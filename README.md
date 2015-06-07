@@ -1,21 +1,32 @@
-# File Chooser
+
+# android-file-chooser
+
+a lightweight file/folder chooser
 
 [ ![Download](https://api.bintray.com/packages/hedzr/maven/filechooser/images/download.svg) ](https://bintray.com/hedzr/maven/filechooser/_latestVersion)
 
-# Overview
+## Usage
+
+### Configuration
+
+#### build.gradle
+```gradle
+compile 'com.obsez.android.lib.filechooser:filechooser:1.1.0'
+```
+
+### Codes
 
 FileChooser android library give a simple file/folder chooser in single call:
 
 ```java
 ```
 
-##
 
-* https://dl.bintray.com/hedzr/maven
-* https://github.com/hz/android-file-chooser
-* https://github.com/hz/obsez-file-chooser
+## References
 
-##
+* https://github.com/hedzr/android-file-chooser
+
+## Contrib
 
 Contributions and translations welcome.
 
@@ -34,3 +45,5 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+
