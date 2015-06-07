@@ -14,12 +14,82 @@ a lightweight file/folder chooser
 
 #### build.gradle
 ```gradle
-compile 'com.obsez.android.lib.filechooser:filechooser:1.1.0'
+compile 'com.obsez.android.lib.filechooser:filechooser:1.1.1'
 ```
 
 ### Codes
 
 FileChooser android library give a simple file/folder chooser in single call:
+
+#### Choose a Folder
+
+```java
+    new ChooserDialog().with(this)
+            .withFilter(true, false)
+            .withStartFile(startingDir)
+            .withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)
+            .withChosenListener(new ChooserDialog.Result() {
+                @Override
+                public void onChoosePath(String path, File pathFile) {
+                    Toast.makeText(NewMainActivity.this, "FOLDER: " + path, Toast.LENGTH_SHORT).show();
+                }
+            })
+            .build()
+            .show();
+```
+
+#### Choose a File
+
+```java
+    new ChooserDialog().with(this)
+            .withStartFile(path)
+            .withResources(R.string.title_choose_dict_file, R.string.title_choose, R.string.dialog_cancel)
+            .withChosenListener(new ChooserDialog.Result() {
+                @Override
+                public void onChoosePath(String path, File pathFile) {
+                    Toast.makeText(NewMainActivity.this, "FILE: " + path, Toast.LENGTH_SHORT).show();
+                }
+            })
+            .build()
+            .show();
+
+```
+
+#### Wild-match
+
+```java
+    new ChooserDialog().with(this)
+            .withFilterRegex(false, false, "jpg", "jpeg", "png")
+            .withStartFile(path)
+            .withResources(R.string.title_choose_dict_file, R.string.title_choose, R.string.dialog_cancel)
+            .withChosenListener(new ChooserDialog.Result() {
+                @Override
+                public void onChoosePath(String path, File pathFile) {
+                    Toast.makeText(NewMainActivity.this, "FILE: " + path, Toast.LENGTH_SHORT).show();
+                }
+            })
+            .build()
+            .show();
+
+```
+
+#### Regex filter
+
+```java
+    new ChooserDialog().with(this)
+            .withFilterRegex(false, false, ".*\\.(jpe?g|png)")
+            .withStartFile(path)
+            .withResources(R.string.title_choose_dict_file, R.string.title_choose, R.string.dialog_cancel)
+            .withChosenListener(new ChooserDialog.Result() {
+                @Override
+                public void onChoosePath(String path, File pathFile) {
+                    Toast.makeText(NewMainActivity.this, "FILE: " + path, Toast.LENGTH_SHORT).show();
+                }
+            })
+            .build()
+            .show();
+
+```
 
 ```java
 ```
