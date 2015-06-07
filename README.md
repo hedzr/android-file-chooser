@@ -1,6 +1,10 @@
 
 # android-file-chooser
 
+**working and testing, the release coming soon.**
+
+## Overview
+
 a lightweight file/folder chooser
 
 [ ![Download](https://api.bintray.com/packages/hedzr/maven/filechooser/images/download.svg) ](https://bintray.com/hedzr/maven/filechooser/_latestVersion)
