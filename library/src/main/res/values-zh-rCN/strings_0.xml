@@ -1,0 +1,7 @@
+<resources>
+  <string name="app_name">file-chooser-library</string>
+  <string name="title_choose">选择</string>
+  <string name="title_choose_dict_file">选择一个字典文件</string>
+  <string name="dialog_ok">选择</string>
+  <string name="dialog_cancel">取消</string>
+</resources>

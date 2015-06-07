@@ -1,0 +1,693 @@
+:tasks
+
+------------------------------------------------------------
+All tasks runnable from root project
+------------------------------------------------------------
+
+Android tasks
+-------------
+app:androidDependencies - Displays the Android dependencies of the project.
+library:androidDependencies - Displays the Android dependencies of the project.
+app:signingReport - Displays the signing info for each variant.
+library:signingReport - Displays the signing info for each variant.
+
+Build tasks
+-----------
+app:assemble - Assembles all variants of all applications and secondary packages. [app:assembleDebug, app:assembleRelease]
+library:assemble - Assembles all variants of all applications and secondary packages. [library:assembleDebug, library:assembleRelease]
+    library:javadoc
+    library:javadocJar
+    library:sourcesJar
+app:assembleAndroidTest - Assembles all the Test applications. [app:assembleDebugAndroidTest]
+library:assembleAndroidTest - Assembles all the Test applications. [library:assembleDebugAndroidTest]
+app:assembleDebug - Assembles all Debug builds. [app:compileDebugSources, library:bundleRelease]
+    app:dexDebug
+    app:packageDebug
+    app:preDexDebug
+    app:validateDebugSigning
+    app:zipalignDebug
+library:assembleDebug - Assembles all Debug builds. [library:compileDebugSources, library:extractDebugAnnotations]
+    library:bundleDebug - Assembles a bundle containing the library in Debug.
+    library:compileLint
+    library:copyDebugLint
+    library:mergeDebugProguardFiles
+    library:packageDebugJar
+    library:packageDebugJniLibs
+    library:packageDebugLocalJar
+    library:packageDebugRenderscript
+    library:packageDebugResources
+app:assembleDebugAndroidTest - Assembles the android (on device) tests for the Debug build. [app:compileDebugAndroidTestSources]
+    app:dexDebugAndroidTest
+    app:packageDebugAndroidTest
+    app:preDexDebugAndroidTest
+    app:validateDebugSigning
+library:assembleDebugAndroidTest - Assembles the android (on device) tests for the Debug build. [library:compileDebugAndroidTestSources]
+    library:dexDebugAndroidTest
+    library:packageDebugAndroidTest
+    library:preDexDebugAndroidTest
+    library:validateDebugSigning
+app:assembleRelease - Assembles all Release builds. [app:compileReleaseSources, library:bundleRelease]
+    app:dexRelease
+    app:lintVitalRelease - Runs lint on just the fatal issues in the Release build.
+    app:packageRelease
+    app:preDexRelease
+library:assembleRelease - Assembles all Release builds. [library:compileReleaseSources, library:extractReleaseAnnotations]
+    library:bundleRelease - Assembles a bundle containing the library in Release.
+    library:compileLint
+    library:copyReleaseLint
+    library:mergeReleaseProguardFiles
+    library:packageReleaseJar
+    library:packageReleaseJniLibs
+    library:packageReleaseLocalJar
+    library:packageReleaseRenderscript
+    library:packageReleaseResources
+app:build - Assembles and tests this project. [app:assemble, app:check]
+library:build - Assembles and tests this project. [library:assemble, library:check]
+app:buildDependents - Assembles and tests this project and all projects that depend on it. [app:build]
+library:buildDependents - Assembles and tests this project and all projects that depend on it. [app:buildDependents, library:build]
+app:buildNeeded - Assembles and tests this project and all projects it depends on. [app:build, library:buildNeeded]
+library:buildNeeded - Assembles and tests this project and all projects it depends on. [library:build]
+app:clean - Deletes the build directory.
+library:clean - Deletes the build directory.
+app:compileDebugAndroidTestSources [library:bundleRelease]
+    app:checkDebugManifest
+    app:compileDebugAidl
+    app:compileDebugAndroidTestAidl
+    app:compileDebugAndroidTestJava
+    app:compileDebugAndroidTestNdk
+    app:compileDebugAndroidTestRenderscript
+    app:compileDebugJava
+    app:compileDebugRenderscript
+    app:generateDebugAndroidTestAssets
+    app:generateDebugAndroidTestBuildConfig
+    app:generateDebugAndroidTestResValues
+    app:generateDebugAndroidTestResources
+    app:generateDebugAndroidTestSources
+    app:generateDebugAssets
+    app:generateDebugBuildConfig
+    app:generateDebugResValues
+    app:generateDebugResources
+    app:generateDebugSources
+    app:mergeDebugAndroidTestAssets
+    app:mergeDebugAndroidTestResources
+    app:mergeDebugAssets
+    app:mergeDebugResources
+    app:preBuild
+    app:preDebugAndroidTestBuild
+    app:preDebugBuild
+    app:preReleaseBuild
+    app:prepareComAndroidSupportAppcompatV72220Library - Prepare com.android.support:appcompat-v7:22.2.0
+    app:prepareComAndroidSupportSupportV42220Library - Prepare com.android.support:support-v4:22.2.0
+    app:prepareComObsezAndroidLibFilechooserLibrary151Library - Prepare com.obsez.android.lib.filechooser:library:1.5.1
+    app:prepareDebugAndroidTestDependencies
+    app:prepareDebugDependencies
+    app:processDebugAndroidTestJavaRes
+    app:processDebugAndroidTestManifest
+    app:processDebugAndroidTestResources
+    app:processDebugJavaRes
+    app:processDebugManifest
+    app:processDebugResources
+library:compileDebugAndroidTestSources [library:assembleDebug]
+    library:compileDebugAndroidTestAidl
+    library:compileDebugAndroidTestJava
+    library:compileDebugAndroidTestNdk
+    library:compileDebugAndroidTestRenderscript
+    library:generateDebugAndroidTestAssets
+    library:generateDebugAndroidTestBuildConfig
+    library:generateDebugAndroidTestResValues
+    library:generateDebugAndroidTestResources
+    library:generateDebugAndroidTestSources
+    library:mergeDebugAndroidTestAssets
+    library:mergeDebugAndroidTestResources
+    library:prepareDebugAndroidTestDependencies
+    library:processDebugAndroidTestJavaRes
+    library:processDebugAndroidTestManifest
+    library:processDebugAndroidTestResources
+app:compileDebugSources [library:bundleRelease]
+    app:checkDebugManifest
+    app:compileDebugAidl
+    app:compileDebugJava
+    app:compileDebugNdk
+    app:compileDebugRenderscript
+    app:generateDebugAssets
+    app:generateDebugBuildConfig
+    app:generateDebugResValues
+    app:generateDebugResources
+    app:generateDebugSources
+    app:mergeDebugAssets
+    app:mergeDebugResources
+    app:preBuild
+    app:preDebugBuild
+    app:preReleaseBuild
+    app:prepareComAndroidSupportAppcompatV72220Library - Prepare com.android.support:appcompat-v7:22.2.0
+    app:prepareComAndroidSupportSupportV42220Library - Prepare com.android.support:support-v4:22.2.0
+    app:prepareComObsezAndroidLibFilechooserLibrary151Library - Prepare com.obsez.android.lib.filechooser:library:1.5.1
+    app:prepareDebugDependencies
+    app:processDebugJavaRes
+    app:processDebugManifest
+    app:processDebugResources
+library:compileDebugSources
+    library:checkDebugManifest
+    library:compileDebugAidl
+    library:compileDebugJava
+    library:compileDebugNdk
+    library:compileDebugRenderscript
+    library:generateDebugAssets
+    library:generateDebugBuildConfig
+    library:generateDebugResValues
+    library:generateDebugResources
+    library:generateDebugSources
+    library:mergeDebugAssets
+    library:mergeDebugResources
+    library:preBuild
+    library:preDebugAndroidTestBuild
+    library:preDebugBuild
+    library:preDebugUnitTestBuild
+    library:preReleaseBuild
+    library:preReleaseUnitTestBuild
+    library:prepareComAndroidSupportAppcompatV72220Library - Prepare com.android.support:appcompat-v7:22.2.0
+    library:prepareComAndroidSupportSupportV42220Library - Prepare com.android.support:support-v4:22.2.0
+    library:prepareDebugDependencies
+    library:processDebugJavaRes
+    library:processDebugManifest
+    library:processDebugResources
+app:compileDebugUnitTestSources [library:bundleRelease]
+    app:checkDebugManifest
+    app:compileDebugAidl
+    app:compileDebugJava
+    app:compileDebugRenderscript
+    app:compileDebugUnitTestJava
+    app:generateDebugAssets
+    app:generateDebugBuildConfig
+    app:generateDebugResValues
+    app:generateDebugResources
+    app:generateDebugSources
+    app:mergeDebugAssets
+    app:mergeDebugResources
+    app:preBuild
+    app:preCompileDebugUnitTestJava
+    app:preDebugBuild
+    app:preDebugUnitTestBuild
+    app:preReleaseBuild
+    app:prepareComAndroidSupportAppcompatV72220Library - Prepare com.android.support:appcompat-v7:22.2.0
+    app:prepareComAndroidSupportSupportV42220Library - Prepare com.android.support:support-v4:22.2.0
+    app:prepareComObsezAndroidLibFilechooserLibrary151Library - Prepare com.obsez.android.lib.filechooser:library:1.5.1
+    app:prepareDebugDependencies
+    app:prepareDebugUnitTestDependencies
+    app:processDebugJavaRes
+    app:processDebugManifest
+    app:processDebugResources
+    app:processDebugUnitTestJavaRes
+library:compileDebugUnitTestSources
+    library:checkDebugManifest
+    library:compileDebugAidl
+    library:compileDebugJava
+    library:compileDebugRenderscript
+    library:compileDebugUnitTestJava
+    library:generateDebugAssets
+    library:generateDebugBuildConfig
+    library:generateDebugResValues
+    library:generateDebugResources
+    library:generateDebugSources
+    library:mergeDebugAssets
+    library:mergeDebugResources
+    library:preBuild
+    library:preCompileDebugUnitTestJava
+    library:preDebugAndroidTestBuild
+    library:preDebugBuild
+    library:preDebugUnitTestBuild
+    library:preReleaseBuild
+    library:preReleaseUnitTestBuild
+    library:prepareComAndroidSupportAppcompatV72220Library - Prepare com.android.support:appcompat-v7:22.2.0
+    library:prepareComAndroidSupportSupportV42220Library - Prepare com.android.support:support-v4:22.2.0
+    library:prepareDebugDependencies
+    library:prepareDebugUnitTestDependencies
+    library:processDebugJavaRes
+    library:processDebugManifest
+    library:processDebugResources
+    library:processDebugUnitTestJavaRes
+app:compileReleaseSources [library:bundleRelease]
+    app:checkReleaseManifest
+    app:compileReleaseAidl
+    app:compileReleaseJava
+    app:compileReleaseNdk
+    app:compileReleaseRenderscript
+    app:generateReleaseAssets
+    app:generateReleaseBuildConfig
+    app:generateReleaseResValues
+    app:generateReleaseResources
+    app:generateReleaseSources
+    app:mergeReleaseAssets
+    app:mergeReleaseResources
+    app:preBuild
+    app:preDebugBuild
+    app:preReleaseBuild
+    app:prepareComAndroidSupportAppcompatV72220Library - Prepare com.android.support:appcompat-v7:22.2.0
+    app:prepareComAndroidSupportSupportV42220Library - Prepare com.android.support:support-v4:22.2.0
+    app:prepareComObsezAndroidLibFilechooserLibrary151Library - Prepare com.obsez.android.lib.filechooser:library:1.5.1
+    app:prepareReleaseDependencies
+    app:processReleaseJavaRes
+    app:processReleaseManifest
+    app:processReleaseResources
+library:compileReleaseSources
+    library:checkReleaseManifest
+    library:compileReleaseAidl
+    library:compileReleaseJava
+    library:compileReleaseNdk
+    library:compileReleaseRenderscript
+    library:generateReleaseAssets
+    library:generateReleaseBuildConfig
+    library:generateReleaseResValues
+    library:generateReleaseResources
+    library:generateReleaseSources
+    library:mergeReleaseAssets
+    library:mergeReleaseResources
+    library:preBuild
+    library:preDebugAndroidTestBuild
+    library:preDebugBuild
+    library:preDebugUnitTestBuild
+    library:preReleaseBuild
+    library:preReleaseUnitTestBuild
+    library:prepareComAndroidSupportAppcompatV72220Library - Prepare com.android.support:appcompat-v7:22.2.0
+    library:prepareComAndroidSupportSupportV42220Library - Prepare com.android.support:support-v4:22.2.0
+    library:prepareReleaseDependencies
+    library:processReleaseJavaRes
+    library:processReleaseManifest
+    library:processReleaseResources
+app:compileReleaseUnitTestSources [library:bundleRelease]
+    app:checkReleaseManifest
+    app:compileReleaseAidl
+    app:compileReleaseJava
+    app:compileReleaseRenderscript
+    app:compileReleaseUnitTestJava
+    app:generateReleaseAssets
+    app:generateReleaseBuildConfig
+    app:generateReleaseResValues
+    app:generateReleaseResources
+    app:generateReleaseSources
+    app:mergeReleaseAssets
+    app:mergeReleaseResources
+    app:preBuild
+    app:preCompileReleaseUnitTestJava
+    app:preDebugBuild
+    app:preReleaseBuild
+    app:preReleaseUnitTestBuild
+    app:prepareComAndroidSupportAppcompatV72220Library - Prepare com.android.support:appcompat-v7:22.2.0
+    app:prepareComAndroidSupportSupportV42220Library - Prepare com.android.support:support-v4:22.2.0
+    app:prepareComObsezAndroidLibFilechooserLibrary151Library - Prepare com.obsez.android.lib.filechooser:library:1.5.1
+    app:prepareReleaseDependencies
+    app:prepareReleaseUnitTestDependencies
+    app:processReleaseJavaRes
+    app:processReleaseManifest
+    app:processReleaseResources
+    app:processReleaseUnitTestJavaRes
+library:compileReleaseUnitTestSources
+    library:checkReleaseManifest
+    library:compileReleaseAidl
+    library:compileReleaseJava
+    library:compileReleaseRenderscript
+    library:compileReleaseUnitTestJava
+    library:generateReleaseAssets
+    library:generateReleaseBuildConfig
+    library:generateReleaseResValues
+    library:generateReleaseResources
+    library:generateReleaseSources
+    library:mergeReleaseAssets
+    library:mergeReleaseResources
+    library:preBuild
+    library:preCompileReleaseUnitTestJava
+    library:preDebugAndroidTestBuild
+    library:preDebugBuild
+    library:preDebugUnitTestBuild
+    library:preReleaseBuild
+    library:preReleaseUnitTestBuild
+    library:prepareComAndroidSupportAppcompatV72220Library - Prepare com.android.support:appcompat-v7:22.2.0
+    library:prepareComAndroidSupportSupportV42220Library - Prepare com.android.support:support-v4:22.2.0
+    library:prepareReleaseDependencies
+    library:prepareReleaseUnitTestDependencies
+    library:processReleaseJavaRes
+    library:processReleaseManifest
+    library:processReleaseResources
+    library:processReleaseUnitTestJavaRes
+library:extractDebugAnnotations - Extracts Android annotations for the debug variant into the archive file
+    library:checkDebugManifest
+    library:compileDebugAidl
+    library:compileDebugJava
+    library:compileDebugRenderscript
+    library:generateDebugAssets
+    library:generateDebugBuildConfig
+    library:generateDebugResValues
+    library:generateDebugResources
+    library:generateDebugSources
+    library:mergeDebugAssets
+    library:mergeDebugResources
+    library:preBuild
+    library:preDebugAndroidTestBuild
+    library:preDebugBuild
+    library:preDebugUnitTestBuild
+    library:preReleaseBuild
+    library:preReleaseUnitTestBuild
+    library:prepareComAndroidSupportAppcompatV72220Library - Prepare com.android.support:appcompat-v7:22.2.0
+    library:prepareComAndroidSupportSupportV42220Library - Prepare com.android.support:support-v4:22.2.0
+    library:prepareDebugDependencies
+    library:processDebugJavaRes
+    library:processDebugManifest
+    library:processDebugResources
+library:extractReleaseAnnotations - Extracts Android annotations for the release variant into the archive file
+    library:checkReleaseManifest
+    library:compileReleaseAidl
+    library:compileReleaseJava
+    library:compileReleaseRenderscript
+    library:generateReleaseAssets
+    library:generateReleaseBuildConfig
+    library:generateReleaseResValues
+    library:generateReleaseResources
+    library:generateReleaseSources
+    library:mergeReleaseAssets
+    library:mergeReleaseResources
+    library:preBuild
+    library:preDebugAndroidTestBuild
+    library:preDebugBuild
+    library:preDebugUnitTestBuild
+    library:preReleaseBuild
+    library:preReleaseUnitTestBuild
+    library:prepareComAndroidSupportAppcompatV72220Library - Prepare com.android.support:appcompat-v7:22.2.0
+    library:prepareComAndroidSupportSupportV42220Library - Prepare com.android.support:support-v4:22.2.0
+    library:prepareReleaseDependencies
+    library:processReleaseJavaRes
+    library:processReleaseManifest
+    library:processReleaseResources
+app:mockableAndroidJar - Creates a version of android.jar that's suitable for unit tests.
+library:mockableAndroidJar - Creates a version of android.jar that's suitable for unit tests.
+
+Build Setup tasks
+-----------------
+init - Initializes a new Gradle build. [incubating]
+wrapper - Generates Gradle wrapper files. [incubating]
+
+Help tasks
+----------
+components - Displays the components produced by root project 'file-chooser'. [incubating]
+app:components - Displays the components produced by project ':app'. [incubating]
+library:components - Displays the components produced by project ':library'. [incubating]
+dependencies - Displays all dependencies declared in root project 'file-chooser'.
+app:dependencies - Displays all dependencies declared in project ':app'.
+library:dependencies - Displays all dependencies declared in project ':library'.
+dependencyInsight - Displays the insight into a specific dependency in root project 'file-chooser'.
+app:dependencyInsight - Displays the insight into a specific dependency in project ':app'.
+library:dependencyInsight - Displays the insight into a specific dependency in project ':library'.
+help - Displays a help message.
+app:help - Displays a help message.
+library:help - Displays a help message.
+projects - Displays the sub-projects of root project 'file-chooser'.
+app:projects - Displays the sub-projects of project ':app'.
+library:projects - Displays the sub-projects of project ':library'.
+properties - Displays the properties of root project 'file-chooser'.
+app:properties - Displays the properties of project ':app'.
+library:properties - Displays the properties of project ':library'.
+tasks - Displays the tasks runnable from root project 'file-chooser' (some of the displayed tasks may belong to subprojects).
+app:tasks - Displays the tasks runnable from project ':app'.
+library:tasks - Displays the tasks runnable from project ':library'.
+
+Install tasks
+-------------
+app:installDebug - Installs the Debug build. [app:assembleDebug]
+app:installDebugAndroidTest - Installs the android (on device) tests for the Debug build. [app:assembleDebugAndroidTest]
+library:installDebugAndroidTest - Installs the android (on device) tests for the Debug build. [library:assembleDebugAndroidTest]
+app:uninstallAll - Uninstall all applications. [app:uninstallDebug, app:uninstallDebugAndroidTest, app:uninstallRelease]
+library:uninstallAll - Uninstall all applications. [library:uninstallDebugAndroidTest]
+app:uninstallDebug - Uninstalls the Debug build.
+app:uninstallDebugAndroidTest - Uninstalls the android (on device) tests for the Debug build.
+library:uninstallDebugAndroidTest - Uninstalls the android (on device) tests for the Debug build.
+app:uninstallRelease - Uninstalls the Release build.
+
+Publishing tasks
+----------------
+library:generatePomFileForAndroidLibraryPubPublication - Generates the Maven POM file for publication 'androidLibraryPub'.
+library:publish - Publishes all publications produced by this project.
+library:publishAndroidLibraryPubPublicationToMavenLocal - Publishes Maven publication 'androidLibraryPub' to the local Maven repository. [library:extractReleaseAnnotations, library:generatePomFileForAndroidLibraryPubPublication]
+    library:bundleRelease - Assembles a bundle containing the library in Release.
+    library:compileLint
+    library:compileReleaseNdk
+    library:copyReleaseLint
+    library:javadoc
+    library:javadocJar
+    library:mergeReleaseProguardFiles
+    library:packageReleaseJar
+    library:packageReleaseJniLibs
+    library:packageReleaseLocalJar
+    library:packageReleaseRenderscript
+    library:packageReleaseResources
+    library:sourcesJar
+library:publishToMavenLocal - Publishes all Maven publications produced by this project to the local Maven cache. [library:publishAndroidLibraryPubPublicationToMavenLocal]
+
+Verification tasks
+------------------
+app:check - Runs all checks. [app:lint, app:test]
+library:check - Runs all checks. [library:lint, library:test]
+app:connectedAndroidTest - Installs and runs instrumentation tests for all flavors on connected devices. [app:connectedAndroidTestDebug]
+library:connectedAndroidTest - Installs and runs instrumentation tests for all flavors on connected devices. [library:connectedAndroidTestDebug]
+app:connectedAndroidTestDebug - Installs and runs the tests for Debug build on connected devices. [app:assembleDebug, app:assembleDebugAndroidTest]
+library:connectedAndroidTestDebug - Installs and runs the tests for Debug build on connected devices. [library:assembleDebug, library:assembleDebugAndroidTest]
+app:connectedCheck - Runs all device checks on currently connected devices. [app:connectedAndroidTest]
+library:connectedCheck - Runs all device checks on currently connected devices. [library:connectedAndroidTest]
+app:deviceAndroidTest - Installs and runs instrumentation tests using all Device Providers.
+library:deviceAndroidTest - Installs and runs instrumentation tests using all Device Providers.
+app:deviceCheck - Runs all device checks using Device Providers and Test Servers. [app:deviceAndroidTest]
+library:deviceCheck - Runs all device checks using Device Providers and Test Servers. [library:deviceAndroidTest]
+app:lint - Runs lint on all variants. [library:bundleRelease]
+    app:checkDebugManifest
+    app:checkReleaseManifest
+    app:compileDebugAidl
+    app:compileDebugJava
+    app:compileDebugRenderscript
+    app:compileLint
+    app:compileReleaseAidl
+    app:compileReleaseJava
+    app:compileReleaseRenderscript
+    app:generateDebugAssets
+    app:generateDebugBuildConfig
+    app:generateDebugResValues
+    app:generateDebugResources
+    app:generateDebugSources
+    app:generateReleaseAssets
+    app:generateReleaseBuildConfig
+    app:generateReleaseResValues
+    app:generateReleaseResources
+    app:generateReleaseSources
+    app:mergeDebugAssets
+    app:mergeDebugResources
+    app:mergeReleaseAssets
+    app:mergeReleaseResources
+    app:preBuild
+    app:preDebugBuild
+    app:preReleaseBuild
+    app:prepareComAndroidSupportAppcompatV72220Library - Prepare com.android.support:appcompat-v7:22.2.0
+    app:prepareComAndroidSupportSupportV42220Library - Prepare com.android.support:support-v4:22.2.0
+    app:prepareComObsezAndroidLibFilechooserLibrary151Library - Prepare com.obsez.android.lib.filechooser:library:1.5.1
+    app:prepareDebugDependencies
+    app:prepareReleaseDependencies
+    app:processDebugJavaRes
+    app:processDebugManifest
+    app:processDebugResources
+    app:processReleaseJavaRes
+    app:processReleaseManifest
+    app:processReleaseResources
+library:lint - Runs lint on all variants.
+    library:checkDebugManifest
+    library:checkReleaseManifest
+    library:compileDebugAidl
+    library:compileDebugJava
+    library:compileDebugRenderscript
+    library:compileLint
+    library:compileReleaseAidl
+    library:compileReleaseJava
+    library:compileReleaseRenderscript
+    library:generateDebugAssets
+    library:generateDebugBuildConfig
+    library:generateDebugResValues
+    library:generateDebugResources
+    library:generateDebugSources
+    library:generateReleaseAssets
+    library:generateReleaseBuildConfig
+    library:generateReleaseResValues
+    library:generateReleaseResources
+    library:generateReleaseSources
+    library:mergeDebugAssets
+    library:mergeDebugResources
+    library:mergeReleaseAssets
+    library:mergeReleaseResources
+    library:preBuild
+    library:preDebugAndroidTestBuild
+    library:preDebugBuild
+    library:preDebugUnitTestBuild
+    library:preReleaseBuild
+    library:preReleaseUnitTestBuild
+    library:prepareComAndroidSupportAppcompatV72220Library - Prepare com.android.support:appcompat-v7:22.2.0
+    library:prepareComAndroidSupportSupportV42220Library - Prepare com.android.support:support-v4:22.2.0
+    library:prepareDebugDependencies
+    library:prepareReleaseDependencies
+    library:processDebugJavaRes
+    library:processDebugManifest
+    library:processDebugResources
+    library:processReleaseJavaRes
+    library:processReleaseManifest
+    library:processReleaseResources
+app:lintDebug - Runs lint on the Debug build. [library:bundleRelease]
+    app:checkDebugManifest
+    app:compileDebugAidl
+    app:compileDebugJava
+    app:compileDebugRenderscript
+    app:compileLint
+    app:generateDebugAssets
+    app:generateDebugBuildConfig
+    app:generateDebugResValues
+    app:generateDebugResources
+    app:generateDebugSources
+    app:mergeDebugAssets
+    app:mergeDebugResources
+    app:preBuild
+    app:preDebugBuild
+    app:preReleaseBuild
+    app:prepareComAndroidSupportAppcompatV72220Library - Prepare com.android.support:appcompat-v7:22.2.0
+    app:prepareComAndroidSupportSupportV42220Library - Prepare com.android.support:support-v4:22.2.0
+    app:prepareComObsezAndroidLibFilechooserLibrary151Library - Prepare com.obsez.android.lib.filechooser:library:1.5.1
+    app:prepareDebugDependencies
+    app:processDebugJavaRes
+    app:processDebugManifest
+    app:processDebugResources
+library:lintDebug - Runs lint on the Debug build.
+    library:checkDebugManifest
+    library:compileDebugAidl
+    library:compileDebugJava
+    library:compileDebugRenderscript
+    library:compileLint
+    library:generateDebugAssets
+    library:generateDebugBuildConfig
+    library:generateDebugResValues
+    library:generateDebugResources
+    library:generateDebugSources
+    library:mergeDebugAssets
+    library:mergeDebugResources
+    library:preBuild
+    library:preDebugAndroidTestBuild
+    library:preDebugBuild
+    library:preDebugUnitTestBuild
+    library:preReleaseBuild
+    library:preReleaseUnitTestBuild
+    library:prepareComAndroidSupportAppcompatV72220Library - Prepare com.android.support:appcompat-v7:22.2.0
+    library:prepareComAndroidSupportSupportV42220Library - Prepare com.android.support:support-v4:22.2.0
+    library:prepareDebugDependencies
+    library:processDebugJavaRes
+    library:processDebugManifest
+    library:processDebugResources
+app:lintRelease - Runs lint on the Release build. [library:bundleRelease]
+    app:checkReleaseManifest
+    app:compileLint
+    app:compileReleaseAidl
+    app:compileReleaseJava
+    app:compileReleaseRenderscript
+    app:generateReleaseAssets
+    app:generateReleaseBuildConfig
+    app:generateReleaseResValues
+    app:generateReleaseResources
+    app:generateReleaseSources
+    app:mergeReleaseAssets
+    app:mergeReleaseResources
+    app:preBuild
+    app:preDebugBuild
+    app:preReleaseBuild
+    app:prepareComAndroidSupportAppcompatV72220Library - Prepare com.android.support:appcompat-v7:22.2.0
+    app:prepareComAndroidSupportSupportV42220Library - Prepare com.android.support:support-v4:22.2.0
+    app:prepareComObsezAndroidLibFilechooserLibrary151Library - Prepare com.obsez.android.lib.filechooser:library:1.5.1
+    app:prepareReleaseDependencies
+    app:processReleaseJavaRes
+    app:processReleaseManifest
+    app:processReleaseResources
+library:lintRelease - Runs lint on the Release build.
+    library:checkReleaseManifest
+    library:compileLint
+    library:compileReleaseAidl
+    library:compileReleaseJava
+    library:compileReleaseRenderscript
+    library:generateReleaseAssets
+    library:generateReleaseBuildConfig
+    library:generateReleaseResValues
+    library:generateReleaseResources
+    library:generateReleaseSources
+    library:mergeReleaseAssets
+    library:mergeReleaseResources
+    library:preBuild
+    library:preDebugAndroidTestBuild
+    library:preDebugBuild
+    library:preDebugUnitTestBuild
+    library:preReleaseBuild
+    library:preReleaseUnitTestBuild
+    library:prepareComAndroidSupportAppcompatV72220Library - Prepare com.android.support:appcompat-v7:22.2.0
+    library:prepareComAndroidSupportSupportV42220Library - Prepare com.android.support:support-v4:22.2.0
+    library:prepareReleaseDependencies
+    library:processReleaseJavaRes
+    library:processReleaseManifest
+    library:processReleaseResources
+app:test - Run unit tests for all variants. [app:testDebug, app:testRelease]
+library:test - Run unit tests for all variants. [library:testDebug, library:testRelease]
+app:testDebug - Run unit tests for the debug build. [app:compileDebugUnitTestSources, app:mockableAndroidJar]
+    app:assembleDebugUnitTest - Assembles the unit tests for the Debug build.
+library:testDebug - Run unit tests for the debug build. [library:compileDebugUnitTestSources, library:mockableAndroidJar]
+    library:assembleDebugUnitTest - Assembles the unit tests for the Debug build.
+app:testRelease - Run unit tests for the release build. [app:compileReleaseUnitTestSources, app:mockableAndroidJar]
+    app:assembleReleaseUnitTest - Assembles the unit tests for the Release build.
+library:testRelease - Run unit tests for the release build. [library:compileReleaseUnitTestSources, library:mockableAndroidJar]
+    library:assembleReleaseUnitTest - Assembles the unit tests for the Release build.
+
+Other tasks
+-----------
+library:assembleDefault [library:assembleRelease]
+app:jarDebugClasses [library:bundleRelease]
+    app:checkDebugManifest
+    app:compileDebugAidl
+    app:compileDebugJava
+    app:compileDebugRenderscript
+    app:generateDebugAssets
+    app:generateDebugBuildConfig
+    app:generateDebugResValues
+    app:generateDebugResources
+    app:generateDebugSources
+    app:mergeDebugAssets
+    app:mergeDebugResources
+    app:preBuild
+    app:preDebugBuild
+    app:preReleaseBuild
+    app:prepareComAndroidSupportAppcompatV72220Library - Prepare com.android.support:appcompat-v7:22.2.0
+    app:prepareComAndroidSupportSupportV42220Library - Prepare com.android.support:support-v4:22.2.0
+    app:prepareComObsezAndroidLibFilechooserLibrary151Library - Prepare com.obsez.android.lib.filechooser:library:1.5.1
+    app:prepareDebugDependencies
+    app:processDebugJavaRes
+    app:processDebugManifest
+    app:processDebugResources
+app:jarReleaseClasses [library:bundleRelease]
+    app:checkReleaseManifest
+    app:compileReleaseAidl
+    app:compileReleaseJava
+    app:compileReleaseRenderscript
+    app:generateReleaseAssets
+    app:generateReleaseBuildConfig
+    app:generateReleaseResValues
+    app:generateReleaseResources
+    app:generateReleaseSources
+    app:mergeReleaseAssets
+    app:mergeReleaseResources
+    app:preBuild
+    app:preDebugBuild
+    app:preReleaseBuild
+    app:prepareComAndroidSupportAppcompatV72220Library - Prepare com.android.support:appcompat-v7:22.2.0
+    app:prepareComAndroidSupportSupportV42220Library - Prepare com.android.support:support-v4:22.2.0
+    app:prepareComObsezAndroidLibFilechooserLibrary151Library - Prepare com.obsez.android.lib.filechooser:library:1.5.1
+    app:prepareReleaseDependencies
+    app:processReleaseJavaRes
+    app:processReleaseManifest
+    app:processReleaseResources
+
+BUILD SUCCESSFUL
+
+Total time: 35.157 secs

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:descendantFocusability="beforeDescendants"
+                android:padding="10dp">
+
+  <TextView
+      android:id="@+id/text1"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentLeft="false"
+      android:layout_centerVertical="false"
+      android:layout_toRightOf="@+id/icon"
+      android:ellipsize="marquee"
+      android:paddingLeft="8dp"
+      android:paddingRight="8dp"
+      android:text="@string/app_name"
+      android:textColor="@color/material_deep_teal_500"
+      android:textSize="16sp"/>
+
+  <TextView
+      android:id="@+id/txt_size"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignLeft="@+id/text1"
+      android:layout_below="@+id/text1"
+      android:layout_toLeftOf="@+id/txt_date"
+      android:paddingLeft="8dp"
+      android:paddingRight="8dp"
+      android:text="@string/app_name"
+      android:textColor="@color/material_deep_teal_200"
+      android:textSize="13sp"/>
+
+  <TextView
+      android:id="@+id/txt_date"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignRight="@+id/text1"
+      android:layout_below="@+id/text1"
+      android:paddingLeft="8dp"
+      android:paddingRight="8dp"
+      android:text="@string/app_name"
+      android:textColor="@color/material_deep_teal_200"
+      android:textSize="13sp"/>
+
+  <ImageView
+      android:id="@+id/icon"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentLeft="true"
+      android:layout_marginLeft="12dp"
+      android:layout_marginRight="6dp"
+      android:contentDescription="@string/app_name"
+      android:visibility="gone"
+      android:src="@drawable/ic_folder"/>
+
+</RelativeLayout>
