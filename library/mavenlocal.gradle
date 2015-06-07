@@ -1,0 +1,158 @@
+
+// `gradle uploadArchives`
+//   https://github.com/chrisbanes/gradle-mvn-push
+//   https://chris.banes.me/2013/08/27/pushing-aars-to-maven-central/
+// x (+gpg, +signing):
+//   http://zserge.com/blog/gradle-maven-publish.html
+//apply from: '../gradle-mvn-push.gradle'
+//
+//   http://mike-neck.github.io/blog/2013/06/21/how-to-publish-artifacts-with-gradle-maven-publish-plugin-version-1-dot-6/
+//   https://docs.gradle.org/current/dsl/org.gradle.api.publish.maven.MavenPublication.html
+
+
+ext.isSnapshot = version.endsWith("-SNAPSHOT")
+if (isSnapshot) {
+    // do snapshot stuff
+}
+
+// `gradle publishToMavenLocal`
+// 参考：https://docs.gradle.org/current/dsl/org.gradle.api.publish.maven.MavenPublication.html
+apply plugin: 'maven-publish'
+android.libraryVariants
+//task sourceJar (type : Jar) {
+//    classifier = 'sources'
+//    from sourceSets.main.allSource
+//}
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+    // 对于android，没有sourceSets.main.allSource，
+    // 只有android.sourceSets.main.java.srcDirs
+    //https://www.virag.si/2015/01/publishing-gradle-android-library-to-jcenter/
+    //http://stackoverflow.com/questions/11474729/how-to-build-sources-jar-with-gradle
+}
+task javadoc(type: Javadoc) {
+    title = "Documentation for Android $android.defaultConfig.versionName b$android.defaultConfig.versionCode"
+    //destinationDir = new File("${project.getProjectDir()}/doc/compiled/", variant.baseName)
+    //destinationDir = new File("${project.getProjectDir()}/docs/api/", variant.baseName)
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    //ext.cp = android.libraryVariants.collect { variant ->
+    //    variant.javaCompile.classpath.files
+    //}
+    //classpath += files(ext.cp)
+    ////classpath += project.files()
+    ////destinationDir = file("../javadoc/")
+    //failOnError false
+}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+def isReleaseBuild() {
+    return VERSION_NAME.contains("SNAPSHOT") == false
+}
+def getReleaseRepositoryUrl() {
+    return hasProperty('RELEASE_REPOSITORY_URL') ? RELEASE_REPOSITORY_URL
+            : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+}
+def getSnapshotRepositoryUrl() {
+    return hasProperty('SNAPSHOT_REPOSITORY_URL') ? SNAPSHOT_REPOSITORY_URL
+            : "https://oss.sonatype.org/content/repositories/snapshots/"
+}
+def getRepositoryUsername() {
+    return hasProperty('NEXUS_USERNAME') ? NEXUS_USERNAME : ""
+}
+def getRepositoryPassword() {
+    return hasProperty('NEXUS_PASSWORD') ? NEXUS_PASSWORD : ""
+}
+//https://www.virag.si/2015/01/publishing-gradle-android-library-to-jcenter/
+//def siteUrl = 'https://github.com/izacus/FuzzyDateFormatter'      // Homepage URL of the library
+//def gitUrl = 'https://github.com/izacus/FuzzyDateFormatter.git'   // Git repository URL
+publishing {
+    publications {
+        androidLibraryPub(MavenPublication) {
+            artifactId POM_ARTIFACT_ID
+            groupId GROUP
+            version VERSION_NAME
+            artifact bundleRelease
+            //artifact (sourcesJar) {
+            //    classifier = 'sources'
+            //}
+            artifact sourcesJar
+            artifact javadocJar
+            pom.withXml {
+                //asNode().appendNode('description', 'A demonstration of Maven POM customization')
+                asNode().children().last() + {
+                    resolveStrategy = Closure.DELEGATE_FIRST
+                    name POM_ARTIFACT_ID
+                    description POM_DESCRIPTION //'description for project'
+                    //packaging 'jar'//aar,...
+                    url POM_URL //projectUrl
+                    inceptionYear '2015'
+                    scm {
+                        url POM_SCM_URL //scmUrl
+                        connection POM_SCM_CONNECTION // connectionUrl
+                        developerConnection POM_SCM_DEV_CONNECTION // developerConnectionUrl
+                    }
+                    licenses {
+                        license {
+                            name POM_LICENCE_NAME           // 'The Apache Software License, Version 2.0'
+                            url POM_LICENCE_URL             // 'http://www.apache.org/license/LICENSE-2.0.txt'
+                            distribution POM_LICENCE_DIST   // 'repo'
+                        }
+//                        license {
+//                            name 'BSD License'
+//                            comments """
+///**
+//Copyright (c) 2010, gcontracts@me.com
+//All rights reserved.
+//
+//Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
+//following conditions are met:
+//
+//1.) Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+//disclaimer.
+//2.) Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+//disclaimer in the documentation and/or other materials provided with the distribution.
+//3.) Neither the name of Andre Steingress nor the names of its contributors may be used to endorse or
+//promote products derived from this software without specific prior written permission.
+//
+//THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+//INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+//DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+//SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+//SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+//WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+//USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//**/
+//"""
+//                            distribution 'repo'
+//                        }
+                    }
+                    developers {
+                        developer {
+                            id POM_DEVELOPER_ID // 'hedzr'  // your id or nickname
+                            name POM_DEVELOPER_NAME // 'Hedzr Yeh'
+                            email POM_DEVELOPER_EMAIL //'hedzrz@gmail.com'
+                            url 'http://www.hedzr.com'
+                            // see: http://www.mail-archive.com/user@gradle.codehaus.org/msg05368.html
+                            // organization 'Andre Steingress'
+                            // organizationUrl 'http://www.andresteingress.com'
+                            roles{
+                                role 'Developer'
+                            }
+                            timezone '+8'
+                            // http://blog.andresteingress.com/2011/01/14/using-gradle-in-practice/
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+

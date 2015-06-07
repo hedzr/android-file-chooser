@@ -1,0 +1,197 @@
+apply plugin: 'com.android.library'
+
+//apply plugin: 'maven'
+//version = "1.1.3"
+//group = "com.obsez.android.lib.filechooser"
+////http://stackoverflow.com/questions/18559932/gradle-maven-plugin-install-task-does-not-work-with-android-library-project
+//// `gradle installArchives`
+//task installArchives(type: Upload) {
+//    description "Installs the artifacts to the local Maven repository."
+//    repositories.mavenInstaller {
+//        configuration = configurations.default
+//        pom.groupId = 'com.obsez.android.lib.filechooser'
+//        pom.artifactId = 'library'
+//        pom.version = '1.1.3'
+//    }
+//}
+
+//不是必须的
+group = GROUP
+version = VERSION_NAME
+
+// `gradle publishToMavenLocal`
+// https://docs.gradle.org/current/dsl/org.gradle.api.publish.maven.MavenPublication.html
+//
+// new: http://mike-neck.github.io/blog/2013/06/21/how-to-publish-artifacts-with-gradle-maven-publish-plugin-version-1-dot-6/
+// gradle javadocJar
+// gradle sourceJar
+// gradle signJars
+// gradle signPom
+// gradle preparePublication
+// gradle pP publish
+// gradle publishToMavenLocal
+//apply plugin: 'maven-publish'
+////apply plugin: 'java'
+//apply plugin: 'signing'
+//android.libraryVariants
+//// javadoc.jar generation
+//task javadocJar (type: Jar, dependsOn: javadoc) { // (1)
+//    classifier = 'javadoc'
+//    from javadoc.destinationDir
+//}
+//// sources.jar generation
+//task sourceJar (type : Jar) {
+//    classifier = 'sources'
+//    from sourceSets.main.allSource
+//}
+//// pom file name
+//ext {
+//    pomFilePath = "${project.projectDir}/build/pom.xml"
+//    pomFile = file(pomFilePath)
+//}
+//// add configuration for pom signing
+//configurations {
+//    pom
+//}
+//// summarize artifacts
+//artifacts {
+//    archives jar
+//    archives sourceJar
+//    archives javadocJar
+//    if (pomFile.exists()) {
+//        pom pomFile
+//    }
+//}
+//// sign all artifacts
+//task signJars (type : Sign, dependsOn: [jar, javadocJar, sourceJar]) {
+//    sign configurations.archives
+//}
+//// sign pom
+//task signPom(type: Sign) {
+//    sign configurations.pom
+//}
+//// defining which tasks should be called
+//if (project.ext.pomFile.exists()) {
+//    task preparePublication (dependsOn : [signJars, signPom])
+//} else {
+//    task preparePublication (dependsOn : signJars)
+//}
+//// extract signatures and add classifier and extension to them
+//def getSignatureFiles = {
+//    def allFiles = project.tasks.signJars.signatureFiles.collect { it }
+//    def signedSources = allFiles.find { it.name.contains('-sources') }
+//    def signedJavadoc = allFiles.find { it.name.contains('-javadoc') }
+//    def signedJar = (allFiles - [signedSources, signedJavadoc])[0]
+//    return [
+//            [archive: signedSources, classifier: 'sources', extension: 'jar.asc'],
+//            [archive: signedJavadoc, classifier: 'javadoc', extension: 'jar.asc'],
+//            [archive: signedJar,     classifier: null,      extension: 'jar.asc']
+//    ]
+//}
+//// extract pom signature
+//def getPomSignature = {
+//    return project.tasks.signPom.signatureFiles.collect{it}[0]
+//}
+//publishing {
+//    publicaitons {
+//        gpgJars(MavenPublication) {
+//            getSignatureFiles().each {signature ->
+//                artifact (signature.archive) {
+//                    classifier = signature.classifier
+//                    extension  = signature.extension
+//                }
+//            }
+//        }
+//        if (project.ext.pomFile.exists()) {
+//            gpgPom(MavenPublication) {
+//                artifact (getPomSignature()) {
+//                    classifier = null
+//                    extension  = 'pom.asc'
+//                }
+//            }
+//        }
+//        jar(MavenPublication) {
+//            from components.java
+//            pom.withXml {
+//                asNode().children().last() + {
+//                    resolveStrategy = Closure.DELEGATE_FIRST
+//                    name 'project-name'
+//                    description 'description for project'
+//                    url projectUrl
+//                    scm {
+//                        url scmUrl
+//                        connection connectionUrl
+//                        developerConnection developerConnectionUrl
+//                    }
+//                    licenses {
+//                        license {
+//                            name 'The Apache Software License, Version 2.0'
+//                            url 'http://www.apache.org/license/LICENSE-2.0.txt'
+//                            distribution 'repo'
+//                        }
+//                    }
+//                    developers {
+//                        developer {
+//                            id 'your id or nick name'
+//                            name 'Your Name'
+//                            email 'your@mail.address'
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    repositories {
+//        if (project.ext.pomFile.exists()) {
+//            url 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+//            credentials {
+//                username = sonatypeUsername
+//                password = sonatypePassword
+//            }
+//        } else {
+//            url fileDirectory
+//        }
+//    }
+//}
+
+
+
+
+android {
+    //compileSdkVersion 22
+    //buildToolsVersion "23.0.0 rc2"
+    compileSdkVersion Integer.parseInt(project.ANDROID_COMPILE_SDK_VERSION)
+    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
+    resourcePrefix "obsez_fc__"
+
+    defaultConfig {
+        //minSdkVersion 8
+        //targetSdkVersion 22
+        minSdkVersion project.ANDROID_MIN_SDK_VERSION
+        targetSdkVersion project.ANDROID_TARGET_SDK_VERSION
+        versionCode Integer.parseInt(project.VERSION_CODE)
+        versionName project.VERSION_NAME
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+//        debug {
+//            buildConfig "public final static boolean HAS_PROTOTYPE_FEATURE = true;"
+//        }
+//        release {
+//            buildConfig "public final static boolean HAS_PROTOTYPE_FEATURE = false;"
+//        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:22.2.0'
+}
+
+
+
+apply from: 'mavenlocal.gradle'
+apply from: 'bintray.gradle'
