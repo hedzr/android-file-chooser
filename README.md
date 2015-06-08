@@ -8,6 +8,10 @@ a lightweight file/folder chooser
 
 [ ![Download](https://api.bintray.com/packages/hedzr/maven/filechooser/images/download.svg) ](https://bintray.com/hedzr/maven/filechooser/_latestVersion)
 
+<img src="capture/choose_file.png" width="360"/>
+<img src="capture/choose_folder.png" width="360"/>
+
+
 ## Usage
 
 ### Configuration
@@ -27,11 +31,10 @@ FileChooser android library give a simple file/folder chooser in single call:
     new ChooserDialog().with(this)
             .withFilter(true, false)
             .withStartFile(startingDir)
-            .withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)
             .withChosenListener(new ChooserDialog.Result() {
                 @Override
                 public void onChoosePath(String path, File pathFile) {
-                    Toast.makeText(NewMainActivity.this, "FOLDER: " + path, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "FOLDER: " + path, Toast.LENGTH_SHORT).show();
                 }
             })
             .build()
@@ -43,11 +46,10 @@ FileChooser android library give a simple file/folder chooser in single call:
 ```java
     new ChooserDialog().with(this)
             .withStartFile(path)
-            .withResources(R.string.title_choose_dict_file, R.string.title_choose, R.string.dialog_cancel)
             .withChosenListener(new ChooserDialog.Result() {
                 @Override
                 public void onChoosePath(String path, File pathFile) {
-                    Toast.makeText(NewMainActivity.this, "FILE: " + path, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "FILE: " + path, Toast.LENGTH_SHORT).show();
                 }
             })
             .build()
@@ -61,11 +63,11 @@ FileChooser android library give a simple file/folder chooser in single call:
     new ChooserDialog().with(this)
             .withFilter(false, false, "jpg", "jpeg", "png")
             .withStartFile(path)
-            .withResources(R.string.title_choose_dict_file, R.string.title_choose, R.string.dialog_cancel)
+            .withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)
             .withChosenListener(new ChooserDialog.Result() {
                 @Override
                 public void onChoosePath(String path, File pathFile) {
-                    Toast.makeText(NewMainActivity.this, "FILE: " + path, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "FILE: " + path, Toast.LENGTH_SHORT).show();
                 }
             })
             .build()
@@ -79,7 +81,7 @@ FileChooser android library give a simple file/folder chooser in single call:
     new ChooserDialog().with(this)
             .withFilterRegex(false, false, ".*\\.(jpe?g|png)")
             .withStartFile(path)
-            .withResources(R.string.title_choose_dict_file, R.string.title_choose, R.string.dialog_cancel)
+            .withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)
             .withChosenListener(new ChooserDialog.Result() {
                 @Override
                 public void onChoosePath(String path, File pathFile) {

@@ -5,26 +5,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Environment;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.obsez.android.lib.filechooser.internals.DirAdapter;
 import com.obsez.android.lib.filechooser.internals.ExtFileFilter;
-import com.obsez.android.lib.filechooser.internals.FileUtil;
 import com.obsez.android.lib.filechooser.internals.RegexFileFilter;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -42,7 +34,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     public ChooserDialog with(Context cxt) {
-        this.m_context = cxt;
+        this._context = cxt;
         return this;
     }
 
@@ -85,14 +77,14 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     public ChooserDialog withStartFile(String startFile) {
         if (startFile != null)
-            m_currentDir = new File(startFile);
+            _currentDir = new File(startFile);
         else
-            m_currentDir = Environment.getExternalStorageDirectory();
+            _currentDir = Environment.getExternalStorageDirectory();
         return this;
     }
 
     public ChooserDialog withChosenListener(Result r) {
-        this.m_result = r;
+        this._result = r;
         return this;
     }
 
@@ -109,7 +101,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         DirAdapter adapter = refreshDirs();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(m_context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(_context);
         //builder.setTitle(R.string.dlg_choose dir_title);
         builder.setTitle(_titleRes);
         builder.setAdapter(adapter, this);
@@ -117,9 +109,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         if (_dirOnly) {
             builder.setPositiveButton(_okRes, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    if (m_result != null) {
+                    if (_result != null) {
                         if (_dirOnly)
-                            m_result.onChoosePath(m_currentDir.getAbsolutePath(), m_currentDir);
+                            _result.onChoosePath(_currentDir.getAbsolutePath(), _currentDir);
                     }
                     dialog.dismiss();
                 }
@@ -132,41 +124,39 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             }
         });
 
-        m_alertDialog = builder.create();
-        m_list = m_alertDialog.getListView();
-        m_list.setOnItemClickListener(this);
+        _alertDialog = builder.create();
+        _list = _alertDialog.getListView();
+        _list.setOnItemClickListener(this);
         return this;
     }
 
     public ChooserDialog show() {
-        //if (m_result == null)
+        //if (_result == null)
         //    throw new RuntimeException("no chosenListener defined. use withChosenListener() at first.");
-        if (m_alertDialog == null || m_list == null)
+        if (_alertDialog == null || _list == null)
             throw new RuntimeException("call build() before show().");
-        m_alertDialog.show();
+        _alertDialog.show();
         return this;
     }
 
 
-
-
     private void listDirs() {
-        m_entries.clear();
+        _entries.clear();
 
         // Get files
-        File[] files = m_currentDir.listFiles(_fileFilter);
+        File[] files = _currentDir.listFiles(_fileFilter);
 
         // Add the ".." entry
-        if (m_currentDir.getParent() != null)
-            m_entries.add(new File(".."));
+        if (_currentDir.getParent() != null)
+            _entries.add(new File(".."));
 
         if (files != null) {
             for (File file : files) {
-                m_entries.add(file);
+                _entries.add(file);
             }
         }
 
-        Collections.sort(m_entries, new Comparator<File>() {
+        Collections.sort(_entries, new Comparator<File>() {
             public int compare(File f1, File f2) {
                 return f1.getName().toLowerCase().compareTo(f2.getName().toLowerCase());
             }
@@ -174,25 +164,25 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     private void listDirs2() {
-        m_entries.clear();
+        _entries.clear();
 
         // Get files
-        File[] files = m_currentDir.listFiles();
+        File[] files = _currentDir.listFiles();
 
         // Add the ".." entry
-        if (m_currentDir.getParent() != null)
-            m_entries.add(new File(".."));
+        if (_currentDir.getParent() != null)
+            _entries.add(new File(".."));
 
         if (files != null) {
             for (File file : files) {
                 if (!file.isDirectory())
                     continue;
 
-                m_entries.add(file);
+                _entries.add(file);
             }
         }
 
-        Collections.sort(m_entries, new Comparator<File>() {
+        Collections.sort(_entries, new Comparator<File>() {
             public int compare(File f1, File f2) {
                 return f1.getName().toLowerCase().compareTo(f2.getName().toLowerCase());
             }
@@ -201,20 +191,20 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     @Override
     public void onItemClick(AdapterView<?> parent, View list, int pos, long id) {
-        if (pos < 0 || pos >= m_entries.size())
+        if (pos < 0 || pos >= _entries.size())
             return;
 
-        File file = m_entries.get(pos);
+        File file = _entries.get(pos);
         if (file.getName().equals(".."))
-            m_currentDir = m_currentDir.getParentFile();
+            _currentDir = _currentDir.getParentFile();
         else
-            m_currentDir = file;
+            _currentDir = file;
 
         if (!file.isDirectory()) {
             if (!_dirOnly) {
-                if (m_result != null) {
-                    m_result.onChoosePath(file.getAbsolutePath(), file);
-                    m_alertDialog.dismiss();
+                if (_result != null) {
+                    _result.onChoosePath(file.getAbsolutePath(), file);
+                    _alertDialog.dismiss();
                     return;
                 }
             }
@@ -228,26 +218,24 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         //
     }
 
-    DirAdapter refreshDirs(){
+    DirAdapter refreshDirs() {
         listDirs();
-        DirAdapter adapter = new DirAdapter(m_context, m_entries, R.layout.li_row_textview);
-        if(m_list!=null)
-            m_list.setAdapter(adapter);
+        DirAdapter adapter = new DirAdapter(_context, _entries, R.layout.li_row_textview);
+        if (_list != null)
+            _list.setAdapter(adapter);
         return adapter;
     }
 
 
-
-
-    List<File> m_entries = new ArrayList<File>();
-    File m_currentDir;
-    Context m_context;
-    AlertDialog m_alertDialog;
-    ListView m_list;
-    Result m_result = null;
-    boolean _dirOnly;
-    FileFilter _fileFilter;
-    int _titleRes = R.string.choose_file, _okRes = R.string.title_choose, _cancelRes = R.string.dialog_cancel;
+    private List<File> _entries = new ArrayList<File>();
+    private File _currentDir;
+    private Context _context;
+    private AlertDialog _alertDialog;
+    private ListView _list;
+    private Result _result = null;
+    private boolean _dirOnly;
+    private FileFilter _fileFilter;
+    private int _titleRes = R.string.choose_file, _okRes = R.string.title_choose, _cancelRes = R.string.dialog_cancel;
 
     static FileFilter filterDirectoriesOnly = new FileFilter() {
         public boolean accept(File file) {
@@ -260,7 +248,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             return !file.isHidden();
         }
     };
-
 
 
 }

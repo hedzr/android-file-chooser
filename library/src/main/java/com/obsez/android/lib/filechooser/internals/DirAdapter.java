@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class DirAdapter extends ArrayAdapter<File> {
 
-    SimpleDateFormat _formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    final static SimpleDateFormat _formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
     List<File> m_entries;
 
