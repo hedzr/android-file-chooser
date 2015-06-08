@@ -80,6 +80,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             _currentDir = new File(startFile);
         else
             _currentDir = Environment.getExternalStorageDirectory();
+
+        if(!_currentDir.isDirectory())
+            _currentDir = _currentDir.getParentFile();
+
         return this;
     }
 
