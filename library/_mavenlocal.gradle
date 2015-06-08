@@ -1,14 +1,4 @@
 
-// `gradle uploadArchives`
-//   https://github.com/chrisbanes/gradle-mvn-push
-//   https://chris.banes.me/2013/08/27/pushing-aars-to-maven-central/
-// x (+gpg, +signing):
-//   http://zserge.com/blog/gradle-maven-publish.html
-//apply from: '../gradle-mvn-push.gradle'
-//
-//   http://mike-neck.github.io/blog/2013/06/21/how-to-publish-artifacts-with-gradle-maven-publish-plugin-version-1-dot-6/
-//   https://docs.gradle.org/current/dsl/org.gradle.api.publish.maven.MavenPublication.html
-
 
 ext.isSnapshot = version.endsWith("-SNAPSHOT")
 if (isSnapshot) {
@@ -19,30 +9,14 @@ if (isSnapshot) {
 // 参考：https://docs.gradle.org/current/dsl/org.gradle.api.publish.maven.MavenPublication.html
 apply plugin: 'maven-publish'
 android.libraryVariants
-//task sourceJar (type : Jar) {
-//    classifier = 'sources'
-//    from sourceSets.main.allSource
-//}
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier = 'sources'
-    // 对于android，没有sourceSets.main.allSource，
-    // 只有android.sourceSets.main.java.srcDirs
-    //https://www.virag.si/2015/01/publishing-gradle-android-library-to-jcenter/
-    //http://stackoverflow.com/questions/11474729/how-to-build-sources-jar-with-gradle
 }
 task javadoc(type: Javadoc) {
     title = "Documentation for Android $android.defaultConfig.versionName b$android.defaultConfig.versionCode"
-    //destinationDir = new File("${project.getProjectDir()}/doc/compiled/", variant.baseName)
-    //destinationDir = new File("${project.getProjectDir()}/docs/api/", variant.baseName)
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    //ext.cp = android.libraryVariants.collect { variant ->
-    //    variant.javaCompile.classpath.files
-    //}
-    //classpath += files(ext.cp)
-    ////classpath += project.files()
-    ////destinationDir = file("../javadoc/")
     //failOnError false
 }
 task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -53,6 +27,7 @@ artifacts {
     archives javadocJar
     archives sourcesJar
 }
+
 def isReleaseBuild() {
     return VERSION_NAME.contains("SNAPSHOT") == false
 }
@@ -70,6 +45,8 @@ def getRepositoryUsername() {
 def getRepositoryPassword() {
     return hasProperty('NEXUS_PASSWORD') ? NEXUS_PASSWORD : ""
 }
+
+
 //https://www.virag.si/2015/01/publishing-gradle-android-library-to-jcenter/
 //def siteUrl = 'https://github.com/izacus/FuzzyDateFormatter'      // Homepage URL of the library
 //def gitUrl = 'https://github.com/izacus/FuzzyDateFormatter.git'   // Git repository URL
@@ -109,7 +86,7 @@ publishing {
 //                            name 'BSD License'
 //                            comments """
 ///**
-//Copyright (c) 2010, gcontracts@me.com
+//Copyright (c) 2015, hedzr@gmail.com
 //All rights reserved.
 //
 //Redistribution and use in source and binary forms, with or without modification, are permitted provided that the

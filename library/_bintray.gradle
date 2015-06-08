@@ -8,16 +8,6 @@ Properties localProperties = new Properties()
 localProperties.load(project.rootProject.file('local.properties').newDataInputStream())
 //println "user=" + localProperties.getProperty("bintray.user") + ", key=" + localProperties.getProperty("bintray.apikey")
 bintray {
-    // https://github.com/bintray/bintray-examples/blob/master/gradle-multi-example/build.gradle
-    // https://github.com/bintray/gradle-bintray-plugin
-    // https://github.com/bintray/gradle-bintray-plugin/tree/master/src/main/groovy/com/jfrog/bintray/gradle
-    // https://github.com/bintray/gradle-bintray-plugin/blob/master/src/main/groovy/com/jfrog/bintray/gradle/BintrayPlugin.groovy
-    // https://bintray.com/docs/usermanual/uploads/uploads_uploadingusingapis.html
-    // https://github.com/danielemaddaluno/gradle-jcenter-publish
-    //
-    // https://www.virag.si/2015/01/publishing-gradle-android-library-to-jcenter/
-    // https://github.com/izacus/FuzzyDateFormatter/blob/master/build.gradle
-    //
     user = localProperties.getProperty("bintray.user")
     key = localProperties.getProperty("bintray.apikey")
     //configurations = ['published', 'archives']      //configurations = ['deployables']
@@ -26,7 +16,9 @@ bintray {
     publications = ['androidLibraryPub']
     dryRun = false   //Whether to run this as dry-run, without deploying
     publish = true   //If version should be auto published after an upload
-    //Package configuration. The plugin will use the repo and name properties to check if the package already exists. In that case, there's no need to configure the other package properties (like userOrg, desc, etc).
+    // Package configuration. The plugin will use the repo and name properties to check
+    // if the package already exists. In that case, there's no need to configure the
+    // other package properties (like userOrg, desc, etc).
     pkg {
         repo = "maven"
         name = POM_ARTIFACT_ID

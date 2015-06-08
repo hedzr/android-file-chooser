@@ -3,6 +3,6 @@
 * local storage
 * mime
 * intent-filter
-* demo app
+* ~~demo app~~
 * automate release note gen
 
