@@ -59,7 +59,7 @@ FileChooser android library give a simple file/folder chooser in single call:
 
 ```java
     new ChooserDialog().with(this)
-            .withFilterRegex(false, false, "jpg", "jpeg", "png")
+            .withFilter(false, false, "jpg", "jpeg", "png")
             .withStartFile(path)
             .withResources(R.string.title_choose_dict_file, R.string.title_choose, R.string.dialog_cancel)
             .withChosenListener(new ChooserDialog.Result() {
