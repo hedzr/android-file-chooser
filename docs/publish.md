@@ -116,6 +116,118 @@ apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn
 <p>
 
 
+## More
+
+### 1. `gradle publishToMavenLocal`
+
+ https://docs.gradle.org/current/dsl/org.gradle.api.publish.maven.MavenPublication.html
+
+ new: http://mike-neck.github.io/blog/2013/06/21/how-to-publish-artifacts-with-gradle-maven-publish-plugin-version-1-dot-6/
+
+    gradle javadocJar
+    gradle sourceJar
+    gradle signJars
+    gradle signPom
+    gradle preparePublication
+    gradle pP publish
+    gradle publishToMavenLocal
+
+    apply plugin: 'maven-publish'
+    //apply plugin: 'java'
+    apply plugin: 'signing'
+
+    android.libraryVariants
+
+
+### 2. `gradle installArchives`
+
+http://stackoverflow.com/questions/18559932/gradle-maven-plugin-install-task-does-not-work-with-android-library-project
+
+       task installArchives(type: Upload) {
+           description "Installs the artifacts to the local Maven repository."
+           repositories.mavenInstaller {
+               configuration = configurations.default
+               pom.groupId = 'com.obsez.android.lib.filechooser'
+               pom.artifactId = 'library'
+               pom.version = '1.1.3'
+           }
+       }
+
+### 3. `gradle uploadArchives`
+
+    apply from: '../gradle-mvn-push.gradle'
+
+* https://github.com/chrisbanes/gradle-mvn-push
+* https://chris.banes.me/2013/08/27/pushing-aars-to-maven-central/
+* x (+gpg, +signing): http://zserge.com/blog/gradle-maven-publish.html
+
+#### Good Posts
+
+* http://mike-neck.github.io/blog/2013/06/21/how-to-publish-artifacts-with-gradle-maven-publish-plugin-version-1-dot-6/
+* https://docs.gradle.org/current/dsl/org.gradle.api.publish.maven.MavenPublication.html
+
+### 4. about sources
+
+对于Java项目
+
+    task sourceJar (type : Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+对于Android项目，没有sourceSets.main.allSource，只有android.sourceSets.main.java.srcDirs。
+所以：
+
+    task sourcesJar(type: Jar) {
+        from android.sourceSets.main.java.srcDirs
+        classifier = 'sources'
+    }
+
+* https://www.virag.si/2015/01/publishing-gradle-android-library-to-jcenter/
+* http://stackoverflow.com/questions/11474729/how-to-build-sources-jar-with-gradle
+
+### 5. about javadoc
+
+
+    task javadoc(type: Javadoc) {
+        title = "Documentation for Android $android.defaultConfig.versionName b$android.defaultConfig.versionCode"
+        //destinationDir = new File("${project.getProjectDir()}/doc/compiled/", variant.baseName)
+        //destinationDir = new File("${project.getProjectDir()}/docs/api/", variant.baseName)
+        source = android.sourceSets.main.java.srcDirs
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+        //ext.cp = android.libraryVariants.collect { variant ->
+        //    variant.javaCompile.classpath.files
+        //}
+        //classpath += files(ext.cp)
+        ////classpath += project.files()
+        ////destinationDir = file("../javadoc/")
+        //failOnError false
+    }
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+### 6. sources + javadoc
+
+    artifacts {
+        archives javadocJar
+        archives sourcesJar
+    }
+
+### 7. bintray ref
+
+* https://github.com/bintray/bintray-examples/blob/master/gradle-multi-example/build.gradle
+* https://github.com/bintray/gradle-bintray-plugin
+* https://github.com/bintray/gradle-bintray-plugin/tree/master/src/main/groovy/com/jfrog/bintray/gradle
+* https://github.com/bintray/gradle-bintray-plugin/blob/master/src/main/groovy/com/jfrog/bintray/gradle/BintrayPlugin.groovy
+* https://bintray.com/docs/usermanual/uploads/uploads_uploadingusingapis.html
+* https://github.com/danielemaddaluno/gradle-jcenter-publish
+
+* https://www.virag.si/2015/01/publishing-gradle-android-library-to-jcenter/
+* https://github.com/izacus/FuzzyDateFormatter/blob/master/build.gradle
+
+
 
 
 
