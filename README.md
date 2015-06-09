@@ -1,6 +1,5 @@
 # android-file-chooser
 
-**working and testing, the release coming soon.**
 
 ## Overview
 
@@ -17,8 +16,11 @@ a lightweight file/folder chooser
 ### Configuration
 
 #### build.gradle
+
+android-file-chooser was released at jcenter, declare deps with:
+
 ```gradle
-compile 'com.obsez.android.lib.filechooser:filechooser:1.1.1'
+compile 'com.obsez.android.lib.filechooser:filechooser:1.1.2'
 ```
 
 ### Codes
