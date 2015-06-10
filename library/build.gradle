@@ -43,5 +43,9 @@ dependencies {
 
 
 
+// gradle uploadArchives
+apply from: '_sonatype.gradle'
+// gradle publishToMavenLocal
 apply from: '_mavenlocal.gradle'
+// gradle bintrayUpload
 apply from: '_bintray.gradle'
