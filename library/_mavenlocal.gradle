@@ -9,42 +9,43 @@ if (isSnapshot) {
 // 参考：https://docs.gradle.org/current/dsl/org.gradle.api.publish.maven.MavenPublication.html
 apply plugin: 'maven-publish'
 android.libraryVariants
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
-}
-task javadoc(type: Javadoc) {
-    title = "Documentation for Android $android.defaultConfig.versionName b$android.defaultConfig.versionCode"
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    //failOnError false
-}
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-artifacts {
-    archives javadocJar
-    archives sourcesJar
-}
-
-def isReleaseBuild() {
-    return VERSION_NAME.contains("SNAPSHOT") == false
-}
-def getReleaseRepositoryUrl() {
-    return hasProperty('RELEASE_REPOSITORY_URL') ? RELEASE_REPOSITORY_URL
-            : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-}
-def getSnapshotRepositoryUrl() {
-    return hasProperty('SNAPSHOT_REPOSITORY_URL') ? SNAPSHOT_REPOSITORY_URL
-            : "https://oss.sonatype.org/content/repositories/snapshots/"
-}
-def getRepositoryUsername() {
-    return hasProperty('NEXUS_USERNAME') ? NEXUS_USERNAME : ""
-}
-def getRepositoryPassword() {
-    return hasProperty('NEXUS_PASSWORD') ? NEXUS_PASSWORD : ""
-}
+//注意先包含 apply from: '_sonatype.gradle'  //借用其中的sourceJar, javadocJar等功能
+//task sourcesJar(type: Jar) {
+//    from android.sourceSets.main.java.srcDirs
+//    classifier = 'sources'
+//}
+//task javadoc(type: Javadoc) {
+//    title = "Documentation for Android $android.defaultConfig.versionName b$android.defaultConfig.versionCode"
+//    source = android.sourceSets.main.java.srcDirs
+//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//    //failOnError false
+//}
+//task javadocJar(type: Jar, dependsOn: javadoc) {
+//    classifier = 'javadoc'
+//    from javadoc.destinationDir
+//}
+//artifacts {
+//    archives javadocJar
+//    archives sourcesJar
+//}
+//
+//def isReleaseBuild() {
+//    return VERSION_NAME.contains("SNAPSHOT") == false
+//}
+//def getReleaseRepositoryUrl() {
+//    return hasProperty('RELEASE_REPOSITORY_URL') ? RELEASE_REPOSITORY_URL
+//            : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+//}
+//def getSnapshotRepositoryUrl() {
+//    return hasProperty('SNAPSHOT_REPOSITORY_URL') ? SNAPSHOT_REPOSITORY_URL
+//            : "https://oss.sonatype.org/content/repositories/snapshots/"
+//}
+//def getRepositoryUsername() {
+//    return hasProperty('NEXUS_USERNAME') ? NEXUS_USERNAME : ""
+//}
+//def getRepositoryPassword() {
+//    return hasProperty('NEXUS_PASSWORD') ? NEXUS_PASSWORD : ""
+//}
 
 
 //https://www.virag.si/2015/01/publishing-gradle-android-library-to-jcenter/
@@ -56,12 +57,16 @@ publishing {
             artifactId POM_ARTIFACT_ID
             groupId GROUP
             version VERSION_NAME
+
             artifact bundleRelease
+
             //artifact (sourcesJar) {
             //    classifier = 'sources'
             //}
-            artifact sourcesJar
-            artifact javadocJar
+
+            //artifact sourcesJar
+            //artifact javadocJar
+
             pom.withXml {
                 //asNode().appendNode('description', 'A demonstration of Maven POM customization')
                 asNode().children().last() + {
