@@ -40,7 +40,7 @@ afterEvaluate { project ->
                 pom.version = VERSION_NAME
 
                 repository(url: getReleaseRepositoryUrl()) {
-                    println('"' +NEXUS_USERNAME+'", "' +NEXUS_PASSWORD+'"');
+                    //println('"' +getRepositoryUsername()+'", "' +getRepositoryPassword()+'"');
                     authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
                 }
                 snapshotRepository(url: getSnapshotRepositoryUrl()) {
