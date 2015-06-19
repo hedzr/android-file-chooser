@@ -12,7 +12,6 @@
 /.idea/copyright
 .DS_Store
 /build
-/captures
 /docs
 
 gradle-mvn-push.gradle
