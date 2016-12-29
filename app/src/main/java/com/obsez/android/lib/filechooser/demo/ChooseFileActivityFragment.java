@@ -47,6 +47,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                 new ChooserDialog().with(ctx)
                         .withFilter(true, false)
                         .withStartFile(_path)
+                        .withDateFormat("HH:mm")
                         .withResources(R.string.title_choose_folder, R.string.title_choose, R.string.dialog_cancel)
                         .withChosenListener(new ChooserDialog.Result() {
                             @Override

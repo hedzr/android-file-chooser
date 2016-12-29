@@ -19,17 +19,27 @@ import java.util.List;
  */
 public class DirAdapter extends ArrayAdapter<File> {
 
-    final static SimpleDateFormat _formatter = new SimpleDateFormat( "yyyy/MM/dd HH:mm:ss" );
+    static SimpleDateFormat _formatter;
 
     List<File> m_entries;
 
     public DirAdapter( Context cxt, List<File> entries, int resId ) {
         super( cxt, resId, R.id.text1, entries );
-        m_entries = entries;
+        this.init(entries, null);
+    }
+
+    public DirAdapter( Context cxt, List<File> entries, int resId, String dateFormat ) {
+        super( cxt, resId, R.id.text1, entries );
+        this.init(entries, null);
     }
 
     public DirAdapter( Context cxt, List<File> entries, int resource, int textViewResourceId ) {
         super( cxt, resource, textViewResourceId, entries );
+        this.init(entries, null);
+    }
+
+    private void init(List<File> entries, String dateFormat){
+        _formatter = new SimpleDateFormat( dateFormat!=null && "".equals(dateFormat.trim()) ? dateFormat.trim() : "yyyy/MM/dd HH:mm:ss" );
         m_entries = entries;
     }
 
