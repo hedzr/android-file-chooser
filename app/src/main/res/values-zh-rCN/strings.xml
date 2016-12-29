@@ -1,0 +1,9 @@
+<resources>
+  <string name="app_name">file-chooser</string>
+  <string name="hello_world">Hello 世界!</string>
+  <string name="action_settings">设置</string>
+  <string name="btn_choose_a_file">选择文件试试…</string>
+  <string name="title_choose_file">选择一个文件</string>
+  <string name="btn_choose_a_folder">选择文件夹试试…</string>
+  <string name="title_choose_folder">选择一个文件夹</string>
+</resources>
