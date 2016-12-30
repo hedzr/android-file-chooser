@@ -20,7 +20,7 @@ a lightweight file/folder chooser
 android-file-chooser was released at jcenter, declare deps with:
 
 ```gradle
-compile 'com.obsez.android.lib.filechooser:filechooser:1.1.2'
+compile 'com.obsez.android.lib.filechooser:filechooser:1.1.3'
 ```
 
 ### Codes
@@ -95,7 +95,23 @@ FileChooser android library give a simple file/folder chooser in single call:
 
 ```
 
+#### Specify Date Format inside chooser
+
+Since 1.1.3, new builder options `withDateFormat(String)` added.
+
 ```java
+    new ChooserDialog().with(this)
+            .withFilter(true, false)
+            .withStartFile(startingDir)
+            .withDateFormat("HH:mm")    // see also SimpleDateFormat format specifiers
+            .withChosenListener(new ChooserDialog.Result() {
+                @Override
+                public void onChoosePath(String path, File pathFile) {
+                    Toast.makeText(MainActivity.this, "FOLDER: " + path, Toast.LENGTH_SHORT).show();
+                }
+            })
+            .build()
+            .show();
 ```
 
 
