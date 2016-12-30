@@ -11,6 +11,17 @@ def isReleaseBuild() {
     return VERSION_NAME.contains("SNAPSHOT") == false
 }
 
+def getSonatypeProperties() {
+    Properties localProperties = new Properties()
+    localProperties.load(project.rootProject.file('local.properties').newDataInputStream())
+    if (localProperties.getProperty("bintray.user") == null) {
+        return null
+    } else {
+        println "user=" + localProperties.getProperty("bintray.user") + ", key=" + localProperties.getProperty("bintray.apikey")
+    }
+    return localProperties
+}
+
 def getReleaseRepositoryUrl() {
     return hasProperty('RELEASE_REPOSITORY_URL') ? RELEASE_REPOSITORY_URL
             : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
@@ -22,12 +33,17 @@ def getSnapshotRepositoryUrl() {
 }
 
 def getRepositoryUsername() {
-    return hasProperty('NEXUS_USERNAME') ? NEXUS_USERNAME : ""
+    Properties p = getSonatypeProperties()
+    def user = p && p.hasProperty('nexus.user') ? p.getProperty("nexus.user") : null
+    return hasProperty('NEXUS_USERNAME') ? NEXUS_USERNAME : user
 }
 
 def getRepositoryPassword() {
-    return hasProperty('NEXUS_PASSWORD') ? NEXUS_PASSWORD : ""
+    Properties p = getSonatypeProperties()
+    def pass = p && p.hasProperty('nexus.pass') ? p.getProperty("nexus.pass") : null
+    return hasProperty('NEXUS_PASSWORD') ? NEXUS_PASSWORD : pass
 }
+println "sonatype: user=" + getRepositoryUsername() + ", key=" + getRepositoryPassword()
 
 afterEvaluate { project ->
     uploadArchives {
@@ -40,7 +56,7 @@ afterEvaluate { project ->
                 pom.version = VERSION_NAME
 
                 repository(url: getReleaseRepositoryUrl()) {
-                    println('"' +NEXUS_USERNAME+'", "' +NEXUS_PASSWORD+'"');
+                    //println('"' +getRepositoryUsername()+'", "' +getRepositoryPassword()+'"');
                     authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
                 }
                 snapshotRepository(url: getSnapshotRepositoryUrl()) {

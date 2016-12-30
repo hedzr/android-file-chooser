@@ -99,6 +99,15 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    public ChooserDialog withDateFormat() {
+        return this.withDateFormat("yyyy/MM/dd HH:mm:ss");
+    }
+
+    public ChooserDialog withDateFormat(String format) {
+        this._dateFormat = format;
+        return this;
+    }
+
     public ChooserDialog build() {
         if (_titleRes == 0 || _okRes == 0 || _cancelRes == 0)
             throw new RuntimeException("withResources() should be called at first.");
@@ -224,7 +233,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     DirAdapter refreshDirs() {
         listDirs();
-        DirAdapter adapter = new DirAdapter(_context, _entries, R.layout.li_row_textview);
+        DirAdapter adapter = new DirAdapter(_context, _entries, R.layout.li_row_textview, this._dateFormat);
         if (_list != null)
             _list.setAdapter(adapter);
         return adapter;
@@ -240,6 +249,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private boolean _dirOnly;
     private FileFilter _fileFilter;
     private int _titleRes = R.string.choose_file, _okRes = R.string.title_choose, _cancelRes = R.string.dialog_cancel;
+    private String _dateFormat;
 
     static FileFilter filterDirectoriesOnly = new FileFilter() {
         public boolean accept(File file) {
