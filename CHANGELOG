@@ -1,0 +1,14 @@
+# Changelog
+
+## 1.1.3 - 2016-12-31
+
+'+' withDateFormat()
+'*' remove wrong timestamp display at '..' (parent) folder
+'+' add history/changelog
+'*' upgrade building environment
+'+' traditional chinese language
+
+## 1.1.2 and older
+
+'+' basic functionalities
+
