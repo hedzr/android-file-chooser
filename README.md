@@ -20,7 +20,7 @@ a lightweight file/folder chooser
 android-file-chooser was released at jcenter, declare deps with:
 
 ```gradle
-compile 'com.obsez.android.lib.filechooser:filechooser:1.1.3'
+compile 'com.obsez.android.lib.filechooser:filechooser:1.1.4'
 ```
 
 ### Codes
