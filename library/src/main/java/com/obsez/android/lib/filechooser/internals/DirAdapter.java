@@ -30,7 +30,7 @@ public class DirAdapter extends ArrayAdapter<File> {
 
     public DirAdapter( Context cxt, List<File> entries, int resId, String dateFormat ) {
         super( cxt, resId, R.id.text1, entries );
-        this.init(entries, null);
+        this.init(entries, dateFormat);
     }
 
     public DirAdapter( Context cxt, List<File> entries, int resource, int textViewResourceId ) {
@@ -39,7 +39,7 @@ public class DirAdapter extends ArrayAdapter<File> {
     }
 
     private void init(List<File> entries, String dateFormat){
-        _formatter = new SimpleDateFormat( dateFormat!=null && "".equals(dateFormat.trim()) ? dateFormat.trim() : "yyyy/MM/dd HH:mm:ss" );
+        _formatter = new SimpleDateFormat( dateFormat!=null && !"".equals(dateFormat.trim()) ? dateFormat.trim() : "yyyy/MM/dd HH:mm:ss" );
         m_entries = entries;
     }
 

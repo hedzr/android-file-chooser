@@ -1,5 +1,4 @@
 <resources>
-  <string name="app_name">file-chooser-library</string>
   <string name="title_choose">Choose</string>
   <string name="title_choose_dict_file">Pick a dictionary</string>
   <string name="dialog_ok">Select</string>
