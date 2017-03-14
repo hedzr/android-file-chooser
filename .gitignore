@@ -19,3 +19,4 @@ gradle-mvn-push.gradle
 gradle.tasks.txt
 
 *.iml
+*.apk
