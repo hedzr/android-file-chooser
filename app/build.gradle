@@ -1,9 +1,28 @@
 apply plugin: 'com.android.application'
 
+
+
+
 android {
     compileSdkVersion Integer.parseInt(project.ANDROID_COMPILE_SDK_VERSION)
     buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
 
+    signingConfigs {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        def sdkDir = properties.getProperty('sdk.dir')
+        def ndkDir = properties.getProperty('ndk.dir')
+        def ksPath = properties.getProperty('KS_PATH')
+        def keystorePropertiesFile = rootProject.file(ksPath) //"../keystore.properties")
+        def keystoreProperties = new Properties()
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+        config {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
     defaultConfig {
         applicationId "com.obsez.android.lib.filechooser.demo"
         minSdkVersion project.ANDROID_MIN_SDK_VERSION
@@ -17,6 +36,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+
 }
 
 dependencies {
@@ -25,3 +46,4 @@ dependencies {
     compile project(':library')
     //compile 'com.obsez.android.lib.filechooser:filechooser:1.1.3'
 }
+
