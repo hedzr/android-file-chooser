@@ -10,6 +10,12 @@ a lightweight file/folder chooser
 <img src="captures/choose_file.png" width="360"/>
 <img src="captures/choose_folder.png" width="360"/>
 
+### Demo Application
+
+A demo-app can be installed from [Play Store](https://play.google.com/store/apps/details?id=com.obsez.android.lib.filechooser.demo).
+
+<a href='https://play.google.com/store/apps/details?id=com.obsez.android.lib.filechooser.demo&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' width='240' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
+
 
 ## Usage
 
@@ -20,7 +26,7 @@ a lightweight file/folder chooser
 android-file-chooser was released at jcenter, declare deps with:
 
 ```gradle
-compile 'com.obsez.android.lib.filechooser:filechooser:1.1.4'
+compile 'com.obsez.android.lib.filechooser:filechooser:1.1.5'
 ```
 
 ### Codes

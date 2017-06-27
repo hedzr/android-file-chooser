@@ -43,7 +43,7 @@ public class ExtFileFilter implements FileFilter {
         if (pathname.isDirectory())
             return true;
 
-        String ext = FileUtil.getExtension(pathname).substring(1);
+        String ext = FileUtil.getExtensionWithoutDot(pathname);
         for (String e : m_ext) {
             if (ext.equalsIgnoreCase(e))
                 return true;

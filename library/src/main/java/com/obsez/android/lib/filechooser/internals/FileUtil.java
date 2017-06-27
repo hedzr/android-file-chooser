@@ -26,6 +26,13 @@ public class FileUtil {
         }
     }
 
+    public static String getExtensionWithoutDot(File file) {
+        String ext = getExtension(file);
+        if (ext.length() == 0)
+            return ext;
+        return ext.substring(1);
+    }
+
     public static String getReadableFileSize(long size) {
         final int BYTES_IN_KILOBYTES = 1024;
         final DecimalFormat dec = new DecimalFormat("###.#");
