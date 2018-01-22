@@ -17,6 +17,11 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 <a href='https://play.google.com/store/apps/details?id=com.obsez.android.lib.filechooser.demo&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' width='240' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
 
 
+## Changes
+
+Since 1.1.6, AS 3.0+ + Gradle 4.1+ + Android SDK & Building Tools 26.0+ are prerequisites.
+
+
 ## Usage
 
 ### Configuration
@@ -101,7 +106,7 @@ FileChooser android library give a simple file/folder chooser in single call:
 
 ```
 
-#### Specify Date Format inside chooser
+#### Date Format String
 
 Since 1.1.3, new builder options `withDateFormat(String)` added.
 

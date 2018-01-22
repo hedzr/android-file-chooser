@@ -1,5 +1,11 @@
 # RELEASES
 
+
+## 1.1.5 - 2017-06-27
+
+fixed issue #2
+
+
 ## 1.1.4 - 2017-06-27
 
 bug fixed for last releases
