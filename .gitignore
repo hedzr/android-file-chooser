@@ -20,3 +20,6 @@ gradle.tasks.txt
 
 *.iml
 *.apk
+
+.gradle.tasks.txt
+projectFilesBackup/
