@@ -1,9 +1,15 @@
 package com.obsez.android.lib.filechooser;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -148,10 +154,25 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         //    throw new RuntimeException("no chosenListener defined. use withChosenListener() at first.");
         if (_alertDialog == null || _list == null)
             throw new RuntimeException("call build() before show().");
-        _alertDialog.show();
+
+        // Check for permissions if SDK version is >= 23
+        if (Build.VERSION.SDK_INT >= 23) {
+            ActivityCompat.requestPermissions((Activity) _context,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    PERMISSION_REQUEST_READ_EXTERNAL_STORAGE);
+
+            int permissionCheck = ContextCompat.checkSelfPermission(_context,
+                    Manifest.permission.READ_EXTERNAL_STORAGE);
+
+            if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+                _alertDialog.show();
+            }
+        } else {
+            _alertDialog.show();
+        }
+
         return this;
     }
-
 
     private void listDirs() {
         _entries.clear();
@@ -239,7 +260,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return adapter;
     }
 
-
+    private int PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 0;
     private List<File> _entries = new ArrayList<File>();
     private File _currentDir;
     private Context _context;
