@@ -3,6 +3,7 @@
 buildscript {
     repositories {
         jcenter()
+        google()
         mavenCentral()
         maven { url "http://dl.bintray.com/hedzr/maven" }
         maven { url "https://maven.google.com" }
@@ -36,6 +37,7 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        google()
         mavenCentral()
         mavenLocal()
     }
