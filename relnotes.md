@@ -15,7 +15,7 @@ Spring 2018 Version:
 fixed issue #2
 
 
-## 1.1.4 - 2017-06-27
+## 1.1.4.1 - 2017-06-27
 
 bug fixed for last releases
 
