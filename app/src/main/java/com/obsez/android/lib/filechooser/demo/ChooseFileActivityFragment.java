@@ -45,6 +45,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                 // choose a folder
                 final Context ctx = getActivity();
                 new ChooserDialog().with(ctx)
+                        .withIcon(R.mipmap.ic_hedzr_logo)
                         .withFilter(true, false)
                         .withStartFile(_path)
                         .withDateFormat("HH:mm")

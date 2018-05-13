@@ -5,6 +5,7 @@
 
 a lightweight file/folder chooser
 
+
 [ ![Download](https://api.bintray.com/packages/hedzr/maven/filechooser/images/download.svg) ](https://bintray.com/hedzr/maven/filechooser/_latestVersion)
 
 <img src="captures/choose_file.png" width="360"/>
@@ -21,6 +22,13 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 
 Since 1.1.6, AS 3.0+ + Gradle 4.1+ + Android SDK & Building Tools 26.0+ are prerequisites.
 
+Two withXXX calls added for AlertDialog icon and layout resource. See Also: [withIcon()](./library/src/main/java/com/obsez/android/lib/filechooser/ChooserDialog.java#L114), [withLayoutView()](./library/src/main/java/com/obsez/android/lib/filechooser/ChooserDialog.java#L119)
+
+
+**NOTE**:
+
+> minSDK will be moved up to 14+ at next release, since we like Android Supports Library 26.+.
+
 
 ## Usage
 
@@ -31,7 +39,7 @@ Since 1.1.6, AS 3.0+ + Gradle 4.1+ + Android SDK & Building Tools 26.0+ are prer
 android-file-chooser was released at jcenter, declare deps with:
 
 ```gradle
-compile 'com.obsez.android.lib.filechooser:filechooser:1.1.5'
+compile 'com.obsez.android.lib.filechooser:filechooser:1.1.6'
 ```
 
 ### Codes
@@ -115,6 +123,26 @@ Since 1.1.3, new builder options `withDateFormat(String)` added.
             .withFilter(true, false)
             .withStartFile(startingDir)
             .withDateFormat("HH:mm")    // see also SimpleDateFormat format specifiers
+            .withChosenListener(new ChooserDialog.Result() {
+                @Override
+                public void onChoosePath(String path, File pathFile) {
+                    Toast.makeText(MainActivity.this, "FOLDER: " + path, Toast.LENGTH_SHORT).show();
+                }
+            })
+            .build()
+            .show();
+```
+
+#### Modify Icon or View Layout of `AlertDialog`:
+
+Since 1.1.6, 2 new options are available:
+
+```java
+    new ChooserDialog().with(this)
+            .withFilter(true, false)
+            .withStartFile(startingDir)
+            .withIcon(R.drawable.ic_file_chooser)
+            .withLayoutView(R.layout.alert_file_chooser)
             .withChosenListener(new ChooserDialog.Result() {
                 @Override
                 public void onChoosePath(String path, File pathFile) {
