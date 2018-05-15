@@ -42,6 +42,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     }
 
+    public ChooserDialog(Context cxt) {
+        this._context = cxt;
+    }
+
     public ChooserDialog with(Context cxt) {
         this._context = cxt;
         return this;
@@ -107,7 +111,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     public ChooserDialog withResources(@StringRes int titleRes, @StringRes int okRes, @StringRes int cancelRes) {
         this._titleRes = titleRes;
         this._okRes = okRes;
-        this._cancelRes = cancelRes;
+        this._negativeRes = cancelRes;
         return this;
     }
 
@@ -130,14 +134,34 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    public ChooserDialog withNegativeButton(@StringRes int cancelTitle,
+            final DialogInterface.OnClickListener listener) {
+        this._negativeRes = cancelTitle;
+        this._negativeListener = listener;
+        return this;
+    }
+
+    public ChooserDialog withNegativeButtonListener(final DialogInterface.OnClickListener listener) {
+        this._negativeListener = listener;
+        return this;
+    }
+
+    /**
+     * it's NOT recommended to use the `withOnCancelListener`, replace with `withNegativeButtonListener` pls.
+     */
+    public ChooserDialog withOnCancelListener(final DialogInterface.OnCancelListener listener) {
+        this._cancelListener2 = listener;
+        return this;
+    }
+
     public ChooserDialog build() {
-        if (_titleRes == 0 || _okRes == 0 || _cancelRes == 0) {
+        if (_titleRes == 0 || _okRes == 0 || _negativeRes == 0) {
             throw new RuntimeException("withResources() should be called at first.");
         }
 
         DirAdapter adapter = refreshDirs();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(_context);
+        this.builder = new AlertDialog.Builder(_context);
         //builder.setTitle(R.string.dlg_choose dir_title);
         builder.setTitle(_titleRes);
         builder.setAdapter(adapter, this);
@@ -165,11 +189,18 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             });
         }
 
-        builder.setNegativeButton(_cancelRes, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
+        if (this._negativeListener == null) {
+            this._negativeListener = new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.cancel();
+                }
+            };
+        }
+        builder.setNegativeButton(this._negativeRes, this._negativeListener);
+
+        if (this._cancelListener2 != null) {
+            builder.setOnCancelListener(_cancelListener2);
+        }
 
         _alertDialog = builder.create();
         _list = _alertDialog.getListView();
@@ -296,7 +327,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     private int PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 0;
-    private List<File> _entries = new ArrayList<File>();
+    private List<File> _entries = new ArrayList<>();
     private File _currentDir;
     private Context _context;
     private AlertDialog _alertDialog;
@@ -305,12 +336,15 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private boolean _dirOnly;
     private FileFilter _fileFilter;
     private @StringRes
-    int _titleRes = R.string.choose_file, _okRes = R.string.title_choose, _cancelRes = R.string.dialog_cancel;
+    int _titleRes = R.string.choose_file, _okRes = R.string.title_choose, _negativeRes = R.string.dialog_cancel;
     private @DrawableRes
     int _iconRes = -1;
     private @LayoutRes
     int _layoutRes = -1;
     private String _dateFormat;
+    private AlertDialog.Builder builder;
+    private DialogInterface.OnClickListener _negativeListener;
+    private DialogInterface.OnCancelListener _cancelListener2;
 
     static FileFilter filterDirectoriesOnly = new FileFilter() {
         public boolean accept(File file) {
