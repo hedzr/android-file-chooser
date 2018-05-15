@@ -3,7 +3,6 @@
 
 ## 1.1.7 - 2018-05-15
 
-\* for forkers, using gradle 4.4, gradle plugin 3.1.2, AS 3.1.2, now
 \* #8, misspell typo fixed, thx @bostrot
 \* #9, new style constructor from @SeppPenner
 \* README for #3 is more friendlier
