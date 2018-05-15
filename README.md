@@ -154,9 +154,20 @@ Since 1.1.6, 2 new options are available:
 ```
 
 
-## References
+## If u trying to build this
 
-* https://github.com/hedzr/android-file-chooser
+```bash
+cat >keystore.properties<<EOF
+keyAlias=youKeyAlias
+keyPassword=password
+storeFile=/Users/me/android-file-chooser.keystore
+storePassword=password
+EOF
+git clone git@github.com:hedzr/android-file-chooser.git somewhere
+```
+
+you'd better generate a new file `android-file-chooser.keystore` at homedir or else. such as: `keytool -genkey -alias android.keystore -keyalg RSA -validity 20000 -keystore android.keystore`, see also [Sign an app](https://developer.android.com/studio/publish/app-signing).
+Or, erase the `KS_PATH` lines and signature section in app/build.gradle.
 
 ## Contrib
 

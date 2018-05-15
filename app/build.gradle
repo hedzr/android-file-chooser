@@ -13,7 +13,7 @@ android {
         def sdkDir = properties.getProperty('sdk.dir')
         def ndkDir = properties.getProperty('ndk.dir')
         def ksPath = properties.getProperty('KS_PATH')
-        def keystorePropertiesFile = rootProject.file(ksPath) //"../keystore.properties")
+        def keystorePropertiesFile = rootProject.file(ksPath ? ksPath : "../keystore.properties")
         def keystoreProperties = new Properties()
         keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
         config {
@@ -41,9 +41,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:25.0.1'
-    compile project(':library')
-    //compile 'com.obsez.android.lib.filechooser:filechooser:1.1.6'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:25.0.1'
+    implementation project(':library')
+    //implementation 'com.obsez.android.lib.filechooser:filechooser:1.1.6'
 }
 
