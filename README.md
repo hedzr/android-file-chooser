@@ -39,7 +39,7 @@ Two withXXX calls added for AlertDialog icon and layout resource. See Also: [wit
 android-file-chooser was released at jcenter, declare deps with:
 
 ```gradle
-compile 'com.obsez.android.lib.filechooser:filechooser:1.1.6'
+compile 'com.obsez.android.lib.filechooser:filechooser:1.1.7'
 ```
 
 ### Codes
@@ -153,8 +153,25 @@ Since 1.1.6, 2 new options are available:
             .show();
 ```
 
+#### Customizable NegativeButton
 
-## If u trying to build this
+1.1.7 or Higher, try `withNegativeButton()` and `withNegativeButtonListener()`.
+
+#### New calling chain
+
+1.1.7+, new constructor `ChooserDialog(context)` can simplify the chain invoking, such as:
+
+```java
+    new ChooserDialog(this)
+            .withFilter(true, false)
+            .withStartFile(startingDir)
+            ...
+```
+
+And, old style is still available. No need to modify your existing codes.
+
+
+## Build me
 
 ```bash
 cat >keystore.properties<<EOF
@@ -164,6 +181,8 @@ storeFile=/Users/me/android-file-chooser.keystore
 storePassword=password
 EOF
 git clone git@github.com:hedzr/android-file-chooser.git somewhere
+cd somewhere
+./gradlew assembleDebug
 ```
 
 you'd better generate a new file `android-file-chooser.keystore` at homedir or else. such as: `keytool -genkey -alias android.keystore -keyalg RSA -validity 20000 -keystore android.keystore`, see also [Sign an app](https://developer.android.com/studio/publish/app-signing).
