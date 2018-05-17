@@ -38,6 +38,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_choose_file, container, false);
         _tv = (TextView) root.findViewById(R.id.textView);
+        _tv.setText(BuildConfig.VERSION_NAME);
         _iv = (ImageView) root.findViewById(R.id.imageView);
         root.findViewById(R.id.btn_choose_a_file).setOnClickListener(this);
         root.findViewById(R.id.btn_choose_a_folder).setOnClickListener(new View.OnClickListener() {

@@ -1,6 +1,11 @@
 # RELEASES
 
 
+## 1.1.8 - 2018-05-17
+
+\* #13, `withRowLayoutView(resId)` allow color/font customizing...
+
+
 ## 1.1.7 - 2018-05-15
 
 \* #8, misspell typo fixed, thx @bostrot

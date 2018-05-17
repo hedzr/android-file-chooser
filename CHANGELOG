@@ -1,5 +1,11 @@
 # Changelog
 
+
+## 1.1.8 - 2018-05-17
+
+\* #13, `withRowLayoutView(resId)` allow color/font customizing...
+\* a few codes be optimized.
+
 ## 1.1.7 - 2018-05-15
 
 \* using AS 3.1.2.
@@ -7,6 +13,7 @@
 \* #9, new style constructor from @SeppPenner
 \* README for #3 is more friendlier
 \* KS_PATH usage in #2 is more friendlier
+
 
 ## 1.1.6 - 2018-02-11
 

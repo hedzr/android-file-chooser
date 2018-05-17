@@ -39,7 +39,7 @@ Two withXXX calls added for AlertDialog icon and layout resource. See Also: [wit
 android-file-chooser was released at jcenter, declare deps with:
 
 ```gradle
-compile 'com.obsez.android.lib.filechooser:filechooser:1.1.7'
+compile 'com.obsez.android.lib.filechooser:filechooser:1.1.8'
 ```
 
 ### Codes
@@ -169,6 +169,10 @@ Since 1.1.6, 2 new options are available:
 ```
 
 And, old style is still available. No need to modify your existing codes.
+
+#### `withRowLayoutView(resId)`
+
+1.1.8+. Now you can customize each row.
 
 
 ## Build me
