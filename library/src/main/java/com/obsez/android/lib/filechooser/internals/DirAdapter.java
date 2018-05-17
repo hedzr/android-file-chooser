@@ -1,6 +1,8 @@
 package com.obsez.android.lib.filechooser.internals;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +21,9 @@ import java.util.List;
  */
 public class DirAdapter extends ArrayAdapter<File> {
 
-    static SimpleDateFormat _formatter;
+    private static SimpleDateFormat _formatter;
 
-    List<File> m_entries;
+    private List<File> m_entries;
 
     public DirAdapter( Context cxt, List<File> entries, int resId ) {
         super( cxt, resId, R.id.text1, entries );
@@ -38,21 +40,21 @@ public class DirAdapter extends ArrayAdapter<File> {
         this.init(entries, null);
     }
 
+    @SuppressLint("SimpleDateFormat")
     private void init(List<File> entries, String dateFormat){
         _formatter = new SimpleDateFormat( dateFormat!=null && !"".equals(dateFormat.trim()) ? dateFormat.trim() : "yyyy/MM/dd HH:mm:ss" );
         m_entries = entries;
     }
 
     // This function is called to show each view item
+    @NonNull
     @Override
     public View getView( int position, View convertView, ViewGroup parent ) {
         ViewGroup rl = (ViewGroup) super.getView( position, convertView, parent );
-        if ( rl == null )
-            return null;
 
-        TextView tvName = (TextView) rl.findViewById( R.id.text1 );
-        TextView tvSize = (TextView) rl.findViewById( R.id.txt_size );
-        TextView tvDate = (TextView) rl.findViewById( R.id.txt_date );
+        TextView tvName = rl.findViewById( R.id.text1 );
+        TextView tvSize = rl.findViewById( R.id.txt_size );
+        TextView tvDate = rl.findViewById( R.id.txt_date );
         //ImageView ivIcon = (ImageView) rl.findViewById(R.id.icon);
 
         tvDate.setVisibility( View.VISIBLE );

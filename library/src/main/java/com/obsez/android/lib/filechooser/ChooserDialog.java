@@ -24,6 +24,7 @@ import com.obsez.android.lib.filechooser.internals.RegexFileFilter;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -125,6 +126,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    public ChooserDialog withRowLayoutView(@LayoutRes int layoutResId) {
+        this._rowLayoutRes = layoutResId;
+        return this;
+    }
+
     public ChooserDialog withDateFormat() {
         return this.withDateFormat("yyyy/MM/dd HH:mm:ss");
     }
@@ -161,7 +167,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         DirAdapter adapter = refreshDirs();
 
-        this.builder = new AlertDialog.Builder(_context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(_context);
         //builder.setTitle(R.string.dlg_choose dir_title);
         builder.setTitle(_titleRes);
         builder.setAdapter(adapter, this);
@@ -170,7 +176,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             builder.setIcon(this._iconRes);
         }
 
-        if (this._layoutRes != -1) {
+        if (-1 != this._layoutRes) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 builder.setView(this._layoutRes);
             }
@@ -217,6 +223,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         // Check for permissions if SDK version is >= 23
         if (Build.VERSION.SDK_INT >= 23) {
+            final int PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 0;
+
             ActivityCompat.requestPermissions((Activity) _context,
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                     PERMISSION_REQUEST_READ_EXTERNAL_STORAGE);
@@ -246,9 +254,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         }
 
         if (files != null) {
-            for (File file : files) {
-                _entries.add(file);
-            }
+            _entries.addAll(Arrays.asList(files));
         }
 
         Collections.sort(_entries, new Comparator<File>() {
@@ -317,16 +323,16 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         //
     }
 
-    DirAdapter refreshDirs() {
+    private DirAdapter refreshDirs() {
         listDirs();
-        DirAdapter adapter = new DirAdapter(_context, _entries, R.layout.li_row_textview, this._dateFormat);
+        DirAdapter adapter = new DirAdapter(_context, _entries,
+                _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
         if (_list != null) {
             _list.setAdapter(adapter);
         }
         return adapter;
     }
 
-    private int PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 0;
     private List<File> _entries = new ArrayList<>();
     private File _currentDir;
     private Context _context;
@@ -341,18 +347,19 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     int _iconRes = -1;
     private @LayoutRes
     int _layoutRes = -1;
+    private @LayoutRes
+    int _rowLayoutRes = -1;
     private String _dateFormat;
-    private AlertDialog.Builder builder;
     private DialogInterface.OnClickListener _negativeListener;
     private DialogInterface.OnCancelListener _cancelListener2;
 
-    static FileFilter filterDirectoriesOnly = new FileFilter() {
+    private static FileFilter filterDirectoriesOnly = new FileFilter() {
         public boolean accept(File file) {
             return file.isDirectory();
         }
     };
 
-    static FileFilter filterFiles = new FileFilter() {
+    private static FileFilter filterFiles = new FileFilter() {
         public boolean accept(File file) {
             return !file.isHidden();
         }

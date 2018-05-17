@@ -97,7 +97,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
     public void onClick(View v) {
         //choose a file
         final Context ctx = this.getActivity();
-        new ChooserDialog().with(ctx)
+        new ChooserDialog(ctx)
                 .withFilterRegex(false, false, ".*\\.(jpe?g|png)")
                 .withStartFile(_path)
                 .withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)
