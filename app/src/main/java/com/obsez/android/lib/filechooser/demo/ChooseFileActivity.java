@@ -2,8 +2,8 @@ package com.obsez.android.lib.filechooser.demo;
 
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -11,10 +11,7 @@ import android.view.MenuItem;
 
 import java.util.Locale;
 
-import static java.security.AccessController.getContext;
-
-
-public class ChooseFileActivity extends ActionBarActivity {
+public class ChooseFileActivity extends AppCompatActivity {
 
     private static final String TAG = "ChooseFileActivity";
 

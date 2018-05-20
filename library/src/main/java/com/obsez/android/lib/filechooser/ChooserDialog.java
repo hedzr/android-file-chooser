@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.DrawableRes;
@@ -16,10 +17,11 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
-import com.obsez.android.lib.filechooser.internals.DirAdapter;
 import com.obsez.android.lib.filechooser.internals.ExtFileFilter;
 import com.obsez.android.lib.filechooser.internals.RegexFileFilter;
+import com.obsez.android.lib.filechooser.tool.DirAdapter;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -160,12 +162,49 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    public ChooserDialog withFileIcons(final boolean tryResolveFileTypeAndIcon, final Drawable fileIcon,
+            final Drawable folderIcon) {
+        _adapterSetter = new AdapterSetter() {
+            @Override
+            public void apply(DirAdapter adapter) {
+                if (fileIcon != null) adapter.setDefaultFileIcon(fileIcon);
+                if (folderIcon != null) adapter.setDefaultFolderIcon(folderIcon);
+                adapter.setResolveFileType(tryResolveFileTypeAndIcon);
+            }
+        };
+        return this;
+    }
+
+    public ChooserDialog withFileIconsRes(final boolean tryResolveFileTypeAndIcon, final int fileIcon,
+            final int folderIcon) {
+        _adapterSetter = new AdapterSetter() {
+            @Override
+            public void apply(DirAdapter adapter) {
+                if (fileIcon != -1) adapter.setDefaultFileIcon(ContextCompat.getDrawable(_context, fileIcon));
+                if (folderIcon != -1) {
+                    adapter.setDefaultFolderIcon(
+                            ContextCompat.getDrawable(_context, folderIcon));
+                }
+                adapter.setResolveFileType(tryResolveFileTypeAndIcon);
+            }
+        };
+        return this;
+    }
+
+    public ChooserDialog withAdapterSetter(AdapterSetter setter) {
+        _adapterSetter = setter;
+        return this;
+    }
+
     public ChooserDialog build() {
         if (_titleRes == 0 || _okRes == 0 || _negativeRes == 0) {
             throw new RuntimeException("withResources() should be called at first.");
         }
 
         DirAdapter adapter = refreshDirs();
+        if (_adapterSetter != null) {
+            _adapterSetter.apply(adapter);
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(_context);
         //builder.setTitle(R.string.dlg_choose dir_title);
@@ -300,7 +339,12 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         File file = _entries.get(pos);
         if (file.getName().equals("..")) {
-            _currentDir = _currentDir.getParentFile();
+            File f = _currentDir.getParentFile();
+            if (f.canRead()) {
+                _currentDir = f;
+            } else {
+                Toast.makeText(this._context, "Couldn't go up level", Toast.LENGTH_SHORT).show();
+            }
         } else {
             _currentDir = file;
         }
@@ -327,6 +371,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         listDirs();
         DirAdapter adapter = new DirAdapter(_context, _entries,
                 _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
+        if (_adapterSetter != null) {
+            _adapterSetter.apply(adapter);
+        }
         if (_list != null) {
             _list.setAdapter(adapter);
         }
@@ -352,6 +399,12 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private String _dateFormat;
     private DialogInterface.OnClickListener _negativeListener;
     private DialogInterface.OnCancelListener _cancelListener2;
+
+    public interface AdapterSetter {
+        void apply(DirAdapter adapter);
+    }
+
+    private AdapterSetter _adapterSetter = null;
 
     private static FileFilter filterDirectoriesOnly = new FileFilter() {
         public boolean accept(File file) {

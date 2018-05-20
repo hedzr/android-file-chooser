@@ -6,4 +6,6 @@
   <string name="title_choose_file">Choose a file</string>
   <string name="btn_choose_a_folder">Choose a folder</string>
   <string name="title_choose_folder">Choose a folder</string>
+  <string name="btn_choose_any_file">Choose any file</string>
+  <string name="title_choose_any_file">Choose any file</string>
 </resources>
