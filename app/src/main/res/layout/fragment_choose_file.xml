@@ -9,11 +9,11 @@
                 tools:context=".ChooseFileActivityFragment">
 
   <Button
+      android:id="@+id/btn_choose_a_file"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="@string/btn_choose_a_file"
-      android:id="@+id/btn_choose_a_file"
-      android:layout_centerHorizontal="true"/>
+      android:layout_centerHorizontal="true"
+      android:text="@string/btn_choose_a_file"/>
 
   <Button
       android:layout_width="wrap_content"
@@ -23,12 +23,20 @@
       android:layout_below="@+id/btn_choose_a_file"
       android:layout_centerHorizontal="true"/>
 
+  <Button
+      android:id="@+id/btn_choose_any_file"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/btn_choose_a_folder"
+      android:layout_centerHorizontal="true"
+      android:text="@string/btn_choose_any_file"/>
+
   <TextView
       android:text="@string/hello_world"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:id="@+id/textView"
-      android:layout_below="@+id/btn_choose_a_folder"
+      android:layout_below="@+id/btn_choose_any_file"
       android:layout_centerHorizontal="true"
       />
 

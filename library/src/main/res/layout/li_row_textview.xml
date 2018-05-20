@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:descendantFocusability="beforeDescendants"
@@ -15,6 +16,7 @@
       android:ellipsize="marquee"
       android:paddingLeft="8dp"
       android:paddingRight="8dp"
+      android:drawablePadding="8dip"
       android:text="@string/title_choose"
       android:textColor="@color/material_deep_teal_500"
       android:textSize="16sp"/>
@@ -46,13 +48,15 @@
 
   <ImageView
       android:id="@+id/icon"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
       android:layout_alignParentLeft="true"
       android:layout_marginLeft="12dp"
       android:layout_marginRight="6dp"
       android:contentDescription="@string/title_choose"
+      android:scaleType="fitCenter"
+      android:src="@drawable/ic_folder"
       android:visibility="gone"
-      android:src="@drawable/ic_folder"/>
+      app:srcCompat="@drawable/ic_folder"/>
 
 </RelativeLayout>

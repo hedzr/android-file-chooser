@@ -1,13 +1,8 @@
 package com.obsez.android.lib.filechooser.demo;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.obsez.android.lib.filechooser.ChooserDialog;
+import com.obsez.android.lib.filechooser.tool.DirAdapter;
 
 import java.io.File;
 
@@ -35,7 +31,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_choose_file, container, false);
         _tv = (TextView) root.findViewById(R.id.textView);
         _tv.setText(BuildConfig.VERSION_NAME);
@@ -51,7 +47,8 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                         .withFilter(true, false)
                         .withStartFile(_path)
                         .withDateFormat("HH:mm")
-                        .withResources(R.string.title_choose_folder, R.string.title_choose, R.string.dialog_cancel)
+                        .withResources(R.string.title_choose_folder, R.string.title_choose,
+                                R.string.dialog_cancel)
                         //.withOnCancelListener(new DialogInterface.OnCancelListener(){
                         //
                         //    /**
@@ -91,6 +88,35 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                         .show();
             }
         });
+        root.findViewById(R.id.btn_choose_any_file).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Context ctx = getActivity();
+                new ChooserDialog(ctx)
+                        .withStartFile(_path)
+                        .withResources(R.string.title_choose_any_file, R.string.title_choose, R.string.dialog_cancel)
+                        .withFileIconsRes(false, R.mipmap.ic_my_file, R.mipmap.ic_my_folder)
+                        .withAdapterSetter(new ChooserDialog.AdapterSetter() {
+                            @Override
+                            public void apply(DirAdapter adapter) {
+                                //
+                            }
+                        })
+                        .withChosenListener(new ChooserDialog.Result() {
+                            @Override
+                            public void onChoosePath(String path, File pathFile) {
+                                Toast.makeText(ctx, "FILE: " + path, Toast.LENGTH_SHORT).show();
+
+                                _path = path;
+                                _tv.setText(_path);
+                                //_iv.setImageURI(Uri.fromFile(pathFile));
+                                _iv.setImageBitmap(ImageUtil.decodeFile(pathFile));
+                            }
+                        })
+                        .build()
+                        .show();
+            }
+        });
         return root;
     }
 
@@ -108,13 +134,9 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                         Toast.makeText(ctx, "FILE: " + path, Toast.LENGTH_SHORT).show();
 
                         _path = path;
-
                         _tv.setText(_path);
-
                         //_iv.setImageURI(Uri.fromFile(pathFile));
-
                         _iv.setImageBitmap(ImageUtil.decodeFile(pathFile));
-
                     }
                 })
                 .build()

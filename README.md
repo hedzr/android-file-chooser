@@ -39,7 +39,7 @@ Two withXXX calls added for AlertDialog icon and layout resource. See Also: [wit
 android-file-chooser was released at jcenter, declare deps with:
 
 ```gradle
-compile 'com.obsez.android.lib.filechooser:filechooser:1.1.8'
+compile 'com.obsez.android.lib.filechooser:filechooser:1.1.9'
 ```
 
 ### Codes
@@ -174,6 +174,43 @@ And, old style is still available. No need to modify your existing codes.
 
 1.1.8+. Now you can customize each row.
 
+#### `withFileIcons`
+
+1.1.9+. `withFileIcons(resolveMime, fileIcon, folderIcon)` and
+`withFileIconsRes(resolveMime, fileIconResId, folderIconResId)` allow
+user-defined file/folder icon.
+
+`resolveMime`: true means that `DirAdapter` will try get icon from the associated app with the file's mime type.
+
+```java
+    new ChooserDialog(ctx)
+            .withStartFile(_path)
+            .withResources(R.string.title_choose_any_file, R.string.title_choose, R.string.dialog_cancel)
+            .withFileIconsRes(false, R.mipmap.ic_my_file, R.mipmap.ic_my_folder)
+            .withChosenListener(new ChooserDialog.Result() {
+                @Override
+                public void onChoosePath(String path, File pathFile) {
+                    Toast.makeText(ctx, "FILE: " + path, Toast.LENGTH_SHORT).show();
+                }
+            })
+            .build()
+            .show();
+```
+
+#### `withAdapterSetter(setter)`
+
+1.1.9+. a `AdapterSetter` can be use to customize the `DirAdapter`.
+
+```java
+            .withAdapterSetter(new ChooserDialog.AdapterSetter() {
+                @Override
+                public void apply(DirAdapter adapter) {
+                    adapter.setDefaultFileIcon(fileIcon);
+                    adapter.setDefaultFolderIcon(folderIcon);
+                    adapter.setResolveFileType(tryResolveFileTypeAndIcon);
+                }
+            })
+```
 
 ## Build me
 

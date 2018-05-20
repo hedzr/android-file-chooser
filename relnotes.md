@@ -1,9 +1,13 @@
 # RELEASES
 
 
+## 1.1.9 - 2018-05-20
+
+\+ #14, `withFileIcons(...)`, `withFileIconsRes(...)`, `withAdapterSetter(...)`
+
 ## 1.1.8 - 2018-05-17
 
-\* #13, `withRowLayoutView(resId)` allow color/font customizing...
+\+ #13, `withRowLayoutView(resId)` allow color/font customizing...
 
 
 ## 1.1.7 - 2018-05-15
