@@ -17,7 +17,6 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.obsez.android.lib.filechooser.internals.ExtFileFilter;
 import com.obsez.android.lib.filechooser.internals.RegexFileFilter;
@@ -191,8 +190,33 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    /**
+     *
+     * @param setter you can customize the folder navi-adapter with `setter`
+     * @return this
+     */
     public ChooserDialog withAdapterSetter(AdapterSetter setter) {
         _adapterSetter = setter;
+        return this;
+    }
+
+    /**
+     *
+     * @param cb give a hook at navigating up to a directory
+     * @return this
+     */
+    public ChooserDialog withNavigateUpTo(CanNavigateUp cb) {
+        _folderNavUpCB = cb;
+        return this;
+    }
+
+    /**
+     *
+     * @param cb give a hook at navigating to a child directory
+     * @return this
+     */
+    public ChooserDialog withNavigateTo(CanNavigateTo cb) {
+        _folderNavToCB = cb;
         return this;
     }
 
@@ -340,25 +364,28 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         File file = _entries.get(pos);
         if (file.getName().equals("..")) {
             File f = _currentDir.getParentFile();
-            if (f.canRead()) {
+            if (_folderNavUpCB == null) _folderNavUpCB = _defaultNavUpCB;
+            if (_folderNavUpCB.canUpTo(f)) {
                 _currentDir = f;
-            } else {
-                Toast.makeText(this._context, "Couldn't go up level", Toast.LENGTH_SHORT).show();
+                //} else {
+                //    Toast.makeText(this._context, "Couldn't go up level", Toast.LENGTH_SHORT).show();
             }
         } else {
-            _currentDir = file;
-        }
-
-        if (!file.isDirectory()) {
-            if (!_dirOnly) {
-                if (_result != null) {
-                    _result.onChoosePath(file.getAbsolutePath(), file);
-                    _alertDialog.dismiss();
-                    return;
+            if (file.isDirectory()) {
+                if (_folderNavToCB == null) _folderNavToCB = _defaultNavToCB;
+                if (_folderNavToCB.canNavigate(file)) {
+                    _currentDir = file;
+                }
+            } else {
+                if (!_dirOnly) {
+                    if (_result != null) {
+                        _result.onChoosePath(file.getAbsolutePath(), file);
+                        _alertDialog.dismiss();
+                        return;
+                    }
                 }
             }
         }
-
         refreshDirs();
     }
 
@@ -406,17 +433,42 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     private AdapterSetter _adapterSetter = null;
 
-    private static FileFilter filterDirectoriesOnly = new FileFilter() {
+    private final static FileFilter filterDirectoriesOnly = new FileFilter() {
         public boolean accept(File file) {
             return file.isDirectory();
         }
     };
 
-    private static FileFilter filterFiles = new FileFilter() {
+    private final static FileFilter filterFiles = new FileFilter() {
         public boolean accept(File file) {
             return !file.isHidden();
         }
     };
 
+
+    public interface CanNavigateUp {
+        boolean canUpTo(File dir);
+    }
+
+    public interface CanNavigateTo {
+        boolean canNavigate(File dir);
+    }
+
+    private CanNavigateUp _folderNavUpCB;
+    private CanNavigateTo _folderNavToCB;
+
+    private final static CanNavigateUp _defaultNavUpCB = new CanNavigateUp() {
+        @Override
+        public boolean canUpTo(File dir) {
+            return dir != null && dir.canRead();
+        }
+    };
+
+    private final static CanNavigateTo _defaultNavToCB = new CanNavigateTo() {
+        @Override
+        public boolean canNavigate(File dir) {
+            return true;
+        }
+    };
 
 }
