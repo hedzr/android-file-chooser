@@ -39,7 +39,7 @@ Two withXXX calls added for AlertDialog icon and layout resource. See Also: [wit
 android-file-chooser was released at jcenter, declare deps with:
 
 ```gradle
-compile 'com.obsez.android.lib.filechooser:filechooser:1.1.9'
+implementation 'com.obsez.android.lib.filechooser:filechooser:1.1.9'
 ```
 
 ### Codes
