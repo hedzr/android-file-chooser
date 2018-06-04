@@ -102,6 +102,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             _currentDir = _currentDir.getParentFile();
         }
 
+        if (_currentDir == null) {
+            _currentDir = Environment.getExternalStorageDirectory();
+        }
+
         return this;
     }
 
@@ -191,7 +195,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     /**
-     *
      * @param setter you can customize the folder navi-adapter with `setter`
      * @return this
      */
@@ -201,7 +204,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     /**
-     *
      * @param cb give a hook at navigating up to a directory
      * @return this
      */
@@ -211,7 +213,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     /**
-     *
      * @param cb give a hook at navigating to a child directory
      * @return this
      */
