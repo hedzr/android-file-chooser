@@ -1,15 +1,22 @@
 # Changelog
 
 
+## 1.1.10 - 2018-06-05
+
+bug fixed
+
+
 ## 1.1.9 - 2018-05-20
 
 \+ #14, `withFileIcons(...)`, `withFileIconsRes(...)`, `withAdapterSetter(...)`
 \* review the whole codes
 
+
 ## 1.1.8 - 2018-05-17
 
 \+ #13, `withRowLayoutView(resId)` allow color/font customizing...
 \* a few codes be optimized.
+
 
 ## 1.1.7 - 2018-05-15
 

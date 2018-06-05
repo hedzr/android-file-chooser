@@ -7,6 +7,7 @@ a lightweight file/folder chooser
 
 
 [ ![Download](https://api.bintray.com/packages/hedzr/maven/filechooser/images/download.svg) ](https://bintray.com/hedzr/maven/filechooser/_latestVersion)
+[![Release](https://jitpack.io/v/hedzr/android-file-chooser.svg)] (https://jitpack.io/#hedzr/android-file-chooser)
 
 <img src="captures/choose_file.png" width="360"/>
 <img src="captures/choose_folder.png" width="360"/>
@@ -39,9 +40,30 @@ Two withXXX calls added for AlertDialog icon and layout resource. See Also: [wit
 android-file-chooser was released at jcenter, declare deps with:
 
 ```gradle
-implementation 'com.obsez.android.lib.filechooser:filechooser:1.1.9'
+implementation 'com.obsez.android.lib.filechooser:filechooser:1.1.10'
 ```
 
+#### taste the fresh
+
+there is a way to taste the `master` branch with [jitpack.io](https://jitpack.io):
+
+1. add the jitpack repository url to your root build.gradle:
+
+```gradle
+allprojects {
+    repositories {
+        jcenter()
+        maven { url "https://jitpack.io" }
+    }
+}
+```
+
+2. import `android-file-chooser`
+
+```gradle
+implementation 'com.github.hedzr:android-file-chooser:master-SNAPSHOT'
+// implementation 'com.github.hedzr:android-file-chooser:v1.1.10'
+```
 
 
 
@@ -217,7 +239,7 @@ user-defined file/folder icon.
 
 #### `withNavigateUpTo(CanNavigateUp)`
 
-1.1.9+. `withNavigateUpTo`
+1.1.10+. `withNavigateUpTo`
 
 ```java
                 .withNavigateUpTo(new ChooserDialog.CanNavigateUp() {
@@ -230,7 +252,7 @@ user-defined file/folder icon.
 
 #### `withNavigateTo(CanNavigateTo)`
 
-1.1.9+. `withNavigateTo`
+1.1.10+. `withNavigateTo`
 
 ```java
                 .withNavigateTo(new ChooserDialog.CanNavigateTo() {

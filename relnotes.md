@@ -1,9 +1,15 @@
 # RELEASES
 
 
+## 1.1.10 - 2018-06-05
+
+bug fixed
+
+
 ## 1.1.9 - 2018-05-20
 
 \+ #14, `withFileIcons(...)`, `withFileIconsRes(...)`, `withAdapterSetter(...)`
+
 
 ## 1.1.8 - 2018-05-17
 
