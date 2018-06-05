@@ -42,27 +42,6 @@ android-file-chooser was released at jcenter, declare deps with:
 implementation 'com.obsez.android.lib.filechooser:filechooser:1.1.9'
 ```
 
-#### taste the fresh
-
-there is a way to taste the `master` branch with [jitpack.io](https://jitpack.io):
-
-1. add the jitpack repository url to your root build.gradle:
-
-```gradle
-allprojects {
-    repositories {
-        jcenter()
-        maven { url "https://jitpack.io" }
-    }
-}
-```
-
-2. import `android-file-chooser`
-
-```gradle
-implementation 'com.github.hedzr:android-file-chooser:master-SNAPSHOT'
-```
-
 
 
 
