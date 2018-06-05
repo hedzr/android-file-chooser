@@ -16,11 +16,11 @@ def getThisProperties() {
 }
 def getBintrayUsername(){
     Properties p = getThisProperties()
-    return p && p.hasProperty('bintray.user') ? p.getProperty("bintray.user") : project.property("bintray.user")
+    return p && p.hasProperty('bintray.user') ? p.getProperty("bintray.user") : project.hasProperty('bintray.user') ? project.property("bintray.user") : ''
 }
 def getBintrayKey(){
     Properties p = getThisProperties()
-    return p && p.hasProperty('bintray.apikey') ? p.getProperty("bintray.apikey") : project.property("bintray.apikey")
+    return p && p.hasProperty('bintray.apikey') ? p.getProperty("bintray.apikey") : project.hasProperty('bintray.apikey') ? project.property("bintray.apikey") : ''
 }
 println "bintray: user=" + getBintrayUsername() + ", key=" + getBintrayKey()
 
