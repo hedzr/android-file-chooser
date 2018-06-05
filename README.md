@@ -7,7 +7,7 @@ a lightweight file/folder chooser
 
 
 [ ![Download](https://api.bintray.com/packages/hedzr/maven/filechooser/images/download.svg) ](https://bintray.com/hedzr/maven/filechooser/_latestVersion)
-[![Release](https://jitpack.io/v/hedzr/android-file-chooser.svg)] (https://jitpack.io/#hedzr/android-file-chooser)
+[![Release](https://jitpack.io/v/hedzr/android-file-chooser.svg)](https://jitpack.io/#hedzr/android-file-chooser)
 
 <img src="captures/choose_file.png" width="360"/>
 <img src="captures/choose_folder.png" width="360"/>
