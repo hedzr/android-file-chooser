@@ -25,9 +25,9 @@ import com.obsez.android.lib.filechooser.tool.DirAdapter;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -318,10 +318,39 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         }
 
         if (files != null) {
-            _entries.addAll(Arrays.asList(files));
-        }
+            //_entries.addAll(Arrays.asList(files));
+            //Collections.sort(_entries, new Comparator<File>() {
+            //    public int compare(File f1, File f2) {
+            //        return f1.getName().toLowerCase().compareTo(f2.getName().toLowerCase());
+            //    }
+            //});
 
-        Collections.sort(_entries, new Comparator<File>() {
+            List<File> dirList = new LinkedList<>();
+            for (File f : files) {
+                if (f.isDirectory()) {
+                    if (!f.getName().startsWith(".")) {
+                        dirList.add(f);
+                    }
+                }
+            }
+            sortByName(dirList);
+            _entries.addAll(dirList);
+
+            List<File> fileList = new LinkedList<>();
+            for (File f : files) {
+                if (!f.isDirectory()) {
+                    if (!f.getName().startsWith(".")) {
+                        fileList.add(f);
+                    }
+                }
+            }
+            sortByName(fileList);
+            _entries.addAll(fileList);
+        }
+    }
+
+    void sortByName(List<File> list) {
+        Collections.sort(list, new Comparator<File>() {
             public int compare(File f1, File f2) {
                 return f1.getName().toLowerCase().compareTo(f2.getName().toLowerCase());
             }
