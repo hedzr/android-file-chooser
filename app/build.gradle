@@ -10,17 +10,19 @@ android {
     signingConfigs {
         Properties properties = new Properties()
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
-        def sdkDir = properties.getProperty('sdk.dir')
-        def ndkDir = properties.getProperty('ndk.dir')
+        //def sdkDir = properties.getProperty('sdk.dir')
+        //def ndkDir = properties.getProperty('ndk.dir')
         def ksPath = properties.getProperty('KS_PATH')
-        def keystorePropertiesFile = rootProject.file(ksPath ? ksPath : "../keystore.properties")
-        def keystoreProperties = new Properties()
-        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-        config {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
+        if (ksPath) {
+            def keystorePropertiesFile = rootProject.file(ksPath ? ksPath : "../keystore.properties")
+            def keystoreProperties = new Properties()
+            keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+            config {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
         }
     }
     defaultConfig {
