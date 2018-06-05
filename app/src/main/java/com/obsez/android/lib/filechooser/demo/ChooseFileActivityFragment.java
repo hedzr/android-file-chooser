@@ -125,7 +125,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
         //choose a file
         final Context ctx = this.getActivity();
         new ChooserDialog(ctx)
-                .withFilterRegex(false, false, ".*\\.(jpe?g|png)")
+                .withFilterRegex(false, true, ".*\\.(jpe?g|png)")
                 .withStartFile(_path)
                 .withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)
                 .withChosenListener(new ChooserDialog.Result() {
@@ -137,6 +137,18 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                         _tv.setText(_path);
                         //_iv.setImageURI(Uri.fromFile(pathFile));
                         _iv.setImageBitmap(ImageUtil.decodeFile(pathFile));
+                    }
+                })
+                .withNavigateUpTo(new ChooserDialog.CanNavigateUp() {
+                    @Override
+                    public boolean canUpTo(File dir) {
+                        return true;
+                    }
+                })
+                .withNavigateTo(new ChooserDialog.CanNavigateTo() {
+                    @Override
+                    public boolean canNavigate(File dir) {
+                        return true;
                     }
                 })
                 .build()
