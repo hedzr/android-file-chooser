@@ -1,5 +1,5 @@
 <resources>
-  <string name="app_name">file-chooser</string>
+  <string name="app_name">android-file-chooser demo</string>
   <string name="hello_world">Hello world!</string>
   <string name="action_settings">Settings</string>
   <string name="btn_choose_a_file">Choose a file</string>

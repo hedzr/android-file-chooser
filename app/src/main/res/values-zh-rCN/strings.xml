@@ -1,5 +1,4 @@
 <resources>
-  <string name="app_name">file-chooser</string>
   <string name="hello_world">Hello 世界!</string>
   <string name="action_settings">设置</string>
   <string name="btn_choose_a_file">选择文件试试…</string>

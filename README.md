@@ -3,11 +3,16 @@
 
 ## Overview
 
-a lightweight file/folder chooser
+![banner](captures/banner.svg)
 
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-android--file--chooser-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/6982)
 [![Download](https://api.bintray.com/packages/hedzr/maven/filechooser/images/download.svg)](https://bintray.com/hedzr/maven/filechooser/_latestVersion)
 [![Release](https://jitpack.io/v/hedzr/android-file-chooser.svg)](https://jitpack.io/#hedzr/android-file-chooser)
+
+`android-file-library` is a lightweight file/folder chooser.
+
+
+### Snapshots
 
 <img src="captures/choose_file.png" width="360"/>
 <img src="captures/choose_folder.png" width="360"/>
@@ -21,15 +26,14 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 
 ## Changes
 
-Since 1.1.6, AS 3.0+ + Gradle 4.1+ + Android SDK & Building Tools 26.0+ are prerequisites.
+~~Since 1.1.6, AS 3.0+ + Gradle 4.1+ + Android SDK & Building Tools 26.0+ are prerequisites.~~
 
-Two withXXX calls added for AlertDialog icon and layout resource. See Also: [withIcon()](./library/src/main/java/com/obsez/android/lib/filechooser/ChooserDialog.java#L114), [withLayoutView()](./library/src/main/java/com/obsez/android/lib/filechooser/ChooserDialog.java#L119)
+~~Two withXXX calls added for AlertDialog icon and layout resource. See Also: [withIcon()](./library/src/main/java/com/obsez/android/lib/filechooser/ChooserDialog.java#L114), [withLayoutView()](./library/src/main/java/com/obsez/android/lib/filechooser/ChooserDialog.java#L119)~~
 
 
 **NOTE**:
 
-> minSDK will be moved up to 14+ at next release, since we like Android Supports Library 26.+.
-
+> ~~minSDK will be moved up to 14+ at next release, since we like Android Supports Library 26.+.~~
 
 ## Usage
 
@@ -267,6 +271,8 @@ user-defined file/folder icon.
 
 ## Build me
 
+### 1. legacy
+
 ```bash
 cat >keystore.properties<<EOF
 keyAlias=youKeyAlias
@@ -282,13 +288,30 @@ cd somewhere
 you'd better generate a new file `android-file-chooser.keystore` at homedir or else. such as: `keytool -genkey -alias android.keystore -keyalg RSA -validity 20000 -keystore android.keystore`, see also [Sign an app](https://developer.android.com/studio/publish/app-signing).
 Or, erase the `KS_PATH` lines and signature section in app/build.gradle.
 
+### 2. current
+
+just fork me and build me currently.
+
 ## Contrib
 
-Contributions and translations welcome.
+Contributions and translations are welcome.
+
+## Feedback
+
+feel free to make an new issue.
+
+## Acknowledges
+
+many peoples report or contribute to improve me, but only a few of them be put here — it's hard to list all.
+
+- logo and banner by: [**iqbalhood**](https://github.com/iqbalhood)
+- codes and reports: [**bostrot**](https://github.com/bostrot), [**SeppPenner**](https://github.com/SeppPenner), [**lucian-cm**](https://github.com/lucian-cm), [**ghost**](https://github.com/ghost), ...
+
+
 
 ## License
 
-Copyright 2015 Hedzr Yeh
+Copyright 2015-2018 Hedzr Yeh
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
