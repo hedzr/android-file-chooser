@@ -269,6 +269,30 @@ user-defined file/folder icon.
 
 
 
+## Under Kotlin
+
+```kotlin
+class MyFragment : Fragment() {
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        val root = inflater.inflate(R.layout.fragment_book, container, false)
+        root.upload_button.setOnClickListener { _: View ->
+            ChooserDialog().with(activity)
+                    .withStartFile(Environment.getExternalStorageDirectory().absolutePath)
+                    // .withStartFile(Environment.getExternalStorageState()+"/")
+                    .withFilterRegex(false, false, ".*\\.(jpe?g|png)")
+                    .withChosenListener { path, pathFile -> activity!!.toast("FILE: $path / $pathFile") }
+                    .build()
+                    .show()
+        }
+
+        return root
+    }
+}
+```
+
+
 ## Build me
 
 ### 1. legacy
