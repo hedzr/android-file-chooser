@@ -3,6 +3,7 @@ package com.obsez.android.lib.filechooser;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -48,6 +49,20 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         this._context = cxt;
     }
 
+    public ChooserDialog(Activity activity) {
+        this._context = activity;
+    }
+
+    public ChooserDialog(Fragment fragment) {
+        this._context = fragment.getActivity();
+    }
+
+    /**
+     * @deprecated will be removed at v1.2
+     * @param cxt android context
+     * @return `this` reference
+     *
+     */
     public ChooserDialog with(Context cxt) {
         this._context = cxt;
         return this;
@@ -159,6 +174,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     /**
      * it's NOT recommended to use the `withOnCancelListener`, replace with `withNegativeButtonListener` pls.
+     * @deprecated will be removed at v1.2
      */
     public ChooserDialog withOnCancelListener(final DialogInterface.OnCancelListener listener) {
         this._cancelListener2 = listener;
@@ -445,14 +461,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private Result _result = null;
     private boolean _dirOnly;
     private FileFilter _fileFilter;
-    private @StringRes
-    int _titleRes = R.string.choose_file, _okRes = R.string.title_choose, _negativeRes = R.string.dialog_cancel;
-    private @DrawableRes
-    int _iconRes = -1;
-    private @LayoutRes
-    int _layoutRes = -1;
-    private @LayoutRes
-    int _rowLayoutRes = -1;
+    private @StringRes int _titleRes = R.string.choose_file, _okRes = R.string.title_choose, _negativeRes = R.string.dialog_cancel;
+    private @DrawableRes int _iconRes = -1;
+    private @LayoutRes int _layoutRes = -1;
+    private @LayoutRes int _rowLayoutRes = -1;
     private String _dateFormat;
     private DialogInterface.OnClickListener _negativeListener;
     private DialogInterface.OnCancelListener _cancelListener2;

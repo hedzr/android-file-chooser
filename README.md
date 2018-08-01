@@ -292,6 +292,27 @@ class MyFragment : Fragment() {
 }
 ```
 
+And:
+
+```kotlin
+        ChooserDialog(context)
+                .withFilterRegex(false, true, ".*\\.(jpe?g|png)")
+                .withStartFile(startPath)
+                .withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)
+                .withChosenListener { path, pathFile ->
+                    Toast.makeText(context, "FILE: $path; PATHFILE: $pathFile", Toast.LENGTH_SHORT).show()
+
+                    //_path = path
+                    //_tv.setText(_path)
+                    ////_iv.setImageURI(Uri.fromFile(pathFile));
+                    //_iv.setImageBitmap(ImageUtil.decodeFile(pathFile))
+                }
+                .withNavigateUpTo { true }
+                .withNavigateTo { true }
+                .build()
+                .show()
+```
+
 
 ## Build me
 

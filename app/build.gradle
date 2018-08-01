@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 
 
@@ -49,8 +50,12 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation project(':library')
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     // implementation 'com.obsez.android.lib.filechooser:filechooser:1.1.6'
     // implementation 'com.github.hedzr:android-file-chooser:master-SNAPSHOT'
     // implementation 'com.github.hedzr:android-file-chooser:v1.1.10'
+}
+repositories {
+    mavenCentral()
 }
 
