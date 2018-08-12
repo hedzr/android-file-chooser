@@ -58,10 +58,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     /**
-     * @deprecated will be removed at v1.2
      * @param cxt android context
      * @return `this` reference
-     *
+     * @deprecated will be removed at v1.2
      */
     public ChooserDialog with(Context cxt) {
         this._context = cxt;
@@ -161,7 +160,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     public ChooserDialog withNegativeButton(@StringRes int cancelTitle,
-            final DialogInterface.OnClickListener listener) {
+                                            final DialogInterface.OnClickListener listener) {
         this._negativeRes = cancelTitle;
         this._negativeListener = listener;
         return this;
@@ -174,6 +173,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     /**
      * it's NOT recommended to use the `withOnCancelListener`, replace with `withNegativeButtonListener` pls.
+     *
      * @deprecated will be removed at v1.2
      */
     public ChooserDialog withOnCancelListener(final DialogInterface.OnCancelListener listener) {
@@ -182,7 +182,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     public ChooserDialog withFileIcons(final boolean tryResolveFileTypeAndIcon, final Drawable fileIcon,
-            final Drawable folderIcon) {
+                                       final Drawable folderIcon) {
         _adapterSetter = new AdapterSetter() {
             @Override
             public void apply(DirAdapter adapter) {
@@ -195,11 +195,12 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     public ChooserDialog withFileIconsRes(final boolean tryResolveFileTypeAndIcon, final int fileIcon,
-            final int folderIcon) {
+                                          final int folderIcon) {
         _adapterSetter = new AdapterSetter() {
             @Override
             public void apply(DirAdapter adapter) {
-                if (fileIcon != -1) adapter.setDefaultFileIcon(ContextCompat.getDrawable(_context, fileIcon));
+                if (fileIcon != -1)
+                    adapter.setDefaultFileIcon(ContextCompat.getDrawable(_context, fileIcon));
                 if (folderIcon != -1) {
                     adapter.setDefaultFolderIcon(
                             ContextCompat.getDrawable(_context, folderIcon));
@@ -304,16 +305,16 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         // Check for permissions if SDK version is >= 23
         if (Build.VERSION.SDK_INT >= 23) {
             final int PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 0;
-
-            ActivityCompat.requestPermissions((Activity) _context,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    PERMISSION_REQUEST_READ_EXTERNAL_STORAGE);
-
             int permissionCheck = ContextCompat.checkSelfPermission(_context,
                     Manifest.permission.READ_EXTERNAL_STORAGE);
 
+            //if = permission granted
             if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
                 _alertDialog.show();
+            } else {
+                ActivityCompat.requestPermissions((Activity) _context,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        PERMISSION_REQUEST_READ_EXTERNAL_STORAGE);
             }
         } else {
             _alertDialog.show();
@@ -461,10 +462,14 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private Result _result = null;
     private boolean _dirOnly;
     private FileFilter _fileFilter;
-    private @StringRes int _titleRes = R.string.choose_file, _okRes = R.string.title_choose, _negativeRes = R.string.dialog_cancel;
-    private @DrawableRes int _iconRes = -1;
-    private @LayoutRes int _layoutRes = -1;
-    private @LayoutRes int _rowLayoutRes = -1;
+    private @StringRes
+    int _titleRes = R.string.choose_file, _okRes = R.string.title_choose, _negativeRes = R.string.dialog_cancel;
+    private @DrawableRes
+    int _iconRes = -1;
+    private @LayoutRes
+    int _layoutRes = -1;
+    private @LayoutRes
+    int _rowLayoutRes = -1;
     private String _dateFormat;
     private DialogInterface.OnClickListener _negativeListener;
     private DialogInterface.OnCancelListener _cancelListener2;
