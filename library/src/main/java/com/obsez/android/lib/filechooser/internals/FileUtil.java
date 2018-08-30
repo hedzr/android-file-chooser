@@ -2,9 +2,6 @@ package com.obsez.android.lib.filechooser.internals;
 
 import java.io.File;
 import java.text.DecimalFormat;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * Created by coco on 6/7/15.
@@ -28,8 +25,9 @@ public class FileUtil {
 
     public static String getExtensionWithoutDot(File file) {
         String ext = getExtension(file);
-        if (ext.length() == 0)
+        if (ext.length() == 0) {
             return ext;
+        }
         return ext.substring(1);
     }
 

@@ -8,10 +8,7 @@ import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.support.v4.content.ContextCompat;
 import android.webkit.MimeTypeMap;
-
-import com.obsez.android.lib.filechooser.R;
 
 import java.util.List;
 

@@ -21,7 +21,7 @@ public class WrappedDrawable extends Drawable {
     public WrappedDrawable(Drawable drawable, float widthInDp, float heightInDp) {
         super();
         _drawable = drawable;
-        setBounds(0, 0, (int)UiUtil.dip2px(widthInDp), (int)UiUtil.dip2px(heightInDp));
+        setBounds(0, 0, (int) UiUtil.dip2px(widthInDp), (int) UiUtil.dip2px(heightInDp));
     }
 
     @Override
@@ -36,16 +36,16 @@ public class WrappedDrawable extends Drawable {
 
     public void setBoundsInDp(float left, float top, float right, float bottom) {
         //update bounds to get correctly
-        super.setBounds((int)UiUtil.dip2px(left),
-                (int)UiUtil.dip2px(top),
-                (int)UiUtil.dip2px(right),
-                (int)UiUtil.dip2px(bottom));
+        super.setBounds((int) UiUtil.dip2px(left),
+                (int) UiUtil.dip2px(top),
+                (int) UiUtil.dip2px(right),
+                (int) UiUtil.dip2px(bottom));
         Drawable drawable = getDrawable();
         if (drawable != null) {
-            drawable.setBounds((int)UiUtil.dip2px(left),
-                    (int)UiUtil.dip2px(top),
-                    (int)UiUtil.dip2px(right),
-                    (int)UiUtil.dip2px(bottom));
+            drawable.setBounds((int) UiUtil.dip2px(left),
+                    (int) UiUtil.dip2px(top),
+                    (int) UiUtil.dip2px(right),
+                    (int) UiUtil.dip2px(bottom));
         }
     }
 

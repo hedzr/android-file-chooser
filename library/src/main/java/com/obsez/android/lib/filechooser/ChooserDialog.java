@@ -160,7 +160,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     public ChooserDialog withNegativeButton(@StringRes int cancelTitle,
-                                            final DialogInterface.OnClickListener listener) {
+            final DialogInterface.OnClickListener listener) {
         this._negativeRes = cancelTitle;
         this._negativeListener = listener;
         return this;
@@ -182,7 +182,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     public ChooserDialog withFileIcons(final boolean tryResolveFileTypeAndIcon, final Drawable fileIcon,
-                                       final Drawable folderIcon) {
+            final Drawable folderIcon) {
         _adapterSetter = new AdapterSetter() {
             @Override
             public void apply(DirAdapter adapter) {
@@ -195,12 +195,13 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     public ChooserDialog withFileIconsRes(final boolean tryResolveFileTypeAndIcon, final int fileIcon,
-                                          final int folderIcon) {
+            final int folderIcon) {
         _adapterSetter = new AdapterSetter() {
             @Override
             public void apply(DirAdapter adapter) {
-                if (fileIcon != -1)
+                if (fileIcon != -1) {
                     adapter.setDefaultFileIcon(ContextCompat.getDrawable(_context, fileIcon));
+                }
                 if (folderIcon != -1) {
                     adapter.setDefaultFolderIcon(
                             ContextCompat.getDrawable(_context, folderIcon));
