@@ -16,6 +16,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -239,6 +240,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    public ChooserDialog disableTitle(boolean b) {
+        _disableTitle = b;
+        return this;
+    }
+
     public ChooserDialog build() {
         if (_titleRes == 0 || _okRes == 0 || _negativeRes == 0) {
             throw new RuntimeException("withResources() should be called at first.");
@@ -251,7 +257,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         AlertDialog.Builder builder = new AlertDialog.Builder(_context);
         //builder.setTitle(R.string.dlg_choose dir_title);
-        builder.setTitle(_titleRes);
+        if (!_disableTitle) builder.setTitle(_titleRes);
         builder.setAdapter(adapter, this);
 
         if (this._iconRes != -1) {
@@ -474,6 +480,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private String _dateFormat;
     private DialogInterface.OnClickListener _negativeListener;
     private DialogInterface.OnCancelListener _cancelListener2;
+    private boolean _disableTitle;
 
     public interface AdapterSetter {
         void apply(DirAdapter adapter);

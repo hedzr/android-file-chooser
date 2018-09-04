@@ -98,8 +98,10 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
             public void onClick(View v) {
                 final Context ctx = getActivity();
                 new ChooserDialog(ctx)
+                        .disableTitle(true)
                         .withStartFile(_path)
-                        .withResources(R.string.title_choose_any_file, R.string.title_choose, R.string.dialog_cancel)
+                        .withResources(R.string.title_choose_any_file, R.string.title_choose,
+                                R.string.dialog_cancel)
                         .withFileIconsRes(false, R.mipmap.ic_my_file, R.mipmap.ic_my_folder)
                         .withAdapterSetter(new ChooserDialog.AdapterSetter() {
                             @Override
@@ -130,17 +132,35 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
         //choose a file
         final Context ctx = this.getActivity();
         assert ctx != null;
-        Demo.INSTANCE.demo1(ctx, _path, new ChooserDialog.Result() {
-            @Override
-            public void onChoosePath(String path, File pathFile) {
-                Toast.makeText(ctx, "FILE: " + path, Toast.LENGTH_SHORT).show();
+        //Demo.INSTANCE.demo1(ctx, _path, new ChooserDialog.Result() {
+        //    @Override
+        //    public void onChoosePath(String path, File pathFile) {
+        //        Toast.makeText(ctx, "FILE: " + path, Toast.LENGTH_SHORT).show();
+        //
+        //        _path = path;
+        //        _tv.setText(_path);
+        //        //_iv.setImageURI(Uri.fromFile(pathFile));
+        //        _iv.setImageBitmap(ImageUtil.decodeFile(pathFile));
+        //    }
+        //});
 
-                _path = path;
-                _tv.setText(_path);
-                //_iv.setImageURI(Uri.fromFile(pathFile));
-                _iv.setImageBitmap(ImageUtil.decodeFile(pathFile));
-            }
-        });
+        new ChooserDialog(ctx)
+                .withFilterRegex(false, true, ".*\\.(jpe?g|png)")
+                .withStartFile(_path)
+                .withResources(R.string.title_nothing, R.string.title_choose, R.string.dialog_cancel)
+                .withChosenListener(new ChooserDialog.Result() {
+                    @Override
+                    public void onChoosePath(String path, File pathFile) {
+                        Toast.makeText(ctx, "FILE: " + path, Toast.LENGTH_SHORT).show();
+
+                        _path = path;
+                        _tv.setText(_path);
+                        //_iv.setImageURI(Uri.fromFile(pathFile));
+                        _iv.setImageBitmap(ImageUtil.decodeFile(pathFile));
+                    }
+                })
+                .build()
+                .show();
     }
 
 }
