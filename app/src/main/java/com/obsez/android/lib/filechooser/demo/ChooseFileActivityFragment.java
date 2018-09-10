@@ -47,7 +47,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
             public void onClick(View v) {
                 // choose a folder
                 final Context ctx = getActivity();
-                new ChooserDialog().with(ctx)
+                FileChooserDialog dialog = FileChooserDialog.newDialog(ctx)
                         .withIcon(R.mipmap.ic_launcher)
                         .withFilter(true, false)
                         .withStartFile(_path)
@@ -81,7 +81,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                         //        Log.d("Negative", "Negative");
                         //    }
                         //})
-                        .withChosenListener(new ChooserDialog.Result() {
+                        .withChosenListener(new FileChooserDialog.Result() {
                             @Override
                             public void onChoosePath(String path, File pathFile) {
                                 Toast.makeText(ctx, "FOLDER: " + path, Toast.LENGTH_SHORT).show();
@@ -97,19 +97,19 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
             @Override
             public void onClick(View v) {
                 final Context ctx = getActivity();
-                new ChooserDialog(ctx)
+                FileChooserDialog.newDialog(ctx)
                         .disableTitle(true)
                         .withStartFile(_path)
                         .withResources(R.string.title_choose_any_file, R.string.title_choose,
                                 R.string.dialog_cancel)
                         .withFileIconsRes(false, R.mipmap.ic_my_file, R.mipmap.ic_my_folder)
-                        .withAdapterSetter(new ChooserDialog.AdapterSetter() {
+                        .withAdapterSetter(new FileChooserDialog.AdapterSetter() {
                             @Override
                             public void apply(DirAdapter adapter) {
                                 //
                             }
                         })
-                        .withChosenListener(new ChooserDialog.Result() {
+                        .withChosenListener(new FileChooserDialog.Result() {
                             @Override
                             public void onChoosePath(String path, File pathFile) {
                                 Toast.makeText(ctx, "FILE: " + path, Toast.LENGTH_SHORT).show();
@@ -144,11 +144,11 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
         //    }
         //});
 
-        new ChooserDialog(ctx)
+        FileChooserDialog.newDialog(ctx)
                 .withFilterRegex(false, true, ".*\\.(jpe?g|png)")
                 .withStartFile(_path)
                 .withResources(R.string.title_nothing, R.string.title_choose, R.string.dialog_cancel)
-                .withChosenListener(new ChooserDialog.Result() {
+                .withChosenListener(new FileChooserDialog.Result() {
                     @Override
                     public void onChoosePath(String path, File pathFile) {
                         Toast.makeText(ctx, "FILE: " + path, Toast.LENGTH_SHORT).show();
