@@ -17,6 +17,7 @@
 
 <img src="captures/choose_file.png" width="360"/>
 <img src="captures/choose_folder.png" width="360"/>
+<img src="captures/smb.png" width="360"/>
 
 ### Demo Application
 
@@ -33,6 +34,7 @@ NtlmPasswordAuthentication not yet supported! (haven't had the need for it)
 ```
 try{
     SmbFileChooserDialog dialog = SmbFileChooserDialog.newDialog(context, "**.***.*.**")
+        .setResources("Select a directory", "choose", "cancel")
         .setFilter(true, false)
         .setOnChosenListener((path, file) -> {
             try{
