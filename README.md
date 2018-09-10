@@ -30,10 +30,10 @@ NtlmPasswordAuthentication not yet supported! (haven't had the need for it)
 
 ## Usage
 
-```try{
-    SmbFileChooserDialog dialog = SmbFileChooserDialog.newDialog(context, "**.***.*.**") //
+```
+try{
+    SmbFileChooserDialog dialog = SmbFileChooserDialog.newDialog(context, "**.***.*.**")
         .setFilter(true, false)
-        .setStartFile(SHARED)
         .setOnChosenListener((path, file) -> {
             try{
                 Toast.makeText(context, file.isDirectory() ? "directory" : "file" + " selected: " + path, Toast.LENGTH_SHORT).show();
