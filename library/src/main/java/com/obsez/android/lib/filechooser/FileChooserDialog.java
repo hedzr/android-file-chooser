@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -12,6 +13,7 @@ import android.os.Environment;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
@@ -32,53 +34,39 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * Created by coco on 6/7/15.
+ * Created by coco on 6/7/15. Edited by Guiorgy on 10/09/18.
  */
-public class FileChooserDialog implements AdapterView.OnItemClickListener, DialogInterface.OnClickListener {
-
+public class FileChooserDialog extends ContextWrapper implements AdapterView.OnItemClickListener, DialogInterface.OnClickListener {
+    @FunctionalInterface
     public interface Result {
         void onChoosePath(@NonNull String dir, @NonNull File dirFile);
     }
 
-    private FileChooserDialog() {
-
+    private FileChooserDialog(Context context) {
+        super(context);
     }
 
-    private FileChooserDialog(Context cxt) {
-        this._context = cxt;
+    public static FileChooserDialog newDialog(Context context){
+        return new FileChooserDialog(context);
     }
 
-    public static FileChooserDialog newDialog(Context cxt){
-        return new FileChooserDialog(cxt);
-    }
-
-    /**
-     * @param cxt android context
-     * @return `this` reference
-     * @deprecated will be removed at v1.2
-     */
-    public FileChooserDialog with(Context cxt) {
-        this._context = cxt;
-        return this;
-    }
-
-    public FileChooserDialog withFilter(FileFilter ff) {
-        withFilter(false, false, (String[]) null);
+    public FileChooserDialog setFilter(FileFilter ff) {
+        setFilter(false, false, (String[]) null);
         this._fileFilter = ff;
         return this;
     }
 
-    public FileChooserDialog withFilter(boolean dirOnly, boolean allowHidden, FileFilter ff) {
-        withFilter(dirOnly, allowHidden, (String[]) null);
+    public FileChooserDialog setFilter(boolean dirOnly, boolean allowHidden, FileFilter ff) {
+        setFilter(dirOnly, allowHidden, (String[]) null);
         this._fileFilter = ff;
         return this;
     }
 
-    public FileChooserDialog withFilter(boolean allowHidden, String... suffixes) {
-        return withFilter(false, allowHidden, suffixes);
+    public FileChooserDialog setFilter(boolean allowHidden, String... suffixes) {
+        return setFilter(false, allowHidden, suffixes);
     }
 
-    public FileChooserDialog withFilter(boolean dirOnly, boolean allowHidden, String... suffixes) {
+    public FileChooserDialog setFilter(boolean dirOnly, boolean allowHidden, String... suffixes) {
         this._dirOnly = dirOnly;
         if (suffixes == null) {
             this._fileFilter = dirOnly ? filterDirectoriesOnly : filterFiles;
@@ -88,19 +76,19 @@ public class FileChooserDialog implements AdapterView.OnItemClickListener, Dialo
         return this;
     }
 
-    public FileChooserDialog withFilterRegex(boolean dirOnly, boolean allowHidden, String pattern, int flags) {
+    public FileChooserDialog setFilterRegex(boolean dirOnly, boolean allowHidden, String pattern, int flags) {
         this._dirOnly = dirOnly;
         this._fileFilter = new RegexFileFilter(_dirOnly, allowHidden, pattern, flags);
         return this;
     }
 
-    public FileChooserDialog withFilterRegex(boolean dirOnly, boolean allowHidden, String pattern) {
+    public FileChooserDialog setFilterRegex(boolean dirOnly, boolean allowHidden, String pattern) {
         this._dirOnly = dirOnly;
         this._fileFilter = new RegexFileFilter(_dirOnly, allowHidden, pattern, Pattern.CASE_INSENSITIVE);
         return this;
     }
 
-    public FileChooserDialog withStartFile(String startFile) {
+    public FileChooserDialog setStartFile(String startFile) {
         if (startFile != null) {
             _currentDir = new File(startFile);
         } else {
@@ -118,65 +106,72 @@ public class FileChooserDialog implements AdapterView.OnItemClickListener, Dialo
         return this;
     }
 
-    public FileChooserDialog withChosenListener(Result r) {
+    public FileChooserDialog setChosenListener(Result r) {
         this._result = r;
         return this;
     }
 
-    public FileChooserDialog withResources(@NonNull String title, @NonNull String ok, @NonNull String cancel) {
+    @NonNull public FileChooserDialog setResources(@StringRes int titleRes, @StringRes int okRes, @StringRes int cancelRes) {
+        this._titleRes = titleRes;
+        this._okRes = okRes;
+        this._negativeRes = cancelRes;
+        return this;
+    }
+    
+    public FileChooserDialog setResources(@NonNull String title, @NonNull String ok, @NonNull String cancel) {
         this._title = title;
         this._ok = ok;
         this._negative = cancel;
         return this;
     }
 
-    public FileChooserDialog withIcon(@DrawableRes int iconId) {
+    public FileChooserDialog setIcon(@DrawableRes int iconId) {
         this._iconRes = iconId;
         return this;
     }
 
-    public FileChooserDialog withLayoutView(@LayoutRes int layoutResId) {
+    public FileChooserDialog setLayoutView(@LayoutRes int layoutResId) {
         this._layoutRes = layoutResId;
         return this;
     }
 
-    public FileChooserDialog withRowLayoutView(@LayoutRes int layoutResId) {
+    public FileChooserDialog setRowLayoutView(@LayoutRes int layoutResId) {
         this._rowLayoutRes = layoutResId;
         return this;
     }
 
-    public FileChooserDialog withDateFormat() {
-        return this.withDateFormat("yyyy/MM/dd HH:mm:ss");
+    public FileChooserDialog setDateFormat() {
+        return this.setDateFormat("yyyy/MM/dd HH:mm:ss");
     }
 
-    public FileChooserDialog withDateFormat(String format) {
+    public FileChooserDialog setDateFormat(String format) {
         this._dateFormat = format;
         return this;
     }
 
-    public FileChooserDialog withNegativeButton(@NonNull String cancelTitle,
+    public FileChooserDialog setNegativeButton(@NonNull String cancelTitle,
                                                 final DialogInterface.OnClickListener listener) {
         this._negative = cancelTitle;
         this._negativeListener = listener;
         return this;
     }
 
-    public FileChooserDialog withNegativeButtonListener(final DialogInterface.OnClickListener listener) {
+    public FileChooserDialog setNegativeButtonListener(final DialogInterface.OnClickListener listener) {
         this._negativeListener = listener;
         return this;
     }
 
     /**
-     * it's NOT recommended to use the `withOnCancelListener`, replace with `withNegativeButtonListener` pls.
+     * it's NOT recommended to use the `setOnCancelListener`, replace set `setNegativeButtonListener` pls.
      *
      * @deprecated will be removed at v1.2
      */
-    public FileChooserDialog withOnCancelListener(final DialogInterface.OnCancelListener listener) {
+    public FileChooserDialog setOnCancelListener(final DialogInterface.OnCancelListener listener) {
         this._cancelListener2 = listener;
         return this;
     }
 
-    public FileChooserDialog withFileIcons(final boolean tryResolveFileTypeAndIcon, final Drawable fileIcon,
+    public FileChooserDialog setFileIcons(final boolean tryResolveFileTypeAndIcon, final Drawable fileIcon,
                                            final Drawable folderIcon) {
         _adapterSetter = adapter -> {
             if (fileIcon != null) adapter.setDefaultFileIcon(fileIcon);
@@ -186,15 +181,15 @@ public class FileChooserDialog implements AdapterView.OnItemClickListener, Dialo
         return this;
     }
 
-    public FileChooserDialog withFileIconsRes(final boolean tryResolveFileTypeAndIcon, final int fileIcon,
+    public FileChooserDialog setFileIconsRes(final boolean tryResolveFileTypeAndIcon, final int fileIcon,
                                               final int folderIcon) {
         _adapterSetter = adapter -> {
             if (fileIcon != -1) {
-                adapter.setDefaultFileIcon(ContextCompat.getDrawable(_context, fileIcon));
+                adapter.setDefaultFileIcon(ContextCompat.getDrawable(getBaseContext(), fileIcon));
             }
             if (folderIcon != -1) {
                 adapter.setDefaultFolderIcon(
-                        ContextCompat.getDrawable(_context, folderIcon));
+                        ContextCompat.getDrawable(getBaseContext(), folderIcon));
             }
             adapter.setResolveFileType(tryResolveFileTypeAndIcon);
         };
@@ -202,10 +197,10 @@ public class FileChooserDialog implements AdapterView.OnItemClickListener, Dialo
     }
 
     /**
-     * @param setter you can customize the folder navi-adapter with `setter`
+     * @param setter you can customize the folder navi-adapter set `setter`
      * @return this
      */
-    public FileChooserDialog withAdapterSetter(AdapterSetter setter) {
+    public FileChooserDialog setAdapterSetter(AdapterSetter setter) {
         _adapterSetter = setter;
         return this;
     }
@@ -214,7 +209,7 @@ public class FileChooserDialog implements AdapterView.OnItemClickListener, Dialo
      * @param cb give a hook at navigating up to a directory
      * @return this
      */
-    public FileChooserDialog withNavigateUpTo(CanNavigateUp cb) {
+    public FileChooserDialog setNavigateUpTo(CanNavigateUp cb) {
         _folderNavUpCB = cb;
         return this;
     }
@@ -223,7 +218,7 @@ public class FileChooserDialog implements AdapterView.OnItemClickListener, Dialo
      * @param cb give a hook at navigating to a child directory
      * @return this
      */
-    public FileChooserDialog withNavigateTo(CanNavigateTo cb) {
+    public FileChooserDialog setNavigateTo(CanNavigateTo cb) {
         _folderNavToCB = cb;
         return this;
     }
@@ -239,7 +234,7 @@ public class FileChooserDialog implements AdapterView.OnItemClickListener, Dialo
             _adapterSetter.apply(adapter);
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(_context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getBaseContext());
         //builder.setTitle(R.string.dlg_choose dir_title);
         if (!_disableTitle) builder.setTitle(_title);
         builder.setAdapter(adapter, this);
@@ -282,7 +277,7 @@ public class FileChooserDialog implements AdapterView.OnItemClickListener, Dialo
 
     public FileChooserDialog show() {
         //if (_result == null)
-        //    throw new RuntimeException("no chosenListener defined. use withChosenListener() at first.");
+        //    throw new RuntimeException("no chosenListener defined. use setChosenListener() at first.");
         if (_alertDialog == null || _list == null) {
             throw new RuntimeException("call build() before show().");
         }
@@ -290,14 +285,14 @@ public class FileChooserDialog implements AdapterView.OnItemClickListener, Dialo
         // Check for permissions if SDK version is >= 23
         if (Build.VERSION.SDK_INT >= 23) {
             final int PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 0;
-            int permissionCheck = ContextCompat.checkSelfPermission(_context,
+            int permissionCheck = ContextCompat.checkSelfPermission(getBaseContext(),
                     Manifest.permission.READ_EXTERNAL_STORAGE);
 
             //if = permission granted
             if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
                 _alertDialog.show();
             } else {
-                ActivityCompat.requestPermissions((Activity) _context,
+                ActivityCompat.requestPermissions((Activity) getBaseContext(),
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                         PERMISSION_REQUEST_READ_EXTERNAL_STORAGE);
             }
@@ -320,13 +315,6 @@ public class FileChooserDialog implements AdapterView.OnItemClickListener, Dialo
         }
 
         if (files != null) {
-            //_entries.addAll(Arrays.asList(files));
-            //Collections.sort(_entries, new Comparator<File>() {
-            //    public int compare(File f1, File f2) {
-            //        return f1.getName().toLowerCase().compareTo(f2.getName().toLowerCase());
-            //    }
-            //});
-
             List<File> dirList = new LinkedList<>();
             for (File f : files) {
                 if (f.isDirectory()) {
@@ -354,8 +342,12 @@ public class FileChooserDialog implements AdapterView.OnItemClickListener, Dialo
     void sortByName(List<File> list) {
         Collections.sort(list, (f1, f2) -> f1.getName().toLowerCase().compareTo(f2.getName().toLowerCase()));
     }
-
-    private void listDirs2() {
+    
+    /**
+     * @deprecated better use listDirs as it sorts directories and files separately
+     */
+    @Deprecated
+    private void listDirsUncategorised() {
         _entries.clear();
 
         // Get files
@@ -376,7 +368,7 @@ public class FileChooserDialog implements AdapterView.OnItemClickListener, Dialo
             }
         }
 
-        Collections.sort(_entries, (f1, f2) -> f1.getName().toLowerCase().compareTo(f2.getName().toLowerCase()));
+        sortByName(_entries);
     }
 
     @Override
@@ -391,8 +383,6 @@ public class FileChooserDialog implements AdapterView.OnItemClickListener, Dialo
             if (_folderNavUpCB == null) _folderNavUpCB = _defaultNavUpCB;
             if (_folderNavUpCB.canUpTo(f)) {
                 _currentDir = f;
-                //} else {
-                //    Toast.makeText(this._context, "Couldn't go up level", Toast.LENGTH_SHORT).show();
             }
         } else {
             if (file.isDirectory()) {
@@ -420,8 +410,7 @@ public class FileChooserDialog implements AdapterView.OnItemClickListener, Dialo
 
     private DirAdapter refreshDirs() {
         listDirs();
-        DirAdapter adapter = new DirAdapter(_context, _entries,
-                _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
+        DirAdapter adapter = new DirAdapter(getBaseContext(), _entries, _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
         if (_adapterSetter != null) {
             _adapterSetter.apply(adapter);
         }
@@ -433,13 +422,12 @@ public class FileChooserDialog implements AdapterView.OnItemClickListener, Dialo
 
     private List<File> _entries = new ArrayList<>();
     private File _currentDir;
-    private Context _context;
     private AlertDialog _alertDialog;
     private ListView _list;
     private Result _result = null;
     private boolean _dirOnly;
     private FileFilter _fileFilter;
-    //private @StringRes int _titleRes = R.string.choose_file, _okRes = R.string.title_choose, _negativeRes = R.string.dialog_cancel;
+    private @StringRes int _titleRes = 0, _okRes = 0, _negativeRes = 0;
     private @NonNull
     String _title = "Select a file", _ok = "Choose", _negative = "Cancel";
     private @DrawableRes
@@ -453,6 +441,7 @@ public class FileChooserDialog implements AdapterView.OnItemClickListener, Dialo
     private DialogInterface.OnCancelListener _cancelListener2;
     private boolean _disableTitle;
 
+    @FunctionalInterface
     public interface AdapterSetter {
         void apply(DirAdapter adapter);
     }
@@ -463,11 +452,12 @@ public class FileChooserDialog implements AdapterView.OnItemClickListener, Dialo
 
     private final static FileFilter filterFiles = file -> !file.isHidden();
 
-
+    @FunctionalInterface
     public interface CanNavigateUp {
         boolean canUpTo(File dir);
     }
 
+    @FunctionalInterface
     public interface CanNavigateTo {
         boolean canNavigate(File dir);
     }
