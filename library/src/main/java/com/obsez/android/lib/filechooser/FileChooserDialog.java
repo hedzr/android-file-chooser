@@ -3,6 +3,7 @@ package com.obsez.android.lib.filechooser;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
@@ -16,9 +17,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.expeditors.gepha.expeditors.R;
 import com.obsez.android.lib.filechooser.internals.ExtFileFilter;
@@ -32,6 +35,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import es.dmoral.toasty.Toasty;
 
 /**
  * Created by coco on 6/7/15. Edited by Guiorgy on 10/09/18.
@@ -111,13 +116,52 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
         return this;
     }
 
+    public FileChooserDialog setCancelable(boolean cancelable){
+        this._cancelable = cancelable;
+        return this;
+    }
+
+    public FileChooserDialog setOnDissmissListener(DialogInterface.OnDismissListener listener){
+        this._onDismissListener = listener;
+        return this;
+    }
+
+    public FileChooserDialog onBackPressed(boolean goBack){
+        if(this._onBackPressed != null) return this;
+        if(goBack){
+            this._onBackPressed = (dialog) -> {
+                if(FileChooserDialog.this._entries.size() > 0
+                        && (FileChooserDialog.this._entries.get(0).getName().equals("../")
+                            || FileChooserDialog.this._entries.get(0).getName().equals(".."))){
+                    FileChooserDialog.this.onItemClick(null, FileChooserDialog.this._list, 0, 0);
+                } else{
+                    dialog.dismiss();
+                }
+            };
+        } else{
+            this._onBackPressed = Dialog::dismiss;
+        }
+        return this;
+    }
+
+    /**
+     * using this will override the above!
+     *
+     * @deprecated use this only if you absolutely need it.
+     */
+    @Deprecated
+    public FileChooserDialog onBackPressed(OnBackPressedListener listener){
+        this._onBackPressed = listener;
+        return this;
+    }
+
     @NonNull public FileChooserDialog setResources(@StringRes int titleRes, @StringRes int okRes, @StringRes int cancelRes) {
         this._titleRes = titleRes;
         this._okRes = okRes;
         this._negativeRes = cancelRes;
         return this;
     }
-    
+
     public FileChooserDialog setResources(@NonNull String title, @NonNull String ok, @NonNull String cancel) {
         this._title = title;
         this._ok = ok;
@@ -162,7 +206,7 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
     }
 
     /**
-     * it's NOT recommended to use the `setOnCancelListener`, replace set `setNegativeButtonListener` pls.
+     * it's NOT recommended to use the `setOnCancelListener`, replace with `setNegativeButtonListener` pls.
      *
      * @deprecated will be removed at v1.2
      */
@@ -229,13 +273,16 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
     }
 
     public FileChooserDialog build() {
+        if (_titleRes != 0) _title = getBaseContext().getResources().getString(_titleRes);
+        if (_okRes != 0) _ok = getBaseContext().getResources().getString(_okRes);
+        if (_negativeRes != 0) _negative = getBaseContext().getResources().getString(_negativeRes);
+
         DirAdapter adapter = refreshDirs();
         if (_adapterSetter != null) {
             _adapterSetter.apply(adapter);
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getBaseContext());
-        //builder.setTitle(R.string.dlg_choose dir_title);
         if (!_disableTitle) builder.setTitle(_title);
         builder.setAdapter(adapter, this);
 
@@ -269,6 +316,17 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
             builder.setOnCancelListener(_cancelListener2);
         }
 
+        builder.setCancelable(_cancelable)
+               .setOnDismissListener(_onDismissListener)
+               .setOnKeyListener((dialog, keyCode, event) -> {
+                   if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+                       FileChooserDialog.this._onBackPressed.onBackPressed((AlertDialog) dialog);
+                   }
+                   return true;
+               });
+
+        builder.setNeutralButton("neutral", (dialog, which) -> Toasty.info(getBaseContext(), "clicked", Toast.LENGTH_SHORT).show());
+
         _alertDialog = builder.create();
         _list = _alertDialog.getListView();
         _list.setOnItemClickListener(this);
@@ -276,8 +334,6 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
     }
 
     public FileChooserDialog show() {
-        //if (_result == null)
-        //    throw new RuntimeException("no chosenListener defined. use setChosenListener() at first.");
         if (_alertDialog == null || _list == null) {
             throw new RuntimeException("call build() before show().");
         }
@@ -342,7 +398,7 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
     void sortByName(List<File> list) {
         Collections.sort(list, (f1, f2) -> f1.getName().toLowerCase().compareTo(f2.getName().toLowerCase()));
     }
-    
+
     /**
      * @deprecated better use listDirs as it sorts directories and files separately
      */
@@ -420,6 +476,16 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
         return adapter;
     }
 
+    public void dismiss(){
+        if(_alertDialog == null) return;
+        _alertDialog.dismiss();
+    }
+
+    public void cancel(){
+        if(_alertDialog == null) return;
+        _alertDialog.cancel();
+    }
+
     private List<File> _entries = new ArrayList<>();
     private File _currentDir;
     private AlertDialog _alertDialog;
@@ -428,18 +494,16 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
     private boolean _dirOnly;
     private FileFilter _fileFilter;
     private @StringRes int _titleRes = 0, _okRes = 0, _negativeRes = 0;
-    private @NonNull
-    String _title = "Select a file", _ok = "Choose", _negative = "Cancel";
-    private @DrawableRes
-    int _iconRes = -1;
-    private @LayoutRes
-    int _layoutRes = -1;
-    private @LayoutRes
-    int _rowLayoutRes = -1;
+    private @NonNull String _title = "Select a file", _ok = "Choose", _negative = "Cancel";
+    private @DrawableRes int _iconRes = -1;
+    private @LayoutRes int _layoutRes = -1;
+    private @LayoutRes int _rowLayoutRes = -1;
     private String _dateFormat;
     private DialogInterface.OnClickListener _negativeListener;
     private DialogInterface.OnCancelListener _cancelListener2;
     private boolean _disableTitle;
+    private boolean _cancelable = true;
+    private DialogInterface.OnDismissListener _onDismissListener;
 
     @FunctionalInterface
     public interface AdapterSetter {
@@ -469,4 +533,10 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
 
     private final static CanNavigateTo _defaultNavToCB = dir -> true;
 
+    @FunctionalInterface
+    public interface OnBackPressedListener{
+        void onBackPressed(AlertDialog dialog);
+    }
+
+    private OnBackPressedListener _onBackPressed;
 }
