@@ -74,7 +74,7 @@ public class SmbDirAdapter extends ArrayAdapter<SmbFile>{
                         final Drawable folderIcon = _defaultFolderIcon;
                         tvName.setCompoundDrawablesWithIntrinsicBounds(folderIcon, null, null, null);
                         tvSize.setText("");
-                        if(!_entries.get(position).getName().trim().equals("..")){
+                        if(!file.getName().trim().equals("../") && !file.getName().trim().equals("..") && file.lastModified() != 0L){
                             tvDate.setText(_formatter.format(new Date(file.lastModified())));
                         } else{
                             tvDate.setVisibility(View.GONE);
@@ -83,7 +83,8 @@ public class SmbDirAdapter extends ArrayAdapter<SmbFile>{
                         final Drawable fileIcon = _defaultFileIcon;
                         tvName.setCompoundDrawablesWithIntrinsicBounds(fileIcon, null, null, null);
                         tvSize.setText(FileUtil.getReadableFileSize(file.length()));
-                        tvDate.setText(_formatter.format(new Date(file.lastModified())));
+                        if(file.lastModified() != 0L) tvDate.setText(_formatter.format(new Date(file.lastModified())));
+                          else tvDate.setVisibility(View.GONE);
                     }
                 } catch(SmbException e){
                     e.printStackTrace();
@@ -148,4 +149,3 @@ public class SmbDirAdapter extends ArrayAdapter<SmbFile>{
     @Deprecated
     private boolean _resolveFileType = false;
 }
-
