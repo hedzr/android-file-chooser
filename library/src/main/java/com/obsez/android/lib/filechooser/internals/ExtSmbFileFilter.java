@@ -5,7 +5,7 @@ import jcifs.smb.SmbFile;
 import jcifs.smb.SmbFileFilter;
 
 /**
- * Created by coco on 6/9/18.
+ * Created by coco on 6/7/15. Edited by Guiorgy on 10/09/18.
  */
 public class ExtSmbFileFilter implements SmbFileFilter{
     boolean m_allowHidden;
