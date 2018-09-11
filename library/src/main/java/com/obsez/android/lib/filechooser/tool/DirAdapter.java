@@ -43,8 +43,7 @@ public class DirAdapter extends ArrayAdapter<File> {
 
     @SuppressLint("SimpleDateFormat")
     private void init(List<File> entries, String dateFormat) {
-        _formatter = new SimpleDateFormat(
-                dateFormat != null && !"".equals(dateFormat.trim()) ? dateFormat.trim() : "yyyy/MM/dd HH:mm:ss");
+        _formatter = new SimpleDateFormat(dateFormat != null && !"".equals(dateFormat.trim()) ? dateFormat.trim() : "yyyy/MM/dd HH:mm:ss");
         _entries = entries;
         _defaultFolderIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_folder);
         _defaultFileIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_file);
@@ -69,7 +68,7 @@ public class DirAdapter extends ArrayAdapter<File> {
             final Drawable folderIcon = _defaultFolderIcon;
             tvName.setCompoundDrawablesWithIntrinsicBounds(folderIcon, null, null, null);
             tvSize.setText("");
-            if (!_entries.get(position).getName().trim().equals("..")) {
+            if (!file.getName().trim().equals("..") && file.lastModified() != 0L) {
                 tvDate.setText(_formatter.format(new Date(file.lastModified())));
             } else {
                 tvDate.setVisibility(View.GONE);
@@ -87,7 +86,8 @@ public class DirAdapter extends ArrayAdapter<File> {
             }
             tvName.setCompoundDrawablesWithIntrinsicBounds(d, null, null, null);
             tvSize.setText(FileUtil.getReadableFileSize(file.length()));
-            tvDate.setText(_formatter.format(new Date(file.lastModified())));
+            if(file.lastModified() != 0L) tvDate.setText(_formatter.format(new Date(file.lastModified())));
+              else tvDate.setVisibility(View.GONE);
         }
 
         return rl;
@@ -123,4 +123,3 @@ public class DirAdapter extends ArrayAdapter<File> {
     private Drawable _defaultFileIcon = null;
     private boolean _resolveFileType = false;
 }
-
