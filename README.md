@@ -39,7 +39,10 @@ try{
         .setFilter(true, false)
         .setOnChosenListener((path, file) -> {
             try{
-                Toast.makeText(context, file.isDirectory() ? "directory" : "file" + " selected: " + path, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,
+                    file.isDirectory() ? "directory" : "file" + " selected: " + path,
+                    Toast.LENGTH_SHORT)
+                .show();
             } catch(SmbException e){
                 e.printStackTrace();
             }
