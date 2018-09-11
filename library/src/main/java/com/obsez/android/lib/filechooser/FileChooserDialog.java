@@ -3,7 +3,6 @@ package com.obsez.android.lib.filechooser;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
@@ -14,6 +13,7 @@ import android.os.Environment;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -21,9 +21,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
-
-import com.expeditors.gepha.expeditors.R;
 import com.obsez.android.lib.filechooser.internals.ExtFileFilter;
 import com.obsez.android.lib.filechooser.internals.RegexFileFilter;
 import com.obsez.android.lib.filechooser.tool.DirAdapter;
@@ -32,46 +29,45 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import es.dmoral.toasty.Toasty;
 
 /**
  * Created by coco on 6/7/15. Edited by Guiorgy on 10/09/18.
  */
 public class FileChooserDialog extends ContextWrapper implements AdapterView.OnItemClickListener, DialogInterface.OnClickListener {
     @FunctionalInterface
-    public interface Result {
+    public interface OnChosenListener{
         void onChoosePath(@NonNull String dir, @NonNull File dirFile);
     }
 
-    private FileChooserDialog(Context context) {
+    private FileChooserDialog(@NonNull Context context) {
         super(context);
     }
 
-    public static FileChooserDialog newDialog(Context context){
+    @NonNull public static FileChooserDialog newDialog(@NonNull Context context){
         return new FileChooserDialog(context);
     }
 
-    public FileChooserDialog setFilter(FileFilter ff) {
+    @NonNull public FileChooserDialog setFilter(@NonNull FileFilter ff) {
         setFilter(false, false, (String[]) null);
         this._fileFilter = ff;
         return this;
     }
 
-    public FileChooserDialog setFilter(boolean dirOnly, boolean allowHidden, FileFilter ff) {
+    @NonNull public FileChooserDialog setFilter(boolean dirOnly, boolean allowHidden, @NonNull FileFilter ff) {
         setFilter(dirOnly, allowHidden, (String[]) null);
         this._fileFilter = ff;
         return this;
     }
 
-    public FileChooserDialog setFilter(boolean allowHidden, String... suffixes) {
+    @NonNull public FileChooserDialog setFilter(boolean allowHidden, @Nullable String... suffixes) {
         return setFilter(false, allowHidden, suffixes);
     }
 
-    public FileChooserDialog setFilter(boolean dirOnly, boolean allowHidden, String... suffixes) {
+    @NonNull public FileChooserDialog setFilter(boolean dirOnly, boolean allowHidden, @Nullable String... suffixes) {
         this._dirOnly = dirOnly;
         if (suffixes == null) {
             this._fileFilter = dirOnly ? filterDirectoriesOnly : filterFiles;
@@ -81,19 +77,19 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
         return this;
     }
 
-    public FileChooserDialog setFilterRegex(boolean dirOnly, boolean allowHidden, String pattern, int flags) {
+    @NonNull public FileChooserDialog setFilterRegex(boolean dirOnly, boolean allowHidden, @NonNull String pattern, int flags) {
         this._dirOnly = dirOnly;
         this._fileFilter = new RegexFileFilter(_dirOnly, allowHidden, pattern, flags);
         return this;
     }
 
-    public FileChooserDialog setFilterRegex(boolean dirOnly, boolean allowHidden, String pattern) {
+    @NonNull public FileChooserDialog setFilterRegex(boolean dirOnly, boolean allowHidden, @NonNull String pattern) {
         this._dirOnly = dirOnly;
         this._fileFilter = new RegexFileFilter(_dirOnly, allowHidden, pattern, Pattern.CASE_INSENSITIVE);
         return this;
     }
 
-    public FileChooserDialog setStartFile(String startFile) {
+    @NonNull public FileChooserDialog setStartFile(@Nullable String startFile) {
         if (startFile != null) {
             _currentDir = new File(startFile);
         } else {
@@ -111,46 +107,24 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
         return this;
     }
 
-    public FileChooserDialog setChosenListener(Result r) {
+    @NonNull public FileChooserDialog setOnChosenListener(@NonNull OnChosenListener r) {
         this._result = r;
         return this;
     }
 
-    public FileChooserDialog setCancelable(boolean cancelable){
+    @NonNull public FileChooserDialog setCancelable(boolean cancelable){
         this._cancelable = cancelable;
         return this;
     }
 
-    public FileChooserDialog setOnDissmissListener(DialogInterface.OnDismissListener listener){
-        this._onDismissListener = listener;
-        return this;
-    }
-
-    public FileChooserDialog onBackPressed(boolean goBack){
-        if(this._onBackPressed != null) return this;
-        if(goBack){
-            this._onBackPressed = (dialog) -> {
-                if(FileChooserDialog.this._entries.size() > 0
-                        && (FileChooserDialog.this._entries.get(0).getName().equals("../")
-                            || FileChooserDialog.this._entries.get(0).getName().equals(".."))){
-                    FileChooserDialog.this.onItemClick(null, FileChooserDialog.this._list, 0, 0);
-                } else{
-                    dialog.dismiss();
-                }
-            };
-        } else{
-            this._onBackPressed = Dialog::dismiss;
+    @NonNull public FileChooserDialog setOnDismissListener(@NonNull DialogInterface.OnDismissListener listener) {
+        if(Build.VERSION.SDK_INT >= 17){
+            this._onDismissListener = listener;
         }
         return this;
     }
 
-    /**
-     * using this will override the above!
-     *
-     * @deprecated use this only if you absolutely need it.
-     */
-    @Deprecated
-    public FileChooserDialog onBackPressed(OnBackPressedListener listener){
+    @NonNull public FileChooserDialog setOnBackPressedListener(OnBackPressedListener listener){
         this._onBackPressed = listener;
         return this;
     }
@@ -162,45 +136,60 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
         return this;
     }
 
-    public FileChooserDialog setResources(@NonNull String title, @NonNull String ok, @NonNull String cancel) {
-        this._title = title;
-        this._ok = ok;
-        this._negative = cancel;
+    @NonNull public FileChooserDialog setResources(@Nullable String title, @Nullable String ok, @Nullable String cancel) {
+        if(title != null){
+            this._title = title;
+            this._titleRes = 0;
+        }
+        if(ok != null){
+            this._ok = ok;
+            this._okRes = 0;
+        }
+        if(cancel != null){
+            this._negative = cancel;
+            this._negativeRes = 0;
+        }
         return this;
     }
 
-    public FileChooserDialog setIcon(@DrawableRes int iconId) {
+    @NonNull public FileChooserDialog setIcon(@DrawableRes int iconId) {
         this._iconRes = iconId;
         return this;
     }
 
-    public FileChooserDialog setLayoutView(@LayoutRes int layoutResId) {
+    @NonNull public FileChooserDialog setLayoutView(@LayoutRes int layoutResId) {
         this._layoutRes = layoutResId;
         return this;
     }
 
-    public FileChooserDialog setRowLayoutView(@LayoutRes int layoutResId) {
+    @NonNull public FileChooserDialog setRowLayoutView(@LayoutRes int layoutResId) {
         this._rowLayoutRes = layoutResId;
         return this;
     }
 
-    public FileChooserDialog setDateFormat() {
+    @NonNull public FileChooserDialog setDateFormat() {
         return this.setDateFormat("yyyy/MM/dd HH:mm:ss");
     }
 
-    public FileChooserDialog setDateFormat(String format) {
+    @NonNull public FileChooserDialog setDateFormat(@NonNull String format) {
         this._dateFormat = format;
         return this;
     }
 
-    public FileChooserDialog setNegativeButton(@NonNull String cancelTitle,
-                                                final DialogInterface.OnClickListener listener) {
-        this._negative = cancelTitle;
+    @NonNull public FileChooserDialog setNegativeButton(@StringRes int cancelTitle, @NonNull final DialogInterface.OnClickListener listener) {
+        this._negativeRes = cancelTitle;
         this._negativeListener = listener;
         return this;
     }
 
-    public FileChooserDialog setNegativeButtonListener(final DialogInterface.OnClickListener listener) {
+    @NonNull public FileChooserDialog setNegativeButton(@NonNull String cancelTitle, @NonNull final DialogInterface.OnClickListener listener) {
+        this._negative = cancelTitle;
+        this._negativeRes = 0;
+        this._negativeListener = listener;
+        return this;
+    }
+
+    @NonNull public FileChooserDialog setNegativeButtonListener(@NonNull final DialogInterface.OnClickListener listener) {
         this._negativeListener = listener;
         return this;
     }
@@ -210,32 +199,38 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
      *
      * @deprecated will be removed at v1.2
      */
-    public FileChooserDialog setOnCancelListener(final DialogInterface.OnCancelListener listener) {
-        this._cancelListener2 = listener;
+    @NonNull public FileChooserDialog setOnCancelListener(@NonNull final DialogInterface.OnCancelListener listener) {
+        this._onCancelListener = listener;
         return this;
     }
 
-    public FileChooserDialog setFileIcons(final boolean tryResolveFileTypeAndIcon, final Drawable fileIcon,
-                                           final Drawable folderIcon) {
-        _adapterSetter = adapter -> {
-            if (fileIcon != null) adapter.setDefaultFileIcon(fileIcon);
-            if (folderIcon != null) adapter.setDefaultFolderIcon(folderIcon);
-            adapter.setResolveFileType(tryResolveFileTypeAndIcon);
+    @NonNull public FileChooserDialog setFileIcons(final boolean tryResolveFileTypeAndIcon, @Nullable final Drawable fileIcon, @Nullable final Drawable folderIcon) {
+        _adapterSetter = new AdapterSetter(){
+            @Override
+            public void apply(@NonNull final DirAdapter adapter){
+                if(fileIcon != null)
+                    adapter.setDefaultFileIcon(fileIcon);
+                if(folderIcon != null)
+                    adapter.setDefaultFolderIcon(folderIcon);
+                adapter.setResolveFileType(tryResolveFileTypeAndIcon);
+            }
         };
         return this;
     }
 
-    public FileChooserDialog setFileIconsRes(final boolean tryResolveFileTypeAndIcon, final int fileIcon,
-                                              final int folderIcon) {
-        _adapterSetter = adapter -> {
-            if (fileIcon != -1) {
-                adapter.setDefaultFileIcon(ContextCompat.getDrawable(getBaseContext(), fileIcon));
+    @NonNull public FileChooserDialog setFileIconsRes(final boolean tryResolveFileTypeAndIcon, final int fileIcon, final int folderIcon) {
+        _adapterSetter = new AdapterSetter(){
+            @Override
+            public void apply(@NonNull final DirAdapter adapter){
+                if(fileIcon != -1){
+                    adapter.setDefaultFileIcon(ContextCompat.getDrawable(FileChooserDialog.this.getBaseContext(), fileIcon));
+                }
+                if(folderIcon != -1){
+                    adapter.setDefaultFolderIcon(
+                            ContextCompat.getDrawable(FileChooserDialog.this.getBaseContext(), folderIcon));
+                }
+                adapter.setResolveFileType(tryResolveFileTypeAndIcon);
             }
-            if (folderIcon != -1) {
-                adapter.setDefaultFolderIcon(
-                        ContextCompat.getDrawable(getBaseContext(), folderIcon));
-            }
-            adapter.setResolveFileType(tryResolveFileTypeAndIcon);
         };
         return this;
     }
@@ -244,7 +239,7 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
      * @param setter you can customize the folder navi-adapter set `setter`
      * @return this
      */
-    public FileChooserDialog setAdapterSetter(AdapterSetter setter) {
+    @NonNull public FileChooserDialog setAdapterSetter(@NonNull AdapterSetter setter) {
         _adapterSetter = setter;
         return this;
     }
@@ -253,7 +248,7 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
      * @param cb give a hook at navigating up to a directory
      * @return this
      */
-    public FileChooserDialog setNavigateUpTo(CanNavigateUp cb) {
+    @NonNull public FileChooserDialog setNavigateUpTo(@NonNull CanNavigateUp cb) {
         _folderNavUpCB = cb;
         return this;
     }
@@ -262,28 +257,27 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
      * @param cb give a hook at navigating to a child directory
      * @return this
      */
-    public FileChooserDialog setNavigateTo(CanNavigateTo cb) {
+    @NonNull public FileChooserDialog setNavigateTo(@NonNull CanNavigateTo cb) {
         _folderNavToCB = cb;
         return this;
     }
 
-    public FileChooserDialog disableTitle(boolean b) {
+    @NonNull public FileChooserDialog disableTitle(boolean b) {
         _disableTitle = b;
         return this;
     }
 
-    public FileChooserDialog build() {
-        if (_titleRes != 0) _title = getBaseContext().getResources().getString(_titleRes);
-        if (_okRes != 0) _ok = getBaseContext().getResources().getString(_okRes);
-        if (_negativeRes != 0) _negative = getBaseContext().getResources().getString(_negativeRes);
-
+    @NonNull public FileChooserDialog build() {
         DirAdapter adapter = refreshDirs();
-        if (_adapterSetter != null) {
-            _adapterSetter.apply(adapter);
+        if (this._adapterSetter != null) {
+            this._adapterSetter.apply(adapter);
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getBaseContext());
-        if (!_disableTitle) builder.setTitle(_title);
+        if (!this._disableTitle){
+            if(this._titleRes == 0) builder.setTitle(this._title);
+              else builder.setTitle(this._titleRes);
+        }
         builder.setAdapter(adapter, this);
 
         if (this._iconRes != -1) {
@@ -296,44 +290,63 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
             }
         }
 
-        if (_dirOnly) {
-            builder.setPositiveButton(_ok, (dialog, id) -> {
-                if (_result != null) {
-                    if (_dirOnly) {
-                        _result.onChoosePath(_currentDir.getAbsolutePath(), _currentDir);
+        if (this._dirOnly) {
+            final DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(final DialogInterface dialog, final int which){
+                    if(FileChooserDialog.this._result != null){
+                        if(FileChooserDialog.this._dirOnly){
+                            FileChooserDialog.this._result.onChoosePath(FileChooserDialog.this._currentDir.getAbsolutePath(),FileChooserDialog.this. _currentDir);
+                        }
                     }
+                    dialog.dismiss();
                 }
-                dialog.dismiss();
-            });
+            };
+
+            if(this._okRes == 0) builder.setPositiveButton(this._ok, listener);
+              else builder.setPositiveButton(this._okRes, listener);
         }
 
         if (this._negativeListener == null) {
-            this._negativeListener = (dialog, id) -> dialog.cancel();
+            this._negativeListener = new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(final DialogInterface dialog, final int id){
+                    dialog.cancel();
+                }
+            };
         }
-        builder.setNegativeButton(this._negative, this._negativeListener);
 
-        if (this._cancelListener2 != null) {
-            builder.setOnCancelListener(_cancelListener2);
+        if(this._negativeRes == 0) builder.setNegativeButton(this._negative, this._negativeListener);
+          else builder.setNegativeButton(this._negativeRes, this._negativeListener);
+
+        if (this._onCancelListener != null) {
+            builder.setOnCancelListener(_onCancelListener);
         }
 
-        builder.setCancelable(_cancelable)
-               .setOnDismissListener(_onDismissListener)
-               .setOnKeyListener((dialog, keyCode, event) -> {
-                   if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-                       FileChooserDialog.this._onBackPressed.onBackPressed((AlertDialog) dialog);
+        if(Build.VERSION.SDK_INT >= 17){
+            if(this._onDismissListener != null){
+                builder.setOnDismissListener(this._onDismissListener);
+            }
+        }
+
+        builder.setCancelable(this._cancelable)
+               .setOnKeyListener(new DialogInterface.OnKeyListener(){
+                   @Override
+                   public boolean onKey(final DialogInterface dialog, final int keyCode, final KeyEvent event){
+                       if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP){
+                           FileChooserDialog.this._onBackPressed.onBackPressed((AlertDialog) dialog);
+                       }
+                       return true;
                    }
-                   return true;
                });
 
-        builder.setNeutralButton("neutral", (dialog, which) -> Toasty.info(getBaseContext(), "clicked", Toast.LENGTH_SHORT).show());
-
-        _alertDialog = builder.create();
-        _list = _alertDialog.getListView();
-        _list.setOnItemClickListener(this);
+        this._alertDialog = builder.create();
+        this._list = this._alertDialog.getListView();
+        this._list.setOnItemClickListener(this);
         return this;
     }
 
-    public FileChooserDialog show() {
+    @NonNull public FileChooserDialog show() {
         if (_alertDialog == null || _list == null) {
             throw new RuntimeException("call build() before show().");
         }
@@ -395,8 +408,13 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
         }
     }
 
-    void sortByName(List<File> list) {
-        Collections.sort(list, (f1, f2) -> f1.getName().toLowerCase().compareTo(f2.getName().toLowerCase()));
+    void sortByName(@NonNull List<File> list) {
+        Collections.sort(list, new Comparator<File>(){
+            @Override
+            public int compare(final File f1, final File f2){
+                return f1.getName().toLowerCase().compareTo(f2.getName().toLowerCase());
+            }
+        });
     }
 
     /**
@@ -428,7 +446,7 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View list, int pos, long id) {
+    public void onItemClick(@Nullable AdapterView<?> parent, @NonNull View list, int pos, long id) {
         if (pos < 0 || pos >= _entries.size()) {
             return;
         }
@@ -460,11 +478,11 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
     }
 
     @Override
-    public void onClick(DialogInterface dialog, int which) {
+    public void onClick(@NonNull DialogInterface dialog, int which) {
         //
     }
 
-    private DirAdapter refreshDirs() {
+    @NonNull private DirAdapter refreshDirs() {
         listDirs();
         DirAdapter adapter = new DirAdapter(getBaseContext(), _entries, _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
         if (_adapterSetter != null) {
@@ -490,7 +508,7 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
     private File _currentDir;
     private AlertDialog _alertDialog;
     private ListView _list;
-    private Result _result = null;
+    private OnChosenListener _result = null;
     private boolean _dirOnly;
     private FileFilter _fileFilter;
     private @StringRes int _titleRes = 0, _okRes = 0, _negativeRes = 0;
@@ -500,43 +518,73 @@ public class FileChooserDialog extends ContextWrapper implements AdapterView.OnI
     private @LayoutRes int _rowLayoutRes = -1;
     private String _dateFormat;
     private DialogInterface.OnClickListener _negativeListener;
-    private DialogInterface.OnCancelListener _cancelListener2;
+    private DialogInterface.OnCancelListener _onCancelListener;
     private boolean _disableTitle;
     private boolean _cancelable = true;
     private DialogInterface.OnDismissListener _onDismissListener;
 
     @FunctionalInterface
     public interface AdapterSetter {
-        void apply(DirAdapter adapter);
+        void apply(@NonNull DirAdapter adapter);
     }
 
     private AdapterSetter _adapterSetter = null;
 
-    private final static FileFilter filterDirectoriesOnly = File::isDirectory;
+    private final static FileFilter filterDirectoriesOnly = new FileFilter(){
+        @Override
+        public boolean accept(final File file){
+            return file.isDirectory();
+        }
+    };
 
-    private final static FileFilter filterFiles = file -> !file.isHidden();
+    private final static FileFilter filterFiles = new FileFilter(){
+        @Override
+        public boolean accept(final File file){
+            return !file.isHidden();
+        }
+    };
 
     @FunctionalInterface
     public interface CanNavigateUp {
-        boolean canUpTo(File dir);
+        boolean canUpTo(@Nullable File dir);
     }
 
     @FunctionalInterface
     public interface CanNavigateTo {
-        boolean canNavigate(File dir);
+        boolean canNavigate(@NonNull File dir);
     }
 
     private CanNavigateUp _folderNavUpCB;
     private CanNavigateTo _folderNavToCB;
 
-    private final static CanNavigateUp _defaultNavUpCB = dir -> dir != null && dir.canRead();
+    private final static CanNavigateUp _defaultNavUpCB = new CanNavigateUp(){
+        @Override
+        public boolean canUpTo(@Nullable final File dir){
+            return dir != null && dir.canRead();
+        }
+    };
 
-    private final static CanNavigateTo _defaultNavToCB = dir -> true;
+    private final static CanNavigateTo _defaultNavToCB = new CanNavigateTo(){
+        @Override
+        public boolean canNavigate(@NonNull final File dir){
+            return true;
+        }
+    };
 
     @FunctionalInterface
     public interface OnBackPressedListener{
-        void onBackPressed(AlertDialog dialog);
+        void onBackPressed(@NonNull AlertDialog dialog);
     }
 
-    private OnBackPressedListener _onBackPressed;
+    private OnBackPressedListener _onBackPressed = (new OnBackPressedListener(){
+        @Override
+        public void onBackPressed(@NonNull final AlertDialog dialog){
+            if(FileChooserDialog.this._entries.size() > 0
+                    && (FileChooserDialog.this._entries.get(0).getName().equals("../") || FileChooserDialog.this._entries.get(0).getName().equals(".."))){
+                FileChooserDialog.this.onItemClick(null, FileChooserDialog.this._list, 0, 0);
+            } else{
+                dialog.dismiss();
+            }
+        }
+    });
 }
