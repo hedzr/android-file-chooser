@@ -68,7 +68,7 @@ public class DirAdapter extends ArrayAdapter<File> {
             final Drawable folderIcon = _defaultFolderIcon;
             tvName.setCompoundDrawablesWithIntrinsicBounds(folderIcon, null, null, null);
             tvSize.setText("");
-            if (!file.getName().trim().equals("..") && file.lastModified() != 0L) {
+            if (!file.getName().trim().equals("../") && !file.getName().trim().equals("..") && file.lastModified() != 0L) {
                 tvDate.setText(_formatter.format(new Date(file.lastModified())));
             } else {
                 tvDate.setVisibility(View.GONE);
