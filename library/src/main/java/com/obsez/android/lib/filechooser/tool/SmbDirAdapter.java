@@ -10,12 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.expeditors.gepha.expeditors.R;
+import com.obsez.android.lib.filechooser.R;
 import com.obsez.android.lib.filechooser.internals.FileUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -24,7 +25,7 @@ import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 
 /**
- * Created by coco on 6/9/18.
+ * Created by coco on 6/9/18. Edited by Guiorgy on 10/09/18.
  */
 public class SmbDirAdapter extends ArrayAdapter<SmbFile>{
     public SmbDirAdapter(Context cxt, List<SmbFile> entries, int resId) {
@@ -53,40 +54,43 @@ public class SmbDirAdapter extends ArrayAdapter<SmbFile>{
     // This function is called to show each view item
     @NonNull
     @Override
-    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+    public View getView(final int position, final View convertView, @NonNull final ViewGroup parent) {
         ViewGroup rl = (ViewGroup) super.getView(position, convertView, parent);
 
-        TextView tvName = rl.findViewById(R.id.text1);
-        TextView tvSize = rl.findViewById(R.id.txt_size);
-        TextView tvDate = rl.findViewById(R.id.txt_date);
+        final TextView tvName = rl.findViewById(R.id.text1);
+        final TextView tvSize = rl.findViewById(R.id.txt_size);
+        final TextView tvDate = rl.findViewById(R.id.txt_date);
         //ImageView ivIcon = (ImageView) rl.findViewById(R.id.icon);
 
         tvDate.setVisibility(View.VISIBLE);
 
-        Future<Void> thread = Executors.newSingleThreadExecutor().submit(() -> {
-            SmbFile file = _entries.get(position);
-            tvName.setText(file.getName());
-            try{
-                if (file.isDirectory()) {
-                    final Drawable folderIcon = _defaultFolderIcon;
-                    tvName.setCompoundDrawablesWithIntrinsicBounds(folderIcon, null, null, null);
-                    tvSize.setText("");
-                    if (!_entries.get(position).getName().trim().equals("..")) {
+        Future<Void> thread = Executors.newSingleThreadExecutor().submit(new Callable<Void>(){
+            @Override
+            public Void call(){
+                SmbFile file = _entries.get(position);
+                tvName.setText(file.getName());
+                try{
+                    if(file.isDirectory()){
+                        final Drawable folderIcon = _defaultFolderIcon;
+                        tvName.setCompoundDrawablesWithIntrinsicBounds(folderIcon, null, null, null);
+                        tvSize.setText("");
+                        if(!_entries.get(position).getName().trim().equals("..")){
+                            tvDate.setText(_formatter.format(new Date(file.lastModified())));
+                        } else{
+                            tvDate.setVisibility(View.GONE);
+                        }
+                    } else{
+                        final Drawable fileIcon = _defaultFileIcon;
+                        tvName.setCompoundDrawablesWithIntrinsicBounds(fileIcon, null, null, null);
+                        tvSize.setText(FileUtil.getReadableFileSize(file.length()));
                         tvDate.setText(_formatter.format(new Date(file.lastModified())));
-                    } else {
-                        tvDate.setVisibility(View.GONE);
                     }
-                } else {
-                    final Drawable fileIcon = _defaultFileIcon;
-                    tvName.setCompoundDrawablesWithIntrinsicBounds(fileIcon, null, null, null);
-                    tvSize.setText(FileUtil.getReadableFileSize(file.length()));
-                    tvDate.setText(_formatter.format(new Date(file.lastModified())));
+                } catch(SmbException e){
+                    e.printStackTrace();
                 }
-            } catch(SmbException e){
-                e.printStackTrace();
-            }
 
-            return null;
+                return null;
+            }
         });
 
         try{
