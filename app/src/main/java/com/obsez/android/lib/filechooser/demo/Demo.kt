@@ -1,22 +1,21 @@
 package com.obsez.android.lib.filechooser.demo
 
 import android.content.Context
-import android.widget.Toast
-import com.obsez.android.lib.filechooser.ChooserDialog
+import com.obsez.android.lib.filechooser.FileChooserDialog
 
 object Demo {
-    
-    
-    fun demo1(context: Context, startPath: String, callback: FileChooserDialog.Result) {
+
+
+    fun demo1(context: Context, startPath: String, callback: FileChooserDialog.OnChosenListener) {
         FileChooserDialog.newDialog(context)
-                .withFilterRegex(false, true, ".*\\.(jpe?g|png)")
-                .withStartFile(startPath)
-                .withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)
-                .withChosenListener(callback)
-                .withNavigateUpTo { true }
-                .withNavigateTo { true }
+                .setFilterRegex(false, true, ".*\\.(jpe?g|png)")
+                .setStartFile(startPath)
+                .setResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)
+                .setOnChosenListener(callback)
+                .setNavigateUpTo { true }
+                .setNavigateTo { true }
                 .build()
                 .show()
-        
+
     }
 }
