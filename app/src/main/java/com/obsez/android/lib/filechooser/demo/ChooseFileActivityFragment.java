@@ -1,8 +1,8 @@
-package com.obsez.android.lib.filechooser.demo;
+package com.obsez.android.lib.smbfilechooser.demo;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,10 +14,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.obsez.android.lib.filechooser.FileChooserDialog;
-import com.obsez.android.lib.filechooser.tool.DirAdapter;
+import com.obsez.android.lib.smbfilechooser.FileChooserDialog;
+import com.obsez.android.lib.smbfilechooser.internals.FileUtil;
+import com.obsez.android.lib.smbfilechooser.tool.DirAdapter;
 
 import java.io.File;
+
+//import android.support.v7.app.AlertDialog;
 
 
 /**
@@ -87,7 +90,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                         //    /**
                         //     * This method will be invoked when the dialog is dismissed. (both when canceled or file chosen)
                         //     * OnDismissListener is only available on API 17 or higher!
-                        //     * 
+                        //     *
                         //     * @param dialog the dialog that was dismissed
                         //     */
                         //    @Override
@@ -101,6 +104,14 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                                 Toast.makeText(ctx, "FOLDER: " + path, Toast.LENGTH_SHORT).show();
                                 _path = path;
                                 _tv.setText(_path);
+                            }
+                        })
+                        .cancelOnTouchOutside(true)
+                        .enableOptions(true)
+                        .setOnLastBackPressedListener(new FileChooserDialog.OnBackPressedListener(){
+                            @Override
+                            public void onBackPressed(@NonNull final AlertDialog dialog){
+                                Toast.makeText(ctx, "there is no parent directory", Toast.LENGTH_SHORT).show();
                             }
                         })
                         .build()
@@ -135,6 +146,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                                 _iv.setImageBitmap(ImageUtil.decodeFile(pathFile));
                             }
                         })
+                        .enableOptions(true)
                         .build()
                         .show();
             }
@@ -174,6 +186,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                         _iv.setImageBitmap(ImageUtil.decodeFile(pathFile));
                     }
                 })
+                .enableOptions(true)
                 .build()
                 .show();
     }

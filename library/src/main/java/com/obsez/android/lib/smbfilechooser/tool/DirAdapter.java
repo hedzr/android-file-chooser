@@ -1,4 +1,4 @@
-package com.obsez.android.lib.filechooser.tool;
+package com.obsez.android.lib.smbfilechooser.tool;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,10 +11,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.obsez.android.lib.filechooser.R;
-import com.obsez.android.lib.filechooser.internals.FileUtil;
-import com.obsez.android.lib.filechooser.internals.UiUtil;
-import com.obsez.android.lib.filechooser.internals.WrappedDrawable;
+import com.obsez.android.lib.smbfilechooser.R;
+import com.obsez.android.lib.smbfilechooser.internals.FileUtil;
+import com.obsez.android.lib.smbfilechooser.internals.UiUtil;
+import com.obsez.android.lib.smbfilechooser.internals.WrappedDrawable;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -123,3 +123,4 @@ public class DirAdapter extends ArrayAdapter<File> {
     private Drawable _defaultFileIcon = null;
     private boolean _resolveFileType = false;
 }
+

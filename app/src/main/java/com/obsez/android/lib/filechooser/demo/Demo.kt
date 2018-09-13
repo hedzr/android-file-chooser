@@ -1,7 +1,7 @@
-package com.obsez.android.lib.filechooser.demo
+package com.obsez.android.lib.smbfilechooser.demo
 
 import android.content.Context
-import com.obsez.android.lib.filechooser.FileChooserDialog
+import com.obsez.android.lib.smbfilechooser.FileChooserDialog
 
 object Demo {
 

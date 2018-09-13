@@ -1,4 +1,4 @@
-package com.obsez.android.lib.filechooser;
+package com.obsez.android.lib.smbfilechooser;
 
 /**
  * Created by coco on 6/7/15.
