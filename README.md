@@ -86,7 +86,7 @@ try{
 })
 //.setOnBackPressedListener(...)
 ```
-- if you want to limit the naming of new folders use this. by default the max length is set to 255, and the regex is *\"\[\<\>\|\\\\\:\&\;\#\\\n\\\r\\\t\?\*\~\\\0\-\\\3\7\]\"*.
+- if you want to limit the naming of new folders use this. by default the max length is set to 255, and the regex is *\"\[\<\>\|\\\:\&\;\#\\n\\r\\t\?\*\~\\0\-\\37\]\"*.
 ```
 .setNewFolderFilter(new FileUtil.NewFolderFilter(maxLength, regex))
 ```
