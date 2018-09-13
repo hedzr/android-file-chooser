@@ -10,12 +10,11 @@
 [![Release](https://jitpack.io/v/hedzr/android-file-chooser.svg)](https://jitpack.io/#hedzr/android-file-chooser)
 
 `android-file-library` is a lightweight file/folder chooser.
-`android-samba-file-chooser` is a fork that adds jcifs.smb.SmbFile support.
-
+This (`android-smbfile-chooser`) is my take on it. I added the ability to use [jcifs.smb.SmbFile](https://jcifs.samba.org/) to browse a Windows shared directory. I also added some small functionality like the ability to add new folders on the go, or delete files, as well as some event listeners like OnBackPressed and OnDismissed (works only on API >= 17).
 
 ### Snapshots
 
-<img src="captures/choose_file.png" width="360"/><img src="captures/choose_folder.png" width="360"/><img src="captures/smb.png" width="360"/><img src="captures/options.png" width="360"/>
+<img src="captures/choose_file.png" width="360"/><img src="captures/smb.png" width="360"/><img src="captures/options.png" width="360"/><img src="captures/new_folder.png" width="360"/>
 
 ### Demo Application
 
@@ -33,7 +32,7 @@ NtlmPasswordAuthentication not yet supported! (haven't had the need for it)
 ```
 try{
     SmbFileChooserDialog dialog = SmbFileChooserDialog.newDialog(context, "**.***.*.**")
-        .setResources("Select a directory", "choose", "cancel")
+        .setResources("select a directory", "choose", "cancel")
         .setFilter(true, false)
         .setOnChosenListener((path, file) -> {
             try{
@@ -50,6 +49,46 @@ try{
 } catch(MalformedURLException | InterruptedException | ExecutionException e){
     e.printStackTrace();
 }
+```
+
+## What's New?
+- by default the option to create new folder and delete files is disabled.
+```
+.enableOptions(true)
+```
+- now you can also pass Strings instead of Resourse id. **if Resourse id was set, it will take priority over Strings!**
+```
+.setOptionResources(0, 0, 0, 0)
+.setOptionResources("new folder", "delete", "cancel", "ok")
+.setOptionsIcons(R.drawable.ic_menu_24dp, R.drawable.ic_add_24dp, R.drawable.ic_delete_24dp)
+```
+- by default touching outside the dialog does nothing.
+```
+.cancelOnTouchOutside(true)
+```
+- by default clicking any button (except neutral/options) will close the dialog. if you disable that, override at least one so you can close the dialog **(that includes the back button)**
+```
+.setDismissOnButtonClick(false)
+.setNegativeButtonListener(new DialogInterface.OnClickListener(){
+    @Override
+    public void onClick(final DialogInterface dialog, final int which){
+        dialog.dismiss();
+    }
+})
+```
+- I've made it so that back button takes you up a directory if there's any, otherwise it closes the dialog. if you want to change the behaviour when there's nothing to go back use setOnLastBackPressedListener. **LastBackPressed won't be called if you use setOnBackPressedListener!**
+```
+.setOnLastBackPressedListener(new FileChooserDialog.OnBackPressedListener(){
+    @Override
+    public void onBackPressed(@NonNull final AlertDialog dialog){
+        // there is no parent directory
+    }
+})
+//.setOnBackPressedListener(...)
+```
+- if you want to limit the naming of new folders use this. by default the max length is set to 255, and the regex is *"[<>|\\\\:&;#\n\r\t?*~\0-\37]"*.
+```
+.setNewFolderFilter(new FileUtil.NewFolderFilter(maxLength, regex))
 ```
 
 for more information please refere to the [original](https://github.com/hedzr/android-file-chooser).
