@@ -292,7 +292,7 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
         return this;
     }
 
-    @NonNull public SmbFileChooserDialog setOptionsIcons(@DrawableRes final int optionsIconRes, @DrawableRes final int createDirIconRes, @DrawableRes final int deleteRes) {
+    @NonNull public SmbFileChooserDialog setOptionIcons(@DrawableRes final int optionsIconRes, @DrawableRes final int createDirIconRes, @DrawableRes final int deleteRes) {
         this._optionsIconRes = optionsIconRes;
         this._createDirIconRes = createDirIconRes;
         this._deleteIconRes = deleteRes;
