@@ -1,4 +1,4 @@
-package com.obsez.android.lib.filechooser.demo;
+package com.obsez.android.lib.smbfilechooser.demo;
 
 import android.content.res.Configuration;
 import android.content.res.Resources;

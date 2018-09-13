@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.obsez.android.lib.filechooser">
+          package="com.obsez.android.lib.smbfilechooser">
 
   <application android:allowBackup="true"
       >
