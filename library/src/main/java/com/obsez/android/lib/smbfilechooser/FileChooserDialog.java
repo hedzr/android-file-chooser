@@ -247,7 +247,7 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
         return this;
     }
 
-    @NonNull public FileChooserDialog setOptionsIcons(@DrawableRes final int optionsIconRes, @DrawableRes final int createDirIconRes, @DrawableRes final int deleteRes) {
+    @NonNull public FileChooserDialog setOptionIcons(@DrawableRes final int optionsIconRes, @DrawableRes final int createDirIconRes, @DrawableRes final int deleteRes) {
         this._optionsIconRes = optionsIconRes;
         this._createDirIconRes = createDirIconRes;
         this._deleteIconRes = deleteRes;
