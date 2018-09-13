@@ -68,7 +68,7 @@ try{
 ```
 - by default clicking any button (except neutral/options) will close the dialog. if you disable that, override at least one so you can close the dialog **(that includes the back button)**
 ```
-.setDismissOnButtonClick(false)
+.dismissOnButtonClick(false)
 .setNegativeButtonListener(new DialogInterface.OnClickListener(){
     @Override
     public void onClick(final DialogInterface dialog, final int which){
