@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.11s - 2018-09-14
+
+\+ added **NtlmPasswordAuthentication** authentication to the *samba* client
+\* updated the demo app
+
+
 ## 1.1.10s - 2018-09-14
 
 \* forked as android-smbfile-chooser!
