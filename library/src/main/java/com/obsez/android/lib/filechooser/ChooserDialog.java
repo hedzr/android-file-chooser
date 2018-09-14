@@ -509,7 +509,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             } else{
                                                 ViewCompat.setElevation(holder, 20);
                                             }
-                                            params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, 3);
+                                            params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, 5);
                                             linearLayout.addView(holder, params);
 
                                             Space rightSpace = new Space(_context);
