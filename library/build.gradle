@@ -26,7 +26,7 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 //        debug {
@@ -48,8 +48,8 @@ dependencies {
 
 
 // gradle uploadArchives
-apply from: '_sonatype.gradle'
+//apply from: '_sonatype.gradle'
 // gradle publishToMavenLocal
-apply from: '_mavenlocal.gradle'
+//apply from: '_mavenlocal.gradle'
 // gradle bintrayUpload
-apply from: '_bintray.gradle'
+//apply from: '_bintray.gradle'
