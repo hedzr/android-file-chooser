@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.1.10 (smb) - 2018-09-14
+## 1.1.10s - 2018-09-14
 
 \* forked as android-smbfile-chooser!
 \* changed all methods that start with `with...` to start with `set...`
