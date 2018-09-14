@@ -11,6 +11,7 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -24,6 +25,7 @@ import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -31,6 +33,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -486,12 +489,31 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
                     final Runnable showOptions = new Runnable(){
                         @Override
                         public void run(){
-                            FileChooserDialog.this._options.setVisibility(View.VISIBLE);
-                            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) FileChooserDialog.this._list.getLayoutParams();
-                            // for some reason FileChooserDialog.this._options.getHeight() is 0 the first time...
-                            params.bottomMargin = FileChooserDialog.this._options.getHeight() != 0 ?
-                                    FileChooserDialog.this._options.getHeight() : 60;
-                            FileChooserDialog.this._list.setLayoutParams(params);
+                            final ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) FileChooserDialog.this._list.getLayoutParams();
+                            if(FileChooserDialog.this._options.getHeight() == 0){
+                                ViewTreeObserver viewTreeObserver = FileChooserDialog.this._options.getViewTreeObserver();
+                                viewTreeObserver.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                                    @Override
+                                    public boolean onPreDraw() {
+                                        if (FileChooserDialog.this._options.getHeight() <= 0) { return false; }
+                                        FileChooserDialog.this._options.getViewTreeObserver().removeOnPreDrawListener(this);
+                                        Handler handler = new Handler();
+                                        handler.postDelayed(new Runnable(){
+                                            @Override
+                                            public void run(){
+                                                params.bottomMargin = _options.getHeight();
+                                                FileChooserDialog.this._list.setLayoutParams(params);
+                                                FileChooserDialog.this._options.setVisibility(View.VISIBLE);
+                                            }
+                                        }, 100); // Just to make sure that the View has been drawn, so the transition is smoother.
+                                        return true;
+                                    }
+                                });
+                            } else{
+                                FileChooserDialog.this._options.setVisibility(View.VISIBLE);
+                                params.bottomMargin = FileChooserDialog.this._options.getHeight();
+                                FileChooserDialog.this._list.setLayoutParams(params);
+                            }
                         }
                     };
                     final Runnable hideOptions = new Runnable(){
@@ -595,6 +617,16 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
                                             overlay.setVisibility(View.INVISIBLE);
                                             FileChooserDialog.this._newFolderView = overlay;
 
+                                            // A LynearLayout and a pair of Spaces to center vews.
+                                            LinearLayout linearLayout = new LinearLayout(getBaseContext());
+                                            params = new FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, CENTER);
+                                            overlay.addView(linearLayout, params);
+
+                                            // The Space on the left.
+                                            Space leftSpace = new Space(getBaseContext());
+                                            params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, 2);
+                                            linearLayout.addView(leftSpace, params);
+
                                             // A solid holder view for the EditText and Buttons.
                                             final LinearLayout holder = new LinearLayout(getBaseContext());
                                             holder.setOrientation(LinearLayout.VERTICAL);
@@ -604,20 +636,24 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
                                             } else{
                                                 ViewCompat.setElevation(holder, 20);
                                             }
-                                            params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, CENTER);
-                                            overlay.addView(holder, params);
+                                            params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, 5);
+                                            linearLayout.addView(holder, params);
 
-                                            // tоdо: (maybe) replace EditText with android.support.design.widget.TextInputLayout and android.support.design.widget.TextInputEditText
-                                            // An EditText to input the new folder name.
+                                            // The Space on the right.
+                                            Space rightSpace = new Space(getBaseContext());
+                                            params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, 2);
+                                            linearLayout.addView(rightSpace, params);
+
                                             final EditText input = new EditText(getBaseContext());
                                             input.setText(newFolder.getName());
                                             input.setSelectAllOnFocus(true);
                                             input.setSingleLine(true);
-                                            // There should be no suggestions, but... :)
+                                            // There should be no suggestions, but... android... :)
                                             input.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_VARIATION_FILTER | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
                                             input.setFilters(new InputFilter[] { FileChooserDialog.this._newFolderFilter != null ? FileChooserDialog.this._newFolderFilter : new NewFolderFilter() });
                                             input.setGravity(CENTER_HORIZONTAL);
-                                            params = new LinearLayout.LayoutParams(256, WRAP_CONTENT);
+                                            params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
+                                            params.setMargins(3, 2, 3, 0);
                                             holder.addView(input, params);
 
                                             this.input = input;

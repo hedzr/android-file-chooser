@@ -10,6 +10,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -23,6 +24,7 @@ import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -30,6 +32,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -571,12 +574,31 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
                     final Runnable showOptions = new Runnable(){
                         @Override
                         public void run(){
-                            SmbFileChooserDialog.this._options.setVisibility(View.VISIBLE);
-                            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) SmbFileChooserDialog.this._list.getLayoutParams();
-                            // for some reason SmbFileChooserDialog.this._options.getHeight() is 0 the first time...
-                            params.bottomMargin = SmbFileChooserDialog.this._options.getHeight() != 0 ?
-                                    SmbFileChooserDialog.this._options.getHeight() : 60;
-                            SmbFileChooserDialog.this._list.setLayoutParams(params);
+                            final ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) SmbFileChooserDialog.this._list.getLayoutParams();
+                            if(SmbFileChooserDialog.this._options.getHeight() == 0){
+                                ViewTreeObserver viewTreeObserver = SmbFileChooserDialog.this._options.getViewTreeObserver();
+                                viewTreeObserver.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                                    @Override
+                                    public boolean onPreDraw() {
+                                        if (SmbFileChooserDialog.this._options.getHeight() <= 0) { return false; }
+                                        SmbFileChooserDialog.this._options.getViewTreeObserver().removeOnPreDrawListener(this);
+                                        Handler handler = new Handler();
+                                        handler.postDelayed(new Runnable(){
+                                            @Override
+                                            public void run(){
+                                                params.bottomMargin = _options.getHeight();
+                                                SmbFileChooserDialog.this._list.setLayoutParams(params);
+                                                SmbFileChooserDialog.this._options.setVisibility(View.VISIBLE);
+                                            }
+                                        }, 100); // Just to make sure that the View has been drawn, so the transition is smoother.
+                                        return true;
+                                    }
+                                });
+                            } else{
+                                SmbFileChooserDialog.this._options.setVisibility(View.VISIBLE);
+                                params.bottomMargin = SmbFileChooserDialog.this._options.getHeight();
+                                SmbFileChooserDialog.this._list.setLayoutParams(params);
+                            }
                         }
                     };
                     final Runnable hideOptions = new Runnable(){
@@ -703,6 +725,16 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
                                             overlay.setVisibility(View.INVISIBLE);
                                             SmbFileChooserDialog.this._newFolderView = overlay;
 
+                                            // A LynearLayout and a pair of Spaces to center vews.
+                                            LinearLayout linearLayout = new LinearLayout(getBaseContext());
+                                            params = new FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, CENTER);
+                                            overlay.addView(linearLayout, params);
+
+                                            // The Space on the left.
+                                            Space leftSpace = new Space(getBaseContext());
+                                            params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, 2);
+                                            linearLayout.addView(leftSpace, params);
+
                                             // A solid holder view for the EditText and Buttons.
                                             final LinearLayout holder = new LinearLayout(getBaseContext());
                                             holder.setOrientation(LinearLayout.VERTICAL);
@@ -712,11 +744,14 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
                                             } else{
                                                 ViewCompat.setElevation(holder, 20);
                                             }
-                                            params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, CENTER);
-                                            overlay.addView(holder, params);
+                                            params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, 5);
+                                            linearLayout.addView(holder, params);
 
-                                            // tоdо: (maybe) replace EditText with android.support.design.widget.TextInputLayout and android.support.design.widget.TextInputEditText
-                                            // actually, maybe not!
+                                            // The Space on the right.
+                                            Space rightSpace = new Space(getBaseContext());
+                                            params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, 2);
+                                            linearLayout.addView(rightSpace, params);
+
                                             // An EditText to input the new folder name.
                                             final EditText input = new EditText(getBaseContext());
                                             try{
