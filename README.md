@@ -28,7 +28,7 @@ A demo-app of the original can be installed from [Play Store](https://play.googl
 **NOTE**:
 
 I replaced all methods "with___()" with "set___()"! also, use static method "newDialog(context)" instead of a constuctor.
-NtlmPasswordAuthentication not yet supported! (haven't had the need for it)
+Also, please don't forget to check the [**_original_**}(https://github.com/hedzr/android-file-chooser) and *:star: star* it! 
 
 ## Usage
 
