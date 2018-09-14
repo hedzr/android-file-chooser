@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.10 (smb) - 2018-09-14
+
+\* forked as android-smbfile-chooser!
+\* changed all methods that start with `with...` to start with `set...`
+\+ added `OnDismissListener`(**only works on API >= 17) and `OnBackPressedListener`
+\* changed the default back button behaviour from always dismissing the dialog, to going up a directory
+\+ added the ability to enable options button (AlertDialog Neutral button) to be able to create new folders and delete files on the go (for both local and shared Files)
+\+ added the ability to set Strings instead of StringResources. **if both are set, StringResources take priority**
+
 
 ## 1.1.10 - 2018-06-05
 
