@@ -2,7 +2,6 @@ package com.obsez.android.lib.smbfilechooser.demo;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,15 +9,22 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.obsez.android.lib.smbfilechooser.FileChooserDialog;
+import com.obsez.android.lib.smbfilechooser.SmbFileChooserDialog;
 import com.obsez.android.lib.smbfilechooser.internals.FileUtil;
 import com.obsez.android.lib.smbfilechooser.tool.DirAdapter;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.util.concurrent.ExecutionException;
+
+import jcifs.smb.NtlmPasswordAuthentication;
+import jcifs.smb.SmbFile;
 
 //import android.support.v7.app.AlertDialog;
 
@@ -146,9 +152,59 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                                 _iv.setImageBitmap(ImageUtil.decodeFile(pathFile));
                             }
                         })
-                        .enableOptions(true)
                         .build()
                         .show();
+            }
+        });
+
+        final EditText mEditDomain = root.findViewById(R.id.edit_domain);
+        final EditText mEditName = root.findViewById(R.id.edit_name);
+        final EditText mEditPassword = root.findViewById(R.id.edit_password);
+        root.findViewById(R.id.btn_choose_a_folder_smb).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(final View v){
+                final Context ctx = getActivity();
+                assert ctx != null;
+                String domain = mEditDomain.getText().toString();
+                if(domain.isEmpty()){
+                    mEditDomain.setError("Required!");
+                    mEditDomain.requestFocus();
+                    return;
+                }
+                String name = mEditName.getText().toString();
+                if(name.isEmpty()) name = null;
+                String password = mEditPassword.getText().toString();
+                if(password.isEmpty()) password = null;
+                NtlmPasswordAuthentication auth;
+                if(name == null && password == null) auth = null;
+                    else auth = new NtlmPasswordAuthentication(domain, name, password);
+                try{
+                    SmbFileChooserDialog.newDialog(ctx, domain, auth)
+                            .setResources(R.string.title_choose_folder_smb, R.string.title_choose, R.string.dialog_cancel)
+                            .setFilter(true, false)
+                            .enableOptions(true)
+                            .setStartFile(null) // same as "smb://{domain}/
+                            .setOnLastBackPressedListener(new SmbFileChooserDialog.OnBackPressedListener(){
+                                @Override
+                                public void onBackPressed(@NonNull final AlertDialog dialog){
+                                    Toast.makeText(ctx, "This dialog won't close by pressing back!", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .setNewFolderFilter(new FileUtil.NewFolderFilter(/*max length of 10*/ 10, /*regex ban everything but a to z (lowercase)*/ "^[a-z]"))
+                            .setOnChosenListener(new SmbFileChooserDialog.OnChosenListener(){
+                                @Override
+                                public void onChoosePath(@NonNull final String path, @NonNull final SmbFile file){
+                                    Toast.makeText(ctx, "FOLDER: " + path, Toast.LENGTH_SHORT).show();
+                                    _path = path;
+                                    _tv.setText(_path);
+                                }
+                            })
+                            .build()
+                            .show();
+                } catch(MalformedURLException | InterruptedException | ExecutionException e){
+                    e.printStackTrace();
+                    Toast.makeText(ctx, "Failed! try again", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         return root;
@@ -186,7 +242,6 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                         _iv.setImageBitmap(ImageUtil.decodeFile(pathFile));
                     }
                 })
-                .enableOptions(true)
                 .build()
                 .show();
     }

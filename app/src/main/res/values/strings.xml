@@ -1,5 +1,5 @@
 <resources>
-  <string name="app_name">android-file-chooser demo</string>
+  <string name="app_name">android-smbfile-chooser demo</string>
   <string name="hello_world">Hello world!</string>
   <string name="action_settings">Settings</string>
   <string name="btn_choose_a_file">Choose a file</string>
@@ -9,4 +9,9 @@
   <string name="title_choose_folder">Choose a folder</string>
   <string name="btn_choose_any_file">Choose any file</string>
   <string name="title_choose_any_file">Choose any file</string>
+  <string name="btn_choose_a_folder_smb">Choose a folder (smb)</string>
+  <string name="title_choose_folder_smb">Choose a folder</string>
+  <string name="hint_domain">domain</string>
+  <string name="hint_name">name</string>
+  <string name="hint_password">password</string>
 </resources>

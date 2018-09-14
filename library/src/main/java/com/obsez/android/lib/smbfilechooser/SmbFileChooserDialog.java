@@ -42,7 +42,6 @@ import com.obsez.android.lib.smbfilechooser.internals.UiUtil;
 import com.obsez.android.lib.smbfilechooser.tool.SmbDirAdapter;
 
 import java.net.MalformedURLException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -57,6 +56,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.regex.Pattern;
 
 import jcifs.Config;
+import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 import jcifs.smb.SmbFileFilter;
@@ -100,29 +100,52 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
         super(context);
     }
 
-    private SmbFileChooserDialog(@NonNull final Context context, @NonNull String serverIP) throws MalformedURLException{
-        super(context);
-        this._rootDirPath = "smb://" + serverIP + '/';
-        this._rootDir = new SmbFile(this._rootDirPath);
-        Config.setProperty("jcifs.netbios.wins", serverIP);
+    private SmbFileChooserDialog(@NonNull final Context context, @NonNull final String serverIP) throws MalformedURLException{
+        this(context, serverIP, null);
     }
 
-    @NonNull public static SmbFileChooserDialog newDialog(@NonNull Context context){
+    public SmbFileChooserDialog(@NonNull final Context context, @Nullable final NtlmPasswordAuthentication auth){
+        super(context);
+        this._auth = auth;
+    }
+
+    private SmbFileChooserDialog(@NonNull final Context context, @NonNull final String serverIP, @Nullable final NtlmPasswordAuthentication auth) throws MalformedURLException{
+        super(context);
+        this._rootDirPath = "smb://" + serverIP + '/';
+        this._rootDir = new SmbFile(this._rootDirPath, auth);
+        Config.setProperty("jcifs.netbios.wins", serverIP);
+        this._auth = auth;
+    }
+
+    @NonNull public static SmbFileChooserDialog newDialog(@NonNull final Context context){
         return new SmbFileChooserDialog(context);
     }
 
-    @NonNull public static SmbFileChooserDialog newDialog(@NonNull Context context, @NonNull String serverIP) throws MalformedURLException{
+    @NonNull public static SmbFileChooserDialog newDialog(@NonNull final Context context, @NonNull final String serverIP) throws MalformedURLException{
         return new SmbFileChooserDialog(context, serverIP);
     }
 
-    @NonNull public SmbFileChooserDialog setServer(@NonNull String serverIP) throws MalformedURLException{
+    @NonNull public static SmbFileChooserDialog newDialog(@NonNull final Context context, @Nullable final NtlmPasswordAuthentication auth){
+        return new SmbFileChooserDialog(context, auth);
+    }
+
+    @NonNull public static SmbFileChooserDialog newDialog(@NonNull final Context context, @NonNull final String serverIP, @Nullable final NtlmPasswordAuthentication auth) throws MalformedURLException{
+        return new SmbFileChooserDialog(context, serverIP, auth);
+    }
+
+    @NonNull public SmbFileChooserDialog setAuthenticator(@NonNull final NtlmPasswordAuthentication auth){
+        this._auth = auth;
+        return this;
+    }
+
+    @NonNull public SmbFileChooserDialog setServer(@NonNull final String serverIP) throws MalformedURLException{
         this._rootDirPath = "smb://" + serverIP + '/';
-        this._rootDir = new SmbFile(this._rootDirPath);
+        this._rootDir = new SmbFile(this._rootDirPath, this._auth);
         Config.setProperty("jcifs.netbios.wins", serverIP);
         return this;
     }
 
-    @NonNull public SmbFileChooserDialog setFilter(@NonNull SmbFileFilter sff) {
+    @NonNull public SmbFileChooserDialog setFilter(@NonNull final SmbFileFilter sff) {
         setFilter(false, false, (String[]) null);
         this._fileFilter = sff;
         return this;
@@ -165,7 +188,7 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
             @Override
             public SmbFileChooserDialog call() throws Exception{
                 if(startFile != null){
-                    _currentDir = new SmbFile(startFile);
+                    _currentDir = new SmbFile(startFile, _auth);
                 } else{
                     _currentDir = _rootDir;
                 }
@@ -175,7 +198,7 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
                     if(parent == null){
                         throw new MalformedURLException(startFile + " has no parent directory");
                     }
-                    _currentDir = new SmbFile(parent);
+                    _currentDir = new SmbFile(parent, _auth);
                 }
 
                 if(_currentDir == null){
@@ -684,11 +707,11 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
                                             @Override
                                             public String call(){
                                                 try{
-                                                    SmbFile newFolder = new SmbFile(SmbFileChooserDialog.this._currentDir, "New folder");
+                                                    SmbFile newFolder = new SmbFile(SmbFileChooserDialog.this._currentDir.getPath(), "New folder", SmbFileChooserDialog.this._auth);
                                                     for(int i = 1; newFolder.exists(); i++)
-                                                        newFolder = new SmbFile(SmbFileChooserDialog.this._currentDir, "New Folder (" + i + ')');
+                                                        newFolder = new SmbFile(SmbFileChooserDialog.this._currentDir.getPath(), "New Folder (" + i + ')', SmbFileChooserDialog.this._auth);
                                                     return newFolder.getName();
-                                                } catch(UnknownHostException | MalformedURLException | SmbException e){
+                                                } catch(MalformedURLException | SmbException e){
                                                     e.printStackTrace();
                                                     return "";
                                                 }
@@ -914,9 +937,6 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
 
                 // Add the ".." entry
                 final String parent = _currentDir.getParent();
-                /*if (parent != null && !parent.equalsIgnoreCase("smb://")) {
-                    _entries.add(new SmbFile(parent));
-                }*/
                 if (parent != null && !parent.equalsIgnoreCase("smb://")) {
                     _entries.add(new SmbFile("smb://.."));
                 }
@@ -1005,7 +1025,7 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
             @Override
             public void run(){
                 try{
-                    final SmbFile newDir = new SmbFile(SmbFileChooserDialog.this._currentDir + name);
+                    final SmbFile newDir = new SmbFile(SmbFileChooserDialog.this._currentDir.getPath(), name);
                     if(!newDir.exists()){
                         newDir.mkdir();
                         refreshDirs();
@@ -1124,6 +1144,7 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
     private SmbFile _currentDir;
     private String _rootDirPath;
     private SmbFile _rootDir;
+    private NtlmPasswordAuthentication _auth = null;
     private AlertDialog _alertDialog;
     private ListView _list;
     private OnChosenListener _onChosenListener = null;

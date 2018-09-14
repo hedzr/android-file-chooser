@@ -31,14 +31,61 @@
       android:layout_centerHorizontal="true"
       android:text="@string/btn_choose_any_file"/>
 
+  <LinearLayout
+      android:id="@+id/edit_holder"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:layout_below="@+id/btn_choose_any_file">
+
+      <EditText
+          android:id="@+id/edit_domain"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:layout_margin="5dp"
+          android:hint="@string/hint_domain"
+          android:singleLine="true"
+          android:inputType="text"/>
+
+      <EditText
+          android:id="@+id/edit_name"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:layout_margin="5dp"
+          android:hint="@string/hint_name"
+          android:singleLine="true"
+          android:inputType="text"/>
+
+
+      <EditText
+          android:id="@+id/edit_password"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:layout_margin="5dp"
+          android:hint="@string/hint_password"
+          android:singleLine="true"
+          android:inputType="textPassword"/>
+
+  </LinearLayout>
+
+  <Button
+      android:id="@+id/btn_choose_a_folder_smb"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/edit_holder"
+      android:layout_centerHorizontal="true"
+      android:text="@string/btn_choose_a_folder_smb"/>
+
   <TextView
       android:text="@string/hello_world"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:id="@+id/textView"
-      android:layout_below="@+id/btn_choose_any_file"
-      android:layout_centerHorizontal="true"
-      />
+      android:layout_below="@+id/btn_choose_a_folder_smb"
+      android:layout_centerHorizontal="true"/>
 
   <ImageView
       android:layout_width="match_parent"
@@ -46,6 +93,7 @@
       android:id="@+id/imageView"
       android:layout_below="@+id/textView"
       android:layout_centerHorizontal="true"
-      android:background="@android:color/transparent"/>
+      android:background="@android:color/transparent"
+      tools:ignore="ContentDescription" />
 
 </RelativeLayout>
