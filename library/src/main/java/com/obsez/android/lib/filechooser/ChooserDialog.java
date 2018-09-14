@@ -466,7 +466,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                         hideOptions.run();
                                         File newFolder = new File(_currentDir, "New folder");
                                         for(int i = 1; newFolder.exists(); i++)
-                                            newFolder = new File(_currentDir, "New Folder (" + i + ')');
+                                            newFolder = new File(_currentDir, "New folder (" + i + ')');
                                         if(this.input != null) this.input.setText(newFolder.getName());
 
                                         if(_newFolderView == null){
