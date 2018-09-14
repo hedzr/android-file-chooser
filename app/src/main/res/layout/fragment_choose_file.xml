@@ -31,14 +31,21 @@
       android:layout_centerHorizontal="true"
       android:text="@string/btn_choose_any_file"/>
 
+  <Button
+      android:id="@+id/btn_choose_multiple"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/btn_choose_any_file"
+      android:layout_centerHorizontal="true"
+      android:text="@string/btn_choose_multiple"/>
+
   <TextView
       android:text="@string/hello_world"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:id="@+id/textView"
-      android:layout_below="@+id/btn_choose_any_file"
-      android:layout_centerHorizontal="true"
-      />
+      android:layout_below="@+id/btn_choose_multiple"
+      android:layout_centerHorizontal="true"/>
 
   <ImageView
       android:layout_width="match_parent"

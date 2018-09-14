@@ -156,8 +156,38 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    public ChooserDialog dismissOnButtonClick(final boolean dismissOnButtonClick){
+        this._dismissOnButtonClick = dismissOnButtonClick;
+        if(dismissOnButtonClick){
+            this._defaultLastBack = new OnBackPressedListener(){
+                @Override
+                public void onBackPressed(AlertDialog dialog){
+                    dialog.dismiss();
+                }
+            };
+        } else{
+            this._defaultLastBack = new OnBackPressedListener(){
+                @Override
+                public void onBackPressed(AlertDialog dialog){
+                    //
+                }
+            };
+        }
+        return this;
+    }
+
     public ChooserDialog withChosenListener(Result r) {
         this._result = r;
+        return this;
+    }
+
+    public ChooserDialog withOnBackPressedListener(OnBackPressedListener listener){
+        this._onBackPressed = listener;
+        return this;
+    }
+
+    public ChooserDialog withOnLastBackPressedListener(OnBackPressedListener listener){
+        this._onLastBackPressed = listener;
         return this;
     }
 
@@ -323,12 +353,12 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             }
         }
 
-        if (_dirOnly) {
+        if (_dirOnly || !_dismissOnButtonClick) {
             builder.setPositiveButton(_okRes, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if(_result != null){
-                        if(_dirOnly){
+                        if(_dirOnly || !_dismissOnButtonClick){
                             _result.onChoosePath(_currentDir.getAbsolutePath(), _currentDir);
                         }
                     }
@@ -342,11 +372,51 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             builder.setOnCancelListener(_cancelListener2);
         }
 
+        builder.setOnKeyListener(new DialogInterface.OnKeyListener(){
+            @Override
+            public boolean onKey(final DialogInterface dialog, final int keyCode, final KeyEvent event){
+                if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP){
+                    if(_newFolderView != null && _newFolderView.getVisibility() == View.VISIBLE){
+                        _newFolderView.setVisibility(View.INVISIBLE);
+                        return true;
+                    }
+
+                    _onBackPressed.onBackPressed((AlertDialog) dialog);
+                }
+                return true;
+            }
+        });
+
         _alertDialog = builder.create();
 
         _alertDialog.setOnShowListener(new DialogInterface.OnShowListener(){
             @Override
             public void onShow(final DialogInterface dialog){
+                if(!_dismissOnButtonClick){
+                    Button negative = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+                    Button positive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+
+                    negative.setOnClickListener(new View.OnClickListener(){
+                        @Override
+                        public void onClick(final View v){
+                            if(_negativeListener != null){
+                                _negativeListener.onClick(_alertDialog, AlertDialog.BUTTON_NEGATIVE);
+                            }
+                        }
+                    });
+
+                    positive.setOnClickListener(new View.OnClickListener(){
+                        @Override
+                        public void onClick(final View v){
+                            if(_result != null){
+                                if(_dirOnly || !_dismissOnButtonClick){
+                                    _result.onChoosePath(_currentDir.getAbsolutePath(), _currentDir);
+                                }
+                            }
+                        }
+                    });
+                }
+
                 if (_createDirRes == 0 || _newFolderCancelRes == 0 || _newFolderOkRes == 0) {
                     throw new RuntimeException("withOptionResources() should be called at first.");
                 }
@@ -651,7 +721,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         File[] files = _currentDir.listFiles(_fileFilter);
 
         // Add the ".." entry
-        if (_currentDir.getParent() != null) {
+        if (_currentDir.getParentFile() != null && !_currentDir.getParentFile().equals(Environment.getExternalStorageDirectory().getParentFile())) {
             _entries.add(new File(".."));
         }
 
@@ -757,9 +827,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     if (file.isDirectory()){
                         if (_folderNavToCB == null) _folderNavToCB = _defaultNavToCB;
                         if (_folderNavToCB.canNavigate(file)) _currentDir = file;
-                    } else if (!_dirOnly && _result != null){
+                    } else if ((!_dirOnly || !_dismissOnButtonClick) && _result != null){
                         _result.onChoosePath(file.getAbsolutePath(), file);
-                        _alertDialog.dismiss();
+                        if(_dismissOnButtonClick) _alertDialog.dismiss();
                         return;
                     }
                     break;
@@ -800,6 +870,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return adapter;
     }
 
+    public void dismiss(){
+        _alertDialog.dismiss();
+    }
+
     private List<File> _entries = new ArrayList<>();
     private File _currentDir;
     private Context _context;
@@ -827,6 +901,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private @DrawableRes
     int _optionsIconRes = -1, _createDirIconRes = -1, _deleteIconRes = -1;
     private View _newFolderView;
+    private boolean _dismissOnButtonClick = true;
 
     @FunctionalInterface
     public interface AdapterSetter {
@@ -872,6 +947,32 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         @Override
         public boolean canNavigate(File dir) {
             return true;
+        }
+    };
+
+    @FunctionalInterface
+    public interface OnBackPressedListener{
+        void onBackPressed(AlertDialog dialog);
+    }
+
+    private OnBackPressedListener _onBackPressed = (new OnBackPressedListener(){
+        @Override
+        public void onBackPressed(AlertDialog dialog){
+            if(_entries.size() > 0
+                    && (_entries.get(0).getName().equals("../") || _entries.get(0).getName().equals(".."))){
+                onItemClick(null, _list, 0, 0);
+            } else{
+                if(_onLastBackPressed != null) _onLastBackPressed.onBackPressed(dialog);
+                else _defaultLastBack.onBackPressed(dialog);
+            }
+        }
+    });
+    private OnBackPressedListener _onLastBackPressed;
+
+    private OnBackPressedListener _defaultLastBack = new OnBackPressedListener(){
+        @Override
+        public void onBackPressed(AlertDialog dialog){
+            dialog.dismiss();
         }
     };
 
