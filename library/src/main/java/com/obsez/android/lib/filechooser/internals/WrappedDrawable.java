@@ -1,10 +1,9 @@
-package com.obsez.android.lib.smbfilechooser.internals;
+package com.obsez.android.lib.filechooser.internals;
 
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
 
 public class WrappedDrawable extends Drawable {
 
@@ -75,7 +74,7 @@ public class WrappedDrawable extends Drawable {
     }
 
     @Override
-    public void draw(@NonNull Canvas canvas) {
+    public void draw(Canvas canvas) {
         Drawable drawable = getDrawable();
         if (drawable != null) {
             drawable.draw(canvas);

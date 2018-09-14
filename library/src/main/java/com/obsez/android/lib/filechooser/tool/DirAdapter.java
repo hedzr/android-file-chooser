@@ -1,4 +1,4 @@
-package com.obsez.android.lib.smbfilechooser.tool;
+package com.obsez.android.lib.filechooser.tool;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,10 +11,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.obsez.android.lib.smbfilechooser.R;
-import com.obsez.android.lib.smbfilechooser.internals.FileUtil;
-import com.obsez.android.lib.smbfilechooser.internals.UiUtil;
-import com.obsez.android.lib.smbfilechooser.internals.WrappedDrawable;
+import com.obsez.android.lib.filechooser.R;
+import com.obsez.android.lib.filechooser.internals.FileUtil;
+import com.obsez.android.lib.filechooser.internals.UiUtil;
+import com.obsez.android.lib.filechooser.internals.WrappedDrawable;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -43,7 +43,8 @@ public class DirAdapter extends ArrayAdapter<File> {
 
     @SuppressLint("SimpleDateFormat")
     private void init(List<File> entries, String dateFormat) {
-        _formatter = new SimpleDateFormat(dateFormat != null && !"".equals(dateFormat.trim()) ? dateFormat.trim() : "yyyy/MM/dd HH:mm:ss");
+        _formatter = new SimpleDateFormat(
+                dateFormat != null && !"".equals(dateFormat.trim()) ? dateFormat.trim() : "yyyy/MM/dd HH:mm:ss");
         _entries = entries;
         _defaultFolderIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_folder);
         _defaultFileIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_file);
@@ -68,7 +69,7 @@ public class DirAdapter extends ArrayAdapter<File> {
             final Drawable folderIcon = _defaultFolderIcon;
             tvName.setCompoundDrawablesWithIntrinsicBounds(folderIcon, null, null, null);
             tvSize.setText("");
-            if (!file.getName().trim().equals("../") && !file.getName().trim().equals("..") && file.lastModified() != 0L) {
+            if (!_entries.get(position).getName().trim().equals("..")) {
                 tvDate.setText(_formatter.format(new Date(file.lastModified())));
             } else {
                 tvDate.setVisibility(View.GONE);
@@ -86,8 +87,7 @@ public class DirAdapter extends ArrayAdapter<File> {
             }
             tvName.setCompoundDrawablesWithIntrinsicBounds(d, null, null, null);
             tvSize.setText(FileUtil.getReadableFileSize(file.length()));
-            if(file.lastModified() != 0L) tvDate.setText(_formatter.format(new Date(file.lastModified())));
-              else tvDate.setVisibility(View.GONE);
+            tvDate.setText(_formatter.format(new Date(file.lastModified())));
         }
 
         return rl;

@@ -1,7 +1,7 @@
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           android:id="@+id/fragment"
-          android:name="com.obsez.android.lib.smbfilechooser.demo.ChooseFileActivityFragment"
+          android:name="com.obsez.android.lib.filechooser.demo.ChooseFileActivityFragment"
           tools:layout="@layout/fragment_choose_file"
           android:layout_width="match_parent"
           android:layout_height="match_parent"/>

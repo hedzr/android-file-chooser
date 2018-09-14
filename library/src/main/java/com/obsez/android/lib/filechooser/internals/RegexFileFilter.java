@@ -1,4 +1,4 @@
-package com.obsez.android.lib.smbfilechooser.internals;
+package com.obsez.android.lib.filechooser.internals;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -61,7 +61,10 @@ public class RegexFileFilter implements FileFilter {
         }
 
         String name = pathname.getName();
-        return m_pattern.matcher(name).matches();
+        if (m_pattern.matcher(name).matches()) {
+            return true;
+        }
+        return false;
     }
 
 }
