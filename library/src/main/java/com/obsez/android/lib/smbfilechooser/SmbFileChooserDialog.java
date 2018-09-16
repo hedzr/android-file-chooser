@@ -471,24 +471,24 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
         final Future thread = EXECUTOR.submit(new Runnable(){
             @Override
             public void run(){
-                SmbDirAdapter adapter = null;
-                try{
-                    adapter = SmbFileChooserDialog.this.refreshDirs();
-                } catch(MalformedURLException | SmbException e){
+                _adapter = new SmbDirAdapter(getBaseContext(), _entries, _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, _dateFormat);
+                if(SmbFileChooserDialog.this._adapterSetter != null){
+                    SmbFileChooserDialog.this._adapterSetter.apply(_adapter);
+                }
+                try {
+                    SmbFileChooserDialog.this.refreshDirs();
+                } catch (MalformedURLException | SmbException e) {
                     e.printStackTrace();
                 }
-                if(SmbFileChooserDialog.this._adapterSetter != null){
-                    SmbFileChooserDialog.this._adapterSetter.apply(adapter);
-                }
-
-                if(!SmbFileChooserDialog.this._disableTitle){
-                    if(SmbFileChooserDialog.this._titleRes == 0) builder.setTitle(SmbFileChooserDialog.this._title);
-                      else builder.setTitle(SmbFileChooserDialog.this._titleRes);
-                }
-                builder.setAdapter(adapter, SmbFileChooserDialog.this);
+                builder.setAdapter(_adapter, SmbFileChooserDialog.this);
             }
         });
         thread.get();
+
+        if(!_disableTitle){
+            if(_titleRes == 0) builder.setTitle(_title);
+            else builder.setTitle(_titleRes);
+        }
 
         if(this._iconRes != -1){
             builder.setIcon(this._iconRes);
@@ -1110,14 +1110,13 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
         //
     }
 
-    private SmbDirAdapter refreshDirs() throws MalformedURLException, SmbException{
+    private void refreshDirs() throws MalformedURLException, SmbException{
         listDirs();
-
-        final SmbDirAdapter adapter = new SmbDirAdapter(getBaseContext(), _entries, _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, _dateFormat);
+        _adapter.setEntries(_entries);
+        /*final SmbDirAdapter adapter = new SmbDirAdapter(getBaseContext(), _entries, _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, _dateFormat);
         if (_adapterSetter != null) {
             _adapterSetter.apply(adapter);
         }
-
         if (_list != null) {
             ((Activity) getBaseContext()).runOnUiThread(new Runnable(){
                 @Override
@@ -1126,8 +1125,7 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
                 }
             });
         }
-
-        return adapter;
+        return adapter;*/
     }
 
     public void dismiss(){
@@ -1141,6 +1139,7 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
     }
 
     private List<SmbFile> _entries = new ArrayList<>();
+    private SmbDirAdapter _adapter;
     private SmbFile _currentDir;
     private String _rootDirPath;
     private SmbFile _rootDir;

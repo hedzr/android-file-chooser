@@ -4,10 +4,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:descendantFocusability="beforeDescendants"
-                android:padding="10dp">
+                android:padding="10dp"
+				android:id="@+id/root">
 
   <TextView
-      android:id="@+id/text1"
+      android:id="@+id/text"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_alignParentLeft="false"
@@ -25,8 +26,8 @@
       android:id="@+id/txt_size"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_alignLeft="@+id/text1"
-      android:layout_below="@+id/text1"
+      android:layout_alignLeft="@+id/text"
+      android:layout_below="@+id/text"
       android:layout_toLeftOf="@+id/txt_date"
       android:paddingLeft="8dp"
       android:paddingRight="8dp"
@@ -38,8 +39,8 @@
       android:id="@+id/txt_date"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_alignRight="@+id/text1"
-      android:layout_below="@+id/text1"
+      android:layout_alignRight="@+id/text"
+      android:layout_below="@+id/text"
       android:paddingLeft="8dp"
       android:paddingRight="8dp"
       android:text="@string/title_choose"

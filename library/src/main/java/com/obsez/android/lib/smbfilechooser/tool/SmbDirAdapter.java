@@ -29,24 +29,23 @@ import jcifs.smb.SmbFile;
  */
 public class SmbDirAdapter extends ArrayAdapter<SmbFile>{
     public SmbDirAdapter(Context cxt, List<SmbFile> entries, int resId) {
-        super(cxt, resId, R.id.text1, entries);
-        this.init(entries, null);
+        super(cxt, resId, R.id.text, entries);
+        this.init(null);
     }
 
     public SmbDirAdapter(Context cxt, List<SmbFile> entries, int resId, String dateFormat) {
-        super(cxt, resId, R.id.text1, entries);
-        this.init(entries, dateFormat);
+        super(cxt, resId, R.id.text, entries);
+        this.init(dateFormat);
     }
 
     public SmbDirAdapter(Context cxt, List<SmbFile> entries, int resource, int textViewResourceId) {
         super(cxt, resource, textViewResourceId, entries);
-        this.init(entries, null);
+        this.init(null);
     }
 
     @SuppressLint("SimpleDateFormat")
-    private void init(List<SmbFile> entries, String dateFormat) {
+    private void init(String dateFormat) {
         _formatter = new SimpleDateFormat(dateFormat != null && !"".equals(dateFormat.trim()) ? dateFormat.trim() : "yyyy/MM/dd HH:mm:ss");
-        _entries = entries;
         _defaultFolderIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_folder);
         _defaultFileIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_file);
     }
@@ -57,17 +56,18 @@ public class SmbDirAdapter extends ArrayAdapter<SmbFile>{
     public View getView(final int position, final View convertView, @NonNull final ViewGroup parent) {
         ViewGroup rl = (ViewGroup) super.getView(position, convertView, parent);
 
-        final TextView tvName = rl.findViewById(R.id.text1);
+        final TextView tvName = rl.findViewById(R.id.text);
         final TextView tvSize = rl.findViewById(R.id.txt_size);
         final TextView tvDate = rl.findViewById(R.id.txt_date);
         //ImageView ivIcon = (ImageView) rl.findViewById(R.id.icon);
 
         tvDate.setVisibility(View.VISIBLE);
 
-        Future<Void> thread = Executors.newSingleThreadExecutor().submit(new Callable<Void>(){
+        Future ret = Executors.newSingleThreadExecutor().submit(new Runnable(){
             @Override
-            public Void call(){
-                SmbFile file = _entries.get(position);
+            public void run(){
+                SmbFile file = SmbDirAdapter.super.getItem(position);
+				if(file == null) return;
 				String name = file.getName();
 				name = name.endsWith("/") ? name.substring(0, name.length()) : name;
                 tvName.setText(name);
@@ -91,13 +91,11 @@ public class SmbDirAdapter extends ArrayAdapter<SmbFile>{
                 } catch(SmbException e){
                     e.printStackTrace();
                 }
-
-                return null;
             }
         });
 
         try{
-            thread.get();
+            ret.get();
         } catch(InterruptedException | ExecutionException e){
             e.printStackTrace();
         }
@@ -140,8 +138,13 @@ public class SmbDirAdapter extends ArrayAdapter<SmbFile>{
         this._resolveFileType = resolveFileType;
     }
 
+    public void setEntries(List<SmbFile> entries){
+        super.clear();
+        super.addAll(entries);
+        notifyDataSetChanged();
+    }
+
     private static SimpleDateFormat _formatter;
-    private List<SmbFile> _entries;
     private Drawable _defaultFolderIcon = null;
     private Drawable _defaultFileIcon = null;
 

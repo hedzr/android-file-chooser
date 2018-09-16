@@ -365,18 +365,20 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
     }
 
     @NonNull public FileChooserDialog build() {
-        DirAdapter adapter = refreshDirs();
-        if (this._adapterSetter != null) {
-            this._adapterSetter.apply(adapter);
-        }
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getBaseContext());
-        if (!this._disableTitle){
+		
+        _adapter = new DirAdapter(getBaseContext(), _entries, _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
+        if (this._adapterSetter != null) {
+            this._adapterSetter.apply(_adapter);
+        }
+		refreshDirs();
+        builder.setAdapter(_adapter, this);
+
+		if (!this._disableTitle){
             if(this._titleRes == -1) builder.setTitle(this._title);
               else builder.setTitle(this._titleRes);
         }
-        builder.setAdapter(adapter, this);
-
+		
         if (this._iconRes != -1) {
             builder.setIcon(this._iconRes);
         }
@@ -915,16 +917,17 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
         //
     }
 
-    @NonNull private DirAdapter refreshDirs() {
+    @NonNull private void refreshDirs() {
         listDirs();
-        DirAdapter adapter = new DirAdapter(getBaseContext(), _entries, _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
+		_adapter.setEntries(_entries);
+        /*DirAdapter adapter = new DirAdapter(getBaseContext(), _entries, _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
         if (_adapterSetter != null) {
             _adapterSetter.apply(adapter);
         }
         if (_list != null) {
             _list.setAdapter(adapter);
         }
-        return adapter;
+        return adapter;*/
     }
 
     public void dismiss(){
@@ -938,6 +941,7 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
     }
 
     private List<File> _entries = new ArrayList<>();
+	private DirAdapter _adapter;
     private File _currentDir;
     private AlertDialog _alertDialog;
     private ListView _list;

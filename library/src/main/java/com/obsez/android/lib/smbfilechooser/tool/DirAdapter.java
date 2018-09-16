@@ -27,24 +27,23 @@ import java.util.List;
 public class DirAdapter extends ArrayAdapter<File> {
 
     public DirAdapter(Context cxt, List<File> entries, int resId) {
-        super(cxt, resId, R.id.text1, entries);
-        this.init(entries, null);
+        super(cxt, resId, R.id.text, entries);
+        this.init(null);
     }
 
     public DirAdapter(Context cxt, List<File> entries, int resId, String dateFormat) {
-        super(cxt, resId, R.id.text1, entries);
-        this.init(entries, dateFormat);
+        super(cxt, resId, R.id.text, entries);
+        this.init(dateFormat);
     }
 
     public DirAdapter(Context cxt, List<File> entries, int resource, int textViewResourceId) {
         super(cxt, resource, textViewResourceId, entries);
-        this.init(entries, null);
+        this.init(null);
     }
 
     @SuppressLint("SimpleDateFormat")
-    private void init(List<File> entries, String dateFormat) {
+    private void init(String dateFormat) {
         _formatter = new SimpleDateFormat(dateFormat != null && !"".equals(dateFormat.trim()) ? dateFormat.trim() : "yyyy/MM/dd HH:mm:ss");
-        _entries = entries;
         _defaultFolderIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_folder);
         _defaultFileIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_file);
     }
@@ -55,14 +54,15 @@ public class DirAdapter extends ArrayAdapter<File> {
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         ViewGroup rl = (ViewGroup) super.getView(position, convertView, parent);
 
-        TextView tvName = rl.findViewById(R.id.text1);
+        TextView tvName = rl.findViewById(R.id.text);
         TextView tvSize = rl.findViewById(R.id.txt_size);
         TextView tvDate = rl.findViewById(R.id.txt_date);
         //ImageView ivIcon = (ImageView) rl.findViewById(R.id.icon);
 
         tvDate.setVisibility(View.VISIBLE);
 
-        File file = _entries.get(position);
+        File file = super.getItem(position);
+		if(file == null) return rl;
         tvName.setText(file.getName());
         if (file.isDirectory()) {
             final Drawable folderIcon = _defaultFolderIcon;
@@ -116,9 +116,14 @@ public class DirAdapter extends ArrayAdapter<File> {
     public void setResolveFileType(boolean resolveFileType) {
         this._resolveFileType = resolveFileType;
     }
+	
+	public void setEntries(List<File> entries){
+		super.clear();
+        super.addAll(entries);
+        notifyDataSetChanged();
+	}
 
     private static SimpleDateFormat _formatter;
-    private List<File> _entries;
     private Drawable _defaultFolderIcon = null;
     private Drawable _defaultFileIcon = null;
     private boolean _resolveFileType = false;
