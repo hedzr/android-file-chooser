@@ -68,7 +68,9 @@ public class SmbDirAdapter extends ArrayAdapter<SmbFile>{
             @Override
             public Void call(){
                 SmbFile file = _entries.get(position);
-                tvName.setText(file.getName());
+				String name = file.getName();
+				name = name.endsWith("/") ? name.substring(0, name.length()) : name;
+                tvName.setText(name);
                 try{
                     if(file.isDirectory()){
                         final Drawable folderIcon = _defaultFolderIcon;
