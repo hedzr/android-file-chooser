@@ -67,8 +67,7 @@ import static com.obsez.android.lib.filechooser.internals.FileUtil.NewFolderFilt
 /**
  * Created by coco on 6/7/15.
  */
-public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInterface.OnClickListener {
-
+public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInterface.OnClickListener, AdapterView.OnItemLongClickListener {
     @FunctionalInterface
     public interface Result {
         void onChoosePath(String dir, File dirFile);
@@ -264,6 +263,13 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    public ChooserDialog withOnDismissListener(final DialogInterface.OnDismissListener listener){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){
+            _onDismissListener = listener;
+        }
+        return this;
+    }
+
     public ChooserDialog withFileIcons(final boolean tryResolveFileTypeAndIcon, final Drawable fileIcon,
             final Drawable folderIcon) {
         _adapterSetter = new AdapterSetter() {
@@ -322,8 +328,13 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
-    public ChooserDialog disableTitle(boolean b) {
-        _disableTitle = b;
+    public ChooserDialog disableTitle(boolean disableTitle) {
+        _disableTitle = disableTitle;
+        return this;
+    }
+
+    public ChooserDialog enableMultiple(boolean enableMultiple){
+        this._enableMultiple = enableMultiple;
         return this;
     }
 
@@ -332,16 +343,17 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             throw new RuntimeException("withResources() should be called at first.");
         }
 
-        DirAdapter adapter = refreshDirs();
-        if (_adapterSetter != null) {
-            _adapterSetter.apply(adapter);
-        }
-
         AlertDialog.Builder builder = new AlertDialog.Builder(_context);
+
+        _adapter = new DirAdapter(_context, new ArrayList<File>(),
+                _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
+        if (_adapterSetter != null) _adapterSetter.apply(_adapter);
+        refreshDirs();
+        builder.setAdapter(_adapter, this);
+
         if (!_disableTitle){
             builder.setTitle(_titleRes);
         }
-        builder.setAdapter(adapter, this);
 
         if (_iconRes != -1) {
             builder.setIcon(_iconRes);
@@ -353,14 +365,12 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             }
         }
 
-        if (_dirOnly || !_dismissOnButtonClick) {
+        if (_dirOnly || _enableMultiple) {
             builder.setPositiveButton(_okRes, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if(_result != null){
-                        if(_dirOnly || !_dismissOnButtonClick){
-                            _result.onChoosePath(_currentDir.getAbsolutePath(), _currentDir);
-                        }
+                        _result.onChoosePath(_currentDir.getAbsolutePath(), _currentDir);
                     }
                 }
             });
@@ -370,6 +380,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         if (_cancelListener2 != null) {
             builder.setOnCancelListener(_cancelListener2);
+        }
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && _onDismissListener != null){
+            builder.setOnDismissListener(_onDismissListener);
         }
 
         builder.setOnKeyListener(new DialogInterface.OnKeyListener(){
@@ -409,7 +423,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         @Override
                         public void onClick(final View v){
                             if(_result != null){
-                                if(_dirOnly || !_dismissOnButtonClick){
+                                if(_dirOnly || _enableMultiple){
                                     _result.onChoosePath(_currentDir.getAbsolutePath(), _currentDir);
                                 }
                             }
@@ -676,9 +690,12 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 }
             }
         });
-
-        this._list = this._alertDialog.getListView();
-        this._list.setOnItemClickListener(this);
+        _list = _alertDialog.getListView();
+        _list.setOnItemClickListener(this);
+        if (_enableMultiple){
+            _list.setOnItemLongClickListener(this);
+            //_alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
+        }
         return this;
     }
 
@@ -757,7 +774,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         }
     }
 
-    void sortByName(List<File> list) {
+    private void sortByName(List<File> list) {
         Collections.sort(list, new Comparator<File>() {
             public int compare(File f1, File f2) {
                 return f1.getName().toLowerCase().compareTo(f2.getName().toLowerCase());
@@ -812,10 +829,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View list, int pos, long id) {
-        if (pos < 0 || pos >= _entries.size()) return;
+    public void onItemClick(AdapterView<?> parent, View list, int position, long id) {
+        if (position < 0 || position >= _entries.size()) return;
 
-        File file = _entries.get(pos);
+        File file = _entries.get(position);
         if (file.getName().equals("..")) {
             File f = _currentDir.getParentFile();
             if (_folderNavUpCB == null) _folderNavUpCB = _defaultNavUpCB;
@@ -823,11 +840,19 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             _chooseMode = CHOOSE_MODE_NORMAL;
         } else {
             switch(_chooseMode){
+                case CHOOSE_MODE_SELECT_MULTIPLE:
+                    if(!file.isDirectory()){
+                        _adapter.selectItem(position);
+                        if(!_adapter.isAnySelected()){
+                            _chooseMode = CHOOSE_MODE_NORMAL;
+                            _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
+                        }
+                    }
                 case CHOOSE_MODE_NORMAL:
                     if (file.isDirectory()){
                         if (_folderNavToCB == null) _folderNavToCB = _defaultNavToCB;
                         if (_folderNavToCB.canNavigate(file)) _currentDir = file;
-                    } else if ((!_dirOnly || !_dismissOnButtonClick) && _result != null){
+                    } else if ((!_dirOnly) && _result != null){
                         _result.onChoosePath(file.getAbsolutePath(), file);
                         if(_dismissOnButtonClick) _alertDialog.dismiss();
                         return;
@@ -842,8 +867,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     }
                     _chooseMode = CHOOSE_MODE_NORMAL;
                     break;
-                case CHOOSE_MODE_SELECT_MULTIPLE:
-                    break;
                 default:
                     // ERROR! It shouldn't get here...
                     break;
@@ -853,13 +876,25 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View list, int position, long id) {
+        File file = _entries.get(position);
+        if (file.getName().equals("..") || file.isDirectory()) return true;
+        if(_adapter.isSelected(position)) return true;
+        _adapter.selectItem(position);
+        _chooseMode = CHOOSE_MODE_SELECT_MULTIPLE;
+        _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+        return true;
+    }
+
+    @Override
     public void onClick(DialogInterface dialog, int which) {
         //
     }
 
-    private DirAdapter refreshDirs() {
+    private void refreshDirs() {
         listDirs();
-        DirAdapter adapter = new DirAdapter(_context, _entries,
+        _adapter.setEntries(_entries);
+        /*DirAdapter adapter = new DirAdapter(_context, _entries,
                 _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
         if (_adapterSetter != null) {
             _adapterSetter.apply(adapter);
@@ -867,7 +902,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         if (_list != null) {
             _list.setAdapter(adapter);
         }
-        return adapter;
+        return adapter;*/
     }
 
     public void dismiss(){
@@ -875,6 +910,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     private List<File> _entries = new ArrayList<>();
+    private DirAdapter _adapter;
     private File _currentDir;
     private Context _context;
     private AlertDialog _alertDialog;
@@ -893,6 +929,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private String _dateFormat;
     private DialogInterface.OnClickListener _negativeListener;
     private DialogInterface.OnCancelListener _cancelListener2;
+    private DialogInterface.OnDismissListener _onDismissListener;
     private boolean _disableTitle;
     private boolean _enableOptions;
     private View _options;
@@ -902,6 +939,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     int _optionsIconRes = -1, _createDirIconRes = -1, _deleteIconRes = -1;
     private View _newFolderView;
     private boolean _dismissOnButtonClick = true;
+    private boolean _enableMultiple;
 
     @FunctionalInterface
     public interface AdapterSetter {
@@ -978,7 +1016,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     private static final int CHOOSE_MODE_NORMAL = 0;
     private static final int CHOOSE_MODE_DELETE = 1;
-    private static final int CHOOSE_MODE_SELECT_MULTIPLE = 2; // maybe 1day? :)
+    private static final int CHOOSE_MODE_SELECT_MULTIPLE = 2;
 
     private int _chooseMode = CHOOSE_MODE_NORMAL;
 

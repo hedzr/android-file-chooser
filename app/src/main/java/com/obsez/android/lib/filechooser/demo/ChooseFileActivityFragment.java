@@ -3,6 +3,7 @@ package com.obsez.android.lib.filechooser.demo;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -153,6 +154,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                     .withStartFile(_path)
                     .withResources(R.string.title_choose_multiple, R.string.new_folder_ok,
                             R.string.dialog_cancel)
+                    .enableMultiple(true)
                     .dismissOnButtonClick(false)
                     .withOnLastBackPressedListener(new ChooserDialog.OnBackPressedListener() {
                         @Override
@@ -173,29 +175,69 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                         public void onChoosePath(String dir, File dirFile) {
                             if(dirFile.isDirectory()){
                                 dialog.dismiss();
-
-                                if(files.isEmpty()) return;
-
-                                ArrayList<String> paths = new ArrayList<String>();
-                                for (File file : files) {
-                                    paths.add(file.getAbsolutePath());
-                                }
-
-                                new AlertDialog.Builder(ctx)
-                                        .setAdapter(new ArrayAdapter<String>(ctx,
-                                                android.R.layout.simple_expandable_list_item_1, paths),null)
-                                        .create()
-                                        .show();
-                                return;
                             }
-
                             if(!files.remove(dirFile)){
                                 files.add(dirFile);
                             }
                         }
+                    });
+
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){
+                    dialog.withOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            if(files.isEmpty()) return;
+
+                            ArrayList<String> paths = new ArrayList<String>();
+                            for (File file : files) {
+                                paths.add(file.getAbsolutePath());
+                            }
+
+                            new AlertDialog.Builder(ctx)
+                                    .setAdapter(new ArrayAdapter<String>(ctx,
+                                            android.R.layout.simple_expandable_list_item_1, paths),null)
+                                    .create()
+                                    .show();
+                        }
+                    });
+                } else{
+                    // OnDismissListener is not supported, so we simulate something similar.
+                    final Runnable onDismiss = new Runnable() {
+                        @Override
+                        public void run() {
+                            if(files.isEmpty()) return;
+
+                            ArrayList<String> paths = new ArrayList<String>();
+                            for (File file : files) {
+                                paths.add(file.getAbsolutePath());
+                            }
+
+                            new AlertDialog.Builder(ctx)
+                                    .setAdapter(new ArrayAdapter<String>(ctx,
+                                            android.R.layout.simple_expandable_list_item_1, paths),null)
+                                    .create()
+                                    .show();
+                        }
+                    };
+                    dialog.withOnLastBackPressedListener(new ChooserDialog.OnBackPressedListener() {
+                        @Override
+                        public void onBackPressed(AlertDialog dialog) {
+                            files.clear();
+                            dialog.dismiss();
+                            onDismiss.run();
+                        }
                     })
-                    .build()
-                    .show();
+                    .withNegativeButtonListener(new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            files.clear();
+                            dialog.dismiss();
+                            onDismiss.run();
+                        }
+                    });
+                }
+
+                dialog.build().show();
             }
         });
         return root;
