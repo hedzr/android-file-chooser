@@ -45,11 +45,13 @@ import com.obsez.android.lib.smbfilechooser.tool.DirAdapter;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.regex.Pattern;
 
 import static android.view.Gravity.BOTTOM;
@@ -72,10 +74,15 @@ import static com.obsez.android.lib.smbfilechooser.internals.FileUtil.NewFolderF
  * Created by coco on 6/7/15. Edited by Guiorgy on 10/09/18.
  */
 @SuppressWarnings("SpellCheckingInspection")
-public class FileChooserDialog extends LightContextWrapper implements AdapterView.OnItemClickListener, DialogInterface.OnClickListener {
+public class FileChooserDialog extends LightContextWrapper implements DialogInterface.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     @FunctionalInterface
     public interface OnChosenListener{
         void onChoosePath(@NonNull final String dir, @NonNull final File dirFile);
+    }
+
+    @FunctionalInterface
+    public interface OnSelectedListener {
+        void onSelectFiles(@NonNull final List<File> files);
     }
 
     private FileChooserDialog(@NonNull final Context context) {
@@ -172,8 +179,13 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
         return this;
     }
 
-    @NonNull public FileChooserDialog setOnChosenListener(@NonNull final OnChosenListener r) {
-        this._onChosenListener = r;
+    @NonNull public FileChooserDialog setOnChosenListener(@NonNull final OnChosenListener listener) {
+        this._onChosenListener = listener;
+        return this;
+    }
+
+    @NonNull public FileChooserDialog setOnSelectedListener(@NonNull final OnSelectedListener listener) {
+        this._onSelectedListener = listener;
         return this;
     }
 
@@ -359,6 +371,12 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
         return this;
     }
 
+    @NonNull public FileChooserDialog enableMultiple(final boolean enableMultiple, final boolean allowSelectMultipleFolders){
+        this._enableMultiple = enableMultiple;
+        this._allowSelectDir = allowSelectMultipleFolders;
+        return this;
+    }
+
     @NonNull public FileChooserDialog setNewFolderFilter(@NonNull final NewFolderFilter filter){
         this._newFolderFilter = filter;
         return this;
@@ -366,19 +384,19 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
 
     @NonNull public FileChooserDialog build() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getBaseContext());
-		
-        _adapter = new DirAdapter(getBaseContext(), _entries, _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
+
+        this._adapter = new DirAdapter(getBaseContext(), new ArrayList<File>(),this. _rowLayoutRes != -1 ? this._rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
         if (this._adapterSetter != null) {
-            this._adapterSetter.apply(_adapter);
+            this._adapterSetter.apply(this._adapter);
         }
 		refreshDirs();
-        builder.setAdapter(_adapter, this);
+        builder.setAdapter(this._adapter, this);
 
 		if (!this._disableTitle){
             if(this._titleRes == -1) builder.setTitle(this._title);
               else builder.setTitle(this._titleRes);
         }
-		
+
         if (this._iconRes != -1) {
             builder.setIcon(this._iconRes);
         }
@@ -389,15 +407,28 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
             }
         }
 
-        if (this._dirOnly) {
+        if (this._dirOnly || this._enableMultiple) {
             final DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener(){
                 @Override
                 public void onClick(final DialogInterface dialog, final int which){
-                    if(FileChooserDialog.this._onChosenListener != null){
-                        if(FileChooserDialog.this._dirOnly){
-                            FileChooserDialog.this._onChosenListener.onChoosePath(FileChooserDialog.this._currentDir.getAbsolutePath(), FileChooserDialog.this. _currentDir);
+                    if(FileChooserDialog.this._enableMultiple){
+                        if(FileChooserDialog.this._adapter.isAnySelected()){
+                            if(FileChooserDialog.this._adapter.isOneSelected()){
+                                if(FileChooserDialog.this._onChosenListener != null){
+                                    final File selected = _adapter.getSelected().get(0);
+                                    FileChooserDialog.this._onChosenListener.onChoosePath(selected.getAbsolutePath(), selected);
+                                }
+                            } else{
+                                if(FileChooserDialog.this._onSelectedListener != null){
+                                    FileChooserDialog.this._onSelectedListener.onSelectFiles(_adapter.getSelected());
+                                }
+                            }
                         }
+                    } else if(FileChooserDialog.this._onChosenListener != null){
+                        FileChooserDialog.this._onChosenListener.onChoosePath(FileChooserDialog.this._currentDir.getAbsolutePath(), FileChooserDialog.this._currentDir);
                     }
+
+                    FileChooserDialog.this._alertDialog.dismiss();
                 }
             };
 
@@ -458,17 +489,30 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
                         }
                     });
 
-					if(FileChooserDialog.this._dirOnly){
-						Button positive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-						positive.setOnClickListener(new View.OnClickListener(){
-							@Override
-							public void onClick(final View v){
-								if(FileChooserDialog.this._onChosenListener != null){
-									FileChooserDialog.this._onChosenListener.onChoosePath(FileChooserDialog.this._currentDir.getAbsolutePath(), FileChooserDialog.this._currentDir);
-								}
-							}
-						});
-					}
+                    if(FileChooserDialog.this._dirOnly || FileChooserDialog.this._enableMultiple){
+                        Button positive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                        positive.setOnClickListener(new View.OnClickListener(){
+                            @Override
+                            public void onClick(final View v){
+                                if(FileChooserDialog.this._enableMultiple){
+                                    if(FileChooserDialog.this._adapter.isAnySelected()){
+                                        if(FileChooserDialog.this._adapter.isOneSelected()){
+                                            if(FileChooserDialog.this._onChosenListener != null){
+                                                final File selected = _adapter.getSelected().get(0);
+                                                FileChooserDialog.this._onChosenListener.onChoosePath(selected.getAbsolutePath(), selected);
+                                            }
+                                        } else{
+                                            if(FileChooserDialog.this._onSelectedListener != null){
+                                                FileChooserDialog.this._onSelectedListener.onSelectFiles(_adapter.getSelected());
+                                            }
+                                        }
+                                    }
+                                } else if(FileChooserDialog.this._onChosenListener != null){
+                                    FileChooserDialog.this._onChosenListener.onChoosePath(FileChooserDialog.this._currentDir.getAbsolutePath(), FileChooserDialog.this._currentDir);
+                                }
+                            }
+                        });
+                    }
                 }
 
                 if(FileChooserDialog.this._enableOptions){
@@ -724,7 +768,50 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
                                     public void onClick(final View v1){
                                         //Toast.makeText(getBaseContext(), "delete clicked", Toast.LENGTH_SHORT).show();
                                         hideOptions.run();
-                                        FileChooserDialog.this._chooseMode = FileChooserDialog.this._chooseMode != CHOOSEMODE_DELETE ? CHOOSEMODE_DELETE : CHOOSEMODE_NORMAL;
+
+                                        if(FileChooserDialog.this._chooseMode == CHOOSE_MODE_SELECT_MULTIPLE){
+                                            Queue<File> parents = new ArrayDeque<File>();
+                                            File current = FileChooserDialog.this._currentDir.getParentFile();
+                                            final File root = Environment.getExternalStorageDirectory();
+                                            while(current != null && !current.equals(root)){
+                                                parents.add(current);
+                                                current = current.getParentFile();
+                                            }
+
+                                            for(File file : FileChooserDialog.this._adapter.getSelected()){
+                                                try{
+                                                    deleteFile(file);
+
+                                                } catch(IOException e){
+                                                    // There's probably a better way to handle this, but...
+                                                    e.printStackTrace();
+                                                    Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                                                    break;
+                                                }
+                                            }
+                                            FileChooserDialog.this._adapter.clearSelected();
+
+                                            // Check whether the current directory was deleted.
+                                            if(!FileChooserDialog.this._currentDir.exists()){
+                                                File parent;
+
+                                                while((parent = parents.poll()) != null){
+                                                    if(parent.exists()) break;
+                                                }
+
+                                                if(parent != null && parent.exists()){
+                                                    FileChooserDialog.this._currentDir = parent;
+                                                } else{
+                                                    FileChooserDialog.this._currentDir = Environment.getExternalStorageDirectory();
+                                                }
+                                            }
+
+                                            refreshDirs();
+                                            FileChooserDialog.this._chooseMode = CHOOSE_MODE_NORMAL;
+                                            return;
+                                        }
+
+                                        FileChooserDialog.this._chooseMode = FileChooserDialog.this._chooseMode != CHOOSE_MODE_DELETE ? CHOOSE_MODE_DELETE : CHOOSE_MODE_NORMAL;
                                     }
                                 });
                                 // endregion
@@ -743,6 +830,9 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
 
         this._list = this._alertDialog.getListView();
         this._list.setOnItemClickListener(this);
+        if (this._enableMultiple){
+            this._list.setOnItemLongClickListener(this);
+        }
         return this;
     }
 
@@ -767,11 +857,15 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
                 ActivityCompat.requestPermissions((Activity) getBaseContext(),
                         new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE },
                         PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
+                return this;
             }
         } else {
             _alertDialog.show();
         }
 
+        if(_enableMultiple && !_dirOnly){
+            _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
+        }
         return this;
     }
 
@@ -783,7 +877,7 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
 
         // Add the ".." entry
         if (_currentDir.getParentFile() != null && !_currentDir.getParent().equals("/storage/emulated")) {
-            _entries.add(new File("../"));
+            _entries.add(new File(".."));
         }
 
         if (files != null) {
@@ -871,37 +965,47 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
     }
 
     @Override
-    public void onItemClick(@Nullable final AdapterView<?> parent, @NonNull final View list, final int pos, final long id) {
-        if (pos < 0 || pos >= _entries.size()) return;
+    public void onItemClick(@Nullable final AdapterView<?> parent, @NonNull final View list, final int position, final long id) {
+        if (position < 0 || position >= _entries.size()) return;
 
-        File file = _entries.get(pos);
-        if (file.getName().equals("../") || file.getName().equals("..")) {
+        File file = _entries.get(position);
+        if (file.getName().equals("..")) {
             File f = _currentDir.getParentFile();
             if (_folderNavUpCB == null) _folderNavUpCB = _defaultNavUpCB;
             if (_folderNavUpCB.canUpTo(f)) _currentDir = f;
-            _chooseMode = CHOOSEMODE_NORMAL;
+            if(_chooseMode == CHOOSE_MODE_DELETE) _chooseMode = CHOOSE_MODE_NORMAL;
         } else {
             switch(_chooseMode){
-                case CHOOSEMODE_NORMAL:
+                case CHOOSE_MODE_NORMAL:
                     if (file.isDirectory()){
                         if (_folderNavToCB == null) _folderNavToCB = _defaultNavToCB;
                         if (_folderNavToCB.canNavigate(file)) _currentDir = file;
-                    } else if (!_dirOnly && _onChosenListener != null){
+                    } else if ((!_dirOnly) && _onChosenListener != null){
                         _onChosenListener.onChoosePath(file.getAbsolutePath(), file);
-                        _alertDialog.dismiss();
+                        if(_dismissOnButtonClick) _alertDialog.dismiss();
                         return;
                     }
                     break;
-                case CHOOSEMODE_DELETE:
+                case CHOOSE_MODE_SELECT_MULTIPLE:
+                    if(file.isDirectory()){
+                        if (_folderNavToCB == null) _folderNavToCB = _defaultNavToCB;
+                        if (_folderNavToCB.canNavigate(file)) _currentDir = file;
+                    } else{
+                        _adapter.selectItem(position);
+                        if(!_adapter.isAnySelected()){
+                            _chooseMode = CHOOSE_MODE_NORMAL;
+                            if(!_dirOnly) _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
+                        }
+                    }
+                    break;
+                case CHOOSE_MODE_DELETE:
                     try{
                         deleteFile(file);
                     } catch(IOException e){
                         e.printStackTrace();
                         Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                     }
-                    _chooseMode = CHOOSEMODE_NORMAL;
-                    break;
-                case CHOOSEMODE_SELECT_MANY:
+                    _chooseMode = CHOOSE_MODE_NORMAL;
                     break;
                 default:
                     // ERROR! It shouldn't get here...
@@ -912,21 +1016,29 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
     }
 
     @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View list, int position, long id) {
+        File file = _entries.get(position);
+        if (file.getName().equals("..")) return true;
+        if(!_allowSelectDir && file.isDirectory()) return true;
+        _adapter.selectItem(position);
+        if(!_adapter.isAnySelected()){
+            _chooseMode = CHOOSE_MODE_NORMAL;
+            if(!_dirOnly) _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
+        } else{
+            _chooseMode = CHOOSE_MODE_SELECT_MULTIPLE;
+            if(!_dirOnly) _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+        }
+        return true;
+    }
+
+    @Override
     public void onClick(@NonNull final DialogInterface dialog, final int which) {
         //
     }
 
-    @NonNull private void refreshDirs() {
+    private void refreshDirs() {
         listDirs();
 		_adapter.setEntries(_entries);
-        /*DirAdapter adapter = new DirAdapter(getBaseContext(), _entries, _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
-        if (_adapterSetter != null) {
-            _adapterSetter.apply(adapter);
-        }
-        if (_list != null) {
-            _list.setAdapter(adapter);
-        }
-        return adapter;*/
     }
 
     public void dismiss(){
@@ -945,6 +1057,7 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
     private AlertDialog _alertDialog;
     private ListView _list;
     private OnChosenListener _onChosenListener = null;
+    private OnSelectedListener _onSelectedListener = null;
     private boolean _dirOnly;
     private FileFilter _fileFilter;
     private @StringRes int _titleRes = -1, _okRes = -1, _negativeRes = -1;
@@ -966,6 +1079,8 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
     private @NonNull String _createDir = "New folder", _delete = "Delete", _newFolderCancel = "Cancel", _newFolderOk = "Ok";
     private @DrawableRes int _optionsIconRes = -1, _createDirIconRes = -1, _deleteIconRes = -1;
     private View _newFolderView;
+    private boolean _enableMultiple;
+    private boolean _allowSelectDir = false;
 
     @FunctionalInterface
     public interface AdapterSetter {
@@ -1041,11 +1156,11 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
         }
     };
 
-    private static final int CHOOSEMODE_NORMAL = 0;
-    private static final int CHOOSEMODE_DELETE = 1;
-    private static final int CHOOSEMODE_SELECT_MANY = 2;
+    private static final int CHOOSE_MODE_NORMAL = 0;
+    private static final int CHOOSE_MODE_DELETE = 1;
+    private static final int CHOOSE_MODE_SELECT_MULTIPLE = 2;
 
-    private int _chooseMode = CHOOSEMODE_NORMAL;
+    private int _chooseMode = CHOOSE_MODE_NORMAL;
 
     private NewFolderFilter _newFolderFilter;
 }

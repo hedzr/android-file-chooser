@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,6 +22,8 @@ import com.obsez.android.lib.smbfilechooser.tool.DirAdapter;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import jcifs.smb.NtlmPasswordAuthentication;
@@ -231,6 +234,8 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                 .setFilterRegex(false, true, ".*\\.(jpe?g|png)")
                 .setStartFile(_path)
                 .setResources(R.string.title_nothing, R.string.title_choose, R.string.dialog_cancel)
+                .enableOptions(true)
+                .enableMultiple(true, true)
                 .setOnChosenListener(new FileChooserDialog.OnChosenListener() {
                     @Override
                     public void onChoosePath(@NonNull String path, @NonNull File pathFile) {
@@ -240,6 +245,22 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                         _tv.setText(_path);
                         //_iv.setImageURI(Uri.fromFile(pathFile));
                         _iv.setImageBitmap(ImageUtil.decodeFile(pathFile));
+                    }
+                })
+                .setOnSelectedListener(new FileChooserDialog.OnSelectedListener(){
+                    @Override
+                    public void onSelectFiles(@NonNull final List<File> files){
+                        ArrayList<String> paths = new ArrayList<String>();
+                        for (File file : files) {
+                            paths.add(file.getAbsolutePath());
+                        }
+
+                        new AlertDialog.Builder(ctx)
+                                .setTitle(files.size() + " files selected:")
+                                .setAdapter(new ArrayAdapter<String>(ctx,
+                                        android.R.layout.simple_expandable_list_item_1, paths),null)
+                                .create()
+                                .show();
                     }
                 })
                 .build()

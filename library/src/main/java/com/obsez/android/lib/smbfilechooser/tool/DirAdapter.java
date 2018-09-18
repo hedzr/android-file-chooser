@@ -2,10 +2,14 @@ package com.obsez.android.lib.smbfilechooser.tool;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -18,6 +22,7 @@ import com.obsez.android.lib.smbfilechooser.internals.WrappedDrawable;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -46,6 +51,13 @@ public class DirAdapter extends ArrayAdapter<File> {
         _formatter = new SimpleDateFormat(dateFormat != null && !"".equals(dateFormat.trim()) ? dateFormat.trim() : "yyyy/MM/dd HH:mm:ss");
         _defaultFolderIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_folder);
         _defaultFileIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_file);
+
+        int accentColor = UiUtil.getThemeAccentColor(getContext());
+        int red = Color.red(accentColor);
+        int green = Color.green(accentColor);
+        int blue = Color.blue(accentColor);
+        int accentColorWithAlpha = Color.argb(40, red, green, blue);
+        _colorFilter = new PorterDuffColorFilter(accentColorWithAlpha, PorterDuff.Mode.MULTIPLY);
     }
 
     // This function is called to show each view item
@@ -90,6 +102,9 @@ public class DirAdapter extends ArrayAdapter<File> {
               else tvDate.setVisibility(View.GONE);
         }
 
+        View root = rl.findViewById(R.id.root);
+        if(_selected.get(file.hashCode(), null) == null) root.getBackground().clearColorFilter();
+          else root.getBackground().setColorFilter(_colorFilter);
         return rl;
     }
 
@@ -116,16 +131,62 @@ public class DirAdapter extends ArrayAdapter<File> {
     public void setResolveFileType(boolean resolveFileType) {
         this._resolveFileType = resolveFileType;
     }
-	
+
 	public void setEntries(List<File> entries){
 		super.clear();
         super.addAll(entries);
         notifyDataSetChanged();
 	}
 
+    @Override
+    public long getItemId(int position) {
+        //noinspection ConstantConditions
+        return getItem(position).hashCode();
+    }
+
+    public void selectItem(int position){
+        int id = (int) getItemId(position);
+        if(_selected.get(id, null) == null){
+            _selected.append(id, getItem(position));
+        } else{
+            _selected.delete(id);
+        }
+        notifyDataSetChanged();
+    }
+
+    public boolean isSelected(int position){
+        return isSelectedById((int) getItemId(position));
+    }
+
+    public boolean isSelectedById(int id){
+        return _selected.get(id, null) != null;
+    }
+
+    public boolean isAnySelected(){
+        return _selected.size() > 0;
+    }
+
+    public boolean isOneSelected(){
+        return  _selected.size() == 1;
+    }
+
+    public List<File> getSelected(){
+        ArrayList<File> list = new ArrayList<File>();
+        for(int i = 0; i < _selected.size(); i++){
+            list.add(_selected.valueAt(i));
+        }
+        return list;
+    }
+
+    public void clearSelected(){
+        _selected.clear();
+    }
+
     private static SimpleDateFormat _formatter;
     private Drawable _defaultFolderIcon = null;
     private Drawable _defaultFileIcon = null;
     private boolean _resolveFileType = false;
+    private PorterDuffColorFilter _colorFilter;
+    private SparseArray<File> _selected = new SparseArray<File>();
 }
 

@@ -2,18 +2,25 @@ package com.obsez.android.lib.smbfilechooser.tool;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.obsez.android.lib.smbfilechooser.R;
+import com.obsez.android.lib.smbfilechooser.SmbFileChooserDialog;
 import com.obsez.android.lib.smbfilechooser.internals.FileUtil;
+import com.obsez.android.lib.smbfilechooser.internals.UiUtil;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -48,6 +55,13 @@ public class SmbDirAdapter extends ArrayAdapter<SmbFile>{
         _formatter = new SimpleDateFormat(dateFormat != null && !"".equals(dateFormat.trim()) ? dateFormat.trim() : "yyyy/MM/dd HH:mm:ss");
         _defaultFolderIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_folder);
         _defaultFileIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_file);
+
+        int accentColor = UiUtil.getThemeAccentColor(getContext());
+        int red = Color.red(accentColor);
+        int green = Color.green(accentColor);
+        int blue = Color.blue(accentColor);
+        int accentColorWithAlpha = Color.argb(40, red, green, blue);
+        _colorFilter = new PorterDuffColorFilter(accentColorWithAlpha, PorterDuff.Mode.MULTIPLY);
     }
 
     // This function is called to show each view item
@@ -56,6 +70,7 @@ public class SmbDirAdapter extends ArrayAdapter<SmbFile>{
     public View getView(final int position, final View convertView, @NonNull final ViewGroup parent) {
         ViewGroup rl = (ViewGroup) super.getView(position, convertView, parent);
 
+        final View root = rl.findViewById(R.id.root);
         final TextView tvName = rl.findViewById(R.id.text);
         final TextView tvSize = rl.findViewById(R.id.txt_size);
         final TextView tvDate = rl.findViewById(R.id.txt_date);
@@ -88,6 +103,9 @@ public class SmbDirAdapter extends ArrayAdapter<SmbFile>{
                         if(file.lastModified() != 0L) tvDate.setText(_formatter.format(new Date(file.lastModified())));
                           else tvDate.setVisibility(View.GONE);
                     }
+
+                    if(_selected.get(file.hashCode(), null) == null) root.getBackground().clearColorFilter();
+                      else root.getBackground().setColorFilter(_colorFilter);
                 } catch(SmbException e){
                     e.printStackTrace();
                 }
@@ -129,7 +147,6 @@ public class SmbDirAdapter extends ArrayAdapter<SmbFile>{
     }
 
     /**
-     *
      * @deprecated no pint. can't get file icons on a samba server
      */
     @Deprecated
@@ -144,14 +161,72 @@ public class SmbDirAdapter extends ArrayAdapter<SmbFile>{
         notifyDataSetChanged();
     }
 
+    @Override
+    public long getItemId(final int position) {
+        Future<Long> ret = SmbFileChooserDialog.getNetworkThread().submit(new Callable<Long>(){
+            @Override
+            public Long call(){
+                //noinspection ConstantConditions
+                return (long) getItem(position).hashCode();
+            }
+        });
+
+        try{
+            return ret.get();
+        } catch(InterruptedException | ExecutionException e){
+            e.printStackTrace();
+        }
+
+        return position;
+    }
+
+    public void selectItem(int position){
+        int id = (int) getItemId(position);
+        if(_selected.get(id, null) == null){
+            _selected.append(id, getItem(position));
+        } else{
+            _selected.delete(id);
+        }
+        notifyDataSetChanged();
+    }
+
+    public boolean isSelected(int position){
+        return isSelectedById((int) getItemId(position));
+    }
+
+    public boolean isSelectedById(int id){
+        return _selected.get(id, null) != null;
+    }
+
+    public boolean isAnySelected(){
+        return _selected.size() > 0;
+    }
+
+    public boolean isOneSelected(){
+        return  _selected.size() == 1;
+    }
+
+    public List<SmbFile> getSelected(){
+        ArrayList<SmbFile> list = new ArrayList<SmbFile>();
+        for(int i = 0; i < _selected.size(); i++){
+            list.add(_selected.valueAt(i));
+        }
+        return list;
+    }
+
+    public void clearSelected(){
+        _selected.clear();
+    }
+
     private static SimpleDateFormat _formatter;
     private Drawable _defaultFolderIcon = null;
     private Drawable _defaultFileIcon = null;
-
     /**
-     * @deprecated no pint. can't get file icons on a samba server
+     * @deprecated no point. can't get file icons on a samba server
      */
     @Deprecated
     private boolean _resolveFileType = false;
+    private PorterDuffColorFilter _colorFilter;
+    private SparseArray<SmbFile> _selected = new SparseArray<SmbFile>();
 }
 

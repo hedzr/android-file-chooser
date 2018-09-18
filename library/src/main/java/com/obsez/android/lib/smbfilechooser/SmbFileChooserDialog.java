@@ -42,11 +42,13 @@ import com.obsez.android.lib.smbfilechooser.internals.UiUtil;
 import com.obsez.android.lib.smbfilechooser.tool.SmbDirAdapter;
 
 import java.net.MalformedURLException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -79,7 +81,7 @@ import static com.obsez.android.lib.smbfilechooser.internals.FileUtil.NewFolderF
  * Created by coco on 6/7/15. Edited by Guiorgy on 10/09/18.
  */
 @SuppressWarnings("SpellCheckingInspection")
-public class SmbFileChooserDialog extends LightContextWrapper implements AdapterView.OnItemClickListener, DialogInterface.OnClickListener{
+public class SmbFileChooserDialog extends LightContextWrapper implements DialogInterface.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor(new ThreadFactory(){
         @Override
         public Thread newThread(@NonNull final Runnable runnable){
@@ -91,9 +93,18 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
         }
     });
 
+    public static ExecutorService getNetworkThread(){
+        return  EXECUTOR;
+    }
+
     @FunctionalInterface
     public interface OnChosenListener{
         void onChoosePath(@NonNull String path, @NonNull SmbFile file);
+    }
+
+    @FunctionalInterface
+    public interface OnSelectedListener {
+        void onSelectFiles(@NonNull final List<SmbFile> files);
     }
 
     public SmbFileChooserDialog(@NonNull final Context context){
@@ -242,6 +253,11 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
 
     @NonNull public SmbFileChooserDialog setOnChosenListener(@NonNull OnChosenListener listener) {
         this._onChosenListener = listener;
+        return this;
+    }
+
+    @NonNull public SmbFileChooserDialog setOnSelectedListener(@NonNull final OnSelectedListener listener) {
+        this._onSelectedListener = listener;
         return this;
     }
 
@@ -460,6 +476,12 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
         return this;
     }
 
+    @NonNull public SmbFileChooserDialog enableMultiple(final boolean enableMultiple, final boolean allowSelectMultipleFolders){
+        this._enableMultiple = enableMultiple;
+        this._allowSelectDir = allowSelectMultipleFolders;
+        return this;
+    }
+
     @NonNull public SmbFileChooserDialog setNewFolderFilter(@NonNull final NewFolderFilter filter){
         this._newFolderFilter = filter;
         return this;
@@ -471,23 +493,24 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
         final Future thread = EXECUTOR.submit(new Runnable(){
             @Override
             public void run(){
-                _adapter = new SmbDirAdapter(getBaseContext(), _entries, _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, _dateFormat);
+                SmbFileChooserDialog.this._adapter = new SmbDirAdapter(getBaseContext(), new ArrayList<SmbFile>(),
+                        SmbFileChooserDialog.this. _rowLayoutRes != -1 ? SmbFileChooserDialog.this._rowLayoutRes : R.layout.li_row_textview, SmbFileChooserDialog.this._dateFormat);
                 if(SmbFileChooserDialog.this._adapterSetter != null){
-                    SmbFileChooserDialog.this._adapterSetter.apply(_adapter);
+                    SmbFileChooserDialog.this._adapterSetter.apply(SmbFileChooserDialog.this._adapter);
                 }
                 try {
                     SmbFileChooserDialog.this.refreshDirs();
                 } catch (MalformedURLException | SmbException e) {
                     e.printStackTrace();
                 }
-                builder.setAdapter(_adapter, SmbFileChooserDialog.this);
+                builder.setAdapter(SmbFileChooserDialog.this._adapter, SmbFileChooserDialog.this);
             }
         });
         thread.get();
 
-        if(!_disableTitle){
-            if(_titleRes == 0) builder.setTitle(_title);
-            else builder.setTitle(_titleRes);
+        if(!this._disableTitle){
+            if(this._titleRes == 0) builder.setTitle(this._title);
+            else builder.setTitle(this._titleRes);
         }
 
         if(this._iconRes != -1){
@@ -513,6 +536,35 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
             };
 
             if(this._okRes == 0) builder.setPositiveButton(this._ok, listener);
+              else builder.setPositiveButton(this._okRes, listener);
+        }
+
+        if (this._dirOnly || this._enableMultiple) {
+            final DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(final DialogInterface dialog, final int which){
+                    if(SmbFileChooserDialog.this._enableMultiple){
+                        if(SmbFileChooserDialog.this._adapter.isAnySelected()){
+                            if(SmbFileChooserDialog.this._adapter.isOneSelected()){
+                                if(SmbFileChooserDialog.this._onChosenListener != null){
+                                    final SmbFile selected = _adapter.getSelected().get(0);
+                                    SmbFileChooserDialog.this._onChosenListener.onChoosePath(selected.getPath(), selected);
+                                }
+                            } else{
+                                if(SmbFileChooserDialog.this._onSelectedListener != null){
+                                    SmbFileChooserDialog.this._onSelectedListener.onSelectFiles(_adapter.getSelected());
+                                }
+                            }
+                        }
+                    } else if(SmbFileChooserDialog.this._onChosenListener != null){
+                        SmbFileChooserDialog.this._onChosenListener.onChoosePath(SmbFileChooserDialog.this._currentDir.getPath(), SmbFileChooserDialog.this._currentDir);
+                    }
+
+                    SmbFileChooserDialog.this._alertDialog.dismiss();
+                }
+            };
+
+            if(this._okRes == -1) builder.setPositiveButton(this._ok, listener);
               else builder.setPositiveButton(this._okRes, listener);
         }
 
@@ -569,10 +621,23 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
 						positive.setOnClickListener(new View.OnClickListener(){
 							@Override
 							public void onClick(final View v){
-								if(SmbFileChooserDialog.this._onChosenListener != null){
-										SmbFileChooserDialog.this._onChosenListener.onChoosePath(SmbFileChooserDialog.this._currentDir.getPath(), SmbFileChooserDialog.this._currentDir);
-									}
-								}
+                                if(SmbFileChooserDialog.this._enableMultiple){
+                                    if(SmbFileChooserDialog.this._adapter.isAnySelected()){
+                                        if(SmbFileChooserDialog.this._adapter.isOneSelected()){
+                                            if(SmbFileChooserDialog.this._onChosenListener != null){
+                                                final SmbFile selected = _adapter.getSelected().get(0);
+                                                SmbFileChooserDialog.this._onChosenListener.onChoosePath(selected.getPath(), selected);
+                                            }
+                                        } else{
+                                            if(SmbFileChooserDialog.this._onSelectedListener != null){
+                                                SmbFileChooserDialog.this._onSelectedListener.onSelectFiles(_adapter.getSelected());
+                                            }
+                                        }
+                                    }
+                                } else if(SmbFileChooserDialog.this._onChosenListener != null){
+                                    SmbFileChooserDialog.this._onChosenListener.onChoosePath(SmbFileChooserDialog.this._currentDir.getPath(), SmbFileChooserDialog.this._currentDir);
+                                }
+                            }
 						});
 					}
                 }
@@ -862,7 +927,51 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
                                     public void onClick(final View v1){
                                         //Toast.makeText(getBaseContext(), "delete clicked", Toast.LENGTH_SHORT).show();
                                         hideOptions.run();
-                                        SmbFileChooserDialog.this._chooseMode = SmbFileChooserDialog.this._chooseMode != CHOOSEMODE_DELETE ? CHOOSEMODE_DELETE : CHOOSEMODE_NORMAL;
+
+
+                                        if(SmbFileChooserDialog.this._chooseMode == CHOOSE_MODE_SELECT_MULTIPLE){
+                                            try{
+                                                Queue<SmbFile> parents = new ArrayDeque<SmbFile>();
+                                                final String parentPath = SmbFileChooserDialog.this._currentDir.getParent();
+                                                SmbFile current = new SmbFile(parentPath);
+                                                while(!current.equals(SmbFileChooserDialog.this._rootDir)){
+                                                    parents.add(current);
+                                                    final String parent = current.getParent();
+                                                    current = new SmbFile(parent);
+                                                }
+
+                                                for(SmbFile file : SmbFileChooserDialog.this._adapter.getSelected()){
+                                                    deleteFile(file);
+                                                }
+                                                SmbFileChooserDialog.this._adapter.clearSelected();
+
+                                                // Check whether the current directory was deleted.
+                                                if(!SmbFileChooserDialog.this._currentDir.exists()){
+                                                    SmbFile parent;
+
+                                                    while((parent = parents.poll()) != null){
+                                                        if(parent.exists()) break;
+                                                    }
+
+                                                    if(parent != null && parent.exists()){
+                                                        SmbFileChooserDialog.this._currentDir = parent;
+                                                    } else{
+                                                        SmbFileChooserDialog.this._currentDir = SmbFileChooserDialog.this._rootDir;
+                                                    }
+                                                }
+
+                                                refreshDirs();
+                                            } catch(MalformedURLException e){
+                                                e.printStackTrace();
+                                            } catch(SmbException e){
+                                                e.printStackTrace();
+                                            }
+
+                                            SmbFileChooserDialog.this._chooseMode = CHOOSE_MODE_NORMAL;
+                                            return;
+                                        }
+
+                                        SmbFileChooserDialog.this._chooseMode = SmbFileChooserDialog.this._chooseMode != CHOOSE_MODE_DELETE ? CHOOSE_MODE_DELETE : CHOOSE_MODE_NORMAL;
                                     }
                                 });
                                 // endregion
@@ -923,6 +1032,12 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
                 return SmbFileChooserDialog.this;
             }
         });
+
+        if(_alertDialog.isShowing()){
+            if(_enableMultiple && !_dirOnly){
+                _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
+            }
+        }
         return ret.get();
     }
 
@@ -1056,40 +1171,51 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
                 }
             });
         }
-        this._chooseMode = CHOOSEMODE_NORMAL;
+        this._chooseMode = CHOOSE_MODE_NORMAL;
     }
 
     @Override
-    public void onItemClick(@Nullable AdapterView<?> parent, @NonNull View list, final int pos, final long id) {
+    public void onItemClick(@Nullable AdapterView<?> parent, @NonNull View list, final int position, final long id) {
         EXECUTOR.execute(new Runnable(){
             @Override
             public void run(){
                 try{
-                    if(pos < 0 || pos >= _entries.size()) return;
+                    if(position < 0 || position >= _entries.size()) return;
 
-                    SmbFile file = _entries.get(pos);
+                    SmbFile file = _entries.get(position);
                     if(file.getName().equals("../") || file.getName().equals("..")){
                         final String parentPath = _currentDir.getParent();
                         final SmbFile f = new SmbFile(parentPath);
                         if(_folderNavUpCB == null) _folderNavUpCB = _defaultNavUpCB;
                         if(_folderNavUpCB.canUpTo(f)) _currentDir = f;
-                        _chooseMode = CHOOSEMODE_NORMAL;
+                        if(_chooseMode == CHOOSE_MODE_DELETE) _chooseMode = CHOOSE_MODE_NORMAL;
                     } else{
                         switch(_chooseMode){
-                            case CHOOSEMODE_NORMAL:
+                            case CHOOSE_MODE_NORMAL:
                                 if (file.isDirectory()){
                                     if (_folderNavToCB == null) _folderNavToCB = _defaultNavToCB;
                                     if (_folderNavToCB.canNavigate(file)) _currentDir = file;
-                                } else if (!_dirOnly && _onChosenListener != null){
+                                } else if ((!_dirOnly) && _onChosenListener != null){
                                     _onChosenListener.onChoosePath(file.getPath(), file);
-                                    _alertDialog.dismiss();
+                                    if(_dismissOnButtonClick) _alertDialog.dismiss();
                                     return;
                                 }
                                 break;
-                            case CHOOSEMODE_DELETE:
-                                deleteFile(file);
+                            case CHOOSE_MODE_SELECT_MULTIPLE:
+                                if(file.isDirectory()){
+                                    if (_folderNavToCB == null) _folderNavToCB = _defaultNavToCB;
+                                    if (_folderNavToCB.canNavigate(file)) _currentDir = file;
+                                } else{
+                                    _adapter.selectItem(position);
+                                    if(!_adapter.isAnySelected()){
+                                        _chooseMode = CHOOSE_MODE_NORMAL;
+                                        if(!_dirOnly) _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
+                                    }
+                                }
                                 break;
-                            case CHOOSEMODE_SELECT_MANY:
+                            case CHOOSE_MODE_DELETE:
+                                deleteFile(file);
+                                _chooseMode = CHOOSE_MODE_NORMAL;
                                 break;
                             default:
                                 // ERROR! It shouldn't get here...
@@ -1105,26 +1231,39 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
     }
 
     @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View list, int position, long id) {
+        try{
+            SmbFile file = _entries.get(position);
+            if (file.getName().equals("..")) return true;
+            if(!_allowSelectDir && file.isDirectory()) return true;
+            _adapter.selectItem(position);
+            if(!_adapter.isAnySelected()){
+                _chooseMode = CHOOSE_MODE_NORMAL;
+                if(!_dirOnly) _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
+            } else{
+                _chooseMode = CHOOSE_MODE_SELECT_MULTIPLE;
+                if(!_dirOnly) _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+            }
+            return true;
+        } catch(SmbException e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
     public void onClick(DialogInterface dialog, int which) {
         //
     }
 
     private void refreshDirs() throws MalformedURLException, SmbException{
         listDirs();
-        _adapter.setEntries(_entries);
-        /*final SmbDirAdapter adapter = new SmbDirAdapter(getBaseContext(), _entries, _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, _dateFormat);
-        if (_adapterSetter != null) {
-            _adapterSetter.apply(adapter);
-        }
-        if (_list != null) {
-            ((Activity) getBaseContext()).runOnUiThread(new Runnable(){
-                @Override
-                public void run(){
-                    _list.setAdapter(adapter);
-                }
-            });
-        }
-        return adapter;*/
+        ((Activity) SmbFileChooserDialog.this.getBaseContext()).runOnUiThread(new Runnable(){
+            @Override
+            public void run(){
+                _adapter.setEntries(_entries);
+            }
+        });
     }
 
     public void dismiss(){
@@ -1146,6 +1285,7 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
     private AlertDialog _alertDialog;
     private ListView _list;
     private OnChosenListener _onChosenListener = null;
+    private OnSelectedListener _onSelectedListener = null;
     private boolean _dirOnly;
     private SmbFileFilter _fileFilter;
     private @StringRes int _titleRes = 0, _okRes = 0, _negativeRes = 0;
@@ -1170,6 +1310,8 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
     private @NonNull String _createDir = "New folder", _delete = "Delete", _newFolderCancel = "Cancel", _newFolderOk = "Ok";
     private @DrawableRes int _optionsIconRes = -1, _createDirIconRes = -1, _deleteIconRes = -1;
     private View _newFolderView;
+    private boolean _enableMultiple;
+    private boolean _allowSelectDir = false;
 
     @FunctionalInterface
     public interface AdapterSetter {
@@ -1245,11 +1387,11 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
         }
     };
 
-    private static final int CHOOSEMODE_NORMAL = 0;
-    private static final int CHOOSEMODE_DELETE = 1;
-    private static final int CHOOSEMODE_SELECT_MANY = 2;
+    private static final int CHOOSE_MODE_NORMAL = 0;
+    private static final int CHOOSE_MODE_DELETE = 1;
+    private static final int CHOOSE_MODE_SELECT_MULTIPLE = 2;
 
-    private int _chooseMode = CHOOSEMODE_NORMAL;
+    private int _chooseMode = CHOOSE_MODE_NORMAL;
 
     private NewFolderFilter _newFolderFilter;
 }
