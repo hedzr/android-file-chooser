@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -218,6 +217,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                             }
 
                             new AlertDialog.Builder(ctx)
+                                    .setTitle(files.size() + " files selected:")
                                     .setAdapter(new ArrayAdapter<String>(ctx,
                                             android.R.layout.simple_expandable_list_item_1, paths),null)
                                     .create()

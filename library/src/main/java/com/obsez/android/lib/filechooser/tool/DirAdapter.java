@@ -9,7 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
-import android.util.SparseIntArray;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -22,6 +22,7 @@ import com.obsez.android.lib.filechooser.internals.WrappedDrawable;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -56,7 +57,7 @@ public class DirAdapter extends ArrayAdapter<File> {
         int red = Color.red(accentColor);
         int green = Color.green(accentColor);
         int blue = Color.blue(accentColor);
-        int accentColorWithAlpha = Color.argb(50, red, green, blue);
+        int accentColorWithAlpha = Color.argb(40, red, green, blue);
         _colorFilter = new PorterDuffColorFilter(accentColorWithAlpha, PorterDuff.Mode.MULTIPLY);
     }
 
@@ -103,7 +104,7 @@ public class DirAdapter extends ArrayAdapter<File> {
         }
 
         View root = rl.findViewById(R.id.root);
-        if(selected.get(file.hashCode(), -1) == -1) root.getBackground().clearColorFilter();
+        if(_selected.get(file.hashCode(), null) == null) root.getBackground().clearColorFilter();
           else root.getBackground().setColorFilter(_colorFilter);
         return rl;
     }
@@ -146,10 +147,10 @@ public class DirAdapter extends ArrayAdapter<File> {
 
     public void selectItem(int position){
         int id = (int) getItemId(position);
-        if(selected.get(id, -1) == -1){
-            selected.append(id, position);
+        if(_selected.get(id, null) == null){
+            _selected.append(id, getItem(position));
         } else{
-            selected.delete(id);
+            _selected.delete(id);
         }
         notifyDataSetChanged();
     }
@@ -159,11 +160,27 @@ public class DirAdapter extends ArrayAdapter<File> {
     }
 
     public boolean isSelectedById(int id){
-        return selected.get(id, -1) != -1;
+        return _selected.get(id, null) != null;
     }
 
     public boolean isAnySelected(){
-        return selected.size() > 0;
+        return _selected.size() > 0;
+    }
+
+    public boolean isOneSelected(){
+        return  _selected.size() == 1;
+    }
+
+    public List<File> getSelected(){
+        ArrayList<File> list = new ArrayList<File>();
+        for(int i = 0; i < _selected.size(); i++){
+            list.add(_selected.valueAt(i));
+        }
+        return list;
+    }
+
+    public void clearSelected(){
+        _selected.clear();
     }
 
     private static SimpleDateFormat _formatter;
@@ -171,6 +188,6 @@ public class DirAdapter extends ArrayAdapter<File> {
     private Drawable _defaultFileIcon = null;
     private boolean _resolveFileType = false;
     private PorterDuffColorFilter _colorFilter;
-    private SparseIntArray selected = new SparseIntArray();
+    private SparseArray<File> _selected = new SparseArray<File>();
 }
 
