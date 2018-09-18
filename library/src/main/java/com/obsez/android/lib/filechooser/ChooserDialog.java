@@ -674,6 +674,25 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                     public void onClick(final View v1){
                                         //Toast.makeText(_context, "delete clicked", Toast.LENGTH_SHORT).show();
                                         hideOptions.run();
+
+                                        if(_chooseMode == CHOOSE_MODE_SELECT_MULTIPLE){
+                                            for(File file : _adapter.getSelected()){
+                                                try{
+                                                    deleteFile(file);
+
+                                                } catch(IOException e){
+                                                    // There's probably a better way to handle this, but...
+                                                    e.printStackTrace();
+                                                    Toast.makeText(_context, e.getMessage(), Toast.LENGTH_LONG).show();
+                                                    break;
+                                                }
+                                            }
+                                            _adapter.clearSelected();
+                                            refreshDirs();
+                                            _chooseMode = CHOOSE_MODE_NORMAL;
+                                            return;
+                                        }
+
                                         _chooseMode = _chooseMode != CHOOSE_MODE_DELETE ? CHOOSE_MODE_DELETE : CHOOSE_MODE_NORMAL;
                                     }
                                 });
@@ -901,15 +920,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private void refreshDirs() {
         listDirs();
         _adapter.setEntries(_entries);
-        /*DirAdapter adapter = new DirAdapter(_context, _entries,
-                _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
-        if (_adapterSetter != null) {
-            _adapterSetter.apply(adapter);
-        }
-        if (_list != null) {
-            _list.setAdapter(adapter);
-        }
-        return adapter;*/
     }
 
     public void dismiss(){
