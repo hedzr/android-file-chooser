@@ -867,7 +867,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         if (_folderNavToCB.canNavigate(file)) _currentDir = file;
                     } else if ((!_dirOnly) && _result != null){
                         _result.onChoosePath(file.getAbsolutePath(), file);
-                        _alertDialog.dismiss();
                         return;
                     }
                     break;
