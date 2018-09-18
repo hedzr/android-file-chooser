@@ -555,8 +555,6 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
             public void onShow(final DialogInterface dialog){
                 if(!SmbFileChooserDialog.this._dismissOnButtonClick){
                     Button negative = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
-                    Button positive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-
                     negative.setOnClickListener(new View.OnClickListener(){
                         @Override
                         public void onClick(final View v){
@@ -566,16 +564,17 @@ public class SmbFileChooserDialog extends LightContextWrapper implements Adapter
                         }
                     });
 
-                    positive.setOnClickListener(new View.OnClickListener(){
-                        @Override
-                        public void onClick(final View v){
-                            if(SmbFileChooserDialog.this._onChosenListener != null){
-                                if(SmbFileChooserDialog.this._dirOnly){
-                                    SmbFileChooserDialog.this._onChosenListener.onChoosePath(SmbFileChooserDialog.this._currentDir.getPath(), SmbFileChooserDialog.this._currentDir);
-                                }
-                            }
-                        }
-                    });
+					if(SmbFileChooserDialog.this._dirOnly){
+						Button positive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+						positive.setOnClickListener(new View.OnClickListener(){
+							@Override
+							public void onClick(final View v){
+								if(SmbFileChooserDialog.this._onChosenListener != null){
+										SmbFileChooserDialog.this._onChosenListener.onChoosePath(SmbFileChooserDialog.this._currentDir.getPath(), SmbFileChooserDialog.this._currentDir);
+									}
+								}
+						});
+					}
                 }
 
                 if(SmbFileChooserDialog.this._enableOptions){

@@ -449,8 +449,6 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
             public void onShow(final DialogInterface dialog){
                 if(!FileChooserDialog.this._dismissOnButtonClick){
                     Button negative = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
-                    Button positive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-
                     negative.setOnClickListener(new View.OnClickListener(){
                         @Override
                         public void onClick(final View v){
@@ -460,16 +458,17 @@ public class FileChooserDialog extends LightContextWrapper implements AdapterVie
                         }
                     });
 
-                    positive.setOnClickListener(new View.OnClickListener(){
-                        @Override
-                        public void onClick(final View v){
-                            if(FileChooserDialog.this._onChosenListener != null){
-                                if(FileChooserDialog.this._dirOnly){
-                                    FileChooserDialog.this._onChosenListener.onChoosePath(FileChooserDialog.this._currentDir.getAbsolutePath(), FileChooserDialog.this._currentDir);
-                                }
-                            }
-                        }
-                    });
+					if(FileChooserDialog.this._dirOnly){
+						Button positive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+						positive.setOnClickListener(new View.OnClickListener(){
+							@Override
+							public void onClick(final View v){
+								if(FileChooserDialog.this._onChosenListener != null){
+									FileChooserDialog.this._onChosenListener.onChoosePath(FileChooserDialog.this._currentDir.getAbsolutePath(), FileChooserDialog.this._currentDir);
+								}
+							}
+						});
+					}
                 }
 
                 if(FileChooserDialog.this._enableOptions){
