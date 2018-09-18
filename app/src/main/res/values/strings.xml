@@ -8,6 +8,8 @@
   <string name="btn_choose_a_folder">Choose a folder</string>
   <string name="title_choose_folder">Choose a folder</string>
   <string name="btn_choose_any_file">Choose any file</string>
+  <string name="title_choose_multiple">Choose multiple files</string>
+  <string name="btn_choose_multiple">Choose multiple files</string>
   <string name="title_choose_any_file">Choose any file</string>
   <string name="option_create_folder">New folder</string>
   <string name="options_delete">Delete</string>
