@@ -89,6 +89,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                                 _tv.setText(_path);
                             }
                         })
+                        .enableOptions(true)
                         .build()
                         .show();
             }
