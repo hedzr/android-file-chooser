@@ -746,6 +746,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE,
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE },
                         PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
+				return this;
             }
         } else{
             _alertDialog.show();
