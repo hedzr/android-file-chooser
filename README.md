@@ -14,8 +14,12 @@
 
 ### Snapshots
 
+<table><tr><td>
 <img src="captures/choose_file.png" width="360"/>
+</td><td>
 <img src="captures/choose_folder.png" width="360"/>
+</td></tr></table>
+
 
 ### Demo Application
 
@@ -26,14 +30,9 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 
 ## Changes
 
-~~Since 1.1.6, AS 3.0+ + Gradle 4.1+ + Android SDK & Building Tools 26.0+ are prerequisites.~~
-
-~~Two withXXX calls added for AlertDialog icon and layout resource. See Also: [withIcon()](./library/src/main/java/com/obsez/android/lib/filechooser/ChooserDialog.java#L114), [withLayoutView()](./library/src/main/java/com/obsez/android/lib/filechooser/ChooserDialog.java#L119)~~
+- create new folder on the fly, thx [Guiorgy](https://github.com/Guiorgy) and his [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser)
 
 
-**NOTE**:
-
-> ~~minSDK will be moved up to 14+ at next release, since we like Android Supports Library 26.+.~~
 
 ## Usage
 
@@ -350,7 +349,7 @@ feel free to make an new issue.
 many peoples report or contribute to improve me, but only a few of them be put here — it's hard to list all.
 
 - logo and banner by: [**iqbalhood**](https://github.com/iqbalhood)
-- codes and reports: [**bostrot**](https://github.com/bostrot), [**SeppPenner**](https://github.com/SeppPenner), [**lucian-cm**](https://github.com/lucian-cm), [**ghost**](https://github.com/ghost), [**UmeshBaldaniya46**](https://github.com/UmeshBaldaniya46) ...
+- codes and reports: [**bostrot**](https://github.com/bostrot), [**SeppPenner**](https://github.com/SeppPenner), [**lucian-cm**](https://github.com/lucian-cm), [**ghost**](https://github.com/ghost), [**UmeshBaldaniya46**](https://github.com/UmeshBaldaniya46), [Guiorgy](https://github.com/Guiorgy) ...
 
 
 
