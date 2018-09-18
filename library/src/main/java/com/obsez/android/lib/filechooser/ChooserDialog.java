@@ -217,6 +217,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    public ChooserDialog withNewFolderFilter(NewFolderFilter filter){
+        this._newFolderFilter = filter;
+        return this;
+    }
+	
     public ChooserDialog withIcon(@DrawableRes int iconId) {
         this._iconRes = iconId;
         return this;
