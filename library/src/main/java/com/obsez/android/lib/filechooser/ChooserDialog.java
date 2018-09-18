@@ -694,7 +694,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         _list.setOnItemClickListener(this);
         if (_enableMultiple){
             _list.setOnItemLongClickListener(this);
-            //_alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
         }
         return this;
     }
@@ -724,10 +723,13 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE },
                         PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
             }
-        } else {
+        } else{
             _alertDialog.show();
         }
 
+        if(_enableMultiple){
+            _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
+        }
         return this;
     }
 
@@ -837,25 +839,30 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             File f = _currentDir.getParentFile();
             if (_folderNavUpCB == null) _folderNavUpCB = _defaultNavUpCB;
             if (_folderNavUpCB.canUpTo(f)) _currentDir = f;
-            _chooseMode = CHOOSE_MODE_NORMAL;
+            if(_chooseMode == CHOOSE_MODE_DELETE) _chooseMode = CHOOSE_MODE_NORMAL;
         } else {
             switch(_chooseMode){
-                case CHOOSE_MODE_SELECT_MULTIPLE:
-                    if(!file.isDirectory()){
-                        _adapter.selectItem(position);
-                        if(!_adapter.isAnySelected()){
-                            _chooseMode = CHOOSE_MODE_NORMAL;
-                            _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
-                        }
-                    }
                 case CHOOSE_MODE_NORMAL:
                     if (file.isDirectory()){
                         if (_folderNavToCB == null) _folderNavToCB = _defaultNavToCB;
                         if (_folderNavToCB.canNavigate(file)) _currentDir = file;
                     } else if ((!_dirOnly) && _result != null){
                         _result.onChoosePath(file.getAbsolutePath(), file);
-                        if(_dismissOnButtonClick) _alertDialog.dismiss();
+                        _alertDialog.dismiss();
                         return;
+                    }
+                    break;
+                case CHOOSE_MODE_SELECT_MULTIPLE:
+                    if(file.isDirectory()){
+                        if (_folderNavToCB == null) _folderNavToCB = _defaultNavToCB;
+                        if (_folderNavToCB.canNavigate(file)) _currentDir = file;
+                    } else{
+                        _adapter.selectItem(position);
+                        if(!_adapter.isAnySelected()){
+                            _chooseMode = CHOOSE_MODE_NORMAL;
+                            _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
+                        }
+                        _result.onChoosePath(file.getAbsolutePath(), file);
                     }
                     break;
                 case CHOOSE_MODE_DELETE:

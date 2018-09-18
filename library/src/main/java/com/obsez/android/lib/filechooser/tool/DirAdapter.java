@@ -51,6 +51,13 @@ public class DirAdapter extends ArrayAdapter<File> {
                 dateFormat != null && !"".equals(dateFormat.trim()) ? dateFormat.trim() : "yyyy/MM/dd HH:mm:ss");
         _defaultFolderIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_folder);
         _defaultFileIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_file);
+
+        int accentColor = UiUtil.getThemeAccentColor(getContext());
+        int red = Color.red(accentColor);
+        int green = Color.green(accentColor);
+        int blue = Color.blue(accentColor);
+        int accentColorWithAlpha = Color.argb(50, red, green, blue);
+        _colorFilter = new PorterDuffColorFilter(accentColorWithAlpha, PorterDuff.Mode.MULTIPLY);
     }
 
     // This function is called to show each view item
@@ -93,10 +100,11 @@ public class DirAdapter extends ArrayAdapter<File> {
             tvSize.setText(FileUtil.getReadableFileSize(file.length()));
             tvDate.setText(_formatter.format(new Date(file.lastModified())));
 
-            View root = rl.findViewById(R.id.root);
-            if(selected.get(file.hashCode(), -1) == -1) root.getBackground().clearColorFilter();
-              else root.getBackground().setColorFilter(new PorterDuffColorFilter(0x60000000, PorterDuff.Mode.MULTIPLY));
         }
+
+        View root = rl.findViewById(R.id.root);
+        if(selected.get(file.hashCode(), -1) == -1) root.getBackground().clearColorFilter();
+          else root.getBackground().setColorFilter(_colorFilter);
         return rl;
     }
 
@@ -162,6 +170,7 @@ public class DirAdapter extends ArrayAdapter<File> {
     private Drawable _defaultFolderIcon = null;
     private Drawable _defaultFileIcon = null;
     private boolean _resolveFileType = false;
+    private PorterDuffColorFilter _colorFilter;
     private SparseIntArray selected = new SparseIntArray();
 }
 
