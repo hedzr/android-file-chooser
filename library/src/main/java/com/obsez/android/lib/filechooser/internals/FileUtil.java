@@ -1,5 +1,8 @@
 package com.obsez.android.lib.filechooser.internals;
 
+import android.text.InputFilter;
+import android.text.Spanned;
+
 import java.io.File;
 import java.text.DecimalFormat;
 
@@ -55,4 +58,51 @@ public class FileUtil {
         return String.valueOf(dec.format(fileSize) + suffix);
     }
 
+    public static class NewFolderFilter implements InputFilter {
+        private final int maxLength;
+        private final String regex;
+
+        public NewFolderFilter() {
+            this.maxLength = 255;
+            this.regex = "[<>|\\\\:&;#\n\r\t?*~\0-\37]";
+        }
+
+        public NewFolderFilter(int max) {
+            this.maxLength = max;
+            this.regex = "[<>|\\\\:&;#\n\r\t?*~\0-\37]";
+        }
+
+        public NewFolderFilter(String regex) {
+            this.maxLength = 255;
+            this.regex = regex;
+        }
+
+        public NewFolderFilter(int max, String regex) {
+            this.maxLength = max;
+            this.regex = regex;
+        }
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend){
+            String filtered;
+
+            int keep = maxLength - (dest.length() - (dend - dstart));
+            if (keep <= 0) {
+                filtered = "";
+            } else if (keep >= end - start) {
+                filtered = source.subSequence(start, end).toString();
+            } else {
+                keep += start;
+                if (Character.isHighSurrogate(source.charAt(keep - 1))) {
+                    --keep;
+                    if (keep == start) {
+                        return "";
+                    }
+                }
+                filtered = source.subSequence(start, keep).toString();
+            }
+
+            return filtered.replaceAll(regex, "");
+        }
+    }
 }
