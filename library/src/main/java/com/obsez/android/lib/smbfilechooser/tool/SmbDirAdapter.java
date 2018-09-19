@@ -37,26 +37,26 @@ import jcifs.smb.SmbFile;
 public class SmbDirAdapter extends ArrayAdapter<SmbFile>{
     public SmbDirAdapter(Context cxt, List<SmbFile> entries, int resId) {
         super(cxt, resId, R.id.text, entries);
-        this.init(null);
+        this.init(cxt, null);
     }
 
     public SmbDirAdapter(Context cxt, List<SmbFile> entries, int resId, String dateFormat) {
         super(cxt, resId, R.id.text, entries);
-        this.init(dateFormat);
+        this.init(cxt, dateFormat);
     }
 
     public SmbDirAdapter(Context cxt, List<SmbFile> entries, int resource, int textViewResourceId) {
         super(cxt, resource, textViewResourceId, entries);
-        this.init(null);
+        this.init(cxt, null);
     }
 
     @SuppressLint("SimpleDateFormat")
-    private void init(String dateFormat) {
+    private void init(Context context, String dateFormat) {
         _formatter = new SimpleDateFormat(dateFormat != null && !"".equals(dateFormat.trim()) ? dateFormat.trim() : "yyyy/MM/dd HH:mm:ss");
         _defaultFolderIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_folder);
         _defaultFileIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_file);
 
-        int accentColor = UiUtil.getThemeAccentColor(getContext());
+        int accentColor = context.getResources().getColor(android.support.v7.appcompat.R.color.material_deep_teal_500);
         int red = Color.red(accentColor);
         int green = Color.green(accentColor);
         int blue = Color.blue(accentColor);

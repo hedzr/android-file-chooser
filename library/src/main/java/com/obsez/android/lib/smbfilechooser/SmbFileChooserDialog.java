@@ -648,7 +648,7 @@ public class SmbFileChooserDialog extends LightContextWrapper implements DialogI
                     options.setVisibility(View.VISIBLE);
                     final Drawable drawable = ContextCompat.getDrawable(getBaseContext(),
                             SmbFileChooserDialog.this._optionsIconRes != -1 ? SmbFileChooserDialog.this._optionsIconRes : R.drawable.ic_menu_24dp);
-                    final int color = UiUtil.getThemeAccentColor(getBaseContext());
+                    final int color = getBaseContext().getResources().getColor(android.support.v7.appcompat.R.color.material_deep_teal_500);
                     final PorterDuffColorFilter filter = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
                     if(drawable != null){
                         drawable.setColorFilter(filter);
@@ -657,6 +657,7 @@ public class SmbFileChooserDialog extends LightContextWrapper implements DialogI
                         options.setCompoundDrawablesWithIntrinsicBounds(
                                 SmbFileChooserDialog.this._optionsIconRes != -1 ? SmbFileChooserDialog.this._optionsIconRes : R.drawable.ic_menu_24dp, 0, 0, 0);
                     }
+                    options.setTextColor(color);
 
                     final Runnable showOptions = new Runnable(){
                         @Override
@@ -736,6 +737,7 @@ public class SmbFileChooserDialog extends LightContextWrapper implements DialogI
                                     createDir.setCompoundDrawablesWithIntrinsicBounds(
                                             SmbFileChooserDialog.this._createDirIconRes != -1 ? SmbFileChooserDialog.this._createDirIconRes : R.drawable.ic_add_24dp, 0, 0, 0);
                                 }
+								createDir.setTextColor(color);
                                 params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, START | CENTER_VERTICAL);
                                 params.leftMargin = 10;
                                 options.addView(createDir, params);
@@ -755,6 +757,7 @@ public class SmbFileChooserDialog extends LightContextWrapper implements DialogI
                                     delete.setCompoundDrawablesWithIntrinsicBounds(
                                             SmbFileChooserDialog.this._deleteIconRes != -1 ? SmbFileChooserDialog.this._deleteIconRes : R.drawable.ic_delete_24dp, 0, 0, 0);
                                 }
+								delete.setTextColor(color);
                                 params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, END | CENTER_VERTICAL);
                                 params.rightMargin = 10;
                                 options.addView(delete, params);
@@ -864,22 +867,20 @@ public class SmbFileChooserDialog extends LightContextWrapper implements DialogI
                                             params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
                                             holder.addView(buttons, params);
 
-                                            // The OK button.
+                                            // The Cancel button.
                                             final Button cancel = new Button(getBaseContext(), null, android.R.attr.buttonBarButtonStyle);
-                                            if(SmbFileChooserDialog.this._newFolderCancelRes == -1)
-                                                cancel.setText(SmbFileChooserDialog.this._newFolderCancel);
-                                            else
-                                                cancel.setText(SmbFileChooserDialog.this._newFolderCancelRes);
+                                            if(SmbFileChooserDialog.this._newFolderCancelRes == -1) cancel.setText(SmbFileChooserDialog.this._newFolderCancel);
+                                              else cancel.setText(SmbFileChooserDialog.this._newFolderCancelRes);
+											cancel.setTextColor(color);
                                             cancel.setGravity(START);
                                             params = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
                                             buttons.addView(cancel, params);
 
                                             // The OK button.
                                             final Button ok = new Button(getBaseContext(), null, android.R.attr.buttonBarButtonStyle);
-                                            if(SmbFileChooserDialog.this._newFolderOkRes == -1)
-                                                ok.setText(SmbFileChooserDialog.this._newFolderOk);
-                                            else
-                                                ok.setText(SmbFileChooserDialog.this._newFolderOkRes);
+                                            if(SmbFileChooserDialog.this._newFolderOkRes == -1) ok.setText(SmbFileChooserDialog.this._newFolderOk);
+                                              else ok.setText(SmbFileChooserDialog.this._newFolderOkRes);
+											cancel.setTextColor(color);
                                             ok.setGravity(END);
                                             params = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
                                             buttons.addView(ok, params);
