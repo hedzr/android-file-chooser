@@ -88,37 +88,40 @@ public class FileUtil {
 
     public static class NewFolderFilter implements InputFilter{
         private final int maxLength;
-        private final String regex;
+        private final Pattern pattern;
 
         public NewFolderFilter() {
             this.maxLength = 255;
-            this.regex = "[<>|\\\\:&;#\n\r\t?*~\0-\37]";
+            this.pattern = Pattern.compile("[<>|\\\\:&;#\n\r\t?*~\0-\37]");
         }
 
-        public NewFolderFilter(final int max) {
+        public NewFolderFilter(int max) {
             this.maxLength = max;
-            this.regex = "[<>|\\\\:&;#\n\r\t?*~\0-\37]";
+            this.pattern = Pattern.compile("[<>|\\\\:&;#\n\r\t?*~\0-\37]");
         }
 
-        public NewFolderFilter(@NonNull final String regex) {
+        public NewFolderFilter(String pattern) {
             this.maxLength = 255;
-            this.regex = regex;
+            this.pattern = Pattern.compile(pattern);
         }
 
-        public NewFolderFilter(final int max, @NonNull final String regex) {
+        public NewFolderFilter(int max, String pattern) {
             this.maxLength = max;
-            this.regex = regex;
+            this.pattern = Pattern.compile(pattern);
         }
 
         @Override
-        public CharSequence filter(final CharSequence source, final int start, final int end, final Spanned dest, final int dstart, final int dend){
-            String filtered;
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend){
+            Matcher matcher = pattern.matcher(source);
+            if (matcher.matches()) {
+                return "";
+            }
 
             int keep = maxLength - (dest.length() - (dend - dstart));
             if (keep <= 0) {
-                filtered = "";
+                return  "";
             } else if (keep >= end - start) {
-                filtered = source.subSequence(start, end).toString();
+                return null; // keep original
             } else {
                 keep += start;
                 if (Character.isHighSurrogate(source.charAt(keep - 1))) {
@@ -127,10 +130,8 @@ public class FileUtil {
                         return "";
                     }
                 }
-                filtered = source.subSequence(start, keep).toString();
+                return source.subSequence(start, keep).toString();
             }
-
-            return filtered.replaceAll(regex, "");
         }
     }
 
