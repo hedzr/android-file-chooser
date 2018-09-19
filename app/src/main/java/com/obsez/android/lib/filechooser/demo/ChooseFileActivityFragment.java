@@ -58,8 +58,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                     .withFilter(true, false)
                     .withStartFile(_path)
                     .withDateFormat("HH:mm")
-                    .withResources(R.string.title_choose_folder, R.string.title_choose,
-                        R.string.dialog_cancel)
+                    .withResources(R.string.title_choose_folder, R.string.title_choose, R.string.dialog_cancel)
                     //.withOnCancelListener(new DialogInterface.OnCancelListener(){
                     //
                     //    /**
@@ -114,8 +113,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                 new ChooserDialog(ctx)
                     .disableTitle(true)
                     .withStartFile(_path)
-                    .withResources(R.string.title_choose_any_file, R.string.title_choose,
-                        R.string.dialog_cancel)
+                    .withResources(R.string.title_choose_any_file, R.string.title_choose, R.string.dialog_cancel)
                     .withFileIconsRes(false, R.mipmap.ic_my_file, R.mipmap.ic_my_folder)
                     .withAdapterSetter(new ChooserDialog.AdapterSetter() {
                         @Override
@@ -154,8 +152,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                 dialog.enableOptions(true)
                     .withFilterRegex(false, true, ".*\\.txt")
                     .withStartFile(_path)
-                    .withResources(R.string.title_choose_multiple, R.string.new_folder_ok,
-                        R.string.dialog_cancel)
+                    .withResources(R.string.title_choose_multiple, R.string.new_folder_ok, R.string.dialog_cancel)
                     .enableMultiple(true)
                     .dismissOnButtonClick(false);
 
@@ -199,7 +196,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                                     dialog.dismiss();
                                     return;
                                 }
-                                if (!files.remove(dirFile)) {
+                                if (!files.contains(dirFile)) {
                                     files.add(dirFile);
                                 }
                             }
@@ -224,14 +221,16 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                                 .show();
                         }
                     };
-                    dialog.withOnLastBackPressedListener(new ChooserDialog.OnBackPressedListener() {
-                        @Override
-                        public void onBackPressed(AlertDialog dialog) {
-                            files.clear();
-                            dialog.dismiss();
-                            onDismiss.run();
-                        }
-                    })
+
+                    dialog
+                        .withOnLastBackPressedListener(new ChooserDialog.OnBackPressedListener() {
+                            @Override
+                            public void onBackPressed(AlertDialog dialog) {
+                                files.clear();
+                                dialog.dismiss();
+                                onDismiss.run();
+                            }
+                        })
                         .withNegativeButtonListener(new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -248,7 +247,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                                     onDismiss.run();
                                     return;
                                 }
-                                if (!files.remove(dirFile)) {
+                                if (!files.contains(dirFile)) {
                                     files.add(dirFile);
                                 }
                             }
