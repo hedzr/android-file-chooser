@@ -54,13 +54,13 @@ public class ImageUtil {
     }
 
     public static Bitmap showBitmapFromFile(String imgPath) {
-        File imgFile = new  File(imgPath);
+        File imgFile = new File(imgPath);
         return showBitmapFromFile(imgFile);
     }
 
     public static Bitmap showBitmapFromFile(File imgFile) {
         try {
-            if(imgFile.exists()){
+            if (imgFile.exists()) {
 
                 Bitmap bitmap = decodeFile(imgFile.getAbsolutePath());
                 return bitmap;

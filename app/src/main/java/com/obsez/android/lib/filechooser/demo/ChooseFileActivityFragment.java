@@ -39,7 +39,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-            @Nullable Bundle savedInstanceState) {
+                             @Nullable Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
 
         View root = inflater.inflate(R.layout.fragment_choose_file, container, false);
@@ -54,56 +54,56 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                 final Context ctx = getActivity();
                 assert ctx != null;
                 new ChooserDialog().with(ctx)
-                        .withIcon(R.mipmap.ic_launcher)
-                        .withFilter(true, false)
-                        .withStartFile(_path)
-                        .withDateFormat("HH:mm")
-                        .withResources(R.string.title_choose_folder, R.string.title_choose,
-                                R.string.dialog_cancel)
-                        //.withOnCancelListener(new DialogInterface.OnCancelListener(){
-                        //
-                        //    /**
-                        //     * This method will be invoked when the dialog is canceled.
-                        //     *
-                        //     * @param dialog the dialog that was canceled will be passed into the
-                        //     *               method
-                        //     */
-                        //    @Override
-                        //    public void onCancel(DialogInterface dialog) {
-                        //        Log.d("CANCEL", "CANCEL");
-                        //    }
-                        //})
-                        //.withNegativeButtonListener(new DialogInterface.OnClickListener(){
-                        //
-                        //    /**
-                        //     * This method will be invoked when a button in the dialog is clicked.
-                        //     *
-                        //     * @param dialog the dialog that received the click
-                        //     * @param which  the button that was clicked (ex.
-                        //     *               {@link DialogInterface#BUTTON_POSITIVE}) or the position
-                        //     */
-                        //    @Override
-                        //    public void onClick(DialogInterface dialog, int which) {
-                        //        Log.d("Negative", "Negative");
-                        //    }
-                        //})
-                        .withChosenListener(new ChooserDialog.Result() {
-                            @Override
-                            public void onChoosePath(String path, File pathFile) {
-                                Toast.makeText(ctx, "FOLDER: " + path, Toast.LENGTH_SHORT).show();
-                                _path = path;
-                                _tv.setText(_path);
-                            }
-                        })
-                        .enableOptions(true)
-                        .withOnBackPressedListener(new ChooserDialog.OnBackPressedListener() {
-                            @Override
-                            public void onBackPressed(AlertDialog dialog) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .build()
-                        .show();
+                    .withIcon(R.mipmap.ic_launcher)
+                    .withFilter(true, false)
+                    .withStartFile(_path)
+                    .withDateFormat("HH:mm")
+                    .withResources(R.string.title_choose_folder, R.string.title_choose,
+                        R.string.dialog_cancel)
+                    //.withOnCancelListener(new DialogInterface.OnCancelListener(){
+                    //
+                    //    /**
+                    //     * This method will be invoked when the dialog is canceled.
+                    //     *
+                    //     * @param dialog the dialog that was canceled will be passed into the
+                    //     *               method
+                    //     */
+                    //    @Override
+                    //    public void onCancel(DialogInterface dialog) {
+                    //        Log.d("CANCEL", "CANCEL");
+                    //    }
+                    //})
+                    //.withNegativeButtonListener(new DialogInterface.OnClickListener(){
+                    //
+                    //    /**
+                    //     * This method will be invoked when a button in the dialog is clicked.
+                    //     *
+                    //     * @param dialog the dialog that received the click
+                    //     * @param which  the button that was clicked (ex.
+                    //     *               {@link DialogInterface#BUTTON_POSITIVE}) or the position
+                    //     */
+                    //    @Override
+                    //    public void onClick(DialogInterface dialog, int which) {
+                    //        Log.d("Negative", "Negative");
+                    //    }
+                    //})
+                    .withChosenListener(new ChooserDialog.Result() {
+                        @Override
+                        public void onChoosePath(String path, File pathFile) {
+                            Toast.makeText(ctx, "FOLDER: " + path, Toast.LENGTH_SHORT).show();
+                            _path = path;
+                            _tv.setText(_path);
+                        }
+                    })
+                    .enableOptions(true)
+                    .withOnBackPressedListener(new ChooserDialog.OnBackPressedListener() {
+                        @Override
+                        public void onBackPressed(AlertDialog dialog) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .build()
+                    .show();
             }
         });
         root.findViewById(R.id.btn_choose_any_file).setOnClickListener(new View.OnClickListener() {
@@ -112,36 +112,36 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                 final Context ctx = getActivity();
                 assert ctx != null;
                 new ChooserDialog(ctx)
-                        .disableTitle(true)
-                        .withStartFile(_path)
-                        .withResources(R.string.title_choose_any_file, R.string.title_choose,
-                                R.string.dialog_cancel)
-                        .withFileIconsRes(false, R.mipmap.ic_my_file, R.mipmap.ic_my_folder)
-                        .withAdapterSetter(new ChooserDialog.AdapterSetter() {
-                            @Override
-                            public void apply(DirAdapter adapter) {
-                                //
-                            }
-                        })
-                        .withChosenListener(new ChooserDialog.Result() {
-                            @Override
-                            public void onChoosePath(String path, File pathFile) {
-                                Toast.makeText(ctx, "FILE: " + path, Toast.LENGTH_SHORT).show();
+                    .disableTitle(true)
+                    .withStartFile(_path)
+                    .withResources(R.string.title_choose_any_file, R.string.title_choose,
+                        R.string.dialog_cancel)
+                    .withFileIconsRes(false, R.mipmap.ic_my_file, R.mipmap.ic_my_folder)
+                    .withAdapterSetter(new ChooserDialog.AdapterSetter() {
+                        @Override
+                        public void apply(DirAdapter adapter) {
+                            //
+                        }
+                    })
+                    .withChosenListener(new ChooserDialog.Result() {
+                        @Override
+                        public void onChoosePath(String path, File pathFile) {
+                            Toast.makeText(ctx, "FILE: " + path, Toast.LENGTH_SHORT).show();
 
-                                _path = path;
-                                _tv.setText(_path);
-                                //_iv.setImageURI(Uri.fromFile(pathFile));
-                                _iv.setImageBitmap(ImageUtil.decodeFile(pathFile));
-                            }
-                        })
-                        .withOnBackPressedListener(new ChooserDialog.OnBackPressedListener() {
-                            @Override
-                            public void onBackPressed(AlertDialog dialog) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .build()
-                        .show();
+                            _path = path;
+                            _tv.setText(_path);
+                            //_iv.setImageURI(Uri.fromFile(pathFile));
+                            _iv.setImageBitmap(ImageUtil.decodeFile(pathFile));
+                        }
+                    })
+                    .withOnBackPressedListener(new ChooserDialog.OnBackPressedListener() {
+                        @Override
+                        public void onBackPressed(AlertDialog dialog) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .build()
+                    .show();
             }
         });
         root.findViewById(R.id.btn_choose_multiple).setOnClickListener(new View.OnClickListener() {
@@ -152,18 +152,18 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                 assert ctx != null;
                 final ChooserDialog dialog = new ChooserDialog(ctx);
                 dialog.enableOptions(true)
-                    .withFilterRegex(false, true,".*\\.txt")
+                    .withFilterRegex(false, true, ".*\\.txt")
                     .withStartFile(_path)
                     .withResources(R.string.title_choose_multiple, R.string.new_folder_ok,
-                            R.string.dialog_cancel)
+                        R.string.dialog_cancel)
                     .enableMultiple(true)
                     .dismissOnButtonClick(false);
 
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                     dialog.withOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
-                            if(files.isEmpty()) return;
+                            if (files.isEmpty()) return;
 
                             ArrayList<String> paths = new ArrayList<String>();
                             for (File file : files) {
@@ -171,45 +171,45 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                             }
 
                             new AlertDialog.Builder(ctx)
-                                    .setTitle(files.size() + " files selected:")
-                                    .setAdapter(new ArrayAdapter<String>(ctx,
-                                            android.R.layout.simple_expandable_list_item_1, paths),null)
-                                    .create()
-                                    .show();
+                                .setTitle(files.size() + " files selected:")
+                                .setAdapter(new ArrayAdapter<String>(ctx,
+                                    android.R.layout.simple_expandable_list_item_1, paths), null)
+                                .create()
+                                .show();
                         }
                     })
-                    .withOnLastBackPressedListener(new ChooserDialog.OnBackPressedListener() {
-                        @Override
-                        public void onBackPressed(AlertDialog dialog) {
-                            files.clear();
-                            dialog.dismiss();
-                        }
-                    })
-                    .withNegativeButtonListener(new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            files.clear();
-                            dialog.dismiss();
-                        }
-                    })
-                    .withChosenListener(new ChooserDialog.Result() {
-                        @Override
-                        public void onChoosePath(String dir, File dirFile) {
-                            if(dirFile.isDirectory()){
+                        .withOnLastBackPressedListener(new ChooserDialog.OnBackPressedListener() {
+                            @Override
+                            public void onBackPressed(AlertDialog dialog) {
+                                files.clear();
                                 dialog.dismiss();
-                                return;
                             }
-                            if(!files.remove(dirFile)){
-                                files.add(dirFile);
+                        })
+                        .withNegativeButtonListener(new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                files.clear();
+                                dialog.dismiss();
                             }
-                        }
-                    });
-                } else{
+                        })
+                        .withChosenListener(new ChooserDialog.Result() {
+                            @Override
+                            public void onChoosePath(String dir, File dirFile) {
+                                if (dirFile.isDirectory()) {
+                                    dialog.dismiss();
+                                    return;
+                                }
+                                if (!files.remove(dirFile)) {
+                                    files.add(dirFile);
+                                }
+                            }
+                        });
+                } else {
                     // OnDismissListener is not supported, so we simulate something similar anywhere where the dialog might be dismissed.
                     final Runnable onDismiss = new Runnable() {
                         @Override
                         public void run() {
-                            if(files.isEmpty()) return;
+                            if (files.isEmpty()) return;
 
                             ArrayList<String> paths = new ArrayList<String>();
                             for (File file : files) {
@@ -217,11 +217,11 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                             }
 
                             new AlertDialog.Builder(ctx)
-                                    .setTitle(files.size() + " files selected:")
-                                    .setAdapter(new ArrayAdapter<String>(ctx,
-                                            android.R.layout.simple_expandable_list_item_1, paths),null)
-                                    .create()
-                                    .show();
+                                .setTitle(files.size() + " files selected:")
+                                .setAdapter(new ArrayAdapter<String>(ctx,
+                                    android.R.layout.simple_expandable_list_item_1, paths), null)
+                                .create()
+                                .show();
                         }
                     };
                     dialog.withOnLastBackPressedListener(new ChooserDialog.OnBackPressedListener() {
@@ -232,27 +232,27 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                             onDismiss.run();
                         }
                     })
-                    .withNegativeButtonListener(new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            files.clear();
-                            dialog.dismiss();
-                            onDismiss.run();
-                        }
-                    })
-                    .withChosenListener(new ChooserDialog.Result() {
-                        @Override
-                        public void onChoosePath(String dir, File dirFile) {
-                            if(dirFile.isDirectory()){
+                        .withNegativeButtonListener(new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                files.clear();
                                 dialog.dismiss();
                                 onDismiss.run();
-                                return;
                             }
-                            if(!files.remove(dirFile)){
-                                files.add(dirFile);
+                        })
+                        .withChosenListener(new ChooserDialog.Result() {
+                            @Override
+                            public void onChoosePath(String dir, File dirFile) {
+                                if (dirFile.isDirectory()) {
+                                    dialog.dismiss();
+                                    onDismiss.run();
+                                    return;
+                                }
+                                if (!files.remove(dirFile)) {
+                                    files.add(dirFile);
+                                }
                             }
-                        }
-                    });
+                        });
                 }
 
                 dialog.build().show();
@@ -279,28 +279,28 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
         //});
 
         new ChooserDialog(ctx)
-                .withFilterRegex(false, true, ".*\\.(jpe?g|png)")
-                .withStartFile(_path)
-                .withResources(R.string.title_nothing, R.string.title_choose, R.string.dialog_cancel)
-                .withChosenListener(new ChooserDialog.Result() {
-                    @Override
-                    public void onChoosePath(String path, File pathFile) {
-                        Toast.makeText(ctx, "FILE: " + path, Toast.LENGTH_SHORT).show();
+            .withFilterRegex(false, true, ".*\\.(jpe?g|png)")
+            .withStartFile(_path)
+            .withResources(R.string.title_nothing, R.string.title_choose, R.string.dialog_cancel)
+            .withChosenListener(new ChooserDialog.Result() {
+                @Override
+                public void onChoosePath(String path, File pathFile) {
+                    Toast.makeText(ctx, "FILE: " + path, Toast.LENGTH_SHORT).show();
 
-                        _path = path;
-                        _tv.setText(_path);
-                        //_iv.setImageURI(Uri.fromFile(pathFile));
-                        _iv.setImageBitmap(ImageUtil.decodeFile(pathFile));
-                    }
-                })
-                .withOnBackPressedListener(new ChooserDialog.OnBackPressedListener() {
-                    @Override
-                    public void onBackPressed(AlertDialog dialog) {
-                        dialog.dismiss();
-                    }
-                })
-                .build()
-                .show();
+                    _path = path;
+                    _tv.setText(_path);
+                    //_iv.setImageURI(Uri.fromFile(pathFile));
+                    _iv.setImageBitmap(ImageUtil.decodeFile(pathFile));
+                }
+            })
+            .withOnBackPressedListener(new ChooserDialog.OnBackPressedListener() {
+                @Override
+                public void onBackPressed(AlertDialog dialog) {
+                    dialog.dismiss();
+                }
+            })
+            .build()
+            .show();
     }
 
 }

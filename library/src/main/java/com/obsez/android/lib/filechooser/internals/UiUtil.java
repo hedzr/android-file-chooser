@@ -51,7 +51,7 @@ public final class UiUtil {
         } else {
             String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString());
             mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                    fileExtension.toLowerCase());
+                fileExtension.toLowerCase());
         }
         return mimeType;
     }

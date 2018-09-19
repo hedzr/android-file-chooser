@@ -155,19 +155,19 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
-    public ChooserDialog dismissOnButtonClick(final boolean dismissOnButtonClick){
+    public ChooserDialog dismissOnButtonClick(final boolean dismissOnButtonClick) {
         this._dismissOnButtonClick = dismissOnButtonClick;
-        if(dismissOnButtonClick){
-            this._defaultLastBack = new OnBackPressedListener(){
+        if (dismissOnButtonClick) {
+            this._defaultLastBack = new OnBackPressedListener() {
                 @Override
-                public void onBackPressed(AlertDialog dialog){
+                public void onBackPressed(AlertDialog dialog) {
                     dialog.dismiss();
                 }
             };
-        } else{
-            this._defaultLastBack = new OnBackPressedListener(){
+        } else {
+            this._defaultLastBack = new OnBackPressedListener() {
                 @Override
-                public void onBackPressed(AlertDialog dialog){
+                public void onBackPressed(AlertDialog dialog) {
                     //
                 }
             };
@@ -180,12 +180,12 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
-    public ChooserDialog withOnBackPressedListener(OnBackPressedListener listener){
+    public ChooserDialog withOnBackPressedListener(OnBackPressedListener listener) {
         this._onBackPressed = listener;
         return this;
     }
 
-    public ChooserDialog withOnLastBackPressedListener(OnBackPressedListener listener){
+    public ChooserDialog withOnLastBackPressedListener(OnBackPressedListener listener) {
         this._onLastBackPressed = listener;
         return this;
     }
@@ -197,7 +197,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
-    public ChooserDialog enableOptions(boolean enableOptions){
+    public ChooserDialog enableOptions(boolean enableOptions) {
         this._enableOptions = enableOptions;
         return this;
     }
@@ -217,11 +217,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
-    public ChooserDialog withNewFolderFilter(NewFolderFilter filter){
+    public ChooserDialog withNewFolderFilter(NewFolderFilter filter) {
         this._newFolderFilter = filter;
         return this;
     }
-	
+
     public ChooserDialog withIcon(@DrawableRes int iconId) {
         this._iconRes = iconId;
         return this;
@@ -247,7 +247,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     public ChooserDialog withNegativeButton(@StringRes int cancelTitle,
-            final DialogInterface.OnClickListener listener) {
+                                            final DialogInterface.OnClickListener listener) {
         this._negativeRes = cancelTitle;
         this._negativeListener = listener;
         return this;
@@ -268,15 +268,15 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
-    public ChooserDialog withOnDismissListener(final DialogInterface.OnDismissListener listener){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){
+    public ChooserDialog withOnDismissListener(final DialogInterface.OnDismissListener listener) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             _onDismissListener = listener;
         }
         return this;
     }
 
     public ChooserDialog withFileIcons(final boolean tryResolveFileTypeAndIcon, final Drawable fileIcon,
-            final Drawable folderIcon) {
+                                       final Drawable folderIcon) {
         _adapterSetter = new AdapterSetter() {
             @Override
             public void apply(DirAdapter adapter) {
@@ -289,7 +289,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     public ChooserDialog withFileIconsRes(final boolean tryResolveFileTypeAndIcon, final int fileIcon,
-            final int folderIcon) {
+                                          final int folderIcon) {
         _adapterSetter = new AdapterSetter() {
             @Override
             public void apply(DirAdapter adapter) {
@@ -298,7 +298,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 }
                 if (folderIcon != -1) {
                     adapter.setDefaultFolderIcon(
-                            ContextCompat.getDrawable(_context, folderIcon));
+                        ContextCompat.getDrawable(_context, folderIcon));
                 }
                 adapter.setResolveFileType(tryResolveFileTypeAndIcon);
             }
@@ -338,7 +338,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
-    public ChooserDialog enableMultiple(boolean enableMultiple){
+    public ChooserDialog enableMultiple(boolean enableMultiple) {
         this._enableMultiple = enableMultiple;
         return this;
     }
@@ -351,12 +351,12 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         AlertDialog.Builder builder = new AlertDialog.Builder(_context);
 
         _adapter = new DirAdapter(_context, new ArrayList<File>(),
-                _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
+            _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
         if (_adapterSetter != null) _adapterSetter.apply(_adapter);
         refreshDirs();
         builder.setAdapter(_adapter, this);
 
-        if (!_disableTitle){
+        if (!_disableTitle) {
             builder.setTitle(_titleRes);
         }
 
@@ -374,7 +374,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             builder.setPositiveButton(_okRes, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    if(_result != null){
+                    if (_result != null) {
                         _result.onChoosePath(_currentDir.getAbsolutePath(), _currentDir);
                     }
                 }
@@ -387,15 +387,15 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             builder.setOnCancelListener(_cancelListener2);
         }
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && _onDismissListener != null){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && _onDismissListener != null) {
             builder.setOnDismissListener(_onDismissListener);
         }
 
-        builder.setOnKeyListener(new DialogInterface.OnKeyListener(){
+        builder.setOnKeyListener(new DialogInterface.OnKeyListener() {
             @Override
-            public boolean onKey(final DialogInterface dialog, final int keyCode, final KeyEvent event){
-                if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP){
-                    if(_newFolderView != null && _newFolderView.getVisibility() == View.VISIBLE){
+            public boolean onKey(final DialogInterface dialog, final int keyCode, final KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+                    if (_newFolderView != null && _newFolderView.getVisibility() == View.VISIBLE) {
                         _newFolderView.setVisibility(View.INVISIBLE);
                         return true;
                     }
@@ -408,27 +408,27 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         _alertDialog = builder.create();
 
-        _alertDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+        _alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
-            public void onShow(final DialogInterface dialog){
-                if(!_dismissOnButtonClick){
+            public void onShow(final DialogInterface dialog) {
+                if (!_dismissOnButtonClick) {
                     Button negative = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
                     Button positive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
 
-                    negative.setOnClickListener(new View.OnClickListener(){
+                    negative.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(final View v){
-                            if(_negativeListener != null){
+                        public void onClick(final View v) {
+                            if (_negativeListener != null) {
                                 _negativeListener.onClick(_alertDialog, AlertDialog.BUTTON_NEGATIVE);
                             }
                         }
                     });
 
-                    positive.setOnClickListener(new View.OnClickListener(){
+                    positive.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(final View v){
-                            if(_result != null){
-                                if(_dirOnly || _enableMultiple){
+                        public void onClick(final View v) {
+                            if (_result != null) {
+                                if (_dirOnly || _enableMultiple) {
                                     _result.onChoosePath(_currentDir.getAbsolutePath(), _currentDir);
                                 }
                             }
@@ -440,36 +440,38 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     throw new RuntimeException("withOptionResources() should be called at first.");
                 }
 
-                if(_enableOptions){
+                if (_enableOptions) {
                     final Button options = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
                     options.setText("");
                     options.setVisibility(View.VISIBLE);
                     final Drawable drawable = ContextCompat.getDrawable(_context, _optionsIconRes != -1 ? _optionsIconRes : R.drawable.ic_menu_24dp);
                     final int color = UiUtil.getThemeAccentColor(_context);
                     final PorterDuffColorFilter filter = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
-                    if(drawable != null){
+                    if (drawable != null) {
                         drawable.setColorFilter(filter);
                         options.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
-                    } else{
+                    } else {
                         options.setCompoundDrawablesWithIntrinsicBounds(
-                                _optionsIconRes != -1 ? _optionsIconRes : R.drawable.ic_menu_24dp, 0, 0, 0);
+                            _optionsIconRes != -1 ? _optionsIconRes : R.drawable.ic_menu_24dp, 0, 0, 0);
                     }
 
-                    final Runnable showOptions = new Runnable(){
+                    final Runnable showOptions = new Runnable() {
                         @Override
-                        public void run(){
+                        public void run() {
                             final ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) _list.getLayoutParams();
-                            if(_options.getHeight() == 0){
+                            if (_options.getHeight() == 0) {
                                 ViewTreeObserver viewTreeObserver = _options.getViewTreeObserver();
                                 viewTreeObserver.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                                     @Override
                                     public boolean onPreDraw() {
-                                        if (_options.getHeight() <= 0) { return false; }
+                                        if (_options.getHeight() <= 0) {
+                                            return false;
+                                        }
                                         _options.getViewTreeObserver().removeOnPreDrawListener(this);
                                         Handler handler = new Handler();
-                                        handler.postDelayed(new Runnable(){
+                                        handler.postDelayed(new Runnable() {
                                             @Override
-                                            public void run(){
+                                            public void run() {
                                                 params.bottomMargin = _options.getHeight();
                                                 _list.setLayoutParams(params);
                                                 _options.setVisibility(View.VISIBLE);
@@ -478,16 +480,16 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                         return true;
                                     }
                                 });
-                            } else{
+                            } else {
                                 _options.setVisibility(View.VISIBLE);
                                 params.bottomMargin = _options.getHeight();
                                 _list.setLayoutParams(params);
                             }
                         }
                     };
-                    final Runnable hideOptions = new Runnable(){
+                    final Runnable hideOptions = new Runnable() {
                         @Override
-                        public void run(){
+                        public void run() {
                             _options.setVisibility(View.INVISIBLE);
                             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) _list.getLayoutParams();
                             params.bottomMargin = 0;
@@ -495,16 +497,16 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         }
                     };
 
-                    options.setOnClickListener(new View.OnClickListener(){
+                    options.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(final View view){
-                            if(_options == null){
+                        public void onClick(final View view) {
+                            if (_options == null) {
                                 // region Draw options view. (this only happens the first time one clicks on options)
                                 // Root view (FrameLayout) of the ListView in the AlertDialog.
                                 final int rootId = _context.getResources().getIdentifier("contentPanel", "id", "android");
                                 final FrameLayout root = ((AlertDialog) dialog).findViewById(rootId);
                                 // In case the was changed or not found.
-                                if(root == null) return;
+                                if (root == null) return;
 
                                 // Create options view.
                                 final FrameLayout options = new FrameLayout(_context);
@@ -521,10 +523,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                 createDir.setText(R.string.option_create_folder);
                                 // Drawable for the button.
                                 final Drawable plus = ContextCompat.getDrawable(_context, _createDirIconRes != -1 ? _createDirIconRes : R.drawable.ic_add_24dp);
-                                if(plus != null){
+                                if (plus != null) {
                                     plus.setColorFilter(filter);
                                     createDir.setCompoundDrawablesWithIntrinsicBounds(plus, null, null, null);
-                                } else{
+                                } else {
                                     createDir.setCompoundDrawablesWithIntrinsicBounds(_createDirIconRes != -1 ? _createDirIconRes : R.drawable.ic_add_24dp, 0, 0, 0);
                                 }
                                 params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, START | CENTER_VERTICAL);
@@ -535,10 +537,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                 final Button delete = new Button(_context, null, android.R.attr.buttonBarButtonStyle);
                                 delete.setText(_deleteRes);
                                 final Drawable bin = ContextCompat.getDrawable(_context, _deleteIconRes != -1 ? _deleteIconRes : R.drawable.ic_delete_24dp);
-                                if(bin != null){
+                                if (bin != null) {
                                     bin.setColorFilter(filter);
                                     delete.setCompoundDrawablesWithIntrinsicBounds(bin, null, null, null);
-                                } else{
+                                } else {
                                     delete.setCompoundDrawablesWithIntrinsicBounds(_deleteIconRes != -1 ? _deleteIconRes : R.drawable.ic_delete_24dp, 0, 0, 0);
                                 }
                                 params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, END | CENTER_VERTICAL);
@@ -546,26 +548,27 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                 options.addView(delete, params);
 
                                 // Event Listeners.
-                                createDir.setOnClickListener(new View.OnClickListener(){
+                                createDir.setOnClickListener(new View.OnClickListener() {
                                     private EditText input = null;
 
                                     @Override
-                                    public void onClick(final View view){
+                                    public void onClick(final View view) {
                                         //Toast.makeText(getBaseContext(), "new folder clicked", Toast.LENGTH_SHORT).show();
                                         hideOptions.run();
                                         File newFolder = new File(_currentDir, "New folder");
-                                        for(int i = 1; newFolder.exists(); i++)
+                                        for (int i = 1; newFolder.exists(); i++)
                                             newFolder = new File(_currentDir, "New folder (" + i + ')');
-                                        if(this.input != null) this.input.setText(newFolder.getName());
+                                        if (this.input != null)
+                                            this.input.setText(newFolder.getName());
 
-                                        if(_newFolderView == null){
+                                        if (_newFolderView == null) {
                                             // region Draw a view with input to create new folder. (this only happens the first time one clicks on New folder)
-                                            try{
+                                            try {
                                                 //noinspection ConstantConditions
-                                                ((AlertDialog) dialog).getWindow().clearFlags(FLAG_NOT_FOCUSABLE  | FLAG_ALT_FOCUSABLE_IM);
+                                                ((AlertDialog) dialog).getWindow().clearFlags(FLAG_NOT_FOCUSABLE | FLAG_ALT_FOCUSABLE_IM);
                                                 //noinspection ConstantConditions
                                                 ((AlertDialog) dialog).getWindow().setSoftInputMode(SOFT_INPUT_STATE_VISIBLE);
-                                            } catch(NullPointerException e){
+                                            } catch (NullPointerException e) {
                                                 e.printStackTrace();
                                             }
 
@@ -593,9 +596,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             final LinearLayout holder = new LinearLayout(_context);
                                             holder.setOrientation(LinearLayout.VERTICAL);
                                             holder.setBackgroundColor(0xffffffff);
-                                            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                                 holder.setElevation(20f);
-                                            } else{
+                                            } else {
                                                 ViewCompat.setElevation(holder, 20);
                                             }
                                             params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, 5);
@@ -611,7 +614,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             input.setSingleLine(true);
                                             // There should be no suggestions, but...
                                             input.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_VARIATION_FILTER | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                                            input.setFilters(new InputFilter[] { _newFolderFilter != null ? _newFolderFilter : new NewFolderFilter() });
+                                            input.setFilters(new InputFilter[]{_newFolderFilter != null ? _newFolderFilter : new NewFolderFilter()});
                                             input.setGravity(CENTER_HORIZONTAL);
                                             params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
                                             params.setMargins(3, 2, 3, 0);
@@ -637,10 +640,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             buttons.addView(ok, params);
 
                                             // Event Listeners.
-                                            input.setOnEditorActionListener(new TextView.OnEditorActionListener(){
+                                            input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                                                 @Override
-                                                public boolean onEditorAction(final TextView v, final int actionId, final KeyEvent event){
-                                                    if(actionId == EditorInfo.IME_ACTION_DONE){
+                                                public boolean onEditorAction(final TextView v, final int actionId, final KeyEvent event) {
+                                                    if (actionId == EditorInfo.IME_ACTION_DONE) {
                                                         ChooserDialog.this.createNewDirectory(input.getText().toString());
                                                         UiUtil.hideKeyboardFrom(_context, input);
                                                         overlay.setVisibility(View.INVISIBLE);
@@ -649,16 +652,16 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                                     return false;
                                                 }
                                             });
-                                            cancel.setOnClickListener(new View.OnClickListener(){
+                                            cancel.setOnClickListener(new View.OnClickListener() {
                                                 @Override
-                                                public void onClick(final View v){
+                                                public void onClick(final View v) {
                                                     UiUtil.hideKeyboardFrom(_context, input);
                                                     overlay.setVisibility(View.INVISIBLE);
                                                 }
                                             });
-                                            ok.setOnClickListener(new View.OnClickListener(){
+                                            ok.setOnClickListener(new View.OnClickListener() {
                                                 @Override
-                                                public void onClick(final View v){
+                                                public void onClick(final View v) {
                                                     ChooserDialog.this.createNewDirectory(input.getText().toString());
                                                     UiUtil.hideKeyboardFrom(_context, input);
                                                     overlay.setVisibility(View.INVISIBLE);
@@ -667,25 +670,25 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             // endregion
                                         }
 
-                                        if(_newFolderView.getVisibility() == View.INVISIBLE){
+                                        if (_newFolderView.getVisibility() == View.INVISIBLE) {
                                             _newFolderView.setVisibility(View.VISIBLE);
-                                        } else{
+                                        } else {
                                             _newFolderView.setVisibility(View.INVISIBLE);
                                         }
                                     }
                                 });
-                                delete.setOnClickListener(new View.OnClickListener(){
+                                delete.setOnClickListener(new View.OnClickListener() {
                                     @Override
-                                    public void onClick(final View v1){
+                                    public void onClick(final View v1) {
                                         //Toast.makeText(_context, "delete clicked", Toast.LENGTH_SHORT).show();
                                         hideOptions.run();
 
-                                        if(_chooseMode == CHOOSE_MODE_SELECT_MULTIPLE){
-                                            for(File file : _adapter.getSelected()){
-                                                try{
+                                        if (_chooseMode == CHOOSE_MODE_SELECT_MULTIPLE) {
+                                            for (File file : _adapter.getSelected()) {
+                                                try {
                                                     deleteFile(file);
 
-                                                } catch(IOException e){
+                                                } catch (IOException e) {
                                                     // There's probably a better way to handle this, but...
                                                     e.printStackTrace();
                                                     Toast.makeText(_context, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -704,9 +707,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                 // endregion
                             }
 
-                            if(_options.getVisibility() == View.VISIBLE){
+                            if (_options.getVisibility() == View.VISIBLE) {
                                 hideOptions.run();
-                            } else{
+                            } else {
                                 showOptions.run();
                             }
                         }
@@ -716,7 +719,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         });
         _list = _alertDialog.getListView();
         _list.setOnItemClickListener(this);
-        if (_enableMultiple){
+        if (_enableMultiple) {
             _list.setOnItemLongClickListener(this);
         }
         return this;
@@ -733,26 +736,26 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         if (Build.VERSION.SDK_INT >= 23) {
             final int PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE = 0;
             int readPermissionCheck = ContextCompat.checkSelfPermission(_context,
-                    Manifest.permission.READ_EXTERNAL_STORAGE);
+                Manifest.permission.READ_EXTERNAL_STORAGE);
             int writePermissionCheck = ContextCompat.checkSelfPermission(_context,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
             //if = permission granted
             if (readPermissionCheck == PackageManager.PERMISSION_GRANTED
-                    && writePermissionCheck == PackageManager.PERMISSION_GRANTED) {
+                && writePermissionCheck == PackageManager.PERMISSION_GRANTED) {
                 _alertDialog.show();
             } else {
                 ActivityCompat.requestPermissions((Activity) _context,
-                        new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE },
-                        PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
-				return this;
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
+                return this;
             }
-        } else{
+        } else {
             _alertDialog.show();
         }
 
-        if(_enableMultiple){
+        if (_enableMultiple) {
             _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
         }
         return this;
@@ -834,25 +837,26 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
 
-    private void createNewDirectory(String name){
+    private void createNewDirectory(String name) {
         final File newDir = new File(_currentDir, name);
-        if(!newDir.exists() && newDir.mkdir()){
+        if (!newDir.exists() && newDir.mkdir()) {
             refreshDirs();
             return;
         }
         Toast.makeText(_context,
-                "Couldn't create folder " + newDir.getName() + " at " + newDir.getAbsolutePath(),
-                Toast.LENGTH_LONG).show();
+            "Couldn't create folder " + newDir.getName() + " at " + newDir.getAbsolutePath(),
+            Toast.LENGTH_LONG).show();
     }
 
     private void deleteFile(File file) throws IOException {
-        if(file.isDirectory()){
+        if (file.isDirectory()) {
             final File[] entries = file.listFiles();
-            for(final File entry : entries){
+            for (final File entry : entries) {
                 deleteFile(entry);
             }
         }
-        if(!file.delete()) throw new IOException("Couldn't delete \"" + file.getName() + "\" at \"" + file.getParent());
+        if (!file.delete())
+            throw new IOException("Couldn't delete \"" + file.getName() + "\" at \"" + file.getParent());
     }
 
     @Override
@@ -864,26 +868,26 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             File f = _currentDir.getParentFile();
             if (_folderNavUpCB == null) _folderNavUpCB = _defaultNavUpCB;
             if (_folderNavUpCB.canUpTo(f)) _currentDir = f;
-            if(_chooseMode == CHOOSE_MODE_DELETE) _chooseMode = CHOOSE_MODE_NORMAL;
+            if (_chooseMode == CHOOSE_MODE_DELETE) _chooseMode = CHOOSE_MODE_NORMAL;
         } else {
-            switch(_chooseMode){
+            switch (_chooseMode) {
                 case CHOOSE_MODE_NORMAL:
-                    if (file.isDirectory()){
+                    if (file.isDirectory()) {
                         if (_folderNavToCB == null) _folderNavToCB = _defaultNavToCB;
                         if (_folderNavToCB.canNavigate(file)) _currentDir = file;
-                    } else if ((!_dirOnly) && _result != null){
+                    } else if ((!_dirOnly) && _result != null) {
                         _result.onChoosePath(file.getAbsolutePath(), file);
-                        if(_dismissOnButtonClick) _alertDialog.dismiss();
+                        if (_dismissOnButtonClick) _alertDialog.dismiss();
                         return;
                     }
                     break;
                 case CHOOSE_MODE_SELECT_MULTIPLE:
-                    if(file.isDirectory()){
+                    if (file.isDirectory()) {
                         if (_folderNavToCB == null) _folderNavToCB = _defaultNavToCB;
                         if (_folderNavToCB.canNavigate(file)) _currentDir = file;
-                    } else{
+                    } else {
                         _adapter.selectItem(position);
-                        if(!_adapter.isAnySelected()){
+                        if (!_adapter.isAnySelected()) {
                             _chooseMode = CHOOSE_MODE_NORMAL;
                             _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
                         }
@@ -891,9 +895,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     }
                     break;
                 case CHOOSE_MODE_DELETE:
-                    try{
+                    try {
                         deleteFile(file);
-                    } catch(IOException e){
+                    } catch (IOException e) {
                         e.printStackTrace();
                         Toast.makeText(_context, e.getMessage(), Toast.LENGTH_LONG).show();
                     }
@@ -911,7 +915,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     public boolean onItemLongClick(AdapterView<?> parent, View list, int position, long id) {
         File file = _entries.get(position);
         if (file.getName().equals("..") || file.isDirectory()) return true;
-        if(_adapter.isSelected(position)) return true;
+        if (_adapter.isSelected(position)) return true;
         _adapter.selectItem(position);
         _chooseMode = CHOOSE_MODE_SELECT_MULTIPLE;
         _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
@@ -928,7 +932,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         _adapter.setEntries(_entries);
     }
 
-    public void dismiss(){
+    public void dismiss() {
         _alertDialog.dismiss();
     }
 
@@ -1012,27 +1016,27 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     };
 
     @FunctionalInterface
-    public interface OnBackPressedListener{
+    public interface OnBackPressedListener {
         void onBackPressed(AlertDialog dialog);
     }
 
-    private OnBackPressedListener _onBackPressed = (new OnBackPressedListener(){
+    private OnBackPressedListener _onBackPressed = (new OnBackPressedListener() {
         @Override
-        public void onBackPressed(AlertDialog dialog){
-            if(_entries.size() > 0
-                    && (_entries.get(0).getName().equals("../") || _entries.get(0).getName().equals(".."))){
+        public void onBackPressed(AlertDialog dialog) {
+            if (_entries.size() > 0
+                && (_entries.get(0).getName().equals("../") || _entries.get(0).getName().equals(".."))) {
                 onItemClick(null, _list, 0, 0);
-            } else{
-                if(_onLastBackPressed != null) _onLastBackPressed.onBackPressed(dialog);
+            } else {
+                if (_onLastBackPressed != null) _onLastBackPressed.onBackPressed(dialog);
                 else _defaultLastBack.onBackPressed(dialog);
             }
         }
     });
     private OnBackPressedListener _onLastBackPressed;
 
-    private OnBackPressedListener _defaultLastBack = new OnBackPressedListener(){
+    private OnBackPressedListener _defaultLastBack = new OnBackPressedListener() {
         @Override
-        public void onBackPressed(AlertDialog dialog){
+        public void onBackPressed(AlertDialog dialog) {
             dialog.dismiss();
         }
     };

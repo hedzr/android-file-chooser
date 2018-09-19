@@ -49,7 +49,7 @@ public class DirAdapter extends ArrayAdapter<File> {
     @SuppressLint("SimpleDateFormat")
     private void init(String dateFormat) {
         _formatter = new SimpleDateFormat(
-                dateFormat != null && !"".equals(dateFormat.trim()) ? dateFormat.trim() : "yyyy/MM/dd HH:mm:ss");
+            dateFormat != null && !"".equals(dateFormat.trim()) ? dateFormat.trim() : "yyyy/MM/dd HH:mm:ss");
         _defaultFolderIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_folder);
         _defaultFileIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_file);
 
@@ -75,7 +75,7 @@ public class DirAdapter extends ArrayAdapter<File> {
         tvDate.setVisibility(View.VISIBLE);
 
         File file = super.getItem(position);
-        if(file == null) return rl;
+        if (file == null) return rl;
         tvName.setText(file.getName());
         if (file.isDirectory()) {
             final Drawable folderIcon = _defaultFolderIcon;
@@ -104,8 +104,8 @@ public class DirAdapter extends ArrayAdapter<File> {
         }
 
         View root = rl.findViewById(R.id.root);
-        if(_selected.get(file.hashCode(), null) == null) root.getBackground().clearColorFilter();
-          else root.getBackground().setColorFilter(_colorFilter);
+        if (_selected.get(file.hashCode(), null) == null) root.getBackground().clearColorFilter();
+        else root.getBackground().setColorFilter(_colorFilter);
         return rl;
     }
 
@@ -133,7 +133,7 @@ public class DirAdapter extends ArrayAdapter<File> {
         this._resolveFileType = resolveFileType;
     }
 
-    public void setEntries(List<File> entries){
+    public void setEntries(List<File> entries) {
         super.clear();
         super.addAll(entries);
         notifyDataSetChanged();
@@ -145,41 +145,41 @@ public class DirAdapter extends ArrayAdapter<File> {
         return getItem(position).hashCode();
     }
 
-    public void selectItem(int position){
+    public void selectItem(int position) {
         int id = (int) getItemId(position);
-        if(_selected.get(id, null) == null){
+        if (_selected.get(id, null) == null) {
             _selected.append(id, getItem(position));
-        } else{
+        } else {
             _selected.delete(id);
         }
         notifyDataSetChanged();
     }
 
-    public boolean isSelected(int position){
+    public boolean isSelected(int position) {
         return isSelectedById((int) getItemId(position));
     }
 
-    public boolean isSelectedById(int id){
+    public boolean isSelectedById(int id) {
         return _selected.get(id, null) != null;
     }
 
-    public boolean isAnySelected(){
+    public boolean isAnySelected() {
         return _selected.size() > 0;
     }
 
-    public boolean isOneSelected(){
-        return  _selected.size() == 1;
+    public boolean isOneSelected() {
+        return _selected.size() == 1;
     }
 
-    public List<File> getSelected(){
+    public List<File> getSelected() {
         ArrayList<File> list = new ArrayList<File>();
-        for(int i = 0; i < _selected.size(); i++){
+        for (int i = 0; i < _selected.size(); i++) {
             list.add(_selected.valueAt(i));
         }
         return list;
     }
 
-    public void clearSelected(){
+    public void clearSelected() {
         _selected.clear();
     }
 

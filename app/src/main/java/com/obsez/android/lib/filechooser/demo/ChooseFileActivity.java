@@ -20,7 +20,7 @@ public class ChooseFileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_file);
 
-        if(Log.isLoggable(TAG, Log.INFO)) {
+        if (Log.isLoggable(TAG, Log.INFO)) {
             Resources resources = getApplicationContext().getResources();
             DisplayMetrics dm = resources.getDisplayMetrics();
             Configuration config = resources.getConfiguration();

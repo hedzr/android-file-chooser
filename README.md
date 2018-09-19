@@ -30,7 +30,7 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 
 ## Changes
 
-- create new folder on the fly, thx [Guiorgy](https://github.com/Guiorgy) and his [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser)
+- create new folder on the fly, and the optional multiple select mode for developer, thx [Guiorgy](https://github.com/Guiorgy) and his [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser)
 
 
 

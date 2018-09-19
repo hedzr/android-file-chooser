@@ -37,15 +37,15 @@ public class WrappedDrawable extends Drawable {
     public void setBoundsInDp(float left, float top, float right, float bottom) {
         //update bounds to get correctly
         super.setBounds((int) UiUtil.dip2px(left),
-                (int) UiUtil.dip2px(top),
-                (int) UiUtil.dip2px(right),
-                (int) UiUtil.dip2px(bottom));
+            (int) UiUtil.dip2px(top),
+            (int) UiUtil.dip2px(right),
+            (int) UiUtil.dip2px(bottom));
         Drawable drawable = getDrawable();
         if (drawable != null) {
             drawable.setBounds((int) UiUtil.dip2px(left),
-                    (int) UiUtil.dip2px(top),
-                    (int) UiUtil.dip2px(right),
-                    (int) UiUtil.dip2px(bottom));
+                (int) UiUtil.dip2px(top),
+                (int) UiUtil.dip2px(right),
+                (int) UiUtil.dip2px(bottom));
         }
     }
 
@@ -69,8 +69,8 @@ public class WrappedDrawable extends Drawable {
     public int getOpacity() {
         Drawable drawable = getDrawable();
         return drawable != null
-                ? drawable.getOpacity()
-                : PixelFormat.UNKNOWN;
+            ? drawable.getOpacity()
+            : PixelFormat.UNKNOWN;
     }
 
     @Override
@@ -85,15 +85,15 @@ public class WrappedDrawable extends Drawable {
     public int getIntrinsicWidth() {
         Drawable drawable = getDrawable();
         return drawable != null
-                ? drawable.getBounds().width()
-                : 0;
+            ? drawable.getBounds().width()
+            : 0;
     }
 
     @Override
     public int getIntrinsicHeight() {
         Drawable drawable = getDrawable();
         return drawable != null ?
-                drawable.getBounds().height()
-                : 0;
+            drawable.getBounds().height()
+            : 0;
     }
 }

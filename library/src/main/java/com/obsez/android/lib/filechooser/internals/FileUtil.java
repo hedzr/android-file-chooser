@@ -83,7 +83,7 @@ public class FileUtil {
         }
 
         @Override
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend){
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
             String filtered;
 
             int keep = maxLength - (dest.length() - (dend - dstart));
