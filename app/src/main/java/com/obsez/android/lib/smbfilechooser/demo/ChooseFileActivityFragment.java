@@ -193,7 +193,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                                     Toast.makeText(ctx, "This dialog won't close by pressing back!", Toast.LENGTH_SHORT).show();
                                 }
                             })
-                            .setNewFolderFilter(new FileUtil.NewFolderFilter(/*max length of 10*/ 10, /*regex ban everything but a to z (lowercase)*/ "^[a-z]"))
+                            .setNewFolderFilter(new FileUtil.NewFolderFilter(/*max length of 10*/ 10, /*regex pattern that only allows a to z (lowercase)*/ "[a-z]"))
                             .setOnChosenListener(new SmbFileChooserDialog.OnChosenListener(){
                                 @Override
                                 public void onChoosePath(@NonNull final String path, @NonNull final SmbFile file){
