@@ -31,6 +31,8 @@ import java.util.concurrent.Future;
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 
+import static com.obsez.android.lib.smbfilechooser.SmbFileChooserDialog.getNetworkThread;
+
 /**
  * Created by coco on 6/9/18. Edited by Guiorgy on 10/09/18.
  */
@@ -78,13 +80,13 @@ public class SmbDirAdapter extends ArrayAdapter<SmbFile>{
 
         tvDate.setVisibility(View.VISIBLE);
 
-        Future ret = Executors.newSingleThreadExecutor().submit(new Runnable(){
+        Future ret = getNetworkThread().submit(new Runnable(){
             @Override
             public void run(){
                 SmbFile file = SmbDirAdapter.super.getItem(position);
 				if(file == null) return;
 				String name = file.getName();
-				name = name.endsWith("/") ? name.substring(0, name.length()) : name;
+				name = name.endsWith("/") ? name.substring(0, name.length() - 1) : name;
                 tvName.setText(name);
                 try{
                     if(file.isDirectory()){
@@ -158,12 +160,12 @@ public class SmbDirAdapter extends ArrayAdapter<SmbFile>{
     public void setEntries(List<SmbFile> entries){
         super.clear();
         super.addAll(entries);
-        notifyDataSetChanged();
+        //notifyDataSetChanged();
     }
 
     @Override
     public long getItemId(final int position) {
-        Future<Long> ret = SmbFileChooserDialog.getNetworkThread().submit(new Callable<Long>(){
+        Future<Long> ret = getNetworkThread().submit(new Callable<Long>(){
             @Override
             public Long call(){
                 //noinspection ConstantConditions
@@ -187,7 +189,7 @@ public class SmbDirAdapter extends ArrayAdapter<SmbFile>{
         } else{
             _selected.delete(id);
         }
-        notifyDataSetChanged();
+        //notifyDataSetChanged();
     }
 
     public boolean isSelected(int position){

@@ -9,6 +9,8 @@ import android.text.Spanned;
 
 import java.io.File;
 import java.text.DecimalFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import jcifs.smb.SmbFile;
 

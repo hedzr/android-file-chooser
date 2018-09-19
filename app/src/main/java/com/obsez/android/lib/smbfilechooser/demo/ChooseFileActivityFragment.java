@@ -169,11 +169,11 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                 final Context ctx = getActivity();
                 assert ctx != null;
                 String domain = mEditDomain.getText().toString();
-                if(domain.isEmpty()){
+                /*if(domain.isEmpty()){
                     mEditDomain.setError("Required!");
                     mEditDomain.requestFocus();
                     return;
-                }
+                }*/
                 String name = mEditName.getText().toString();
                 if(name.isEmpty()) name = null;
                 String password = mEditPassword.getText().toString();
@@ -182,7 +182,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                 if(name == null && password == null) auth = null;
                     else auth = new NtlmPasswordAuthentication(domain, name, password);
                 try{
-                    SmbFileChooserDialog.newDialog(ctx, domain, auth)
+                    SmbFileChooserDialog.newDialog(ctx, "10.186.1.20", auth)
                             .setResources(R.string.title_choose_folder_smb, R.string.title_choose, R.string.dialog_cancel)
                             .setFilter(true, false)
                             .enableOptions(true)

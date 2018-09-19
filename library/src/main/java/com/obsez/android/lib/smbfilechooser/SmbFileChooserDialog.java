@@ -487,26 +487,26 @@ public class SmbFileChooserDialog extends LightContextWrapper implements DialogI
         return this;
     }
 
-    @NonNull public SmbFileChooserDialog build() throws ExecutionException, InterruptedException{
+    @NonNull public SmbFileChooserDialog build(){
         final AlertDialog.Builder builder = new AlertDialog.Builder(getBaseContext());
 
-        final Future thread = EXECUTOR.submit(new Runnable(){
+        SmbFileChooserDialog.this._adapter = new SmbDirAdapter(getBaseContext(), new ArrayList<SmbFile>(),
+                SmbFileChooserDialog.this. _rowLayoutRes != -1 ? SmbFileChooserDialog.this._rowLayoutRes : R.layout.li_row_textview, SmbFileChooserDialog.this._dateFormat);
+        if(SmbFileChooserDialog.this._adapterSetter != null){
+            SmbFileChooserDialog.this._adapterSetter.apply(SmbFileChooserDialog.this._adapter);
+        }
+        builder.setAdapter(SmbFileChooserDialog.this._adapter, SmbFileChooserDialog.this);
+
+        EXECUTOR.execute(new Runnable(){
             @Override
             public void run(){
-                SmbFileChooserDialog.this._adapter = new SmbDirAdapter(getBaseContext(), new ArrayList<SmbFile>(),
-                        SmbFileChooserDialog.this. _rowLayoutRes != -1 ? SmbFileChooserDialog.this._rowLayoutRes : R.layout.li_row_textview, SmbFileChooserDialog.this._dateFormat);
-                if(SmbFileChooserDialog.this._adapterSetter != null){
-                    SmbFileChooserDialog.this._adapterSetter.apply(SmbFileChooserDialog.this._adapter);
-                }
                 try {
                     SmbFileChooserDialog.this.refreshDirs();
                 } catch (MalformedURLException | SmbException e) {
                     e.printStackTrace();
                 }
-                builder.setAdapter(SmbFileChooserDialog.this._adapter, SmbFileChooserDialog.this);
             }
         });
-        thread.get();
 
         if(!this._disableTitle){
             if(this._titleRes == 0) builder.setTitle(this._title);
