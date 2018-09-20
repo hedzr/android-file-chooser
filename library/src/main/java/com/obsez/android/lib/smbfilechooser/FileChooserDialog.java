@@ -516,13 +516,15 @@ public class FileChooserDialog extends LightContextWrapper implements DialogInte
                 }
 
                 if(FileChooserDialog.this._enableOptions){
+                    final int color = UiUtil.getThemeAccentColor(getBaseContext());
+                    final PorterDuffColorFilter filter = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
+					
                     final Button options = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
                     options.setText("");
+                    options.setTextColor(color);
                     options.setVisibility(View.VISIBLE);
                     final Drawable drawable = ContextCompat.getDrawable(getBaseContext(),
                             FileChooserDialog.this._optionsIconRes != -1 ? FileChooserDialog.this._optionsIconRes : R.drawable.ic_menu_24dp);
-                    final int color = UiUtil.getThemeAccentColor(getBaseContext());
-                    final PorterDuffColorFilter filter = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
                     if(drawable != null){
                         drawable.setColorFilter(filter);
                         options.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
@@ -530,7 +532,6 @@ public class FileChooserDialog extends LightContextWrapper implements DialogInte
                         options.setCompoundDrawablesWithIntrinsicBounds(
                                 FileChooserDialog.this._optionsIconRes != -1 ? FileChooserDialog.this._optionsIconRes : R.drawable.ic_menu_24dp, 0, 0, 0);
                     }
-                    options.setTextColor(color);
 
                     final Runnable showOptions = new Runnable(){
                         @Override
@@ -597,6 +598,7 @@ public class FileChooserDialog extends LightContextWrapper implements DialogInte
                                 final Button createDir = new Button(getBaseContext(), null, android.R.attr.buttonBarButtonStyle);
                                 if(FileChooserDialog.this._createDirRes == -1) createDir.setText(FileChooserDialog.this._createDir);
                                   else createDir.setText(FileChooserDialog.this._createDirRes);
+								createDir.setTextColor(color);
                                 // Drawable for the button.
                                 final Drawable plus = ContextCompat.getDrawable(getBaseContext(),
                                         FileChooserDialog.this._createDirIconRes != -1 ? FileChooserDialog.this._createDirIconRes : R.drawable.ic_add_24dp);
@@ -607,7 +609,6 @@ public class FileChooserDialog extends LightContextWrapper implements DialogInte
                                     createDir.setCompoundDrawablesWithIntrinsicBounds(
                                             FileChooserDialog.this._createDirIconRes != -1 ? FileChooserDialog.this._createDirIconRes : R.drawable.ic_add_24dp, 0, 0, 0);
                                 }
-								createDir.setTextColor(color);
                                 params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, START | CENTER_VERTICAL);
                                 params.leftMargin = 10;
                                 options.addView(createDir, params);
@@ -616,6 +617,7 @@ public class FileChooserDialog extends LightContextWrapper implements DialogInte
                                 final Button delete = new Button(getBaseContext(), null, android.R.attr.buttonBarButtonStyle);
                                 if(FileChooserDialog.this._deleteRes == -1) delete.setText(FileChooserDialog.this._delete);
                                   else delete.setText(FileChooserDialog.this._deleteRes);
+								delete.setTextColor(color);
                                 final Drawable bin = ContextCompat.getDrawable(getBaseContext(),
                                         FileChooserDialog.this._deleteIconRes != -1 ? FileChooserDialog.this._deleteIconRes : R.drawable.ic_delete_24dp);
                                 if(bin != null){
@@ -625,7 +627,6 @@ public class FileChooserDialog extends LightContextWrapper implements DialogInte
                                     delete.setCompoundDrawablesWithIntrinsicBounds(
                                             FileChooserDialog.this._deleteIconRes != -1 ? FileChooserDialog.this._deleteIconRes : R.drawable.ic_delete_24dp, 0, 0, 0);
                                 }
-								delete.setTextColor(color);
                                 params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, END | CENTER_VERTICAL);
                                 params.rightMargin = 10;
                                 options.addView(delete, params);
