@@ -1,4 +1,4 @@
-package com.obsez.android.lib.smbfilechooser.tool;
+package com.obsez.android.lib.filechooser.tool;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -15,10 +15,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.obsez.android.lib.smbfilechooser.R;
-import com.obsez.android.lib.smbfilechooser.internals.FileUtil;
-import com.obsez.android.lib.smbfilechooser.internals.UiUtil;
-import com.obsez.android.lib.smbfilechooser.internals.WrappedDrawable;
+import com.obsez.android.lib.filechooser.R;
+import com.obsez.android.lib.filechooser.internals.FileUtil;
+import com.obsez.android.lib.filechooser.internals.UiUtil;
+import com.obsez.android.lib.filechooser.internals.WrappedDrawable;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -48,7 +48,8 @@ public class DirAdapter extends ArrayAdapter<File> {
 
     @SuppressLint("SimpleDateFormat")
     private void init(String dateFormat) {
-        _formatter = new SimpleDateFormat(dateFormat != null && !"".equals(dateFormat.trim()) ? dateFormat.trim() : "yyyy/MM/dd HH:mm:ss");
+        _formatter = new SimpleDateFormat(
+            dateFormat != null && !"".equals(dateFormat.trim()) ? dateFormat.trim() : "yyyy/MM/dd HH:mm:ss");
         _defaultFolderIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_folder);
         _defaultFileIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_file);
 
@@ -74,13 +75,13 @@ public class DirAdapter extends ArrayAdapter<File> {
         tvDate.setVisibility(View.VISIBLE);
 
         File file = super.getItem(position);
-		if(file == null) return rl;
+        if (file == null) return rl;
         tvName.setText(file.getName());
         if (file.isDirectory()) {
             final Drawable folderIcon = _defaultFolderIcon;
             tvName.setCompoundDrawablesWithIntrinsicBounds(folderIcon, null, null, null);
             tvSize.setText("");
-            if (!file.getName().trim().equals("../") && !file.getName().trim().equals("..") && file.lastModified() != 0L) {
+            if (!file.getName().trim().equals("..")) {
                 tvDate.setText(_formatter.format(new Date(file.lastModified())));
             } else {
                 tvDate.setVisibility(View.GONE);
@@ -98,13 +99,13 @@ public class DirAdapter extends ArrayAdapter<File> {
             }
             tvName.setCompoundDrawablesWithIntrinsicBounds(d, null, null, null);
             tvSize.setText(FileUtil.getReadableFileSize(file.length()));
-            if(file.lastModified() != 0L) tvDate.setText(_formatter.format(new Date(file.lastModified())));
-              else tvDate.setVisibility(View.GONE);
+            tvDate.setText(_formatter.format(new Date(file.lastModified())));
+
         }
 
         View root = rl.findViewById(R.id.root);
-        if(_selected.get(file.hashCode(), null) == null) root.getBackground().clearColorFilter();
-          else root.getBackground().setColorFilter(_colorFilter);
+        if (_selected.get(file.hashCode(), null) == null) root.getBackground().clearColorFilter();
+        else root.getBackground().setColorFilter(_colorFilter);
         return rl;
     }
 
@@ -132,11 +133,11 @@ public class DirAdapter extends ArrayAdapter<File> {
         this._resolveFileType = resolveFileType;
     }
 
-	public void setEntries(List<File> entries){
-		super.clear();
+    public void setEntries(List<File> entries) {
+        super.clear();
         super.addAll(entries);
         notifyDataSetChanged();
-	}
+    }
 
     @Override
     public long getItemId(int position) {
@@ -144,41 +145,41 @@ public class DirAdapter extends ArrayAdapter<File> {
         return getItem(position).hashCode();
     }
 
-    public void selectItem(int position){
+    public void selectItem(int position) {
         int id = (int) getItemId(position);
-        if(_selected.get(id, null) == null){
+        if (_selected.get(id, null) == null) {
             _selected.append(id, getItem(position));
-        } else{
+        } else {
             _selected.delete(id);
         }
         notifyDataSetChanged();
     }
 
-    public boolean isSelected(int position){
+    public boolean isSelected(int position) {
         return isSelectedById((int) getItemId(position));
     }
 
-    public boolean isSelectedById(int id){
+    public boolean isSelectedById(int id) {
         return _selected.get(id, null) != null;
     }
 
-    public boolean isAnySelected(){
+    public boolean isAnySelected() {
         return _selected.size() > 0;
     }
 
-    public boolean isOneSelected(){
-        return  _selected.size() == 1;
+    public boolean isOneSelected() {
+        return _selected.size() == 1;
     }
 
-    public List<File> getSelected(){
+    public List<File> getSelected() {
         ArrayList<File> list = new ArrayList<File>();
-        for(int i = 0; i < _selected.size(); i++){
+        for (int i = 0; i < _selected.size(); i++) {
             list.add(_selected.valueAt(i));
         }
         return list;
     }
 
-    public void clearSelected(){
+    public void clearSelected() {
         _selected.clear();
     }
 

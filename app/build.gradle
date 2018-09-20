@@ -14,16 +14,17 @@ android {
         //def sdkDir = properties.getProperty('sdk.dir')
         //def ndkDir = properties.getProperty('ndk.dir')
         def ksPath = properties.getProperty('KS_PATH')
-        if (ksPath) {
-            def keystorePropertiesFile = rootProject.file(ksPath ? ksPath : "../keystore.properties")
-            def keystoreProperties = new Properties()
-            keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-            config {
-                keyAlias keystoreProperties['keyAlias']
-                keyPassword keystoreProperties['keyPassword']
-                storeFile file(keystoreProperties['storeFile'])
-                storePassword keystoreProperties['storePassword']
-            }
+        println "ksPath = ${ksPath}"
+        def keystorePropertiesFile = new File(ksPath)
+        if (!keystorePropertiesFile.exists())
+            keystorePropertiesFile = rootProject.file("../keystore.properties")
+        def keystoreProperties = new Properties()
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+        config {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
         }
     }
     defaultConfig {
@@ -35,7 +36,7 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -49,7 +50,6 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'jcifs:jcifs:1.3.17'
     implementation project(':library')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     // implementation 'com.obsez.android.lib.filechooser:filechooser:1.1.6'

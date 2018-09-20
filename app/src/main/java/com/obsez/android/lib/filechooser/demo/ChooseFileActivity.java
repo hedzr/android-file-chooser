@@ -1,4 +1,4 @@
-package com.obsez.android.lib.smbfilechooser.demo;
+package com.obsez.android.lib.filechooser.demo;
 
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -20,7 +20,7 @@ public class ChooseFileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_file);
 
-        if(Log.isLoggable(TAG, Log.INFO)) {
+        if (Log.isLoggable(TAG, Log.INFO)) {
             Resources resources = getApplicationContext().getResources();
             DisplayMetrics dm = resources.getDisplayMetrics();
             Configuration config = resources.getConfiguration();

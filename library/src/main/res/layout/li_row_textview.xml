@@ -5,7 +5,7 @@
                 android:layout_height="match_parent"
                 android:descendantFocusability="beforeDescendants"
                 android:padding="10dp"
-				android:id="@+id/root"
+                android:id="@+id/root"
                 android:background="#fbfbfb">
 
   <TextView
