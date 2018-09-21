@@ -196,7 +196,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                                     dialog.dismiss();
                                     return;
                                 }
-                                if (!files.contains(dirFile)) {
+                                if (!files.remove(dirFile)) {
                                     files.add(dirFile);
                                 }
                             }
@@ -247,7 +247,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                                     onDismiss.run();
                                     return;
                                 }
-                                if (!files.contains(dirFile)) {
+                                if (!files.remove(dirFile)) {
                                     files.add(dirFile);
                                 }
                             }
