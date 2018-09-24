@@ -7,6 +7,8 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileInputStream;
 
+import timber.log.Timber;
+
 /**
  * Created by coco on 6/8/15.
  */
@@ -67,7 +69,7 @@ public class ImageUtil {
 
             }
         } catch (Exception e) {
-            Log.e(TAG, "Exception showBitmapFromFile");
+            Timber.e("Exception showBitmapFromFile");
             return null;
         }
         return null;

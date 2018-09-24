@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +18,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.obsez.android.lib.filechooser.ChooserDialog;
+import com.obsez.android.lib.filechooser.internals.FileUtil;
 import com.obsez.android.lib.filechooser.tool.DirAdapter;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import timber.log.Timber;
 
 
 /**
@@ -36,10 +40,20 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
     public ChooseFileActivityFragment() {
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        String ext = FileUtil.getStoragePath(getActivity(), true);
+        String itl = FileUtil.getStoragePath(getActivity(), false);
+        Timber.v("ext: " + ext + ", total size: " + FileUtil.getReadableFileSize(FileUtil.readSDCard(getActivity(), true)) + ", free size: " + FileUtil.getReadableFileSize(FileUtil.readSDCard(getActivity(), true, true)));
+        Timber.v("itl: " + itl + ", total size: " + FileUtil.getReadableFileSize(FileUtil.readSDCard(getActivity(), false)) + ", free size: " + FileUtil.getReadableFileSize(FileUtil.readSDCard(getActivity(), false, true)));
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+        @Nullable Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
 
         View root = inflater.inflate(R.layout.fragment_choose_file, container, false);
@@ -59,6 +73,12 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                     .withStartFile(_path)
                     .withDateFormat("HH:mm")
                     .withResources(R.string.title_choose_folder, R.string.title_choose, R.string.dialog_cancel)
+                    .withNavigateUpTo(new ChooserDialog.CanNavigateUp() {
+                        @Override
+                        public boolean canUpTo(File dir) {
+                            return true;
+                        }
+                    })
                     //.withOnCancelListener(new DialogInterface.OnCancelListener(){
                     //
                     //    /**
@@ -152,7 +172,8 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                 dialog.enableOptions(true)
                     .withFilterRegex(false, true, ".*\\.txt")
                     .withStartFile(_path)
-                    .withResources(R.string.title_choose_multiple, R.string.new_folder_ok, R.string.dialog_cancel)
+                    .withResources(R.string.title_choose_multiple, R.string.new_folder_ok,
+                        R.string.dialog_cancel)
                     .enableMultiple(true)
                     .dismissOnButtonClick(false);
 
@@ -202,7 +223,8 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                             }
                         });
                 } else {
-                    // OnDismissListener is not supported, so we simulate something similar anywhere where the dialog might be dismissed.
+                    // OnDismissListener is not supported, so we simulate something similar anywhere where the
+                    // dialog might be dismissed.
                     final Runnable onDismiss = new Runnable() {
                         @Override
                         public void run() {
@@ -298,6 +320,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                     dialog.dismiss();
                 }
             })
+            //.enableOptions(true)
             .build()
             .show();
     }

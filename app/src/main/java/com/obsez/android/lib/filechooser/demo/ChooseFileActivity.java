@@ -11,9 +11,19 @@ import android.view.MenuItem;
 
 import java.util.Locale;
 
+import timber.log.Timber;
+
 public class ChooseFileActivity extends AppCompatActivity {
 
     private static final String TAG = "ChooseFileActivity";
+
+    public ChooseFileActivity(){
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+        } else {
+            //Timber.plant(new CrashReportingTree());
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +34,8 @@ public class ChooseFileActivity extends AppCompatActivity {
             Resources resources = getApplicationContext().getResources();
             DisplayMetrics dm = resources.getDisplayMetrics();
             Configuration config = resources.getConfiguration();
-            Log.i(TAG, "dm: density=" + dm.density + ", densityDpi=" + dm.densityDpi + ", curr-locale=" + Locale.getDefault());
+            Timber.v("dm: density=" + dm.density + ", densityDpi=" + dm.densityDpi + ", curr-locale="
+                + Locale.getDefault());
 
             // force English locale
             //config.locale = Locale.ENGLISH;

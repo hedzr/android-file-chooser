@@ -1,5 +1,19 @@
 package com.obsez.android.lib.filechooser;
 
+import static android.view.Gravity.BOTTOM;
+import static android.view.Gravity.CENTER;
+import static android.view.Gravity.CENTER_HORIZONTAL;
+import static android.view.Gravity.CENTER_VERTICAL;
+import static android.view.Gravity.END;
+import static android.view.Gravity.START;
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
+import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+import static android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE;
+
+import static com.obsez.android.lib.filechooser.internals.FileUtil.NewFolderFilter;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -37,6 +51,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.obsez.android.lib.filechooser.internals.ExtFileFilter;
+import com.obsez.android.lib.filechooser.internals.FileUtil;
 import com.obsez.android.lib.filechooser.internals.RegexFileFilter;
 import com.obsez.android.lib.filechooser.internals.UiUtil;
 import com.obsez.android.lib.filechooser.tool.DirAdapter;
@@ -51,23 +66,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static android.view.Gravity.BOTTOM;
-import static android.view.Gravity.CENTER;
-import static android.view.Gravity.CENTER_HORIZONTAL;
-import static android.view.Gravity.CENTER_VERTICAL;
-import static android.view.Gravity.END;
-import static android.view.Gravity.START;
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
-import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-import static android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE;
-import static com.obsez.android.lib.filechooser.internals.FileUtil.NewFolderFilter;
-
 /**
  * Created by coco on 6/7/15.
  */
-public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInterface.OnClickListener, AdapterView.OnItemLongClickListener {
+public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInterface.OnClickListener,
+    AdapterView.OnItemLongClickListener {
     @FunctionalInterface
     public interface Result {
         void onChoosePath(String dir, File dirFile);
@@ -202,7 +205,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
-    public ChooserDialog withOptionResources(@StringRes int createDirRes, @StringRes int deleteRes, @StringRes int newFolderCancelRes, @StringRes int newFolderOkRes) {
+    public ChooserDialog withOptionResources(@StringRes int createDirRes, @StringRes int deleteRes,
+        @StringRes int newFolderCancelRes, @StringRes int newFolderOkRes) {
         this._createDirRes = createDirRes;
         this._deleteRes = deleteRes;
         this._newFolderCancelRes = newFolderCancelRes;
@@ -210,7 +214,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
-    public ChooserDialog withOptionIcons(@DrawableRes int optionsIconRes, @DrawableRes int createDirIconRes, @DrawableRes int deleteRes) {
+    public ChooserDialog withOptionIcons(@DrawableRes int optionsIconRes, @DrawableRes int createDirIconRes,
+        @DrawableRes int deleteRes) {
         this._optionsIconRes = optionsIconRes;
         this._createDirIconRes = createDirIconRes;
         this._deleteIconRes = deleteRes;
@@ -247,7 +252,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     public ChooserDialog withNegativeButton(@StringRes int cancelTitle,
-                                            final DialogInterface.OnClickListener listener) {
+        final DialogInterface.OnClickListener listener) {
         this._negativeRes = cancelTitle;
         this._negativeListener = listener;
         return this;
@@ -276,7 +281,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     public ChooserDialog withFileIcons(final boolean tryResolveFileTypeAndIcon, final Drawable fileIcon,
-                                       final Drawable folderIcon) {
+        final Drawable folderIcon) {
         _adapterSetter = new AdapterSetter() {
             @Override
             public void apply(DirAdapter adapter) {
@@ -289,7 +294,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     public ChooserDialog withFileIconsRes(final boolean tryResolveFileTypeAndIcon, final int fileIcon,
-                                          final int folderIcon) {
+        final int folderIcon) {
         _adapterSetter = new AdapterSetter() {
             @Override
             public void apply(DirAdapter adapter) {
@@ -444,9 +449,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     final Button options = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
                     options.setText("");
                     options.setVisibility(View.VISIBLE);
-                    final Drawable drawable = ContextCompat.getDrawable(_context, _optionsIconRes != -1 ? _optionsIconRes : R.drawable.ic_menu_24dp);
+                    final Drawable drawable = ContextCompat.getDrawable(_context,
+                        _optionsIconRes != -1 ? _optionsIconRes : R.drawable.ic_menu_24dp);
                     final int color = UiUtil.getThemeAccentColor(_context);
-                    final PorterDuffColorFilter filter = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
+                    final PorterDuffColorFilter filter = new PorterDuffColorFilter(color,
+                        PorterDuff.Mode.SRC_IN);
                     if (drawable != null) {
                         drawable.setColorFilter(filter);
                         options.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
@@ -458,7 +465,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     final Runnable showOptions = new Runnable() {
                         @Override
                         public void run() {
-                            final ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) _list.getLayoutParams();
+                            final ViewGroup.MarginLayoutParams params =
+                                (ViewGroup.MarginLayoutParams) _list.getLayoutParams();
                             if (_options.getHeight() == 0) {
                                 ViewTreeObserver viewTreeObserver = _options.getViewTreeObserver();
                                 viewTreeObserver.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -491,7 +499,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         @Override
                         public void run() {
                             _options.setVisibility(View.INVISIBLE);
-                            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) _list.getLayoutParams();
+                            ViewGroup.MarginLayoutParams params =
+                                (ViewGroup.MarginLayoutParams) _list.getLayoutParams();
                             params.bottomMargin = 0;
                             _list.setLayoutParams(params);
                         }
@@ -501,9 +510,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         @Override
                         public void onClick(final View view) {
                             if (_options == null) {
-                                // region Draw options view. (this only happens the first time one clicks on options)
+                                // region Draw options view. (this only happens the first time one clicks on
+                                // options)
                                 // Root view (FrameLayout) of the ListView in the AlertDialog.
-                                final int rootId = _context.getResources().getIdentifier("contentPanel", "id", "android");
+                                final int rootId = _context.getResources().getIdentifier("contentPanel", "id",
+                                    "android");
                                 final FrameLayout root = ((AlertDialog) dialog).findViewById(rootId);
                                 // In case the was changed or not found.
                                 if (root == null) return;
@@ -511,7 +522,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                 // Create options view.
                                 final FrameLayout options = new FrameLayout(_context);
                                 //options.setBackgroundColor(0x60000000);
-                                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, BOTTOM);
+                                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(MATCH_PARENT,
+                                    WRAP_CONTENT, BOTTOM);
                                 root.addView(options, params);
 
                                 options.setOnClickListener(null);
@@ -519,31 +531,41 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                 _options = options;
 
                                 // Create a button for the option to create a new directory/folder.
-                                final Button createDir = new Button(_context, null, android.R.attr.buttonBarButtonStyle);
+                                final Button createDir = new Button(_context, null,
+                                    android.R.attr.buttonBarButtonStyle);
                                 createDir.setText(R.string.option_create_folder);
                                 // Drawable for the button.
-                                final Drawable plus = ContextCompat.getDrawable(_context, _createDirIconRes != -1 ? _createDirIconRes : R.drawable.ic_add_24dp);
+                                final Drawable plus = ContextCompat.getDrawable(_context,
+                                    _createDirIconRes != -1 ? _createDirIconRes : R.drawable.ic_add_24dp);
                                 if (plus != null) {
                                     plus.setColorFilter(filter);
                                     createDir.setCompoundDrawablesWithIntrinsicBounds(plus, null, null, null);
                                 } else {
-                                    createDir.setCompoundDrawablesWithIntrinsicBounds(_createDirIconRes != -1 ? _createDirIconRes : R.drawable.ic_add_24dp, 0, 0, 0);
+                                    createDir.setCompoundDrawablesWithIntrinsicBounds(
+                                        _createDirIconRes != -1 ? _createDirIconRes : R.drawable.ic_add_24dp, 0,
+                                        0, 0);
                                 }
-                                params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, START | CENTER_VERTICAL);
+                                params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
+                                    START | CENTER_VERTICAL);
                                 params.leftMargin = 10;
                                 options.addView(createDir, params);
 
                                 // Create a button for the option to delete a file.
-                                final Button delete = new Button(_context, null, android.R.attr.buttonBarButtonStyle);
+                                final Button delete = new Button(_context, null,
+                                    android.R.attr.buttonBarButtonStyle);
                                 delete.setText(_deleteRes);
-                                final Drawable bin = ContextCompat.getDrawable(_context, _deleteIconRes != -1 ? _deleteIconRes : R.drawable.ic_delete_24dp);
+                                final Drawable bin = ContextCompat.getDrawable(_context,
+                                    _deleteIconRes != -1 ? _deleteIconRes : R.drawable.ic_delete_24dp);
                                 if (bin != null) {
                                     bin.setColorFilter(filter);
                                     delete.setCompoundDrawablesWithIntrinsicBounds(bin, null, null, null);
                                 } else {
-                                    delete.setCompoundDrawablesWithIntrinsicBounds(_deleteIconRes != -1 ? _deleteIconRes : R.drawable.ic_delete_24dp, 0, 0, 0);
+                                    delete.setCompoundDrawablesWithIntrinsicBounds(
+                                        _deleteIconRes != -1 ? _deleteIconRes : R.drawable.ic_delete_24dp, 0, 0,
+                                        0);
                                 }
-                                params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, END | CENTER_VERTICAL);
+                                params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
+                                    END | CENTER_VERTICAL);
                                 params.rightMargin = 10;
                                 options.addView(delete, params);
 
@@ -553,21 +575,27 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
                                     @Override
                                     public void onClick(final View view) {
-                                        //Toast.makeText(getBaseContext(), "new folder clicked", Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(getBaseContext(), "new folder clicked", Toast
+                                        // .LENGTH_SHORT).show();
                                         hideOptions.run();
                                         File newFolder = new File(_currentDir, "New folder");
-                                        for (int i = 1; newFolder.exists(); i++)
+                                        for (int i = 1; newFolder.exists(); i++) {
                                             newFolder = new File(_currentDir, "New folder (" + i + ')');
-                                        if (this.input != null)
+                                        }
+                                        if (this.input != null) {
                                             this.input.setText(newFolder.getName());
+                                        }
 
                                         if (_newFolderView == null) {
-                                            // region Draw a view with input to create new folder. (this only happens the first time one clicks on New folder)
+                                            // region Draw a view with input to create new folder. (this only
+                                            // happens the first time one clicks on New folder)
                                             try {
                                                 //noinspection ConstantConditions
-                                                ((AlertDialog) dialog).getWindow().clearFlags(FLAG_NOT_FOCUSABLE | FLAG_ALT_FOCUSABLE_IM);
+                                                ((AlertDialog) dialog).getWindow().clearFlags(
+                                                    FLAG_NOT_FOCUSABLE | FLAG_ALT_FOCUSABLE_IM);
                                                 //noinspection ConstantConditions
-                                                ((AlertDialog) dialog).getWindow().setSoftInputMode(SOFT_INPUT_STATE_VISIBLE);
+                                                ((AlertDialog) dialog).getWindow().setSoftInputMode(
+                                                    SOFT_INPUT_STATE_VISIBLE);
                                             } catch (NullPointerException e) {
                                                 e.printStackTrace();
                                             }
@@ -576,7 +604,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             final FrameLayout overlay = new FrameLayout(_context);
                                             overlay.setBackgroundColor(0x60ffffff);
                                             overlay.setScrollContainer(true);
-                                            ViewGroup.MarginLayoutParams params = new FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT, CENTER);
+                                            ViewGroup.MarginLayoutParams params = new FrameLayout.LayoutParams(
+                                                MATCH_PARENT, MATCH_PARENT, CENTER);
                                             root.addView(overlay, params);
 
                                             overlay.setOnClickListener(null);
@@ -585,7 +614,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
                                             // A LinearLayout and a pair of Space to center views.
                                             LinearLayout linearLayout = new LinearLayout(_context);
-                                            params = new FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, CENTER);
+                                            params = new FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT,
+                                                CENTER);
                                             overlay.addView(linearLayout, params);
 
                                             Space leftSpace = new Space(_context);
@@ -613,8 +643,12 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             input.setSelectAllOnFocus(true);
                                             input.setSingleLine(true);
                                             // There should be no suggestions, but...
-                                            input.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_VARIATION_FILTER | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                                            input.setFilters(new InputFilter[]{_newFolderFilter != null ? _newFolderFilter : new NewFolderFilter()});
+                                            input.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+                                                | InputType.TYPE_TEXT_VARIATION_FILTER
+                                                | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                                            input.setFilters(new InputFilter[]{
+                                                _newFolderFilter != null ? _newFolderFilter
+                                                    : new NewFolderFilter()});
                                             input.setGravity(CENTER_HORIZONTAL);
                                             params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
                                             params.setMargins(3, 2, 3, 0);
@@ -628,30 +662,37 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             holder.addView(buttons, params);
 
                                             // The Cancel button.
-                                            final Button cancel = new Button(_context, null, android.R.attr.buttonBarButtonStyle);
+                                            final Button cancel = new Button(_context, null,
+                                                android.R.attr.buttonBarButtonStyle);
                                             cancel.setText(_newFolderCancelRes);
-                                            params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, START);
+                                            params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
+                                                START);
                                             buttons.addView(cancel, params);
 
                                             // The OK button.
-                                            final Button ok = new Button(_context, null, android.R.attr.buttonBarButtonStyle);
+                                            final Button ok = new Button(_context, null,
+                                                android.R.attr.buttonBarButtonStyle);
                                             ok.setText(_newFolderOkRes);
-                                            params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, END);
+                                            params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
+                                                END);
                                             buttons.addView(ok, params);
 
                                             // Event Listeners.
-                                            input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                                                @Override
-                                                public boolean onEditorAction(final TextView v, final int actionId, final KeyEvent event) {
-                                                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-                                                        ChooserDialog.this.createNewDirectory(input.getText().toString());
-                                                        UiUtil.hideKeyboardFrom(_context, input);
-                                                        overlay.setVisibility(View.INVISIBLE);
-                                                        return true;
+                                            input.setOnEditorActionListener(
+                                                new TextView.OnEditorActionListener() {
+                                                    @Override
+                                                    public boolean onEditorAction(final TextView v,
+                                                        final int actionId, final KeyEvent event) {
+                                                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                                                            ChooserDialog.this.createNewDirectory(
+                                                                input.getText().toString());
+                                                            UiUtil.hideKeyboardFrom(_context, input);
+                                                            overlay.setVisibility(View.INVISIBLE);
+                                                            return true;
+                                                        }
+                                                        return false;
                                                     }
-                                                    return false;
-                                                }
-                                            });
+                                                });
                                             cancel.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(final View v) {
@@ -662,7 +703,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             ok.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(final View v) {
-                                                    ChooserDialog.this.createNewDirectory(input.getText().toString());
+                                                    ChooserDialog.this.createNewDirectory(
+                                                        input.getText().toString());
                                                     UiUtil.hideKeyboardFrom(_context, input);
                                                     overlay.setVisibility(View.INVISIBLE);
                                                 }
@@ -691,7 +733,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                                 } catch (IOException e) {
                                                     // There's probably a better way to handle this, but...
                                                     e.printStackTrace();
-                                                    Toast.makeText(_context, e.getMessage(), Toast.LENGTH_LONG).show();
+                                                    Toast.makeText(_context, e.getMessage(),
+                                                        Toast.LENGTH_LONG).show();
                                                     break;
                                                 }
                                             }
@@ -701,7 +744,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             return;
                                         }
 
-                                        _chooseMode = _chooseMode != CHOOSE_MODE_DELETE ? CHOOSE_MODE_DELETE : CHOOSE_MODE_NORMAL;
+                                        _chooseMode = _chooseMode != CHOOSE_MODE_DELETE ? CHOOSE_MODE_DELETE
+                                            : CHOOSE_MODE_NORMAL;
                                     }
                                 });
                                 // endregion
@@ -768,7 +812,21 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         File[] files = _currentDir.listFiles(_fileFilter);
 
         // Add the ".." entry
-        if (_currentDir.getParentFile() != null && !_currentDir.getParentFile().equals(Environment.getExternalStorageDirectory().getParentFile())) {
+        boolean up = false;
+        String removableRoot = FileUtil.getStoragePath(_context, true);
+        if (removableRoot != null) {
+            String primaryRoot = FileUtil.getStoragePath(_context, false);
+            File f = Environment.getExternalStorageDirectory();
+            //File newRoot = _currentDir.getParentFile();
+            if (_currentDir.getAbsolutePath().equals(primaryRoot)) {
+                _entries.add(new File(".. SDCard Storage")); //⇠
+                up = true;
+            } else {
+                _entries.add(new File(".. Primary Storage")); //⇽
+                up = true;
+            }
+        }
+        if (!up && _currentDir.getParentFile() != null && _currentDir.getParentFile().canRead()) {
             _entries.add(new File(".."));
         }
 
@@ -855,8 +913,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 deleteFile(entry);
             }
         }
-        if (!file.delete())
+        if (!file.delete()) {
             throw new IOException("Couldn't delete \"" + file.getName() + "\" at \"" + file.getParent());
+        }
     }
 
     @Override
@@ -869,7 +928,26 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             if (_folderNavUpCB == null) _folderNavUpCB = _defaultNavUpCB;
             if (_folderNavUpCB.canUpTo(f)) _currentDir = f;
             if (_chooseMode == CHOOSE_MODE_DELETE) _chooseMode = CHOOSE_MODE_NORMAL;
+
+        } else if (file.getName().contains(".. SDCard Storage")) {
+            String removableRoot = FileUtil.getStoragePath(_context, true);
+            if (removableRoot != null && Environment.MEDIA_MOUNTED.equals(
+                Environment.getExternalStorageState())) {
+                File f = new File(removableRoot);
+                _currentDir = f;
+                if (_chooseMode == CHOOSE_MODE_DELETE) _chooseMode = CHOOSE_MODE_NORMAL;
+            }
+
+        } else if (file.getName().contains(".. Primary Storage")) {
+            String primaryRoot = FileUtil.getStoragePath(_context, false);
+            if (primaryRoot != null) {
+                File f = new File(primaryRoot);
+                _currentDir = f;
+                if (_chooseMode == CHOOSE_MODE_DELETE) _chooseMode = CHOOSE_MODE_NORMAL;
+            }
+
         } else {
+
             switch (_chooseMode) {
                 case CHOOSE_MODE_NORMAL:
                     if (file.isDirectory()) {
@@ -961,7 +1039,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private boolean _enableOptions;
     private View _options;
     private @StringRes
-    int _createDirRes = R.string.option_create_folder, _deleteRes = R.string.options_delete, _newFolderCancelRes = R.string.new_folder_cancel, _newFolderOkRes = R.string.new_folder_ok;
+    int _createDirRes = R.string.option_create_folder, _deleteRes = R.string.options_delete,
+        _newFolderCancelRes = R.string.new_folder_cancel, _newFolderOkRes = R.string.new_folder_ok;
     private @DrawableRes
     int _optionsIconRes = -1, _createDirIconRes = -1, _deleteIconRes = -1;
     private View _newFolderView;
@@ -1027,8 +1106,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 && (_entries.get(0).getName().equals("../") || _entries.get(0).getName().equals(".."))) {
                 onItemClick(null, _list, 0, 0);
             } else {
-                if (_onLastBackPressed != null) _onLastBackPressed.onBackPressed(dialog);
-                else _defaultLastBack.onBackPressed(dialog);
+                if (_onLastBackPressed != null) {
+                    _onLastBackPressed.onBackPressed(dialog);
+                } else {
+                    _defaultLastBack.onBackPressed(dialog);
+                }
             }
         }
     });
