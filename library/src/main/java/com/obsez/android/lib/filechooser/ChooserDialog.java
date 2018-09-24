@@ -837,15 +837,50 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             File f = Environment.getExternalStorageDirectory();
             //File newRoot = _currentDir.getParentFile();
             if (_currentDir.getAbsolutePath().equals(primaryRoot)) {
-                _entries.add(new File(".. SDCard Storage")); //⇠
+                _entries.add(new File(".. SDCard Storage"){
+                    @Override
+                    public boolean isDirectory(){
+                        return true;
+                    }
+                    @Override
+                    public boolean isHidden(){
+                        return false;
+                    }
+                    @Override
+                    public long lastModified(){
+                        return 0L;
+                    }
+                }); //⇠
                 up = true;
             } else {
-                _entries.add(new File(".. Primary Storage")); //⇽
+                _entries.add(new File(".. Primary Storage"){
+                    @Override
+                    public boolean isDirectory(){
+                        return true;
+                    }
+                    @Override
+                    public boolean isHidden(){
+                        return false;
+                    }
+                    @Override
+                    public long lastModified(){
+                        return 0L;
+                    }
+                }); //⇽
                 up = true;
             }
         }
         if (!up && _currentDir.getParentFile() != null && _currentDir.getParentFile().canRead()) {
-            _entries.add(new File(".."));
+            _entries.add(new File(".."){
+                @Override
+                public boolean isHidden(){
+                    return false;
+                }
+                @Override
+                public long lastModified(){
+                    return 0L;
+                }
+            });
         }
 
         if (files == null) return;
@@ -936,6 +971,19 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 _currentDir = f;
                 _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
                 scrollToTop = true;
+            }
+        } else if (file.getName().contains(".. SDCard Storage")){
+            String removableRoot = FileUtil.getStoragePath(_context, true);
+            if(removableRoot != null && Environment.MEDIA_MOUNTED.equals(
+                Environment.getExternalStorageState())){
+                _currentDir = new File(removableRoot);
+                _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
+            }
+        } else if (file.getName().contains(".. Primary Storage")){
+            String primaryRoot = FileUtil.getStoragePath(_context, false);
+            if(primaryRoot != null){
+                _currentDir = new File(primaryRoot);
+                _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
             }
         } else {
             switch (_chooseMode) {
