@@ -170,7 +170,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                 assert ctx != null;
                 final ChooserDialog dialog = new ChooserDialog(ctx);
                 dialog.enableOptions(true)
-                    .withFilterRegex(false, true, ".*\\.txt")
+                    .withFilter(false, false)
                     .withStartFile(_path)
                     .withResources(R.string.title_choose_multiple, R.string.new_folder_ok,
                         R.string.dialog_cancel)

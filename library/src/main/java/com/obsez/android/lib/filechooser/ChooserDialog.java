@@ -118,10 +118,21 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return withFilter(false, allowHidden, suffixes);
     }
 
-    public ChooserDialog withFilter(boolean dirOnly, boolean allowHidden, String... suffixes) {
+    public ChooserDialog withFilter(boolean dirOnly, final boolean allowHidden, String... suffixes) {
         this._dirOnly = dirOnly;
-        if (suffixes == null) {
-            this._fileFilter = dirOnly ? filterDirectoriesOnly : filterFiles;
+        if (suffixes == null || suffixes.length == 0) {
+            this._fileFilter = dirOnly ?
+            new FileFilter(){
+                @Override
+                public boolean accept(final File file){
+                    return file.isDirectory() && (!file.isHidden() || allowHidden);
+                }
+            } : new FileFilter(){
+                @Override
+                public boolean accept(final File file){
+                    return !file.isHidden() || allowHidden;
+                }
+            };
         } else {
             this._fileFilter = new ExtFileFilter(_dirOnly, allowHidden, suffixes);
         }
@@ -446,14 +457,16 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 }
 
                 if (_enableOptions) {
+                    final int color = UiUtil.getThemeAccentColor(_context);
+                    final PorterDuffColorFilter filter = new PorterDuffColorFilter(color,
+						PorterDuff.Mode.SRC_IN);
+
                     final Button options = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
                     options.setText("");
+                    options.setTextColor(color);
                     options.setVisibility(View.VISIBLE);
                     final Drawable drawable = ContextCompat.getDrawable(_context,
                         _optionsIconRes != -1 ? _optionsIconRes : R.drawable.ic_menu_24dp);
-                    final int color = UiUtil.getThemeAccentColor(_context);
-                    final PorterDuffColorFilter filter = new PorterDuffColorFilter(color,
-                        PorterDuff.Mode.SRC_IN);
                     if (drawable != null) {
                         drawable.setColorFilter(filter);
                         options.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
@@ -533,7 +546,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                 // Create a button for the option to create a new directory/folder.
                                 final Button createDir = new Button(_context, null,
                                     android.R.attr.buttonBarButtonStyle);
-                                createDir.setText(R.string.option_create_folder);
+                                createDir.setText(_createDirRes);
+								createDir.setTextColor(color);
                                 // Drawable for the button.
                                 final Drawable plus = ContextCompat.getDrawable(_context,
                                     _createDirIconRes != -1 ? _createDirIconRes : R.drawable.ic_add_24dp);
@@ -554,6 +568,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                 final Button delete = new Button(_context, null,
                                     android.R.attr.buttonBarButtonStyle);
                                 delete.setText(_deleteRes);
+								delete.setTextColor(color);
                                 final Drawable bin = ContextCompat.getDrawable(_context,
                                     _deleteIconRes != -1 ? _deleteIconRes : R.drawable.ic_delete_24dp);
                                 if (bin != null) {
@@ -665,6 +680,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             final Button cancel = new Button(_context, null,
                                                 android.R.attr.buttonBarButtonStyle);
                                             cancel.setText(_newFolderCancelRes);
+											cancel.setTextColor(color);
                                             params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                                                 START);
                                             buttons.addView(cancel, params);
@@ -673,6 +689,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             final Button ok = new Button(_context, null,
                                                 android.R.attr.buttonBarButtonStyle);
                                             ok.setText(_newFolderOkRes);
+											ok.setTextColor(color);
                                             params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                                                 END);
                                             buttons.addView(ok, params);
@@ -726,21 +743,22 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                         hideOptions.run();
 
                                         if (_chooseMode == CHOOSE_MODE_SELECT_MULTIPLE) {
+                                            boolean success = true;
                                             for (File file : _adapter.getSelected()) {
-                                                try {
-                                                    deleteFile(file);
-
-                                                } catch (IOException e) {
-                                                    // There's probably a better way to handle this, but...
-                                                    e.printStackTrace();
-                                                    Toast.makeText(_context, e.getMessage(),
-                                                        Toast.LENGTH_LONG).show();
-                                                    break;
+                                                _result.onChoosePath(file.getAbsolutePath(), file);
+                                                if(success){
+                                                    try {
+                                                        deleteFile(file);
+                                                    } catch (IOException e) {
+                                                        Toast.makeText(_context, e.getMessage(), Toast.LENGTH_LONG).show();
+                                                        success = false;
+                                                    }
                                                 }
                                             }
                                             _adapter.clearSelected();
-                                            refreshDirs();
+                                            _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
                                             _chooseMode = CHOOSE_MODE_NORMAL;
+											refreshDirs();
                                             return;
                                         }
 
@@ -819,47 +837,69 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             File f = Environment.getExternalStorageDirectory();
             //File newRoot = _currentDir.getParentFile();
             if (_currentDir.getAbsolutePath().equals(primaryRoot)) {
-                _entries.add(new File(".. SDCard Storage")); //⇠
+                _entries.add(new File(".. SDCard Storage"){
+                    @Override
+                    public boolean isDirectory(){
+                        return true;
+                    }
+                    @Override
+                    public boolean isHidden(){
+                        return false;
+                    }
+                    @Override
+                    public long lastModified(){
+                        return 0L;
+                    }
+                }); //⇠
                 up = true;
             } else {
-                _entries.add(new File(".. Primary Storage")); //⇽
+                _entries.add(new File(".. Primary Storage"){
+                    @Override
+                    public boolean isDirectory(){
+                        return true;
+                    }
+                    @Override
+                    public boolean isHidden(){
+                        return false;
+                    }
+                    @Override
+                    public long lastModified(){
+                        return 0L;
+                    }
+                }); //⇽
                 up = true;
             }
         }
         if (!up && _currentDir.getParentFile() != null && _currentDir.getParentFile().canRead()) {
-            _entries.add(new File(".."));
+            _entries.add(new File(".."){
+                @Override
+                public boolean isHidden(){
+                    return false;
+                }
+                @Override
+                public long lastModified(){
+                    return 0L;
+                }
+            });
         }
 
-        if (files != null) {
-            //_entries.addAll(Arrays.asList(files));
-            //Collections.sort(_entries, new Comparator<File>() {
-            //    public int compare(File f1, File f2) {
-            //        return f1.getName().toLowerCase().compareTo(f2.getName().toLowerCase());
-            //    }
-            //});
+        if (files == null) return;
 
-            List<File> dirList = new LinkedList<>();
-            for (File f : files) {
-                if (f.isDirectory()) {
-                    if (!f.getName().startsWith(".")) {
-                        dirList.add(f);
-                    }
-                }
-            }
-            sortByName(dirList);
-            _entries.addAll(dirList);
+        List<File> dirList = new LinkedList<>();
+        List<File> fileList = new LinkedList<>();
 
-            List<File> fileList = new LinkedList<>();
-            for (File f : files) {
-                if (!f.isDirectory()) {
-                    if (!f.getName().startsWith(".")) {
-                        fileList.add(f);
-                    }
-                }
+        for (File f : files) {
+            if (f.isDirectory()) {
+                dirList.add(f);
+            } else{
+                fileList.add(f);
             }
-            sortByName(fileList);
-            _entries.addAll(fileList);
         }
+
+        sortByName(dirList);
+        sortByName(fileList);
+        _entries.addAll(dirList);
+        _entries.addAll(fileList);
     }
 
     private void sortByName(List<File> list) {
@@ -922,39 +962,41 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     public void onItemClick(AdapterView<?> parent, View list, int position, long id) {
         if (position < 0 || position >= _entries.size()) return;
 
+        boolean scrollToTop = false;
         File file = _entries.get(position);
         if (file.getName().equals("..")) {
             File f = _currentDir.getParentFile();
             if (_folderNavUpCB == null) _folderNavUpCB = _defaultNavUpCB;
-            if (_folderNavUpCB.canUpTo(f)) _currentDir = f;
-            if (_chooseMode == CHOOSE_MODE_DELETE) _chooseMode = CHOOSE_MODE_NORMAL;
-
-        } else if (file.getName().contains(".. SDCard Storage")) {
+            if (_folderNavUpCB.canUpTo(f)) {
+                _currentDir = f;
+                _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
+                scrollToTop = true;
+            }
+        } else if (file.getName().contains(".. SDCard Storage")){
             String removableRoot = FileUtil.getStoragePath(_context, true);
-            if (removableRoot != null && Environment.MEDIA_MOUNTED.equals(
-                Environment.getExternalStorageState())) {
-                File f = new File(removableRoot);
-                _currentDir = f;
-                if (_chooseMode == CHOOSE_MODE_DELETE) _chooseMode = CHOOSE_MODE_NORMAL;
+            if(removableRoot != null && Environment.MEDIA_MOUNTED.equals(
+                Environment.getExternalStorageState())){
+                _currentDir = new File(removableRoot);
+                _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
             }
-
-        } else if (file.getName().contains(".. Primary Storage")) {
+        } else if (file.getName().contains(".. Primary Storage")){
             String primaryRoot = FileUtil.getStoragePath(_context, false);
-            if (primaryRoot != null) {
-                File f = new File(primaryRoot);
-                _currentDir = f;
-                if (_chooseMode == CHOOSE_MODE_DELETE) _chooseMode = CHOOSE_MODE_NORMAL;
+            if(primaryRoot != null){
+                _currentDir = new File(primaryRoot);
+                _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
             }
-
         } else {
-
             switch (_chooseMode) {
                 case CHOOSE_MODE_NORMAL:
                     if (file.isDirectory()) {
                         if (_folderNavToCB == null) _folderNavToCB = _defaultNavToCB;
-                        if (_folderNavToCB.canNavigate(file)) _currentDir = file;
+                        if (_folderNavToCB.canNavigate(file)) {
+                            _currentDir = file;
+                            scrollToTop = true;
+                        }
                     } else if ((!_dirOnly) && _result != null) {
                         _result.onChoosePath(file.getAbsolutePath(), file);
+                        if (_enableMultiple) _result.onChoosePath(_currentDir.getAbsolutePath(), _currentDir);
                         if (_dismissOnButtonClick) _alertDialog.dismiss();
                         return;
                     }
@@ -962,7 +1004,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 case CHOOSE_MODE_SELECT_MULTIPLE:
                     if (file.isDirectory()) {
                         if (_folderNavToCB == null) _folderNavToCB = _defaultNavToCB;
-                        if (_folderNavToCB.canNavigate(file)) _currentDir = file;
+                        if (_folderNavToCB.canNavigate(file)) {
+                            _currentDir = file;
+                            scrollToTop = true;
+                        }
                     } else {
                         _adapter.selectItem(position);
                         if (!_adapter.isAnySelected()) {
@@ -987,6 +1032,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             }
         }
         refreshDirs();
+        if(scrollToTop) _list.setSelection(0);
     }
 
     @Override
@@ -994,6 +1040,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         File file = _entries.get(position);
         if (file.getName().equals("..") || file.isDirectory()) return true;
         if (_adapter.isSelected(position)) return true;
+		_result.onChoosePath(file.getAbsolutePath(), file);
         _adapter.selectItem(position);
         _chooseMode = CHOOSE_MODE_SELECT_MULTIPLE;
         _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
@@ -1053,19 +1100,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     private AdapterSetter _adapterSetter = null;
-
-    private final static FileFilter filterDirectoriesOnly = new FileFilter() {
-        public boolean accept(File file) {
-            return file.isDirectory();
-        }
-    };
-
-    private final static FileFilter filterFiles = new FileFilter() {
-        public boolean accept(File file) {
-            return !file.isHidden();
-        }
-    };
-
 
     @FunctionalInterface
     public interface CanNavigateUp {
