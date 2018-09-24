@@ -104,7 +104,7 @@ public class DirAdapter extends ArrayAdapter<File> {
                 d = _defaultFileIcon;
             }
             final Drawable fileIcon = d.getConstantState().newDrawable();
-            if(file.isHidden()){
+            if(file.isHidden() && !file.getName().trim().equals("..")){
                 final PorterDuffColorFilter filter = new PorterDuffColorFilter(0x80ffffff,
                     PorterDuff.Mode.SRC_ATOP);
                 fileIcon.mutate().setColorFilter(filter);
