@@ -1038,7 +1038,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View list, int position, long id) {
         File file = _entries.get(position);
-        if (file.getName().equals("..") || file.isDirectory()) return true;
+        if (file.getName().equals("..") || file.getName().contains(".. SDCard Storage") || file.getName().contains(".. Primary Storage") || file.isDirectory()) return true;
         if (_adapter.isSelected(position)) return true;
 		_result.onChoosePath(file.getAbsolutePath(), file);
         _adapter.selectItem(position);
@@ -1137,7 +1137,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         @Override
         public void onBackPressed(AlertDialog dialog) {
             if (_entries.size() > 0
-                && (_entries.get(0).getName().equals("../") || _entries.get(0).getName().equals(".."))) {
+                && (_entries.get(0).getName().equals("..")) || _entries.get(0).getName().contains(".. SDCard Storage") || _entries.get(0).getName().contains(".. Primary Storage") ) {
                 onItemClick(null, _list, 0, 0);
             } else {
                 if (_onLastBackPressed != null) {
