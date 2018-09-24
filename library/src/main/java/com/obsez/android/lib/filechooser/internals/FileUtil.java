@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.StatFs;
 import android.os.storage.StorageManager;
 import android.text.InputFilter;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 
 import java.io.File;
@@ -12,6 +13,8 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by coco on 6/7/15.
@@ -132,37 +135,42 @@ public class FileUtil {
 
     public static class NewFolderFilter implements InputFilter {
         private final int maxLength;
-        private final String regex;
+        private final Pattern pattern;
+        /**
+         *  examples:
+         *  a simple allow only regex pattern: "^[a-z0-9]*$" (only lower case letters and numbers)
+         *  a simple anything but regex pattern: "^[^0-9&;#]*$" (ban numbers and '&', ';', '#' characters)
+         */
 
         public NewFolderFilter() {
-            this.maxLength = 255;
-            this.regex = "[<>|\\\\:&;#\n\r\t?*~\0-\37]";
+            this(255, "^[^/<>|\\\\:&;#\n\r\t?*~\0-\37]*$");
         }
 
-        public NewFolderFilter(int max) {
-            this.maxLength = max;
-            this.regex = "[<>|\\\\:&;#\n\r\t?*~\0-\37]";
+        public NewFolderFilter(int maxLength) {
+            this(maxLength, "^[^/<>|\\\\:&;#\n\r\t?*~\0-\37]*$");
         }
 
-        public NewFolderFilter(String regex) {
-            this.maxLength = 255;
-            this.regex = regex;
+        public NewFolderFilter(String pattern) {
+            this(255, pattern);
         }
 
-        public NewFolderFilter(int max, String regex) {
-            this.maxLength = max;
-            this.regex = regex;
+        public NewFolderFilter(int maxLength, String pattern) {
+            this.maxLength = maxLength;
+            this.pattern = Pattern.compile(pattern);
         }
 
         @Override
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-            String filtered;
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend){
+            Matcher matcher = pattern.matcher(source);
+            if (!matcher.matches()) {
+                return source instanceof SpannableStringBuilder ? dest.subSequence(dstart, dend) : "";
+            }
 
             int keep = maxLength - (dest.length() - (dend - dstart));
             if (keep <= 0) {
-                filtered = "";
+                return  "";
             } else if (keep >= end - start) {
-                filtered = source.subSequence(start, end).toString();
+                return null; // keep original
             } else {
                 keep += start;
                 if (Character.isHighSurrogate(source.charAt(keep - 1))) {
@@ -171,10 +179,8 @@ public class FileUtil {
                         return "";
                     }
                 }
-                filtered = source.subSequence(start, keep).toString();
+                return source.subSequence(start, keep).toString();
             }
-
-            return filtered.replaceAll(regex, "");
         }
     }
 }

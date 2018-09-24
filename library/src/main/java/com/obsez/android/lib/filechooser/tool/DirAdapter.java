@@ -62,6 +62,7 @@ public class DirAdapter extends ArrayAdapter<File> {
     }
 
     // This function is called to show each view item
+    @SuppressWarnings("ConstantConditions")
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
@@ -78,7 +79,12 @@ public class DirAdapter extends ArrayAdapter<File> {
         if (file == null) return rl;
         tvName.setText(file.getName());
         if (file.isDirectory()) {
-            final Drawable folderIcon = _defaultFolderIcon;
+            final Drawable folderIcon = _defaultFolderIcon.getConstantState().newDrawable();
+            if(file.isHidden()){
+                final PorterDuffColorFilter filter = new PorterDuffColorFilter(0x60ffffff,
+                    PorterDuff.Mode.SRC_ATOP);
+                folderIcon.mutate().setColorFilter(filter);
+            }
             tvName.setCompoundDrawablesWithIntrinsicBounds(folderIcon, null, null, null);
             tvSize.setText("");
             if (!file.getName().trim().equals("..")) {
@@ -97,15 +103,21 @@ public class DirAdapter extends ArrayAdapter<File> {
             if (d == null) {
                 d = _defaultFileIcon;
             }
-            tvName.setCompoundDrawablesWithIntrinsicBounds(d, null, null, null);
+            final Drawable fileIcon = d.getConstantState().newDrawable();
+            if(file.isHidden()){
+                final PorterDuffColorFilter filter = new PorterDuffColorFilter(0x80ffffff,
+                    PorterDuff.Mode.SRC_ATOP);
+                fileIcon.mutate().setColorFilter(filter);
+            }
+            tvName.setCompoundDrawablesWithIntrinsicBounds(fileIcon, null, null, null);
             tvSize.setText(FileUtil.getReadableFileSize(file.length()));
             tvDate.setText(_formatter.format(new Date(file.lastModified())));
-
         }
 
         View root = rl.findViewById(R.id.root);
         if (_selected.get(file.hashCode(), null) == null) root.getBackground().clearColorFilter();
-        else root.getBackground().setColorFilter(_colorFilter);
+          else root.getBackground().setColorFilter(_colorFilter);
+
         return rl;
     }
 
@@ -136,7 +148,6 @@ public class DirAdapter extends ArrayAdapter<File> {
     public void setEntries(List<File> entries) {
         super.clear();
         super.addAll(entries);
-        notifyDataSetChanged();
     }
 
     @Override
