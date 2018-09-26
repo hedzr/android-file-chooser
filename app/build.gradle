@@ -14,8 +14,8 @@ android {
         //def sdkDir = properties.getProperty('sdk.dir')
         //def ndkDir = properties.getProperty('ndk.dir')
         def ksPath = properties.getProperty('KS_PATH')
-        println "ksPath = ${ksPath}"
-        def keystorePropertiesFile = new File(ksPath)
+        def keystorePropertiesFile = ksPath == null ? rootProject.file("../keystore.properties") : new File(ksPath)
+        println "ksPath = ${ksPath}，${keystorePropertiesFile.absolutePath}"
         if (!keystorePropertiesFile.exists())
             keystorePropertiesFile = rootProject.file("../keystore.properties")
         def keystoreProperties = new Properties()
