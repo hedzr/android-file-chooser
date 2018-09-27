@@ -15,16 +15,20 @@ android {
         //def ndkDir = properties.getProperty('ndk.dir')
         def ksPath = properties.getProperty('KS_PATH')
         def keystorePropertiesFile = ksPath == null ? rootProject.file("../keystore.properties") : new File(ksPath)
-        println "ksPath = ${ksPath}，${keystorePropertiesFile.absolutePath}"
         if (!keystorePropertiesFile.exists())
             keystorePropertiesFile = rootProject.file("../keystore.properties")
-        def keystoreProperties = new Properties()
-        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-        config {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
+        if (keystorePropertiesFile.exists()) {
+            println "ksPath = ${ksPath}，${keystorePropertiesFile.absolutePath}"
+            def keystoreProperties = new Properties()
+            keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+            config {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
+        } else {
+            println "no valid ksPath, ignore it."
         }
     }
     defaultConfig {

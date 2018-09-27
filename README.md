@@ -1,15 +1,16 @@
 # android-file-chooser
 
-
-## Overview
-
-![banner](captures/banner.svg)
-
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-android--file--chooser-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/6982)
 [![Download](https://api.bintray.com/packages/hedzr/maven/filechooser/images/download.svg)](https://bintray.com/hedzr/maven/filechooser/_latestVersion)
 [![Release](https://jitpack.io/v/hedzr/android-file-chooser.svg)](https://jitpack.io/#hedzr/android-file-chooser)
 
 `android-file-library` is a lightweight file/folder chooser.
+
+## Overview
+
+![banner](captures/banner.svg)
+
+
 
 
 ### Snapshots
@@ -31,10 +32,11 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 ## Changes
 
 - create new folder on the fly, and the optional multiple select mode for developer, thx [Guiorgy](https://github.com/Guiorgy) and his [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser)
+- Up (`..`) on the primary storage root will be replaced with `.. SDCard`, it allows to jump to external storage such as a SDCard and going back available too.
 
 
 
-## Usage
+## Usages
 
 ### Configuration
 
@@ -55,6 +57,7 @@ there is a way to taste the `master` branch with [jitpack.io](https://jitpack.io
 ```gradle
 allprojects {
     repositories {
+        google()
         jcenter()
         maven { url "https://jitpack.io" }
     }
@@ -266,6 +269,24 @@ user-defined file/folder icon.
                 })
 ```
 
+#### `enableOptions(true)`
+
+a tri-dot menu icon will be shown at bottom left corner. this icon button allows end user to create new folder on the fly or delete one.
+
+further tunes:
+- `withOptionResources(@StringRes int createDirRes, @StringRes int deleteRes, @StringRes int newFolderCancelRes, @StringRes int newFolderOkRes)`
+- `withOptionIcons(@DrawableRes int optionsIconRes, @DrawableRes int createDirIconRes, @DrawableRes int deleteRes)`
+- `withNewFolderFilter(NewFolderFilter filter)`
+- `withOnBackPressedListener(OnBackPressedListener listener)`
+- `withOnLastBackPressedListener(OnBackPressedListener listener)`
+
+see the sample codes in 
+
+#### `disableTitle(true)`
+
+as named as working.
+
+#### TODO: psuedo `.. SDCard Storage` and `.. Primary Storage`
 
 
 ## Under Kotlin
