@@ -18,7 +18,7 @@ android {
         if (!keystorePropertiesFile.exists())
             keystorePropertiesFile = rootProject.file("../keystore.properties")
         if (keystorePropertiesFile.exists()) {
-            println "ksPath = ${ksPath}，${keystorePropertiesFile.absolutePath}"
+            println "ksPath = ${ksPath}，using ${keystorePropertiesFile.absolutePath}"
             def keystoreProperties = new Properties()
             keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
             config {

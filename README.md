@@ -280,7 +280,7 @@ further tunes:
 - `withOnBackPressedListener(OnBackPressedListener listener)`
 - `withOnLastBackPressedListener(OnBackPressedListener listener)`
 
-see the sample codes in 
+see the sample codes in demo app.
 
 #### `disableTitle(true)`
 
@@ -288,6 +288,10 @@ as named as working.
 
 #### TODO: psuedo `.. SDCard Storage` and `.. Primary Storage`
 
+
+
+
+---
 
 ## Under Kotlin
 
@@ -336,7 +340,7 @@ And:
 
 ## Build me
 
-### 1. legacy
+### 1. ~~legacy~~
 
 ```bash
 cat >keystore.properties<<EOF
@@ -350,12 +354,12 @@ cd somewhere
 ./gradlew assembleDebug
 ```
 
-you'd better generate a new file `android-file-chooser.keystore` at homedir or else. such as: `keytool -genkey -alias android.keystore -keyalg RSA -validity 20000 -keystore android.keystore`, see also [Sign an app](https://developer.android.com/studio/publish/app-signing).
-Or, erase the `KS_PATH` lines and signature section in app/build.gradle.
+~~you'd better generate a new file `android-file-chooser.keystore` at homedir or else. such as: `keytool -genkey -alias android.keystore -keyalg RSA -validity 20000 -keystore android.keystore`, see also [Sign an app](https://developer.android.com/studio/publish/app-signing).
+Or, erase the `KS_PATH` lines and signature section in app/build.gradle.~~
 
 ### 2. current
 
-just fork me and build me currently.
+just fork and build me currently.
 
 ## Contrib
 
@@ -370,13 +374,13 @@ feel free to make an new issue.
 many peoples report or contribute to improve me, but only a few of them be put here — it's hard to list all.
 
 - logo and banner by: [**iqbalhood**](https://github.com/iqbalhood)
-- codes and reports: [**bostrot**](https://github.com/bostrot), [**SeppPenner**](https://github.com/SeppPenner), [**lucian-cm**](https://github.com/lucian-cm), [**ghost**](https://github.com/ghost), [**UmeshBaldaniya46**](https://github.com/UmeshBaldaniya46), [Guiorgy](https://github.com/Guiorgy) ...
-
+- codes and reports: [**bostrot**](https://github.com/bostrot), [**SeppPenner**](https://github.com/SeppPenner), [**lucian-cm**](https://github.com/lucian-cm), [**ghost**](https://github.com/ghost), [**UmeshBaldaniya46**](https://github.com/UmeshBaldaniya46), [**Guiorgy**](https://github.com/Guiorgy) ...
+- DPad s
 
 
 ## License
 
-Copyright 2015-2018 Hedzr Yeh
+Copyright 2015-2018 Hedzr Yeh.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
