@@ -24,7 +24,6 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -69,12 +68,6 @@ public class DirAdapter extends ArrayAdapter<File> {
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         ViewGroup rl = (ViewGroup) super.getView(position, convertView, parent);
 
-        //if (position == _hoveredIndex) {
-        //    rl.setBackgroundColor(Color.argb(128, 70, 70, 70));
-        //} else {
-        //    rl.setBackgroundColor(Color.argb(255, 255, 255, 255));
-        //}
-
         TextView tvName = rl.findViewById(R.id.text);
         TextView tvSize = rl.findViewById(R.id.txt_size);
         TextView tvDate = rl.findViewById(R.id.txt_date);
@@ -109,7 +102,7 @@ public class DirAdapter extends ArrayAdapter<File> {
             tvSize.setText(FileUtil.getReadableFileSize(file.length()));
             tvDate.setText(_formatter.format(new Date(file.lastModified())));
         }
-        if (file.isHidden()) {
+        if(file.isHidden()){
             final PorterDuffColorFilter filter = new PorterDuffColorFilter(0x80ffffff,
                 PorterDuff.Mode.SRC_ATOP);
             icon.mutate().setColorFilter(filter);
@@ -117,13 +110,8 @@ public class DirAdapter extends ArrayAdapter<File> {
         tvName.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
 
         View root = rl.findViewById(R.id.root);
-        if (_selected.get(file.hashCode(), null) == null) {
-            if (position == _hoveredIndex)
-                root.getBackground().setColorFilter(_colorFilter);
-            else
-                root.getBackground().clearColorFilter();
-        } else
-            root.getBackground().setColorFilter(_colorFilter);
+        if (_selected.get(file.hashCode(), null) == null) root.getBackground().clearColorFilter();
+        else root.getBackground().setColorFilter(_colorFilter);
 
         return rl;
     }
@@ -155,7 +143,6 @@ public class DirAdapter extends ArrayAdapter<File> {
     public void setEntries(List<File> entries) {
         super.clear();
         super.addAll(entries);
-        //_hoveredIndex = -1;
     }
 
     @Override
@@ -202,60 +189,11 @@ public class DirAdapter extends ArrayAdapter<File> {
         _selected.clear();
     }
 
-    public int getHoveredIndex() {
-        return _hoveredIndex;
-    }
-
-    public void setHoveredIndex(int i) {
-        _hoveredIndex = i;
-    }
-
-    public int increaseHoveredIndex() {
-        _hoveredIndex++;
-        if (_hoveredIndex >= super.getCount()) _hoveredIndex = super.getCount() - 1;
-        notifyDataSetInvalidated();
-        return _hoveredIndex;
-    }
-
-    public int decreaseHoveredIndex() {
-        _hoveredIndex--;
-        if (_hoveredIndex < 0) _hoveredIndex = 0;
-        notifyDataSetInvalidated();
-        return _hoveredIndex;
-    }
-
-    public int push() {
-        _indexStack.add(_hoveredIndex);
-        return _hoveredIndex;
-    }
-
-    public int push(int index) {
-        _indexStack.add(index);
-        _hoveredIndex = index;
-        return index;
-    }
-
-    public int pop() {
-        if (!_indexStack.isEmpty()) {
-            int x = _indexStack.get(_indexStack.size() - 1);
-            _indexStack.remove(_indexStack.size() - 1);
-            _hoveredIndex = x;
-            return x;
-        }
-        return -1;
-    }
-
-    public void popAll() {
-        _indexStack.clear();
-    }
-
     private static SimpleDateFormat _formatter;
     private Drawable _defaultFolderIcon = null;
     private Drawable _defaultFileIcon = null;
     private boolean _resolveFileType = false;
     private PorterDuffColorFilter _colorFilter;
     private SparseArray<File> _selected = new SparseArray<File>();
-    private int _hoveredIndex;
-    private List<Integer> _indexStack = new LinkedList<>();
 }
 
