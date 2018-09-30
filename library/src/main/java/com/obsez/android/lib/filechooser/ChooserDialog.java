@@ -1144,24 +1144,31 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 }
                 return true;
             }
-        } else{
-            if(_options != null && keyCode == KeyEvent.KEYCODE_DPAD_UP){
-                if(_alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).hasFocus()
-                    || _alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).hasFocus()
-                    || _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).hasFocus()){
-                    if(_options.getVisibility() == View.VISIBLE){
-                        _options.requestFocus();
-                        return true;
-                    } else if(_options.isFocusable()){
-                        _list.requestFocus();
-                        lastSelected = true;
-                        return true;
-                    }
-                } else if(_options.hasFocus()){
+        } else if(_options != null && keyCode == KeyEvent.KEYCODE_DPAD_UP){
+            if(_alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).hasFocus()
+                || _alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).hasFocus()
+                || _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).hasFocus()){
+                if(_options.getVisibility() == View.VISIBLE){
+                    _options.requestFocus();
+                    return true;
+                } else if(_options.isFocusable()){
                     _list.requestFocus();
                     lastSelected = true;
                     return true;
                 }
+            } else if(_options.hasFocus()){
+                _list.requestFocus();
+                lastSelected = true;
+                return true;
+            }
+        }
+
+        if(_alertDialog.getCurrentFocus() == _list) {
+            if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                _onBackPressed.onBackPressed(_alertDialog);
+            }
+            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                onItemClick(null, _list, _list.getSelectedItemPosition(), _list.getSelectedItemId());
             }
         }
         return false;

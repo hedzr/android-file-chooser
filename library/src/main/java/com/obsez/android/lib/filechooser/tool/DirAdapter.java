@@ -111,8 +111,7 @@ public class DirAdapter extends ArrayAdapter<File> {
 
         View root = rl.findViewById(R.id.root);
         if (_selected.get(file.hashCode(), null) == null) root.getBackground().clearColorFilter();
-        else root.getBackground().setColorFilter(_colorFilter);
-
+          else root.getBackground().setColorFilter(_colorFilter);
         return rl;
     }
 
