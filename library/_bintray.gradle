@@ -6,11 +6,13 @@ apply plugin: 'com.jfrog.bintray'
 //apply plugin: 'com.jfrog.bintray'
 def getThisProperties() {
     Properties localProperties = new Properties()
-    localProperties.load(project.rootProject.file('local.properties').newDataInputStream())
-    if (!localProperties.hasProperty("bintray.user")) {
-        return null
-    } else {
-        println "user=" + localProperties.getProperty("bintray.user") + ", key=" + localProperties.getProperty("bintray.apikey")
+    if (project.rootProject.file('local.properties').exists()) {
+        localProperties.load(project.rootProject.file('local.properties').newDataInputStream())
+        if (!localProperties.hasProperty("bintray.user")) {
+            return null
+        } else {
+            println "user=" + localProperties.getProperty("bintray.user") + ", key=" + localProperties.getProperty("bintray.apikey")
+        }
     }
     return localProperties
 }
