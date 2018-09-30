@@ -153,7 +153,9 @@ public class DirAdapter extends ArrayAdapter<File> {
     }
 
     public void setEntries(List<File> entries) {
+        setNotifyOnChange(false);
         super.clear();
+        setNotifyOnChange(true);
         super.addAll(entries);
         //_hoveredIndex = -1;
     }

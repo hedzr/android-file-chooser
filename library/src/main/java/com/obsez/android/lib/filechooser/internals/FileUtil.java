@@ -2,8 +2,10 @@ package com.obsez.android.lib.filechooser.internals;
 
 import android.content.Context;
 import android.os.Build;
+import android.os.Environment;
 import android.os.StatFs;
 import android.os.storage.StorageManager;
+import android.support.annotation.NonNull;
 import android.text.InputFilter;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -68,6 +70,7 @@ public class FileUtil {
         return String.valueOf(dec.format(fileSize) + suffix);
     }
 
+    @NonNull
     public static String getStoragePath(Context context, boolean isRemovable) {
         StorageManager storageManager = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
         Class<?> storageVolumeClazz = null;
@@ -99,7 +102,7 @@ public class FileUtil {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        return null;
+        return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
 
     public static long readSDCard(Context context, Boolean isRemovable) {

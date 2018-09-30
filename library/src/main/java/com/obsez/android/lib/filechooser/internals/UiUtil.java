@@ -14,6 +14,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
+import android.widget.ListView;
 
 import java.util.List;
 
@@ -81,5 +82,28 @@ public final class UiUtil {
     public static void hideKeyboardFrom(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+
+    public static void ensureVisible(ListView listView, int pos) {
+        if (listView == null || listView.getAdapter() == null) {
+            return;
+        }
+
+        if (pos < 0 || pos >= listView.getAdapter().getCount()) {
+            return;
+        }
+
+        int first = listView.getFirstVisiblePosition();
+        int last = listView.getLastVisiblePosition();
+
+        if (pos < first) {
+            listView.setSelection(pos);
+            return;
+        }
+
+        if (pos >= last) {
+            listView.setSelection(1 + pos - (last - first));
+        }
     }
 }
