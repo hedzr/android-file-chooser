@@ -1265,9 +1265,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         @Override
         public void onBackPressed(AlertDialog dialog) {
             if (_entries.size() > 0
-                && (_entries.get(0).getName().equals("..")) ||
-                _entries.get(0).getName().contains(".. SDCard Storage") ||
-                _entries.get(0).getName().contains(".. Primary Storage")) {
+                && (_entries.get(0).getName().equals(".."))) {
                 onItemClick(null, _list, 0, 0);
             } else {
                 if (_onLastBackPressed != null) {
