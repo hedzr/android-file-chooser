@@ -139,7 +139,7 @@ public class FileUtil {
         /**
          *  examples:
          *  a simple allow only regex pattern: "^[a-z0-9]*$" (only lower case letters and numbers)
-         *  a simple anything but regex pattern: "^[^0-9&;#]*$" (ban numbers and '&', ';', '#' characters)
+         *  a simple anything but regex pattern: "^[^0-9;#&amp;]*$" (ban numbers and '&amp;', ';', '#' characters)
          */
 
         public NewFolderFilter() {

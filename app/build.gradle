@@ -47,15 +47,24 @@ android {
         }
     }
 
+
     lintOptions {
+        lintConfig rootProject.file('lint.xml')
+        quiet true
         abortOnError false
+        ignoreWarnings true
+        disable 'InvalidPackage'  // Some libraries have issues with this.
+        disable 'OldTargetApi'    // Lint gives this warning but SDK 20 would be Android L Beta.
+        disable 'IconDensities'   // For testing purpose. This is safe to remove.
+        checkReleaseBuilds false
     }
+
 
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation project(':library')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.jakewharton.timber:timber:4.7.0'
