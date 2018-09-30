@@ -34,7 +34,7 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 
 - create new folder on the fly, and the optional multiple select mode for developer, thx [Guiorgy](https://github.com/Guiorgy) and his [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser)
 - Up (`..`) on the primary storage root will be replaced with `.. SDCard`, it allows to jump to external storage such as a SDCard and going back available too.
-
+- ...
 
 
 ## Usages
@@ -46,8 +46,11 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 android-file-chooser was released at jcenter, declare deps with:
 
 ```gradle
-implementation 'com.obsez.android.lib.filechooser:filechooser:1.1.10'
+implementation 'com.obsez.android.lib.filechooser:filechooser:$android_file_chooser_version'
 ```
+
+for the newest version(s), looking up the badges above.
+
 
 #### taste the fresh
 
