@@ -10,25 +10,27 @@ android {
 
     signingConfigs {
         Properties properties = new Properties()
-        properties.load(project.rootProject.file('local.properties').newDataInputStream())
-        //def sdkDir = properties.getProperty('sdk.dir')
-        //def ndkDir = properties.getProperty('ndk.dir')
-        def ksPath = properties.getProperty('KS_PATH')
-        def keystorePropertiesFile = ksPath == null ? rootProject.file("../keystore.properties") : new File(ksPath)
-        if (!keystorePropertiesFile.exists())
-            keystorePropertiesFile = rootProject.file("../keystore.properties")
-        if (keystorePropertiesFile.exists()) {
-            println "ksPath = ${ksPath}，using ${keystorePropertiesFile.absolutePath}"
-            def keystoreProperties = new Properties()
-            keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-            config {
-                keyAlias keystoreProperties['keyAlias']
-                keyPassword keystoreProperties['keyPassword']
-                storeFile file(keystoreProperties['storeFile'])
-                storePassword keystoreProperties['storePassword']
+        if (project.rootProject.file('local.properties').exists()) {
+            properties.load(project.rootProject.file('local.properties').newDataInputStream())
+            //def sdkDir = properties.getProperty('sdk.dir')
+            //def ndkDir = properties.getProperty('ndk.dir')
+            def ksPath = properties.getProperty('KS_PATH')
+            def keystorePropertiesFile = ksPath == null ? rootProject.file("../keystore.properties") : new File(ksPath)
+            if (!keystorePropertiesFile.exists())
+                keystorePropertiesFile = rootProject.file("../keystore.properties")
+            if (keystorePropertiesFile.exists()) {
+                println "ksPath = ${ksPath}，using ${keystorePropertiesFile.absolutePath}"
+                def keystoreProperties = new Properties()
+                keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+                config {
+                    keyAlias keystoreProperties['keyAlias']
+                    keyPassword keystoreProperties['keyPassword']
+                    storeFile file(keystoreProperties['storeFile'])
+                    storePassword keystoreProperties['storePassword']
+                }
+            } else {
+                println "no valid ksPath, ignore it."
             }
-        } else {
-            println "no valid ksPath, ignore it."
         }
     }
     defaultConfig {
