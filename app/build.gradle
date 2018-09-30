@@ -71,6 +71,7 @@ dependencies {
     // implementation 'com.obsez.android.lib.filechooser:filechooser:1.1.6'
     // implementation 'com.github.hedzr:android-file-chooser:master-SNAPSHOT'
     // implementation 'com.github.hedzr:android-file-chooser:v1.1.10'
+    //unitTestCompile 'com.google.android:android-test:4.1.1.4'
 }
 repositories {
     mavenCentral()
