@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/inner_shadow_top" android:gravity="top" android:height="10dp" android:top="0dp"/>
+    <item android:drawable="@drawable/inner_shadow_right" android:gravity="right" android:width="10dp" android:right="0dp"/>
+    <item android:drawable="@drawable/inner_shadow_bottom" android:gravity="bottom" android:height="10dp" android:bottom="0dp"/>
+    <item android:drawable="@drawable/inner_shadow_left" android:gravity="left" android:width="10dp" android:left="0dp"/>
+</layer-list>
