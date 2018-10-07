@@ -79,6 +79,12 @@ public final class UiUtil {
         if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    // This only works assuming that all list items have the same height!
+    public static int getListYScroll(@NonNull final ListView list){
+        View child = list.getChildAt(0);
+        return list.getFirstVisiblePosition() * child.getHeight() - child.getTop() + list.getPaddingTop();
+    }
+
     public static void hideKeyboardFrom(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);

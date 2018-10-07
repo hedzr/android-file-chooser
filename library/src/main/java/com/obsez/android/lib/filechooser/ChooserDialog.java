@@ -13,6 +13,7 @@ import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 import static android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE;
 
 import static com.obsez.android.lib.filechooser.internals.FileUtil.NewFolderFilter;
+import static com.obsez.android.lib.filechooser.internals.UiUtil.getListYScroll;
 
 import android.Manifest;
 import android.app.Activity;
@@ -516,6 +517,29 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                             _optionsIconRes != -1 ? _optionsIconRes : R.drawable.ic_menu_24dp, 0, 0, 0);
                     }
 
+                    final class Integer{
+                        int Int = 0;
+                    }
+                    final Integer scroll = new Integer();
+
+                    _list.addOnLayoutChangeListener(new View.OnLayoutChangeListener(){
+                        @Override
+                        public void onLayoutChange(final View v, final int left, final int top, final int right, final int bottom,
+                                                   final int oldLeft, final int oldTop, final int oldRight, final int oldBottom){
+                            int oldHeight = oldBottom - oldTop;
+                            if(v.getHeight() != oldHeight){
+                                int offset = oldHeight - v.getHeight();
+                                int newScroll = getListYScroll(_list);
+                                if(scroll.Int != newScroll) offset += scroll.Int - newScroll;
+                                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+                                    _list.scrollListBy(offset);
+                                } else{
+                                    _list.scrollBy(0, offset);
+                                }
+                            }
+                        }
+                    });
+
                     final Runnable showOptions = new Runnable() {
                         @Override
                         public void run() {
@@ -534,6 +558,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                         handler.postDelayed(new Runnable() {
                                             @Override
                                             public void run() {
+                                                scroll.Int = getListYScroll(_list);
                                                 params.bottomMargin = _options.getHeight();
                                                 _list.setLayoutParams(params);
                                                 _options.setVisibility(View.VISIBLE);
@@ -543,6 +568,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                     }
                                 });
                             } else {
+                                scroll.Int = getListYScroll(_list);
                                 _options.setVisibility(View.VISIBLE);
                                 params.bottomMargin = _options.getHeight();
                                 _list.setLayoutParams(params);
@@ -552,6 +578,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     final Runnable hideOptions = new Runnable() {
                         @Override
                         public void run() {
+                            scroll.Int = getListYScroll(_list);
                             _options.setVisibility(View.INVISIBLE);
                             ViewGroup.MarginLayoutParams params =
                                 (ViewGroup.MarginLayoutParams) _list.getLayoutParams();
@@ -683,9 +710,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             holder.setOrientation(LinearLayout.VERTICAL);
                                             holder.setBackgroundColor(0xffffffff);
                                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                                holder.setElevation(20f);
+                                                holder.setElevation(25f);
                                             } else {
-                                                ViewCompat.setElevation(holder, 20);
+                                                ViewCompat.setElevation(holder, 25);
                                             }
                                             params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, 5);
                                             linearLayout.addView(holder, params);
@@ -807,6 +834,27 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
                                         _chooseMode = _chooseMode != CHOOSE_MODE_DELETE ? CHOOSE_MODE_DELETE
                                             : CHOOSE_MODE_NORMAL;
+                                        if(_deleteModeIndicator == null){
+                                            _deleteModeIndicator = new Runnable(){
+                                                @Override
+                                                public void run(){
+                                                    if(_chooseMode == CHOOSE_MODE_DELETE){
+                                                        final int color = 0x80ff0000;
+                                                        final PorterDuffColorFilter red = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
+                                                        _alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).getCompoundDrawables()[0].setColorFilter(red);
+                                                        _alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(color);
+                                                        delete.getCompoundDrawables()[0].setColorFilter(red);
+                                                        delete.setTextColor(color);
+                                                    } else{
+                                                        _alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).getCompoundDrawables()[0].clearColorFilter();
+                                                        _alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(color);
+                                                        delete.getCompoundDrawables()[0].clearColorFilter();
+                                                        delete.setTextColor(color);
+                                                    }
+                                                }
+                                            };
+                                        }
+                                        _deleteModeIndicator.run();
                                     }
                                 });
                                 // endregion
@@ -1006,6 +1054,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             Toast.LENGTH_LONG).show();
     }
 
+    private Runnable _deleteModeIndicator;
     private void deleteFile(File file) throws IOException {
         if (file.isDirectory()) {
             final File[] entries = file.listFiles();
@@ -1034,6 +1083,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 Environment.getExternalStorageState())) {
                 _currentDir = new File(removableRoot);
                 _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
+                if(_deleteModeIndicator != null) _deleteModeIndicator.run();
                 _adapter.popAll();
             }
         } else if (file.getName().contains(".. Primary Storage")) {
@@ -1041,6 +1091,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             if (primaryRoot != null) {
                 _currentDir = new File(primaryRoot);
                 _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
+                if(_deleteModeIndicator != null) _deleteModeIndicator.run();
                 _adapter.popAll();
             }
         } else {
@@ -1087,6 +1138,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         Toast.makeText(_context, e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                     _chooseMode = CHOOSE_MODE_NORMAL;
+                    if(_deleteModeIndicator != null) _deleteModeIndicator.run();
                     break;
                 default:
                     // ERROR! It shouldn't get here...
@@ -1109,6 +1161,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         _adapter.selectItem(position);
         _chooseMode = CHOOSE_MODE_SELECT_MULTIPLE;
         _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+        _deleteModeIndicator.run();
         return true;
     }
 
@@ -1176,6 +1229,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             if (_folderNavUpCB.canUpTo(f)) {
                 _currentDir = f;
                 _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
+                if(_deleteModeIndicator != null) _deleteModeIndicator.run();
                 //scrollToTop = true;
                 _adapter.pop();
 
