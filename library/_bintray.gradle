@@ -6,21 +6,23 @@ apply plugin: 'com.jfrog.bintray'
 //apply plugin: 'com.jfrog.bintray'
 def getThisProperties() {
     Properties localProperties = new Properties()
-    localProperties.load(project.rootProject.file('local.properties').newDataInputStream())
-    if (!localProperties.hasProperty("bintray.user")) {
-        return null
-    } else {
-        println "user=" + localProperties.getProperty("bintray.user") + ", key=" + localProperties.getProperty("bintray.apikey")
+    if (project.rootProject.file('local.properties').exists()) {
+        localProperties.load(project.rootProject.file('local.properties').newDataInputStream())
+        if (!localProperties.hasProperty("bintray.user")) {
+            return null
+        } else {
+            println "user=" + localProperties.getProperty("bintray.user") + ", key=" + localProperties.getProperty("bintray.apikey")
+        }
     }
     return localProperties
 }
 def getBintrayUsername(){
     Properties p = getThisProperties()
-    return p && p.hasProperty('bintray.user') ? p.getProperty("bintray.user") : project.property("bintray.user")
+    return p && p.hasProperty('bintray.user') ? p.getProperty("bintray.user") : project.hasProperty('bintray.user') ? project.property("bintray.user") : ''
 }
 def getBintrayKey(){
     Properties p = getThisProperties()
-    return p && p.hasProperty('bintray.apikey') ? p.getProperty("bintray.apikey") : project.property("bintray.apikey")
+    return p && p.hasProperty('bintray.apikey') ? p.getProperty("bintray.apikey") : project.hasProperty('bintray.apikey') ? project.property("bintray.apikey") : ''
 }
 println "bintray: user=" + getBintrayUsername() + ", key=" + getBintrayKey()
 

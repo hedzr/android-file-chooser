@@ -28,25 +28,30 @@ public class ExtFileFilter implements FileFilter {
     @Override
     public boolean accept(File pathname) {
         if (!m_allowHidden) {
-            if (pathname.isHidden())
+            if (pathname.isHidden()) {
                 return false;
+            }
         }
 
         if (m_onlyDirectory) {
-            if (!pathname.isDirectory())
+            if (!pathname.isDirectory()) {
                 return false;
+            }
         }
 
-        if (m_ext == null)
+        if (m_ext == null) {
             return true;
+        }
 
-        if (pathname.isDirectory())
+        if (pathname.isDirectory()) {
             return true;
+        }
 
-        String ext = FileUtil.getExtension(pathname).substring(1);
+        String ext = FileUtil.getExtensionWithoutDot(pathname);
         for (String e : m_ext) {
-            if (ext.equalsIgnoreCase(e))
+            if (ext.equalsIgnoreCase(e)) {
                 return true;
+            }
         }
         return false;
     }

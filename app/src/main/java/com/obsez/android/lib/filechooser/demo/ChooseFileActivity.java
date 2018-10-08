@@ -2,8 +2,8 @@ package com.obsez.android.lib.filechooser.demo;
 
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -11,23 +11,31 @@ import android.view.MenuItem;
 
 import java.util.Locale;
 
-import static java.security.AccessController.getContext;
+import timber.log.Timber;
 
-
-public class ChooseFileActivity extends ActionBarActivity {
+public class ChooseFileActivity extends AppCompatActivity {
 
     private static final String TAG = "ChooseFileActivity";
+
+    public ChooseFileActivity(){
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+        } else {
+            //Timber.plant(new CrashReportingTree());
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_file);
 
-        if(Log.isLoggable(TAG, Log.INFO)) {
+        if (Log.isLoggable(TAG, Log.INFO)) {
             Resources resources = getApplicationContext().getResources();
             DisplayMetrics dm = resources.getDisplayMetrics();
             Configuration config = resources.getConfiguration();
-            Log.i(TAG, "dm: density=" + dm.density + ", densityDpi=" + dm.densityDpi + ", curr-locale=" + Locale.getDefault());
+            Timber.v("dm: density=" + dm.density + ", densityDpi=" + dm.densityDpi + ", curr-locale="
+                + Locale.getDefault());
 
             // force English locale
             //config.locale = Locale.ENGLISH;

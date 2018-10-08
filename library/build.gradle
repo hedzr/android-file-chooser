@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+//apply plugin: 'com.github.dcendents.android-maven' // ADD THIS
 
 //apply plugin: 'maven'
 //version = "1.1.3"
@@ -34,11 +36,25 @@ android {
 //            buildConfig "public final static boolean HAS_PROTOTYPE_FEATURE = false;"
 //        }
     }
+
+    lintOptions {
+        lintConfig rootProject.file('lint.xml')
+        quiet true
+        abortOnError false
+        ignoreWarnings true
+        disable 'InvalidPackage'  // Some libraries have issues with this.
+        disable 'OldTargetApi'    // Lint gives this warning but SDK 20 would be Android L Beta.
+        disable 'IconDensities'   // For testing purpose. This is safe to remove.
+        disable 'deprecation'
+        checkReleaseBuilds false
+    }
+
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:25.0.1'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 

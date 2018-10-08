@@ -41,24 +41,29 @@ public class RegexFileFilter implements FileFilter {
     @Override
     public boolean accept(File pathname) {
         if (!m_allowHidden) {
-            if (pathname.isHidden())
+            if (pathname.isHidden()) {
                 return false;
+            }
         }
 
         if (m_onlyDirectory) {
-            if (!pathname.isDirectory())
+            if (!pathname.isDirectory()) {
                 return false;
+            }
         }
 
-        if (m_pattern == null)
+        if (m_pattern == null) {
             return true;
+        }
 
-        if (pathname.isDirectory())
+        if (pathname.isDirectory()) {
             return true;
+        }
 
         String name = pathname.getName();
-        if (m_pattern.matcher(name).matches())
+        if (m_pattern.matcher(name).matches()) {
             return true;
+        }
         return false;
     }
 

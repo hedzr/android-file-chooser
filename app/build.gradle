@@ -1,9 +1,38 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+
+
 
 android {
     compileSdkVersion Integer.parseInt(project.ANDROID_COMPILE_SDK_VERSION)
     buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
 
+    signingConfigs {
+        Properties properties = new Properties()
+        if (project.rootProject.file('local.properties').exists()) {
+            properties.load(project.rootProject.file('local.properties').newDataInputStream())
+            //def sdkDir = properties.getProperty('sdk.dir')
+            //def ndkDir = properties.getProperty('ndk.dir')
+            def ksPath = properties.getProperty('KS_PATH')
+            def keystorePropertiesFile = ksPath == null ? rootProject.file("../keystore.properties") : new File(ksPath)
+            if (!keystorePropertiesFile.exists())
+                keystorePropertiesFile = rootProject.file("../keystore.properties")
+            if (keystorePropertiesFile.exists()) {
+                println "ksPath = ${ksPath}，using ${keystorePropertiesFile.absolutePath}"
+                def keystoreProperties = new Properties()
+                keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+                config {
+                    keyAlias keystoreProperties['keyAlias']
+                    keyPassword keystoreProperties['keyPassword']
+                    storeFile file(keystoreProperties['storeFile'])
+                    storePassword keystoreProperties['storePassword']
+                }
+            } else {
+                println "no valid ksPath, ignore it."
+            }
+        }
+    }
     defaultConfig {
         applicationId "com.obsez.android.lib.filechooser.demo"
         minSdkVersion project.ANDROID_MIN_SDK_VERSION
@@ -17,11 +46,34 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+
+    lintOptions {
+        lintConfig rootProject.file('lint.xml')
+        quiet true
+        abortOnError false
+        ignoreWarnings true
+        disable 'InvalidPackage'  // Some libraries have issues with this.
+        disable 'OldTargetApi'    // Lint gives this warning but SDK 20 would be Android L Beta.
+        disable 'IconDensities'   // For testing purpose. This is safe to remove.
+        checkReleaseBuilds false
+    }
+
+
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:25.0.1'
-    compile project(':library')
-    //compile 'com.obsez.android.lib.filechooser:filechooser:1.1.3'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation project(':library')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.jakewharton.timber:timber:4.7.0'
+    // implementation 'com.obsez.android.lib.filechooser:filechooser:1.1.6'
+    // implementation 'com.github.hedzr:android-file-chooser:master-SNAPSHOT'
+    // implementation 'com.github.hedzr:android-file-chooser:v1.1.10'
+    //unitTestCompile 'com.google.android:android-test:4.1.1.4'
 }
+repositories {
+    mavenCentral()
+}
+
