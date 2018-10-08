@@ -1,17 +1,17 @@
 # Changelog
 
 
-## 1.1.11 - 2018-09-30
+## 1.1.11 - 2018-10-08
 
-- create new folder on the fly, and the optional multiple select mode for developer, thx [Guiorgy](https://github.com/Guiorgy) and his [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser)
+- Create new folder on the fly, and the optional multiple select mode for developer, thx [Guiorgy](https://github.com/Guiorgy) and his [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser)
 - Up (`..`) on the primary storage root will be replaced with `.. SDCard`, it allows to jump to external storage such as a SDCard and going back available too.
 - DPad supports, arrow keys supports (#30)
-- ...bug fixed
+- ...bugs fixed
 
 
 ## 1.1.10 - 2018-06-05
 
-bug fixed
+bugs fixed
 
 
 ## 1.1.9 - 2018-05-20
