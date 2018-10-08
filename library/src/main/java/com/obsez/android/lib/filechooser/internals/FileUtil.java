@@ -139,10 +139,11 @@ public class FileUtil {
     public static class NewFolderFilter implements InputFilter {
         private final int maxLength;
         private final Pattern pattern;
+
         /**
-         *  examples:
-         *  a simple allow only regex pattern: "^[a-z0-9]*$" (only lower case letters and numbers)
-         *  a simple anything but regex pattern: "^[^0-9;#&amp;]*$" (ban numbers and '&amp;', ';', '#' characters)
+         * examples:
+         * a simple allow only regex pattern: "^[a-z0-9]*$" (only lower case letters and numbers)
+         * a simple anything but regex pattern: "^[^0-9;#&amp;]*$" (ban numbers and '&amp;', ';', '#' characters)
          */
 
         public NewFolderFilter() {
@@ -163,7 +164,7 @@ public class FileUtil {
         }
 
         @Override
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend){
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
             Matcher matcher = pattern.matcher(source);
             if (!matcher.matches()) {
                 return source instanceof SpannableStringBuilder ? dest.subSequence(dstart, dend) : "";
@@ -171,7 +172,7 @@ public class FileUtil {
 
             int keep = maxLength - (dest.length() - (dend - dstart));
             if (keep <= 0) {
-                return  "";
+                return "";
             } else if (keep >= end - start) {
                 return null; // keep original
             } else {

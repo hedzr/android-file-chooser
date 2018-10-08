@@ -517,23 +517,24 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                             _optionsIconRes != -1 ? _optionsIconRes : R.drawable.ic_menu_24dp, 0, 0, 0);
                     }
 
-                    final class Integer{
+                    final class Integer {
                         int Int = 0;
                     }
                     final Integer scroll = new Integer();
 
-                    _list.addOnLayoutChangeListener(new View.OnLayoutChangeListener(){
+                    _list.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                         @Override
-                        public void onLayoutChange(final View v, final int left, final int top, final int right, final int bottom,
-                                                   final int oldLeft, final int oldTop, final int oldRight, final int oldBottom){
+                        public void onLayoutChange(final View v, final int left, final int top, final int right,
+                            final int bottom,
+                            final int oldLeft, final int oldTop, final int oldRight, final int oldBottom) {
                             int oldHeight = oldBottom - oldTop;
-                            if(v.getHeight() != oldHeight){
+                            if (v.getHeight() != oldHeight) {
                                 int offset = oldHeight - v.getHeight();
                                 int newScroll = getListYScroll(_list);
-                                if(scroll.Int != newScroll) offset += scroll.Int - newScroll;
-                                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+                                if (scroll.Int != newScroll) offset += scroll.Int - newScroll;
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                                     _list.scrollListBy(offset);
-                                } else{
+                                } else {
                                     _list.scrollBy(0, offset);
                                 }
                             }
@@ -834,20 +835,29 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
                                         _chooseMode = _chooseMode != CHOOSE_MODE_DELETE ? CHOOSE_MODE_DELETE
                                             : CHOOSE_MODE_NORMAL;
-                                        if(_deleteModeIndicator == null){
-                                            _deleteModeIndicator = new Runnable(){
+                                        if (_deleteModeIndicator == null) {
+                                            _deleteModeIndicator = new Runnable() {
                                                 @Override
-                                                public void run(){
-                                                    if(_chooseMode == CHOOSE_MODE_DELETE){
+                                                public void run() {
+                                                    if (_chooseMode == CHOOSE_MODE_DELETE) {
                                                         final int color = 0x80ff0000;
-                                                        final PorterDuffColorFilter red = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
-                                                        _alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).getCompoundDrawables()[0].setColorFilter(red);
-                                                        _alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(color);
+                                                        final PorterDuffColorFilter red =
+                                                            new PorterDuffColorFilter(color,
+                                                                PorterDuff.Mode.SRC_IN);
+                                                        _alertDialog.getButton(
+                                                            AlertDialog.BUTTON_NEUTRAL).getCompoundDrawables()
+                                                            [0].setColorFilter(
+                                                            red);
+                                                        _alertDialog.getButton(
+                                                            AlertDialog.BUTTON_NEUTRAL).setTextColor(color);
                                                         delete.getCompoundDrawables()[0].setColorFilter(red);
                                                         delete.setTextColor(color);
-                                                    } else{
-                                                        _alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).getCompoundDrawables()[0].clearColorFilter();
-                                                        _alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(color);
+                                                    } else {
+                                                        _alertDialog.getButton(
+                                                            AlertDialog.BUTTON_NEUTRAL).getCompoundDrawables()
+                                                            [0].clearColorFilter();
+                                                        _alertDialog.getButton(
+                                                            AlertDialog.BUTTON_NEUTRAL).setTextColor(color);
                                                         delete.getCompoundDrawables()[0].clearColorFilter();
                                                         delete.setTextColor(color);
                                                     }
@@ -1055,6 +1065,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     private Runnable _deleteModeIndicator;
+
     private void deleteFile(File file) throws IOException {
         if (file.isDirectory()) {
             final File[] entries = file.listFiles();
@@ -1083,7 +1094,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 Environment.getExternalStorageState())) {
                 _currentDir = new File(removableRoot);
                 _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
-                if(_deleteModeIndicator != null) _deleteModeIndicator.run();
+                if (_deleteModeIndicator != null) _deleteModeIndicator.run();
                 _adapter.popAll();
             }
         } else if (file.getName().contains(".. Primary Storage")) {
@@ -1091,7 +1102,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             if (primaryRoot != null) {
                 _currentDir = new File(primaryRoot);
                 _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
-                if(_deleteModeIndicator != null) _deleteModeIndicator.run();
+                if (_deleteModeIndicator != null) _deleteModeIndicator.run();
                 _adapter.popAll();
             }
         } else {
@@ -1138,7 +1149,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         Toast.makeText(_context, e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                     _chooseMode = CHOOSE_MODE_NORMAL;
-                    if(_deleteModeIndicator != null) _deleteModeIndicator.run();
+                    if (_deleteModeIndicator != null) _deleteModeIndicator.run();
                     break;
                 default:
                     // ERROR! It shouldn't get here...
@@ -1229,7 +1240,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             if (_folderNavUpCB.canUpTo(f)) {
                 _currentDir = f;
                 _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
-                if(_deleteModeIndicator != null) _deleteModeIndicator.run();
+                if (_deleteModeIndicator != null) _deleteModeIndicator.run();
                 //scrollToTop = true;
                 _adapter.pop();
 
