@@ -214,6 +214,13 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    /**
+     * To enable the option pane with create/delete folder on the fly.
+     * When u set it true, you may need WRITE_EXTERNAL_STORAGE declaration too.
+     *
+     * @param enableOptions true/false
+     * @return this
+     */
     public ChooserDialog enableOptions(boolean enableOptions) {
         this._enableOptions = enableOptions;
         return this;
@@ -892,21 +899,36 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         // Check for permissions if SDK version is >= 23
         if (Build.VERSION.SDK_INT >= 23) {
             final int PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE = 0;
-            int readPermissionCheck = ContextCompat.checkSelfPermission(_context,
-                Manifest.permission.READ_EXTERNAL_STORAGE);
-            int writePermissionCheck = ContextCompat.checkSelfPermission(_context,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            if (_enableOptions) {
+                int readPermissionCheck = ContextCompat.checkSelfPermission(_context,
+                    Manifest.permission.READ_EXTERNAL_STORAGE);
+                int writePermissionCheck = ContextCompat.checkSelfPermission(_context,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-            //if = permission granted
-            if (readPermissionCheck == PackageManager.PERMISSION_GRANTED
-                && writePermissionCheck == PackageManager.PERMISSION_GRANTED) {
-                _alertDialog.show();
+                //if = permission granted
+                if (readPermissionCheck == PackageManager.PERMISSION_GRANTED
+                    && writePermissionCheck == PackageManager.PERMISSION_GRANTED) {
+                    _alertDialog.show();
+                } else {
+                    ActivityCompat.requestPermissions((Activity) _context,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
+                    return this;
+                }
             } else {
-                ActivityCompat.requestPermissions((Activity) _context,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
-                return this;
+                int readPermissionCheck = ContextCompat.checkSelfPermission(_context,
+                    Manifest.permission.READ_EXTERNAL_STORAGE);
+
+                //if = permission granted
+                if (readPermissionCheck == PackageManager.PERMISSION_GRANTED) {
+                    _alertDialog.show();
+                } else {
+                    ActivityCompat.requestPermissions((Activity) _context,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
+                    return this;
+                }
             }
         } else {
             _alertDialog.show();

@@ -32,6 +32,17 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 
 ## Changes
 
+### `x1.2.0` branch
+
+- In Working
+
+
+### v1.1.11 patches on `master`
+
+- no WRITE_EXTERNAL_STORAGE requests if not `enableOptions(true)`;
+ 
+
+### v1.1.11
 - create new folder on the fly, and the optional multiple select mode for developer, thx [Guiorgy](https://github.com/Guiorgy) and his [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser)
 - Up (`..`) on the primary storage root will be replaced with `.. SDCard`, it allows to jump to external storage such as a SDCard and going back available too.
 - DPad supports, arrow keys supports (#30)
@@ -287,11 +298,17 @@ further tunes:
 
 see the sample codes in demo app.
 
+**NOTE**:
+
+1. extra `WRITE_EXTERNAL_STORAGE` permission should be declared in your `AndroidManifest.xml`.
+2. we'll ask the extra runtime permission to `WRITE_EXTERNAL_STORAGE` on Android M and higher too.
+
+
 #### `disableTitle(true)`
 
 as named as working.
 
-#### TODO: psuedo `.. SDCard Storage` and `.. Primary Storage`
+#### psuedo `.. SDCard Storage` and `.. Primary Storage`
 
 
 
