@@ -122,7 +122,7 @@ publishing {
                             id POM_DEVELOPER_ID // 'hedzr'  // your id or nickname
                             name POM_DEVELOPER_NAME // 'Hedzr Yeh'
                             email POM_DEVELOPER_EMAIL //'hedzrz@gmail.com'
-                            url 'https://hedzr.com'
+                            url 'http://hedzr.com'
                             // see: http://www.mail-archive.com/user@gradle.codehaus.org/msg05368.html
                             // organization 'Andre Steingress'
                             // organizationUrl 'http://www.andresteingress.com'
