@@ -46,7 +46,11 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
 
         String ext = FileUtil.getStoragePath(getActivity(), true);
         String itl = FileUtil.getStoragePath(getActivity(), false);
-        Timber.v("ext: " + ext + ", total size: " + FileUtil.getReadableFileSize(FileUtil.readSDCard(getActivity(), true)) + ", free size: " + FileUtil.getReadableFileSize(FileUtil.readSDCard(getActivity(), true, true)));
+        if(new File(ext).canRead()) {
+            Timber.v("ext: " + ext + ", total size: " + FileUtil.getReadableFileSize(FileUtil.readSDCard(getActivity(), true)) + ", free size: " + FileUtil.getReadableFileSize(FileUtil.readSDCard(getActivity(), true, true)));
+        } else {
+            Timber.v("ext: " + ext);
+        }
         Timber.v("itl: " + itl + ", total size: " + FileUtil.getReadableFileSize(FileUtil.readSDCard(getActivity(), false)) + ", free size: " + FileUtil.getReadableFileSize(FileUtil.readSDCard(getActivity(), false, true)));
     }
 
