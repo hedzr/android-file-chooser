@@ -35,18 +35,39 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 ### `x1.2.0` branch
 
 - In Working
+- Keyboard supports: process SPACE and ENTER up event;
+- file list no focus when dailog first showing;
+- better storage media detect algorithm for Android M+;
+- no WRITE_EXTERNAL_STORAGE requests if not `enableOptions(true)`;
 
 
 ### v1.1.11 patches on `master`
 
 - no WRITE_EXTERNAL_STORAGE requests if not `enableOptions(true)`;
- 
+
 
 ### v1.1.11
 - create new folder on the fly, and the optional multiple select mode for developer, thx [Guiorgy](https://github.com/Guiorgy) and his [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser)
 - Up (`..`) on the primary storage root will be replaced with `.. SDCard`, it allows to jump to external storage such as a SDCard and going back available too.
 - DPad supports, arrow keys supports (#30)
 - ...
+
+<!--
+
+
+### Which version should I use?
+
+1. `devel` branch is obseleted for this little project. Never used.
+2. `master` branch could be violated for:
+   1. fast fixes
+   2. working on new feature/issue
+   try it via jitpack, 
+3. `x.x.x` / `vx.x.x` are stabled. both
+   1. `bintray.com`/`jcenter` is recommended, just `implementation ...`;
+   2. `jitpack.io`: see instruments above ([taste the fresh](#taste-the-fresh)).
+4. sometimes, a patch tagged as `x.x.x.p` can be refer via jitpack too.
+
+-->
 
 
 ## Usages
@@ -86,7 +107,6 @@ allprojects {
 implementation 'com.github.hedzr:android-file-chooser:master-SNAPSHOT'
 // implementation 'com.github.hedzr:android-file-chooser:v1.1.10'
 ```
-
 
 
 ### Codes

@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
 import android.os.storage.StorageManager;
+import android.os.storage.StorageVolume;
 import android.support.annotation.NonNull;
 import android.text.InputFilter;
 import android.text.SpannableStringBuilder;
@@ -15,6 +16,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -74,6 +76,38 @@ public class FileUtil {
     public static String getStoragePath(Context context, boolean isRemovable) {
         StorageManager storageManager = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
         Class<?> storageVolumeClazz = null;
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            try {
+                storageVolumeClazz = Class.forName("android.os.storage.StorageVolume");
+                Method getPath = storageVolumeClazz.getMethod("getPath");
+                Method isRemovableMtd = storageVolumeClazz.getMethod("isRemovable");
+                Method getStorageVolumes = storageManager.getClass().getMethod("getStorageVolumes");
+
+                Object result = getStorageVolumes.invoke(storageManager);
+
+                for (StorageVolume sv : (List<StorageVolume>) result) {
+                    boolean b = (boolean) isRemovableMtd.invoke(sv);
+                    if ((b && isRemovable) || (!b && !isRemovable)) {
+                        //Timber.d("  ---Object--" + sv);
+                        String path = (String) getPath.invoke(sv);
+                        //Timber.d("  ---path--" + path + "--removable--" + b);
+                        return path;
+                    }
+                }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            return Environment.getExternalStorageDirectory().getAbsolutePath();
+        }
+
+        // legacy way to retrieve the paths
         try {
             storageVolumeClazz = Class.forName("android.os.storage.StorageVolume");
             Method getVolumeList = storageManager.getClass().getMethod("getVolumeList");

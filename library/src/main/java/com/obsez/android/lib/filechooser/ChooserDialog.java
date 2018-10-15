@@ -451,6 +451,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         break;
                     case KeyEvent.KEYCODE_DPAD_RIGHT:
                     case KeyEvent.KEYCODE_DPAD_CENTER:
+                    case KeyEvent.KEYCODE_ENTER:
+                    case KeyEvent.KEYCODE_SPACE:
                         // enter
                         if (event.getAction() == KeyEvent.ACTION_UP) {
                             return doEnter();
@@ -469,6 +471,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         if (_enableMultiple) {
             _list.setOnItemLongClickListener(this);
         }
+        _list.requestFocus();
         return this;
     }
 
