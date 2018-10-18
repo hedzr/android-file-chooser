@@ -904,6 +904,16 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
+
+                    readPermissionCheck = ContextCompat.checkSelfPermission(_context,
+                        Manifest.permission.READ_EXTERNAL_STORAGE);
+                    writePermissionCheck = ContextCompat.checkSelfPermission(_context,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+                    if (readPermissionCheck == PackageManager.PERMISSION_GRANTED
+                        && writePermissionCheck == PackageManager.PERMISSION_GRANTED) {
+                        _alertDialog.show();
+                    }
                     return this;
                 }
             } else {
@@ -917,6 +927,13 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     ActivityCompat.requestPermissions((Activity) _context,
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                         PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
+
+                    readPermissionCheck = ContextCompat.checkSelfPermission(_context,
+                        Manifest.permission.READ_EXTERNAL_STORAGE);
+
+                    if (readPermissionCheck == PackageManager.PERMISSION_GRANTED) {
+                        _alertDialog.show();
+                    }
                     return this;
                 }
             }
