@@ -34,11 +34,13 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 
 ### `x1.2.0` branch
 
-- In Working
-- Keyboard supports: process SPACE and ENTER up event;
-- file list no focus when dailog first showing;
-- better storage media detect algorithm for Android M+;
-- no WRITE_EXTERNAL_STORAGE requests if not `enableOptions(true)`;
+- In progress
+- Done:
+  - Keyboard supports: process SPACE and ENTER up event;
+  - file list no focus when dailog first showing;
+  - better storage media detect algorithm for Android M+;
+  - no WRITE_EXTERNAL_STORAGE requests if not `enableOptions(true)`;
+  - after requested permissions, try showing dialog again instead of return directly;
 
 
 ### v1.1.11 patches on `master`
