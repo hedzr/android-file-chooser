@@ -1,9 +1,14 @@
 package com.obsez.android.lib.filechooser.demo;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -17,7 +22,7 @@ public class ChooseFileActivity extends AppCompatActivity {
 
     private static final String TAG = "ChooseFileActivity";
 
-    public ChooseFileActivity(){
+    public ChooseFileActivity() {
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         } else {
@@ -27,6 +32,7 @@ public class ChooseFileActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        loadNightMode();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_file);
 
@@ -73,4 +79,48 @@ public class ChooseFileActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
+    void loadNightMode() {
+        int nm = getNightMode();
+        Timber.v("loading night mode: " + nm);
+        //if (nm != AppCompatDelegate.getDefaultNightMode()) {
+        setNightMode(nm, false);
+        //} else {
+        //    setNightMode(AppCompatDelegate.MODE_NIGHT_NO, false); // using day mode in default
+        //}
+    }
+
+    //protected open fun loadNightMode() {
+    //    val nm = nightMode
+    //    if (nm != AppCompatDelegate.getDefaultNightMode()) {
+    //        setNightMode(nm)
+    //    }
+    //}
+
+
+    @AppCompatDelegate.NightMode
+    int getNightMode() {
+        SharedPreferences pref = getSharedPreferences("default", Context.MODE_PRIVATE);
+        return pref.getInt("nightMode", AppCompatDelegate.getDefaultNightMode());
+    }
+
+    void setNightMode(@AppCompatDelegate.NightMode int nm) {
+        Timber.v("force setting night mode: " + nm);
+        setNightMode(nm, true);
+    }
+
+    @SuppressLint("ObsoleteSdkInt")
+    void setNightMode(@AppCompatDelegate.NightMode int nm, boolean needRecreate) {
+        SharedPreferences pref = getSharedPreferences("default", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt("nightMode", nm);
+        editor.commit();
+        AppCompatDelegate.setDefaultNightMode(nm);
+        if (Build.VERSION.SDK_INT >= 11 && needRecreate) {
+            recreate();
+        }
+    }
+
+
 }

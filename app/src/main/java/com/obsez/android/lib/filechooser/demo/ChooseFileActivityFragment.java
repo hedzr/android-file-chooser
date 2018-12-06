@@ -7,8 +7,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v7.app.AppCompatDelegate;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,12 +47,16 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
 
         String ext = FileUtil.getStoragePath(getActivity(), true);
         String itl = FileUtil.getStoragePath(getActivity(), false);
-        if(new File(ext).canRead()) {
-            Timber.v("ext: " + ext + ", total size: " + FileUtil.getReadableFileSize(FileUtil.readSDCard(getActivity(), true)) + ", free size: " + FileUtil.getReadableFileSize(FileUtil.readSDCard(getActivity(), true, true)));
+        if (new File(ext).canRead()) {
+            Timber.v("ext: " + ext + ", total size: " + FileUtil.getReadableFileSize(
+                FileUtil.readSDCard(getActivity(), true)) + ", free size: " + FileUtil.getReadableFileSize(
+                FileUtil.readSDCard(getActivity(), true, true)));
         } else {
             Timber.v("ext: " + ext);
         }
-        Timber.v("itl: " + itl + ", total size: " + FileUtil.getReadableFileSize(FileUtil.readSDCard(getActivity(), false)) + ", free size: " + FileUtil.getReadableFileSize(FileUtil.readSDCard(getActivity(), false, true)));
+        Timber.v("itl: " + itl + ", total size: " + FileUtil.getReadableFileSize(
+            FileUtil.readSDCard(getActivity(), false)) + ", free size: " + FileUtil.getReadableFileSize(
+            FileUtil.readSDCard(getActivity(), false, true)));
     }
 
     @Nullable
@@ -61,9 +66,13 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
         //return super.onCreateView(inflater, container, savedInstanceState);
 
         View root = inflater.inflate(R.layout.fragment_choose_file, container, false);
+
+        setModeButtons(root);
+
         _tv = (TextView) root.findViewById(R.id.textView);
         _tv.setText(BuildConfig.VERSION_NAME);
         _iv = (ImageView) root.findViewById(R.id.imageView);
+
         root.findViewById(R.id.btn_choose_a_file).setOnClickListener(this);
         root.findViewById(R.id.btn_choose_a_folder).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -303,6 +312,20 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
         //    }
         //});
 
+        //// toggle:
+        //ChooseFileActivity a = (ChooseFileActivity) getActivity();
+        //int nm = a.getNightMode();
+        //if (nm == AppCompatDelegate.MODE_NIGHT_NO) {
+        //    nm = AppCompatDelegate.MODE_NIGHT_YES;
+        //    Snackbar.make(v, "MODE_NIGHT_YES enabled", Snackbar.LENGTH_SHORT).show();
+        //    Toast.makeText(ctx, "MODE_NIGHT_YES enabled", Toast.LENGTH_SHORT).show();
+        //} else {
+        //    nm = AppCompatDelegate.MODE_NIGHT_NO;
+        //    Snackbar.make(v, "MODE_NIGHT_NO enabled", Snackbar.LENGTH_SHORT).show();
+        //    Toast.makeText(ctx, "MODE_NIGHT_NO enabled", Toast.LENGTH_SHORT).show();
+        //}
+        //a.setNightMode(nm, false);
+
         new ChooserDialog(ctx)
             .withFilterRegex(false, true, ".*\\.(jpe?g|png)")
             .withStartFile(_path)
@@ -329,4 +352,56 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
             .show();
     }
 
+    private void setModeButtons(View root) {
+        final Context ctx = this.getActivity();
+        final ChooseFileActivity a = (ChooseFileActivity) getActivity();
+        root.findViewById(R.id.btn_night_mode_system).setOnClickListener(new View.OnClickListener() {
+
+            /**
+             * Called when a view has been clicked.
+             *
+             * @param v The view that was clicked.
+             */
+            @Override
+            public void onClick(View v) {
+                a.setNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+            }
+        });
+        root.findViewById(R.id.btn_night_mode_no).setOnClickListener(new View.OnClickListener() {
+
+            /**
+             * Called when a view has been clicked.
+             *
+             * @param v The view that was clicked.
+             */
+            @Override
+            public void onClick(View v) {
+                a.setNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            }
+        });
+        root.findViewById(R.id.btn_night_mode_yes).setOnClickListener(new View.OnClickListener() {
+
+            /**
+             * Called when a view has been clicked.
+             *
+             * @param v The view that was clicked.
+             */
+            @Override
+            public void onClick(View v) {
+                a.setNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            }
+        });
+        root.findViewById(R.id.btn_night_mode_auto).setOnClickListener(new View.OnClickListener() {
+
+            /**
+             * Called when a view has been clicked.
+             *
+             * @param v The view that was clicked.
+             */
+            @Override
+            public void onClick(View v) {
+                a.setNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
+            }
+        });
+    }
 }
