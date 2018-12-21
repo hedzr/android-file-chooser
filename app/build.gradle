@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion Integer.parseInt(project.ANDROID_COMPILE_SDK_VERSION)
-    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
+    //buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
 
     signingConfigs {
         Properties properties = new Properties()
