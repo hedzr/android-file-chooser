@@ -47,6 +47,7 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 ### v1.1.11 patches on `master`
 
 - no WRITE_EXTERNAL_STORAGE requests if not `enableOptions(true)`;
+- after requested permissions, try showing dialog again instead of return directly;
 - can't navigate up.
 
 

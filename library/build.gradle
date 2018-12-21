@@ -13,7 +13,7 @@ android {
     //compileSdkVersion 22
     //buildToolsVersion "23.0.0 rc2"
     compileSdkVersion Integer.parseInt(project.ANDROID_COMPILE_SDK_VERSION)
-    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
+    //buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
     resourcePrefix "obsez_fc__"
 
     defaultConfig {
