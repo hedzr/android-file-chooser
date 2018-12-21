@@ -30,7 +30,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -471,7 +470,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         if (_enableMultiple) {
             _list.setOnItemLongClickListener(this);
         }
-        _list.requestFocus();
+        // if (!_list.hasFocus()) _list.requestFocus();
         return this;
     }
 
@@ -973,84 +972,20 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         // Add the ".." entry
         boolean up = false;
         String removableRoot = FileUtil.getStoragePath(_context, true);
+        String primaryRoot = FileUtil.getStoragePath(_context, false);
         if (removableRoot != null) {
-            String primaryRoot = FileUtil.getStoragePath(_context, false);
             //File f = Environment.getExternalStorageDirectory();
             //File newRoot = _currentDir.getParentFile();
             if (_currentDir.getAbsolutePath().equals(primaryRoot)) {
-                _entries.add(new File(".. SDCard Storage") {
-                    @NonNull
-                    @Override
-                    public String getAbsolutePath() {
-                        return FileUtil.getStoragePath(_context, true);
-                    }
-
-                    @Override
-                    public boolean isDirectory() {
-                        return true;
-                    }
-
-                    @Override
-                    public boolean isHidden() {
-                        return false;
-                    }
-
-                    @Override
-                    public long lastModified() {
-                        return 0L;
-                    }
-                }); //⇠
+                _entries.add(__sdcardRoot); //⇠
                 up = true;
             } else if (_currentDir.getAbsolutePath().equals(removableRoot)) {
-                _entries.add(new File(".. Primary Storage") {
-                    @NonNull
-                    @Override
-                    public String getAbsolutePath() {
-                        return FileUtil.getStoragePath(_context, false);
-                    }
-
-                    @Override
-                    public boolean isDirectory() {
-                        return true;
-                    }
-
-                    @Override
-                    public boolean isHidden() {
-                        return false;
-                    }
-
-                    @Override
-                    public long lastModified() {
-                        return 0L;
-                    }
-                }); //⇽
+                _entries.add(__primaryRoot); //⇽
                 up = true;
             }
         }
         if (!up && _currentDir.getParentFile() != null && _currentDir.getParentFile().canRead()) {
-            _entries.add(new File("..") {
-                @Override
-                public boolean isHidden() {
-                    return false;
-                }
-
-                @Override
-                public long lastModified() {
-                    return 0L;
-                }
-
-                @Override
-                public boolean isDirectory() {
-                    return true;
-                }
-
-                @NonNull
-                @Override
-                public String getAbsolutePath() {
-                    return _currentDir.getParentFile().getAbsolutePath();
-                }
-
-            });
+            _entries.add(__normalParent);
         }
 
         if (files == null) return;
@@ -1135,11 +1070,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     @Override
     public void onItemClick(AdapterView<?> parent_, View list_, int position, long id_) {
         if (position < 0 || position >= _entries.size()) return;
-        if (!_list.hasFocus()) _list.requestFocus();
 
         boolean scrollToTop = false;
         File file = _entries.get(position);
         if (file.getName().equals("..")) {
+            if (!_list.hasFocus()) _list.requestFocus();
             doGoBack();
             return;
 
@@ -1236,47 +1171,45 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         //
     }
 
-    private void refreshDirs() {
-        listDirs();
-        _adapter.setEntries(_entries);
-    }
-
     public void dismiss() {
         _alertDialog.dismiss();
     }
 
     private boolean doMoveUp() {
         if (_list.hasFocus()) {
-            Log.d("z", "move up at " + _adapter.getHoveredIndex());
-            int indexOld = _adapter.getHoveredIndex();
-            int index = _adapter.decreaseHoveredIndex();
-            if (indexOld >= 0 && indexOld != index) {
-                UiUtil.ensureVisible(_list, index);
-                _list.requestFocus();
-            } else {
-                _list.setSelection(index); // to prevent the list scroll to top.
-                moveFocusToButtons();
-            }
-        } else if (buttonsHasFocus()) {
-            _list.requestFocus();
+            int position = _list.getSelectedItemPosition();
+            Log.d("z", "move down at " + position);
+            //Log.d("z", "move up at " + _adapter.getHoveredIndex());
+            //int indexOld = _adapter.getHoveredIndex();
+            //int index = _adapter.decreaseHoveredIndex();
+            //if (indexOld >= 0 && indexOld != index) {
+            //    //UiUtil.ensureVisible(_list, index);
+            //    //_list.requestFocus();
+            //} else {
+            //    //_list.setSelection(index); // to prevent the list scroll to top.
+            //    //moveFocusToButtons();
+            //}
+            ////} else if (buttonsHasFocus()) {
+            ////    _list.requestFocus();
         }
         return true;
     }
 
     private boolean doMoveDown() {
         if (_list.hasFocus()) {
-            Log.d("z", "move down at " + _adapter.getHoveredIndex());
-            int indexOld = _adapter.getHoveredIndex();
-            int index = _adapter.increaseHoveredIndex();
-            if (indexOld >= 0 && indexOld != index) {
-                UiUtil.ensureVisible(_list, index);
-                _list.requestFocus();
-            } else {
-                _list.setSelection(index); // to prevent the list scroll to top.
-                moveFocusToButtons();
-            }
-        } else if (buttonsHasFocus()) {
-            _list.requestFocus();
+            int position = _list.getSelectedItemPosition();
+            Log.d("z", "move down at " + position);
+            //int indexOld = _adapter.getHoveredIndex();
+            //int index = _adapter.increaseHoveredIndex();
+            //if (indexOld >= 0 && indexOld != index) {
+            //    //UiUtil.ensureVisible(_list, index);
+            //    //_list.requestFocus();
+            //} else {
+            //    //_list.setSelection(index); // to prevent the list scroll to top.
+            //    //moveFocusToButtons();
+            //}
+            ////} else if (buttonsHasFocus()) {
+            ////    _list.requestFocus();
         }
         return true;
     }
@@ -1297,9 +1230,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
                 if (_deleteModeIndicator != null) _deleteModeIndicator.run();
                 //scrollToTop = true;
+                refreshDirs();
                 _adapter.pop();
 
-                refreshDirs();
                 //if (scrollToTop) _list.setSelection(0);
                 //_list.requestFocus();
                 _list.setSelection(_adapter.getHoveredIndex());
@@ -1310,12 +1243,18 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     private boolean doEnter() {
         if (_list.hasFocus()) {
-            Log.d("z", "enter at " + _adapter.getHoveredIndex());
-            int position = _adapter.getHoveredIndex();
+            int position = _list.getSelectedItemPosition();
+            Log.d("z", "enter at " + position);
+            //int position = _adapter.getHoveredIndex();
             onItemClick(_list, _list, position, -1);
             //_list.requestFocus();
         }
         return true;
+    }
+
+    private void refreshDirs() {
+        listDirs();
+        _adapter.setEntries(_entries);
     }
 
     private boolean buttonsHasFocus() {
@@ -1449,4 +1388,72 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private int _chooseMode = CHOOSE_MODE_NORMAL;
 
     private NewFolderFilter _newFolderFilter;
+
+
+    private File __sdcardRoot = new File(".. SDCard Storage") {
+        //@NonNull
+        //@Override
+        //public String getAbsolutePath() {
+        //    return FileUtil.getStoragePath(_context, true);
+        //}
+        @Override
+        public boolean isDirectory() {
+            return true;
+        }
+
+        @Override
+        public boolean isHidden() {
+            return false;
+        }
+
+        @Override
+        public long lastModified() {
+            return 0L;
+        }
+    };
+
+    private File __primaryRoot = new File(".. Primary Storage") {
+        //@NonNull
+        //@Override
+        //public String getAbsolutePath() {
+        //    return FileUtil.getStoragePath(_context, false);
+        //}
+        @Override
+        public boolean isDirectory() {
+            return true;
+        }
+
+        @Override
+        public boolean isHidden() {
+            return false;
+        }
+
+        @Override
+        public long lastModified() {
+            return 0L;
+        }
+    };
+
+    private static File __normalParent = new File("..") {
+        //@NonNull
+        //@Override
+        //public String getAbsolutePath() {
+        //    return _currentDir.getParentFile().getAbsolutePath();
+        //}
+        @Override
+        public boolean isDirectory() {
+            return true;
+        }
+
+        @Override
+        public boolean isHidden() {
+            return false;
+        }
+
+        @Override
+        public long lastModified() {
+            return 0L;
+        }
+    };
+
 }

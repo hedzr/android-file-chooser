@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ import java.util.List;
  * Created by coco on 6/7/15.
  */
 public class DirAdapter extends ArrayAdapter<File> {
+    private static final String TAG = "DirAdapter";
 
     public DirAdapter(Context cxt, List<File> entries, int resId) {
         super(cxt, resId, R.id.text, entries);
@@ -116,16 +118,16 @@ public class DirAdapter extends ArrayAdapter<File> {
         }
         tvName.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
 
-        View root = rl.findViewById(R.id.root);
-        if (_selected.get(file.hashCode(), null) == null) {
-            if (position == _hoveredIndex) {
-                root.getBackground().setColorFilter(_colorFilter);
-            } else {
-                root.getBackground().clearColorFilter();
-            }
-        } else {
-            root.getBackground().setColorFilter(_colorFilter);
-        }
+        //View root = rl.findViewById(R.id.root);
+        //if (_selected.get(file.hashCode(), null) == null) {
+        //    if (position == _hoveredIndex) {
+        //        root.getBackground().setColorFilter(_colorFilter);
+        //    } else {
+        //        root.getBackground().clearColorFilter();
+        //    }
+        //} else {
+        //    root.getBackground().setColorFilter(_colorFilter);
+        //}
 
         return rl;
     }
@@ -212,12 +214,14 @@ public class DirAdapter extends ArrayAdapter<File> {
 
     public void setHoveredIndex(int i) {
         _hoveredIndex = i;
+        Log.d(TAG, "_hoveredIndex=" + _hoveredIndex);
     }
 
     public int increaseHoveredIndex() {
         _hoveredIndex++;
         if (_hoveredIndex >= super.getCount()) _hoveredIndex = super.getCount() - 1;
         notifyDataSetInvalidated();
+        Log.d(TAG, "(++_hoveredIndex)=" + _hoveredIndex);
         return _hoveredIndex;
     }
 
@@ -225,17 +229,20 @@ public class DirAdapter extends ArrayAdapter<File> {
         _hoveredIndex--;
         if (_hoveredIndex < 0) _hoveredIndex = 0;
         notifyDataSetInvalidated();
+        Log.d(TAG, "(--_hoveredIndex)=" + _hoveredIndex);
         return _hoveredIndex;
     }
 
     public int push() {
         _indexStack.add(_hoveredIndex);
+        Log.d(TAG, "push " + _hoveredIndex + ", _hoveredIndex=" + _hoveredIndex);
         return _hoveredIndex;
     }
 
     public int push(int index) {
         _indexStack.add(index);
         _hoveredIndex = index;
+        Log.d(TAG, "push " + index + ", _hoveredIndex=" + _hoveredIndex);
         return index;
     }
 
@@ -244,6 +251,7 @@ public class DirAdapter extends ArrayAdapter<File> {
             int x = _indexStack.get(_indexStack.size() - 1);
             _indexStack.remove(_indexStack.size() - 1);
             _hoveredIndex = x;
+            Log.d(TAG, "pop " + x + ", _hoveredIndex=" + _hoveredIndex);
             return x;
         }
         return -1;
