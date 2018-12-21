@@ -1038,6 +1038,18 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 public long lastModified() {
                     return 0L;
                 }
+
+                @Override
+                public boolean isDirectory() {
+                    return true;
+                }
+
+                @NonNull
+                @Override
+                public String getAbsolutePath() {
+                    return _currentDir.getParentFile().getAbsolutePath();
+                }
+
             });
         }
 
@@ -1123,6 +1135,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     @Override
     public void onItemClick(AdapterView<?> parent_, View list_, int position, long id_) {
         if (position < 0 || position >= _entries.size()) return;
+        if (!_list.hasFocus()) _list.requestFocus();
 
         boolean scrollToTop = false;
         File file = _entries.get(position);
