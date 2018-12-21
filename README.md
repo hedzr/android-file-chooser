@@ -37,15 +37,17 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 - In progress
 - Done:
   - Keyboard supports: process SPACE and ENTER up event;
-  - file list no focus when dailog first showing;
+  - file list no focus when dialog first showing;
   - better storage media detect algorithm for Android M+;
   - no WRITE_EXTERNAL_STORAGE requests if not `enableOptions(true)`;
   - after requested permissions, try showing dialog again instead of return directly;
+  - can't navigate up.
 
 
 ### v1.1.11 patches on `master`
 
 - no WRITE_EXTERNAL_STORAGE requests if not `enableOptions(true)`;
+- can't navigate up.
 
 
 ### v1.1.11
