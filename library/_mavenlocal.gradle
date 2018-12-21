@@ -58,7 +58,7 @@ publishing {
             groupId GROUP
             version VERSION_NAME
 
-            artifact bundleRelease
+            //artifact bundleRelease
 
             //artifact (sourcesJar) {
             //    classifier = 'sources'
