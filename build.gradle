@@ -41,7 +41,12 @@ allprojects {
     repositories {
         jcenter()
         google()
+        maven { url "https://jitpack.io" }
         mavenCentral()
         //mavenLocal()
     }
+}
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }

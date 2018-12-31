@@ -75,6 +75,7 @@ dependencies {
     //unitTestCompile 'com.google.android:android-test:4.1.1.4'
 }
 repositories {
+    maven { url "https://jitpack.io" }
     mavenCentral()
 }
 
