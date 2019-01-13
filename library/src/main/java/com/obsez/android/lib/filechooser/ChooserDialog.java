@@ -567,7 +567,13 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             @Override
                                             public void run() {
                                                 scroll.Int = getListYScroll(_list);
-                                                params.bottomMargin = _options.getHeight();
+                                                if (_options.getParent() instanceof LinearLayout) {
+                                                    params.height =
+                                                        ((LinearLayout) _options.getParent()).getHeight()
+                                                            - _options.getHeight();
+                                                } else {
+                                                    params.bottomMargin = _options.getHeight();
+                                                }
                                                 _list.setLayoutParams(params);
                                                 _options.setVisibility(View.VISIBLE);
                                             }
@@ -578,7 +584,12 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                             } else {
                                 scroll.Int = getListYScroll(_list);
                                 _options.setVisibility(View.VISIBLE);
-                                params.bottomMargin = _options.getHeight();
+                                if (_options.getParent() instanceof LinearLayout) {
+                                    params.height =
+                                        ((LinearLayout) _options.getParent()).getHeight() - _options.getHeight();
+                                } else {
+                                    params.bottomMargin = _options.getHeight();
+                                }
                                 _list.setLayoutParams(params);
                             }
                         }
@@ -590,7 +601,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                             _options.setVisibility(View.INVISIBLE);
                             ViewGroup.MarginLayoutParams params =
                                 (ViewGroup.MarginLayoutParams) _list.getLayoutParams();
-                            params.bottomMargin = 0;
+                            if (_options.getParent() instanceof LinearLayout) {
+                                params.height = ((LinearLayout) _options.getParent()).getHeight();
+                            } else {
+                                params.bottomMargin = 0;
+                            }
                             _list.setLayoutParams(params);
                         }
                     };
@@ -604,15 +619,22 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                 // Root view (FrameLayout) of the ListView in the AlertDialog.
                                 final int rootId = _context.getResources().getIdentifier("contentPanel", "id",
                                     "android");
-                                final FrameLayout root = ((AlertDialog) dialog).findViewById(rootId);
+                                ViewGroup root1 = ((AlertDialog) dialog).findViewById(rootId);
+                                boolean linear = root1 instanceof LinearLayout;
+                                final ViewGroup root = root1;
                                 // In case the was changed or not found.
                                 if (root == null) return;
 
                                 // Create options view.
                                 final FrameLayout options = new FrameLayout(_context);
                                 //options.setBackgroundColor(0x60000000);
-                                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(MATCH_PARENT,
-                                    WRAP_CONTENT, BOTTOM);
+                                ViewGroup.MarginLayoutParams params;
+                                if (linear) {
+                                    params = new LinearLayout.LayoutParams(MATCH_PARENT,
+                                        (int) UiUtil.dip2px(48));
+                                } else {
+                                    params = new FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, BOTTOM);
+                                }
                                 root.addView(options, params);
 
                                 options.setOnClickListener(null);
