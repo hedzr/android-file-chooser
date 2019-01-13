@@ -113,6 +113,20 @@ implementation 'com.github.hedzr:android-file-chooser:master-SNAPSHOT'
 // implementation 'com.github.hedzr:android-file-chooser:v1.1.10'
 ```
 
+3. 
+sometimes you'd better [disable gradle cache](https://docs.gradle.org/current/userguide/introduction_dependency_management.html#changing-module-cache-control) for jitpack, add these lines into the root-level build.gradle:
+
+```gradle
+buildscript {
+  configurations.all {
+      resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+      resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
+  }
+}
+```
+
+see also: <https://docs.gradle.org/current/dsl/org.gradle.api.artifacts.ResolutionStrategy.html>
+
 
 ### Codes
 
