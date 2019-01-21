@@ -58,8 +58,7 @@ publishing {
             groupId GROUP
             version VERSION_NAME
 
-            // TODO disabled `artifact bundleRelease` in AS3.2
-            // artifact bundleRelease
+            artifact bundleReleaseAar
 
             //artifact (sourcesJar) {
             //    classifier = 'sources'
