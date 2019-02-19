@@ -34,7 +34,8 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 
 ### `x1.2.0` branch
 
-- In progress
+- **In progress**
+- uses AndroidX
 - Done:
   - Keyboard supports: process SPACE and ENTER up event;
   - file list no focus when dailog first showing;
@@ -42,19 +43,17 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
   - no WRITE_EXTERNAL_STORAGE requests if not `enableOptions(true)`;
   - after requested permissions, try showing dialog again instead of return directly;
 
-
-### v1.1.11 patches on `master`
+### v1.1.x patches on `master`
 
 - no WRITE_EXTERNAL_STORAGE requests if not `enableOptions(true)`;
 - after requested permissions, try showing dialog again instead of return directly;
- 
 
-### v1.1.11
+### v1.1.x
+
 - create new folder on the fly, and the optional multiple select mode for developer, thx [Guiorgy](https://github.com/Guiorgy) and his [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser)
 - Up (`..`) on the primary storage root will be replaced with `.. SDCard`, it allows to jump to external storage such as a SDCard and going back available too.
 - DPad supports, arrow keys supports (#30)
 - ...
-
 
 ## Usages
 
@@ -209,7 +208,13 @@ Since 1.1.6, 2 new options are available:
 
 #### Customizable NegativeButton
 
-1.1.7 or Higher, try `withNegativeButton()` and `withNegativeButtonListener()`.
+1.1.7 or Higher, try `withNegativeButton()` and `withNegativeButtonListener()` **instead of `withOnBackPressedListener()`.**
+
+#### withOnBackPressedListener
+
+**deprecated.**
+
+~~But, `Escape` key may trigger it.~~
 
 #### New calling chain
 
@@ -316,7 +321,6 @@ see the sample codes in demo app.
 as named as working.
 
 #### psuedo `.. SDCard Storage` and `.. Primary Storage`
-
 
 
 
