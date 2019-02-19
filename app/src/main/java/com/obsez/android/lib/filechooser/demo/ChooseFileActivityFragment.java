@@ -79,33 +79,33 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                     //        return true;
                     //    }
                     //})
-                    //.withOnCancelListener(new DialogInterface.OnCancelListener(){
-                    //
-                    //    /**
-                    //     * This method will be invoked when the dialog is canceled.
-                    //     *
-                    //     * @param dialog the dialog that was canceled will be passed into the
-                    //     *               method
-                    //     */
-                    //    @Override
-                    //    public void onCancel(DialogInterface dialog) {
-                    //        Log.d("CANCEL", "CANCEL");
-                    //    }
-                    //})
-                    //.withNegativeButtonListener(new DialogInterface.OnClickListener(){
-                    //
-                    //    /**
-                    //     * This method will be invoked when a button in the dialog is clicked.
-                    //     *
-                    //     * @param dialog the dialog that received the click
-                    //     * @param which  the button that was clicked (ex.
-                    //     *               {@link DialogInterface#BUTTON_POSITIVE}) or the position
-                    //     */
-                    //    @Override
-                    //    public void onClick(DialogInterface dialog, int which) {
-                    //        Log.d("Negative", "Negative");
-                    //    }
-                    //})
+                    .withOnCancelListener(new DialogInterface.OnCancelListener() {
+
+                        /**
+                         * This method will be invoked when the dialog is canceled.
+                         *
+                         * @param dialog the dialog that was canceled will be passed into the
+                         *               method
+                         */
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            Log.d("CANCEL", "CANCEL");
+                        }
+                    })
+                    .withNegativeButtonListener(new DialogInterface.OnClickListener() {
+
+                        /**
+                         * This method will be invoked when a button in the dialog is clicked.
+                         *
+                         * @param dialog the dialog that received the click
+                         * @param which  the button that was clicked (ex.
+                         *               {@link DialogInterface#BUTTON_POSITIVE}) or the position
+                         */
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Log.d("Negative", "Negative");
+                        }
+                    })
                     .withChosenListener(new ChooserDialog.Result() {
                         @Override
                         public void onChoosePath(String path, File pathFile) {
@@ -118,6 +118,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                     .withOnBackPressedListener(new ChooserDialog.OnBackPressedListener() {
                         @Override
                         public void onBackPressed(AlertDialog dialog) {
+                            Log.d("backpressed", "back pressed");
                             dialog.dismiss();
                         }
                     })

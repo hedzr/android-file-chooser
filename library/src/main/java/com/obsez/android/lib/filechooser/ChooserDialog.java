@@ -423,6 +423,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             @Override
             public boolean onKey(final DialogInterface dialog, final int keyCode, final KeyEvent event) {
                 switch (keyCode) {
+                    case KeyEvent.KEYCODE_BACK:
                     case KeyEvent.KEYCODE_ESCAPE:
                         if (event.getAction() == KeyEvent.ACTION_UP) {
                             if (_newFolderView != null && _newFolderView.getVisibility() == View.VISIBLE) {
