@@ -46,7 +46,12 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 ### v1.1.x patches on `master`
 
 - no WRITE_EXTERNAL_STORAGE requests if not `enableOptions(true)`;
+
 - after requested permissions, try showing dialog again instead of return directly;
+
+- #42: onBackPressedListener not fired.
+
+  Now, use `withCancelListener` to handle back key. see also [below](#onCancelListener)
 
 ### v1.1.x
 
@@ -104,7 +109,8 @@ FileChooser android library give a simple file/folder chooser in single call:
 ```java
     new ChooserDialog().with(this)
             .withFilter(true, false)
-            .withStartFile(startingDir)
+        	.withStartFile(startingDir)
+        	// to handle the result(s)
             .withChosenListener(new ChooserDialog.Result() {
                 @Override
                 public void onChoosePath(String path, File pathFile) {
@@ -126,6 +132,13 @@ FileChooser android library give a simple file/folder chooser in single call:
                     Toast.makeText(MainActivity.this, "FILE: " + path, Toast.LENGTH_SHORT).show();
                 }
             })
+        	// to handle the back key pressed or clicked outside the dialog:
+        	.withOnCancelListener(new DialogInterface.OnCancelListener() {
+    			public void onCancel(DialogInterface dialog) {
+			        Log.d("CANCEL", "CANCEL");
+			        dialog.cancel(); // MUST have
+    			}
+			})
             .build()
             .show();
 
@@ -210,11 +223,32 @@ Since 1.1.6, 2 new options are available:
 
 1.1.7 or Higher, try `withNegativeButton()` and `withNegativeButtonListener()` **instead of `withOnBackPressedListener()`.**
 
+---
+
 #### withOnBackPressedListener
 
 **deprecated.**
 
-~~But, `Escape` key may trigger it.~~
+
+
+#### onCancelListener
+
+`onCancelListener` will be triggered on back pressed or clicked outside of dialog.
+
+You **MUST** invoke `dialog.cancel()` while override the default `onCancelListener` :
+
+```java
+.withOnCancelListener(new DialogInterface.OnCancelListener() {
+    public void onCancel(DialogInterface dialog) {
+        Log.d("CANCEL", "CANCEL");
+        dialog.cancel(); // MUST have
+    }
+})
+```
+
+
+
+---
 
 #### New calling chain
 

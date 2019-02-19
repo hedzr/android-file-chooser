@@ -90,6 +90,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                         @Override
                         public void onCancel(DialogInterface dialog) {
                             Log.d("CANCEL", "CANCEL");
+                            dialog.cancel();
                         }
                     })
                     .withNegativeButtonListener(new DialogInterface.OnClickListener() {
@@ -115,13 +116,13 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                         }
                     })
                     .enableOptions(true)
-                    .withOnBackPressedListener(new ChooserDialog.OnBackPressedListener() {
-                        @Override
-                        public void onBackPressed(AlertDialog dialog) {
-                            Log.d("backpressed", "back pressed");
-                            dialog.dismiss();
-                        }
-                    })
+                    //.withOnBackPressedListener(new ChooserDialog.OnBackPressedListener() {
+                    //    @Override
+                    //    public void onBackPressed(AlertDialog dialog) {
+                    //        Log.d("backpressed", "back pressed");
+                    //        dialog.dismiss();
+                    //    }
+                    //})
                     .build()
                     .show();
             }

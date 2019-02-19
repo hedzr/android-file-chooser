@@ -287,9 +287,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     /**
-     * it's NOT recommended to use the `withOnCancelListener`, replace with `withNegativeButtonListener` pls.
+     * onCancelListener will be triggered on back pressed or clicked outside of dialog
      *
-     * @deprecated will be removed at v1.2
      */
     public ChooserDialog withOnCancelListener(final DialogInterface.OnCancelListener listener) {
         this._cancelListener2 = listener;
@@ -413,6 +412,14 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         if (_cancelListener2 != null) {
             builder.setOnCancelListener(_cancelListener2);
+        } else {
+            builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    Log.v("Cancel", "Cancel");
+                    dialog.cancel();
+                }
+            });
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && _onDismissListener != null) {
@@ -423,7 +430,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             @Override
             public boolean onKey(final DialogInterface dialog, final int keyCode, final KeyEvent event) {
                 switch (keyCode) {
-                    case KeyEvent.KEYCODE_BACK:
+                    //case KeyEvent.KEYCODE_BACK:
                     case KeyEvent.KEYCODE_ESCAPE:
                         if (event.getAction() == KeyEvent.ACTION_UP) {
                             if (_newFolderView != null && _newFolderView.getVisibility() == View.VISIBLE) {
