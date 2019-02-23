@@ -35,7 +35,7 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 ### `x1.2.0` branch
 
 - **In progress**
-- uses AndroidX
+- Plan: uses AndroidX
 - Done:
   - Keyboard supports: process SPACE and ENTER up event;
   - file list no focus when dailog first showing;
@@ -95,14 +95,32 @@ allprojects {
 
 ```gradle
 implementation 'com.github.hedzr:android-file-chooser:master-SNAPSHOT'
-// implementation 'com.github.hedzr:android-file-chooser:v1.1.10'
+// implementation 'com.github.hedzr:android-file-chooser:v1.1.14'
 ```
 
-
+> **Tips for using JitPack.io**
+>
+> To disable gradle local cache in your project, add stretegy into your top `build.grable`:
+>
+> ```gradle
+> configurations.all {
+>     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+>     resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
+> }
+> ```
+>
+> ref: https://github.com/spring-gradle-plugins/dependency-management-plugin/issues/74#issuecomment-182484694
+>
+> Sometimes it's right, sometimes ... no more warrants.
 
 ### Codes
 
-FileChooser android library give a simple file/folder chooser in single call:
+> **Tips**
+>
+> 1. I am hands down `AlertDialog`.
+> 2. Any codes about `ChooserDialog`, such as the following demo codes, should be only put into UI thread.
+
+FileChooser android library give a simple file/folder chooser in single call (Fluent):
 
 #### Choose a Folder
 
@@ -408,25 +426,6 @@ And:
 
 ## Build me
 
-### 1. ~~legacy~~
-
-```bash
-cat >keystore.properties<<EOF
-keyAlias=youKeyAlias
-keyPassword=password
-storeFile=/Users/me/android-file-chooser.keystore
-storePassword=password
-EOF
-git clone git@github.com:hedzr/android-file-chooser.git somewhere
-cd somewhere
-./gradlew assembleDebug
-```
-
-~~you'd better generate a new file `android-file-chooser.keystore` at homedir or else. such as: `keytool -genkey -alias android.keystore -keyalg RSA -validity 20000 -keystore android.keystore`, see also [Sign an app](https://developer.android.com/studio/publish/app-signing).
-Or, erase the `KS_PATH` lines and signature section in app/build.gradle.~~
-
-### 2. current
-
 just fork and build me currently.
 
 ## Contrib
@@ -435,7 +434,7 @@ Contributions and translations are welcome.
 
 ## Feedback
 
-feel free to make an new issue.
+feel free to make a new issue.
 
 ## Acknowledges
 
@@ -448,7 +447,7 @@ many peoples report or contribute to improve me, but only a few of them be put h
 
 ## License
 
-Copyright 2015-2018 Hedzr Yeh.
+Copyright 2015-2019 Hedzr Yeh.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
