@@ -67,7 +67,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                 // choose a folder
                 final Context ctx = getActivity();
                 assert ctx != null;
-                new ChooserDialog().with(ctx)
+                new ChooserDialog(ctx)
                     .withIcon(R.mipmap.ic_launcher)
                     .withFilter(true, false)
                     .withStartFile(_path)

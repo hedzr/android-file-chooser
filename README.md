@@ -107,7 +107,7 @@ FileChooser android library give a simple file/folder chooser in single call:
 #### Choose a Folder
 
 ```java
-    new ChooserDialog().with(this)
+    new ChooserDialog(MainActivity.this)
             .withFilter(true, false)
         	.withStartFile(startingDir)
         	// to handle the result(s)
@@ -124,7 +124,7 @@ FileChooser android library give a simple file/folder chooser in single call:
 #### Choose a File
 
 ```java
-    new ChooserDialog().with(this)
+    new ChooserDialog(MainActivity.this)
             .withStartFile(path)
             .withChosenListener(new ChooserDialog.Result() {
                 @Override
@@ -147,7 +147,7 @@ FileChooser android library give a simple file/folder chooser in single call:
 #### Wild-match
 
 ```java
-    new ChooserDialog().with(this)
+    new ChooserDialog(MainActivity.this)
             .withFilter(false, false, "jpg", "jpeg", "png")
             .withStartFile(path)
             .withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)
@@ -165,7 +165,7 @@ FileChooser android library give a simple file/folder chooser in single call:
 #### Regex filter
 
 ```java
-    new ChooserDialog().with(this)
+    new ChooserDialog(MainActivity.this)
             .withFilterRegex(false, false, ".*\\.(jpe?g|png)")
             .withStartFile(path)
             .withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)
@@ -185,7 +185,7 @@ FileChooser android library give a simple file/folder chooser in single call:
 Since 1.1.3, new builder options `withDateFormat(String)` added.
 
 ```java
-    new ChooserDialog().with(this)
+    new ChooserDialog(MainActivity.this)
             .withFilter(true, false)
             .withStartFile(startingDir)
             .withDateFormat("HH:mm")    // see also SimpleDateFormat format specifiers
@@ -204,7 +204,7 @@ Since 1.1.3, new builder options `withDateFormat(String)` added.
 Since 1.1.6, 2 new options are available:
 
 ```java
-    new ChooserDialog().with(this)
+    new ChooserDialog(MainActivity.this)
             .withFilter(true, false)
             .withStartFile(startingDir)
             .withIcon(R.drawable.ic_file_chooser)
@@ -255,7 +255,7 @@ You **MUST** invoke `dialog.cancel()` while override the default `onCancelListen
 1.1.7+, new constructor `ChooserDialog(context)` can simplify the chain invoking, such as:
 
 ```java
-    new ChooserDialog(this)
+    new ChooserDialog(MainActivity.this)
             .withFilter(true, false)
             .withStartFile(startingDir)
             ...
@@ -276,6 +276,7 @@ user-defined file/folder icon.
 `resolveMime`: true means that `DirAdapter` will try get icon from the associated app with the file's mime type.
 
 ```java
+    final Context ctx = MainActivity.this;
     new ChooserDialog(ctx)
             .withStartFile(_path)
             .withResources(R.string.title_choose_any_file, R.string.title_choose, R.string.dialog_cancel)
