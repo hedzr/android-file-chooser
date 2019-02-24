@@ -72,6 +72,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                     .withFilter(true, false)
                     .withStartFile(_path)
                     .withDateFormat("HH:mm")
+                    .followDir(true)
                     .withResources(R.string.title_choose_folder, R.string.title_choose, R.string.dialog_cancel)
                     //.withNavigateUpTo(new ChooserDialog.CanNavigateUp() {
                     //    @Override

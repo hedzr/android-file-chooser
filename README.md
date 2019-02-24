@@ -375,6 +375,11 @@ as named as working.
 
 #### psuedo `.. SDCard Storage` and `.. Primary Storage`
 
+since v1.11, external storage will be detected automatically. That means user can switch between internal and external storage by clicking on psuedo folder names. 
+
+#### `followDir(true)`
+
+since patch of v1.14, it allows the chooser dialog title updated by changing directory.
 
 
 ---

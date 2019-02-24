@@ -288,7 +288,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     /**
      * onCancelListener will be triggered on back pressed or clicked outside of dialog
-     *
      */
     public ChooserDialog withOnCancelListener(final DialogInterface.OnCancelListener listener) {
         this._cancelListener2 = listener;
@@ -362,6 +361,14 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     public ChooserDialog disableTitle(boolean disableTitle) {
         _disableTitle = disableTitle;
+        return this;
+    }
+
+    /**
+     * allow dialog title follows the current folder name
+     */
+    public ChooserDialog followDir(boolean followDir) {
+        _followDir = followDir;
         return this;
     }
 
@@ -1128,6 +1135,14 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         _entries.addAll(dirList);
         _entries.addAll(fileList);
 
+        // #45: setup dialog title too
+        if (_alertDialog != null && !_disableTitle) {
+            if (up) {
+                _alertDialog.setTitle(_titleRes);
+            } else if (_followDir) {
+                _alertDialog.setTitle(_currentDir.getName());
+            }
+        }
         //_hoverIndex = -1;
     }
 
@@ -1424,6 +1439,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private DialogInterface.OnDismissListener _onDismissListener;
     private boolean _disableTitle;
     private boolean _enableOptions;
+    private boolean _followDir;
     private View _options;
     private @StringRes
     int _createDirRes = R.string.option_create_folder, _deleteRes = R.string.options_delete,
