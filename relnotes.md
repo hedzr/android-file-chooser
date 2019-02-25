@@ -1,5 +1,24 @@
 # RELEASES
 
+## 1.1.15 - 2019-02-25
+
+- #42: withOnBackPressedListener not fired
+  clarify `onCancelListener`, obsolete `onBackListener`
+- #44: .with(this) in the sample code is obsolete
+  doc updated, demo codes updated.
+  readme doc reviewed
+- #45: Does not display the name of a selected folder
+  Add `titleFollowsDir(boolean)`.
+
+
+## 1.1.14 - 2019-01-18
+
+no more details
+
+## 1.1.12 ~ 1.1.14
+
+the publishing had matters.
+
 
 ## 1.1.11 - 2018-10-08
 

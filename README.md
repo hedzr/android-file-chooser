@@ -53,6 +53,8 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 
   Now, use `withCancelListener` to handle back key. see also [below](#onCancelListener)
 
+- #45: add `titleFollowsDir(boolean)`  to allow title following the change of current directory.
+
 ### v1.1.x
 
 - create new folder on the fly, and the optional multiple select mode for developer, thx [Guiorgy](https://github.com/Guiorgy) and his [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser)
@@ -314,40 +316,44 @@ user-defined file/folder icon.
 1.1.9+. a `AdapterSetter` can be use to customize the `DirAdapter`.
 
 ```java
-            .withAdapterSetter(new ChooserDialog.AdapterSetter() {
-                @Override
-                public void apply(DirAdapter adapter) {
-                    adapter.setDefaultFileIcon(fileIcon);
-                    adapter.setDefaultFolderIcon(folderIcon);
-                    adapter.setResolveFileType(tryResolveFileTypeAndIcon);
-                }
-            })
+.withAdapterSetter(new ChooserDialog.AdapterSetter() {
+    @Override
+    public void apply(DirAdapter adapter) {
+        adapter.setDefaultFileIcon(fileIcon);
+        adapter.setDefaultFolderIcon(folderIcon);
+        adapter.setResolveFileType(tryResolveFileTypeAndIcon);
+    }
+})
 ```
 
 #### `withNavigateUpTo(CanNavigateUp)`
 
 1.1.10+. `withNavigateUpTo`
 
+You can disallow someone enter some special directories.
+
 ```java
-                .withNavigateUpTo(new ChooserDialog.CanNavigateUp() {
-                    @Override
-                    public boolean canUpTo(File dir) {
-                        return true;
-                    }
-                })
+.withNavigateUpTo(new ChooserDialog.CanNavigateUp() {
+    @Override
+    public boolean canUpTo(File dir) {
+        return true;
+    }
+})
 ```
 
 #### `withNavigateTo(CanNavigateTo)`
 
 1.1.10+. `withNavigateTo`
 
+With `withStartFile()`, you can limit the root folder.
+
 ```java
-                .withNavigateTo(new ChooserDialog.CanNavigateTo() {
-                    @Override
-                    public boolean canNavigate(File dir) {
-                        return true;
-                    }
-                })
+.withNavigateTo(new ChooserDialog.CanNavigateTo() {
+    @Override
+    public boolean canNavigate(File dir) {
+        return true;
+    }
+})
 ```
 
 #### `enableOptions(true)`
@@ -356,9 +362,15 @@ a tri-dot menu icon will be shown at bottom left corner. this icon button allows
 
 further tunes:
 - `withOptionResources(@StringRes int createDirRes, @StringRes int deleteRes, @StringRes int newFolderCancelRes, @StringRes int newFolderOkRes)`
+
 - `withOptionIcons(@DrawableRes int optionsIconRes, @DrawableRes int createDirIconRes, @DrawableRes int deleteRes)`
+
 - `withNewFolderFilter(NewFolderFilter filter)`
-- `withOnBackPressedListener(OnBackPressedListener listener)`
+
+- ~~`withOnBackPressedListener(OnBackPressedListener listener)`~~
+
+  > `onCancelListener()` is recommended.
+
 - `withOnLastBackPressedListener(OnBackPressedListener listener)`
 
 see the sample codes in demo app.
@@ -373,13 +385,22 @@ see the sample codes in demo app.
 
 as named as working.
 
+
+
 #### psuedo `.. SDCard Storage` and `.. Primary Storage`
 
 since v1.11, external storage will be detected automatically. That means user can switch between internal and external storage by clicking on psuedo folder names. 
 
-#### `followDir(true)`
 
-since patch of v1.14, it allows the chooser dialog title updated by changing directory.
+
+#### `titleFollowsDir(true)`
+
+since the latest patch of v1.14, it allows the chooser dialog title updated by changing directory.
+
+
+
+
+
 
 
 ---
