@@ -118,12 +118,14 @@ public class DirAdapter extends ArrayAdapter<File> {
 
         View root = rl.findViewById(R.id.root);
         if (_selected.get(file.hashCode(), null) == null) {
-            if (position == _hoveredIndex)
+            if (position == _hoveredIndex) {
                 root.getBackground().setColorFilter(_colorFilter);
-            else
+            } else {
                 root.getBackground().clearColorFilter();
-        } else
+            }
+        } else {
             root.getBackground().setColorFilter(_colorFilter);
+        }
 
         return rl;
     }

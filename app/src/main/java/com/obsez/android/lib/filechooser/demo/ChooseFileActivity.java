@@ -17,7 +17,7 @@ public class ChooseFileActivity extends AppCompatActivity {
 
     private static final String TAG = "ChooseFileActivity";
 
-    public ChooseFileActivity(){
+    public ChooseFileActivity() {
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         } else {

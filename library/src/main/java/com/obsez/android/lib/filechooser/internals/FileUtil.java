@@ -11,6 +11,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -136,13 +137,51 @@ public class FileUtil {
     }
 
 
+    public static void deleteFileRecursively(File file) throws IOException {
+        if (file.isDirectory()) {
+            final File[] entries = file.listFiles();
+            for (final File entry : entries) {
+                deleteFileRecursively(entry);
+            }
+        }
+
+        if (!file.delete()) {
+            throw new IOException("Couldn't delete \"" + file.getName() + "\" at \"" + file.getParent());
+        }
+    }
+
+    public static String getCurrentDir() {
+        return new File("").getAbsolutePath();
+    }
+
+    public static File getCurrentDirectory() {
+        return new File(new File("").getAbsolutePath());
+    }
+
+    public static boolean createNewDirectory(String name) {
+        return createNewDirectory(name, getCurrentDirectory());
+    }
+
+    public static boolean createNewDirectory(String name, File parent) {
+        final File newDir = new File(parent, name);
+        if (!newDir.exists() && newDir.mkdir()) {
+            //refreshDirs();
+            return true;
+        }
+        //Toast.makeText(_context,
+        //    "Couldn't create folder " + newDir.getName() + " at " + newDir.getAbsolutePath(),
+        //    Toast.LENGTH_LONG).show();
+        return false;
+    }
+
     public static class NewFolderFilter implements InputFilter {
         private final int maxLength;
         private final Pattern pattern;
+
         /**
-         *  examples:
-         *  a simple allow only regex pattern: "^[a-z0-9]*$" (only lower case letters and numbers)
-         *  a simple anything but regex pattern: "^[^0-9;#&amp;]*$" (ban numbers and '&amp;', ';', '#' characters)
+         * examples:
+         * a simple allow only regex pattern: "^[a-z0-9]*$" (only lower case letters and numbers)
+         * a simple anything but regex pattern: "^[^0-9;#&amp;]*$" (ban numbers and '&amp;', ';', '#' characters)
          */
 
         public NewFolderFilter() {
@@ -163,7 +202,7 @@ public class FileUtil {
         }
 
         @Override
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend){
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
             Matcher matcher = pattern.matcher(source);
             if (!matcher.matches()) {
                 return source instanceof SpannableStringBuilder ? dest.subSequence(dstart, dend) : "";
@@ -171,7 +210,7 @@ public class FileUtil {
 
             int keep = maxLength - (dest.length() - (dend - dstart));
             if (keep <= 0) {
-                return  "";
+                return "";
             } else if (keep >= end - start) {
                 return null; // keep original
             } else {

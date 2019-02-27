@@ -50,7 +50,6 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Space;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.obsez.android.lib.filechooser.internals.ExtFileFilter;
@@ -64,7 +63,6 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -808,7 +806,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             _result.onChoosePath(file.getAbsolutePath(), file);
                                             if (success) {
                                                 try {
-                                                    deleteFile(file);
+                                                    FileUtil.deleteFileRecursively(file);
                                                 } catch (IOException e) {
                                                     Toast.makeText(_context, e.getMessage(),
                                                         Toast.LENGTH_LONG).show();
@@ -827,31 +825,28 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                     _chooseMode = _chooseMode != CHOOSE_MODE_DELETE ? CHOOSE_MODE_DELETE
                                         : CHOOSE_MODE_NORMAL;
                                     if (_deleteModeIndicator == null) {
-                                        _deleteModeIndicator = new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                if (_chooseMode == CHOOSE_MODE_DELETE) {
-                                                    final int color1 = 0x80ff0000;
-                                                    final PorterDuffColorFilter red =
-                                                        new PorterDuffColorFilter(color1,
-                                                            PorterDuff.Mode.SRC_IN);
-                                                    _alertDialog.getButton(
-                                                        AlertDialog.BUTTON_NEUTRAL).getCompoundDrawables()
-                                                        [0].setColorFilter(
-                                                        red);
-                                                    _alertDialog.getButton(
-                                                        AlertDialog.BUTTON_NEUTRAL).setTextColor(color1);
-                                                    delete.getCompoundDrawables()[0].setColorFilter(red);
-                                                    delete.setTextColor(color1);
-                                                } else {
-                                                    _alertDialog.getButton(
-                                                        AlertDialog.BUTTON_NEUTRAL).getCompoundDrawables()
-                                                        [0].clearColorFilter();
-                                                    _alertDialog.getButton(
-                                                        AlertDialog.BUTTON_NEUTRAL).setTextColor(color);
-                                                    delete.getCompoundDrawables()[0].clearColorFilter();
-                                                    delete.setTextColor(color);
-                                                }
+                                        _deleteModeIndicator = () -> {
+                                            if (_chooseMode == CHOOSE_MODE_DELETE) {
+                                                final int color1 = 0x80ff0000;
+                                                final PorterDuffColorFilter red =
+                                                    new PorterDuffColorFilter(color1,
+                                                        PorterDuff.Mode.SRC_IN);
+                                                _alertDialog.getButton(
+                                                    AlertDialog.BUTTON_NEUTRAL).getCompoundDrawables()
+                                                    [0].setColorFilter(
+                                                    red);
+                                                _alertDialog.getButton(
+                                                    AlertDialog.BUTTON_NEUTRAL).setTextColor(color1);
+                                                delete.getCompoundDrawables()[0].setColorFilter(red);
+                                                delete.setTextColor(color1);
+                                            } else {
+                                                _alertDialog.getButton(
+                                                    AlertDialog.BUTTON_NEUTRAL).getCompoundDrawables()
+                                                    [0].clearColorFilter();
+                                                _alertDialog.getButton(
+                                                    AlertDialog.BUTTON_NEUTRAL).setTextColor(color);
+                                                delete.getCompoundDrawables()[0].clearColorFilter();
+                                                delete.setTextColor(color);
                                             }
                                         };
                                     }
@@ -1094,55 +1089,44 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         Collections.sort(list, (f1, f2) -> f1.getName().toLowerCase().compareTo(f2.getName().toLowerCase()));
     }
 
-    private void listDirs2() {
-        _entries.clear();
-
-        // Get files
-        File[] files = _currentDir.listFiles();
-
-        // Add the ".." entry
-        if (_currentDir.getParent() != null) {
-            _entries.add(new File(".."));
-        }
-
-        if (files != null) {
-            for (File file : files) {
-                if (!file.isDirectory()) {
-                    continue;
-                }
-
-                _entries.add(file);
-            }
-        }
-
-        sortByName(_entries);
-    }
+    //private void listDirs2() {
+    //    _entries.clear();
+    //
+    //    // Get files
+    //    File[] files = _currentDir.listFiles();
+    //
+    //    // Add the ".." entry
+    //    if (_currentDir.getParent() != null) {
+    //        _entries.add(new File(".."));
+    //    }
+    //
+    //    if (files != null) {
+    //        for (File file : files) {
+    //            if (!file.isDirectory()) {
+    //                continue;
+    //            }
+    //
+    //            _entries.add(file);
+    //        }
+    //    }
+    //
+    //    sortByName(_entries);
+    //}
 
 
     private void createNewDirectory(String name) {
-        final File newDir = new File(_currentDir, name);
-        if (!newDir.exists() && newDir.mkdir()) {
+        if (FileUtil.createNewDirectory(name, _currentDir)) {
             refreshDirs();
             return;
         }
+
+        final File newDir = new File(_currentDir, name);
         Toast.makeText(_context,
             "Couldn't create folder " + newDir.getName() + " at " + newDir.getAbsolutePath(),
             Toast.LENGTH_LONG).show();
     }
 
     private Runnable _deleteModeIndicator;
-
-    private void deleteFile(File file) throws IOException {
-        if (file.isDirectory()) {
-            final File[] entries = file.listFiles();
-            for (final File entry : entries) {
-                deleteFile(entry);
-            }
-        }
-        if (!file.delete()) {
-            throw new IOException("Couldn't delete \"" + file.getName() + "\" at \"" + file.getParent());
-        }
-    }
 
     @Override
     public void onItemClick(AdapterView<?> parent_, View list_, int position, long id_) {
@@ -1210,7 +1194,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     break;
                 case CHOOSE_MODE_DELETE:
                     try {
-                        deleteFile(file);
+                        FileUtil.deleteFileRecursively(file);
                     } catch (IOException e) {
                         e.printStackTrace();
                         Toast.makeText(_context, e.getMessage(), Toast.LENGTH_LONG).show();

@@ -24,25 +24,32 @@
         android:text="@string/btn_choose_a_folder"/>
 
     <LinearLayout
+        android:id="@+id/async_maybe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_below="@+id/btn_choose_a_folder"
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/btn_choose_any_file"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/btn_choose_a_folder"
-            android:layout_centerHorizontal="true"
-            android:text="@string/btn_choose_any_file"/>
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btn_choose_any_file_async"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/btn_choose_a_folder"
-            android:layout_centerHorizontal="true"
-            android:text="@string/btn_choose_any_file_async"/>
+            <Button
+                android:id="@+id/btn_choose_any_file"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_choose_any_file"/>
+
+            <Button
+                android:id="@+id/btn_choose_any_file_async"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_choose_any_file_async"
+                android:visibility="gone"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -50,7 +57,7 @@
         android:id="@+id/btn_choose_multiple"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_choose_any_file"
+        android:layout_below="@+id/async_maybe"
         android:layout_centerHorizontal="true"
         android:text="@string/btn_choose_multiple"/>
 
