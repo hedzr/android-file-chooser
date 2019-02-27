@@ -1251,7 +1251,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 _list.requestFocus();
             } else {
                 _list.setSelection(index); // to prevent the list scroll to top.
-                moveFocusToButtons();
+                //moveFocusToButtons();
             }
         } else if (buttonsHasFocus()) {
             _list.requestFocus();
@@ -1271,8 +1271,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 _list.setSelection(index); // to prevent the list scroll to top.
                 moveFocusToButtons();
             }
-        } else if (buttonsHasFocus()) {
-            _list.requestFocus();
+            //} else if (buttonsHasFocus()) {
+            //    _list.requestFocus();
         }
         return true;
     }
