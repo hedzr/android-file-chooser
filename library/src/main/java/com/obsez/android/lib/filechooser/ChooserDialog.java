@@ -1184,7 +1184,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         if (_alertDialog != null && _displayPath) {
             if (up) {
                 displayPath(null);
-            } else if (_displayPath) {
+            } else {
                 displayPath(_currentDir.getPath());
             }
         }
