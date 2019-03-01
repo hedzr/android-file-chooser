@@ -101,6 +101,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
 
         ChooserDialog chooserDialog = new ChooserDialog(ctx)
             .withResources(R.string.title_choose_folder, R.string.title_choose, R.string.dialog_cancel)
+            .withOptionResources(R.string.option_create_folder, R.string.options_delete, R.string.new_folder_cancel, R.string.new_folder_ok)
             .disableTitle(disableTitle.isChecked())
             .enableOptions(enableOptions.isChecked())
             .titleFollowsDir(titleFollowsDir.isChecked())
@@ -198,7 +199,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                     });
             }
         } else {
-            chooserDialog.withChosenListener((dir, dirFile) ->{
+            chooserDialog.withChosenListener((dir, dirFile) -> {
                 if (continueFromLast.isChecked()) {
                     _path = dir;
                 }
