@@ -20,6 +20,8 @@
 <img src="captures/choose_file.png" width="360"/>
 </td><td>
 <img src="captures/choose_folder.png" width="360"/>
+</td><td>
+<img src="https://user-images.githubusercontent.com/27736965/53578348-f1d35880-3b90-11e9-9ef4-7ed0276ca603.gif" width="360"/>
 </td></tr></table>
 
 
