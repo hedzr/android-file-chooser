@@ -45,6 +45,10 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 
 ### v1.1.x patches on `master`
 
+- #46: add `displayPath(boolean)`, thank you [@Guiorgy](https://github.com/Guiorgy).
+
+### v1.1.x
+
 - no WRITE_EXTERNAL_STORAGE requests if not `enableOptions(true)`;
 
 - after requested permissions, try showing dialog again instead of return directly;
@@ -55,12 +59,15 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 
 - #45: add `titleFollowsDir(boolean)`  to allow title following the change of current directory.
 
-### v1.1.x
+- ...
+
+### Archieved History:
 
 - create new folder on the fly, and the optional multiple select mode for developer, thx [Guiorgy](https://github.com/Guiorgy) and his [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser)
 - Up (`..`) on the primary storage root will be replaced with `.. SDCard`, it allows to jump to external storage such as a SDCard and going back available too.
 - DPad supports, arrow keys supports (#30)
-- ...
+
+
 
 ## Usages
 
@@ -399,6 +406,20 @@ since the latest patch of v1.14, it allows the chooser dialog title updated by c
 
 
 
+#### `displayPath(true)`, `customizePathView(callback)`
+
+since the latest patch of v1.15, it allows a path string displayed below the title area.
+
+[Screen Snapshot](https://user-images.githubusercontent.com/27736965/53578348-f1d35880-3b90-11e9-9ef4-7ed0276ca603.gif)
+
+As a useful complement, `customizePathView(callback)` allows tuning the path TextView. For example:
+
+```java
+.customizePathView((pathView) -> {
+    pathView.setGravity(Gravity.RIGHT);
+})
+```
+
 
 
 
@@ -418,6 +439,9 @@ class MyFragment : Fragment() {
                     .withStartFile(Environment.getExternalStorageDirectory().absolutePath)
                     // .withStartFile(Environment.getExternalStorageState()+"/")
                     .withFilterRegex(false, false, ".*\\.(jpe?g|png)")
+                    .titleFollowsDir(true)
+                    .displayPath(true)
+                    .customizePathView{ pathView -> pathView.setGravity(Gravity.RIGHT) }
                     .withChosenListener { path, pathFile -> activity!!.toast("FILE: $path / $pathFile") }
                     .build()
                     .show()

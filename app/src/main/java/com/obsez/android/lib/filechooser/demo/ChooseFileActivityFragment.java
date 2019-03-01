@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,6 +80,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                 .withStartFile(_path)
                 .withDateFormat("HH:mm")
                 .titleFollowsDir(true)
+                .displayPath(true)
                 .withResources(R.string.title_choose_folder, R.string.title_choose, R.string.dialog_cancel)
                 //.withNavigateUpTo(new ChooserDialog.CanNavigateUp() {
                 //    @Override
@@ -136,6 +138,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
             assert ctx != null;
             new ChooserDialog(ctx)
                 .disableTitle(true)
+                .displayPath(true)
                 .withStartFile(_path)
                 .withResources(R.string.title_choose_any_file, R.string.title_choose, R.string.dialog_cancel)
                 .withFileIconsRes(false, R.mipmap.ic_my_file, R.mipmap.ic_my_folder)
@@ -294,6 +297,17 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
             .withFilterRegex(false, true, ".*\\.(jpe?g|png)")
             .withStartFile(_path)
             .withResources(R.string.title_nothing, R.string.title_choose, R.string.dialog_cancel)
+            .displayPath(true)
+            .customizePathView((pathView) -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    // https://developer.mozilla.org/en-US/docs/Web/CSS/font-feature-settings
+                    // https://helpx.adobe.com/fonts/using/open-type-syntax.html
+                    // https://www.zhangxinxu.com/wordpress/2018/12/css-font-feature-settings-keyword-value/
+                    //
+                    pathView.setFontFeatureSettings("sups");
+                    pathView.setGravity(Gravity.RIGHT);
+                }
+            })
             .withChosenListener((path, pathFile) -> {
                 Toast.makeText(ctx, "FILE: " + path, Toast.LENGTH_SHORT).show();
 
