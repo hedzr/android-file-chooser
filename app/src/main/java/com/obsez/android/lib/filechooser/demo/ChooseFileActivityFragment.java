@@ -89,6 +89,10 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
 
         root.findViewById(R.id.btn_show_dialog).setOnClickListener(this);
 
+        // since v1.16, we made its true by default.
+        // titleFollowsDir.setChecked(true);
+        displayPath.setChecked(true);
+
         return root;
     }
 

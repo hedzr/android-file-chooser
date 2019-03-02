@@ -1000,7 +1000,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             _pathView.setTextSize(12);
             _pathView.setLines(1);
             _pathView.setTextColor(0x40000000);
-            _pathView.setPadding(56, 12, 56, 12);
+            int lr = UiUtil.dip2px(16);
+            _pathView.setPadding(lr, 12, lr, 12);
             _pathView.setBackgroundColor(0xffffffff);
             root.addView(_pathView, 0, params);
 
@@ -1492,7 +1493,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private boolean _disableTitle;
     private boolean _enableOptions;
     private boolean _followDir;
-    private boolean _displayPath;
+    private boolean _displayPath = true;
     private TextView _pathView;
     private CustomizePathView _customizePathView;
     private View _options;

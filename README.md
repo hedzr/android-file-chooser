@@ -414,8 +414,6 @@ since v1.11, external storage will be detected automatically. That means user ca
 
 since the latest patch of v1.14, it allows the chooser dialog title updated by changing directory.
 
-since v1.16, its default value is true.
-
 
 
 #### `displayPath(true)`, `customizePathView(callback)`

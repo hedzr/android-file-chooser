@@ -22,6 +22,11 @@ import java.util.List;
 
 public final class UiUtil {
 
+    public static int dip2px(int dipValue) {
+        final float scale = Resources.getSystem().getDisplayMetrics().density;
+        return Float.valueOf(dipValue * scale + 0.5f).intValue();
+    }
+
     public static float dip2px(float dipValue) {
         final float scale = Resources.getSystem().getDisplayMetrics().density;
         return (dipValue * scale + 0.5f);
