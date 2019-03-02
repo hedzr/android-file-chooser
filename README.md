@@ -43,7 +43,7 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 - Plan: uses AndroidX
 - Done:
   - Keyboard supports: process SPACE and ENTER up event;
-  - file list no focus when dailog first showing;
+  - file list no focus when dialog first showing;
   - better storage media detect algorithm for Android M+;
   - no WRITE_EXTERNAL_STORAGE requests if not `enableOptions(true)`;
   - after requested permissions, try showing dialog again instead of return directly;
@@ -54,7 +54,7 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 
 ### v1.1.16
 
-- #48: add `displayPath(boolean)`, thank you [@Guiorgy](https://github.com/Guiorgy).
+- #48: add `displayPath(boolean)`, thank you [@Guiorgy](https://github.com/Guiorgy), and your [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser).
 - new style demo app by @Guiorgy.
 - bugs fixed
 - NOTE: `displayPath` is true by default now.
@@ -65,19 +65,12 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 ### Archived History:
 
 - no WRITE_EXTERNAL_STORAGE requests if not `enableOptions(true)`;
-
 - after requested permissions, try showing dialog again instead of return directly;
-
 - #42: onBackPressedListener not fired.
-
   Now, use `withCancelListener` to handle back key. see also [below](#onCancelListener)
-
 - #45: add `titleFollowsDir(boolean)`  to allow title following the change of current directory.
-
-- create new folder on the fly, and the optional multiple select mode for developer, thx [Guiorgy](https://github.com/Guiorgy) and his [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser)
-
+- create new folder on the fly, and the optional multiple select mode for developer, thx @Guiorgy.
 - Up (`..`) on the primary storage root will be replaced with `.. SDCard`, it allows to jump to external storage such as a SDCard and going back available too.
-
 - DPad supports, arrow keys supports (#30)
 
 
@@ -506,11 +499,13 @@ feel free to make a new issue.
 many peoples report or contribute to improve me, but only a few of them be put here — it's hard to list all.
 
 - logo and banner by: [**iqbalhood**](https://github.com/iqbalhood)
-- codes and reports: [**bostrot**](https://github.com/bostrot), [**SeppPenner**](https://github.com/SeppPenner), [**lucian-cm**](https://github.com/lucian-cm), [**ghost**](https://github.com/ghost), [**UmeshBaldaniya46**](https://github.com/UmeshBaldaniya46), [**Guiorgy**](https://github.com/Guiorgy) ...
-- DPad s
+- codes and reports: [**bostrot**](https://github.com/bostrot), [**SeppPenner**](https://github.com/SeppPenner), [**lucian-cm**](https://github.com/lucian-cm), [**ghost**](https://github.com/ghost), [**UmeshBaldaniya46**](https://github.com/UmeshBaldaniya46), ...
+- especially, the supporter: [Guiorgy](https://github.com/Guiorgy) and his [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser)
 
 
 ## License
+
+Standard Apache 2.0
 
 Copyright 2015-2019 Hedzr Yeh.
 
