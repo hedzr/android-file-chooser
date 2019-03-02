@@ -54,7 +54,7 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 - #48: add `displayPath(boolean)`, thank you [@Guiorgy](https://github.com/Guiorgy).
 - new style demo app by @Guiorgy.
 - bugs fixed
-- NOTE: `displayPath` and `titleFollowsDir` is true by default now.
+- NOTE: `displayPath` is true by default now.
 
 - ...
 
