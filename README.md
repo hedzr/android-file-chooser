@@ -49,7 +49,7 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 
 - 
 
-### v1.1.6
+### v1.1.16
 
 - #48: add `displayPath(boolean)`, thank you [@Guiorgy](https://github.com/Guiorgy).
 - new style demo app by @Guiorgy.
