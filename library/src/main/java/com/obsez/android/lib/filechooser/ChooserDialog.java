@@ -1161,7 +1161,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         boolean up = false;
         String removableRoot = FileUtil.getStoragePath(_context, true);
         String primaryRoot = FileUtil.getStoragePath(_context, false);
-        if (removableRoot != null) {
+        if (!removableRoot.equals(primaryRoot)) {
             //File f = Environment.getExternalStorageDirectory();
             //File newRoot = _currentDir.getParentFile();
             if (_currentDir.getAbsolutePath().equals(primaryRoot)) {
@@ -1351,7 +1351,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         _adapter.selectItem(position);
         _chooseMode = CHOOSE_MODE_SELECT_MULTIPLE;
         _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
-        _deleteModeIndicator.run();
+        if (_deleteModeIndicator != null) _deleteModeIndicator.run();
         return true;
     }
 
