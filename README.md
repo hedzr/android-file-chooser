@@ -23,6 +23,8 @@
 </td><td>
 <img src="https://user-images.githubusercontent.com/27736965/53578348-f1d35880-3b90-11e9-9ef4-7ed0276ca603.gif" width="360"/>
 </td></tr></table>
+More images (beyond v1.1.16) have been found at [Gallery](https://github.com/hedzr/android-file-chooser/wiki/Gallery)
+
 
 
 ### Demo Application
