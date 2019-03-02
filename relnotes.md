@@ -1,5 +1,13 @@
 # RELEASES
 
+## 1.1.16 - 2019-03-03
+
+- #46, #47, #48
+- bugs fixed
+- `displayPath` by **Guiorgy**
+- new style demo app will be released, by **Guiorgy**
+
+
 ## 1.1.15 - 2019-02-25
 
 - #42: withOnBackPressedListener not fired

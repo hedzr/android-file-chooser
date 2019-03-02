@@ -47,9 +47,19 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 
 ### v1.1.x patches on `master`
 
-- #48: add `displayPath(boolean)`, thank you [@Guiorgy](https://github.com/Guiorgy).
+- 
 
-### v1.1.x
+### v1.1.6
+
+- #48: add `displayPath(boolean)`, thank you [@Guiorgy](https://github.com/Guiorgy).
+- new style demo app by @Guiorgy.
+- bugs fixed
+- NOTE: `displayPath` and `titleFollowsDir` is true by default now.
+
+- ...
+
+
+### Archived History:
 
 - no WRITE_EXTERNAL_STORAGE requests if not `enableOptions(true)`;
 
@@ -61,12 +71,10 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 
 - #45: add `titleFollowsDir(boolean)`  to allow title following the change of current directory.
 
-- ...
-
-### Archived History:
-
 - create new folder on the fly, and the optional multiple select mode for developer, thx [Guiorgy](https://github.com/Guiorgy) and his [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser)
+
 - Up (`..`) on the primary storage root will be replaced with `.. SDCard`, it allows to jump to external storage such as a SDCard and going back available too.
+
 - DPad supports, arrow keys supports (#30)
 
 
@@ -406,11 +414,15 @@ since v1.11, external storage will be detected automatically. That means user ca
 
 since the latest patch of v1.14, it allows the chooser dialog title updated by changing directory.
 
+since v1.16, its default value is true.
+
 
 
 #### `displayPath(true)`, `customizePathView(callback)`
 
 since the latest patch of v1.15, it allows a path string displayed below the title area.
+
+since v1.16, its default value is true.
 
 [Screen Snapshot](https://user-images.githubusercontent.com/27736965/53578348-f1d35880-3b90-11e9-9ef4-7ed0276ca603.gif)
 
