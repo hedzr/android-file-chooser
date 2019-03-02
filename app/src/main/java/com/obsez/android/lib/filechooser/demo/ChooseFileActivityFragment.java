@@ -66,7 +66,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+        @Nullable Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
 
         View root = inflater.inflate(R.layout.fragment_choose_file, container, false);
@@ -104,14 +104,17 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
         final ArrayList<File> files = new ArrayList<>();
 
         ChooserDialog chooserDialog = new ChooserDialog(ctx)
-            .withResources(R.string.title_choose_folder, R.string.title_choose, R.string.dialog_cancel)
-            .withOptionResources(R.string.option_create_folder, R.string.options_delete, R.string.new_folder_cancel, R.string.new_folder_ok)
+            .withResources(dirOnly.isChecked() ? R.string.title_choose_folder : R.string.title_choose_file,
+                R.string.title_choose, R.string.dialog_cancel)
+            .withOptionResources(R.string.option_create_folder, R.string.options_delete,
+                R.string.new_folder_cancel, R.string.new_folder_ok)
             .disableTitle(disableTitle.isChecked())
             .enableOptions(enableOptions.isChecked())
             .titleFollowsDir(titleFollowsDir.isChecked())
             .displayPath(displayPath.isChecked());
         if (filterImages.isChecked()) {
-            // Most common image file extensions (source: http://preservationtutorial.library.cornell.edu/presentation/table7-1.html)
+            // Most common image file extensions (source: http://preservationtutorial.library.cornell
+            // .edu/presentation/table7-1.html)
             chooserDialog.withFilter(dirOnly.isChecked(),
                 allowHidden.isChecked(),
                 "tif", "tiff", "gif", "jpeg", "jpg", "jif", "jfif",
@@ -207,7 +210,8 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                 if (continueFromLast.isChecked()) {
                     _path = dir;
                 }
-                Toast.makeText(ctx, (dirFile.isDirectory() ? "FOLDER: " : "FILE: ") + dir, Toast.LENGTH_SHORT).show();
+                Toast.makeText(ctx, (dirFile.isDirectory() ? "FOLDER: " : "FILE: ") + dir,
+                    Toast.LENGTH_SHORT).show();
                 _tv.setText(dir);
                 if (dirFile.isFile()) _iv.setImageBitmap(ImageUtil.decodeFile(dirFile));
             });
