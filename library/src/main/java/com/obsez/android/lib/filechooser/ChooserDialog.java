@@ -343,12 +343,19 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     /**
      * allows dialog title follows the current folder name
+     * @param followDir dialog title will follows the changing of directory
+     * @return this
      */
     public ChooserDialog titleFollowsDir(boolean followDir) {
         _followDir = followDir;
         return this;
     }
 
+    /**
+     * @param followDir deprecated
+     * @return this
+     * @deprecated at 1.1.17 or 1.2.0
+     */
     public ChooserDialog followDir(boolean followDir) {
         _followDir = followDir;
         return this;
