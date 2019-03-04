@@ -8,7 +8,7 @@ import com.obsez.android.lib.filechooser.ChooserDialog
 object Demo {
     fun demo1(context: Context, startPath: String, callback: ChooserDialog.Result) {
         ChooserDialog(context)
-            .followDir(true)
+            .titleFollowsDir(true)
             .withIcon(R.mipmap.ic_launcher)
             .withFilterRegex(false, true, ".*\\.(jpe?g|png)")
             .withStartFile(startPath)
