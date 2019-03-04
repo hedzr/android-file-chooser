@@ -69,3 +69,24 @@ apply from: '_sonatype.gradle'
 apply from: '_mavenlocal.gradle'
 // gradle bintrayUpload
 apply from: '_bintray.gradle'
+
+task createPom << {
+    pom {
+        project {
+            groupId 'com.obsez.android.lib.filechooser'
+            artifactId 'android-file-chooser'
+            version VERSION_NAME
+
+            inceptionYear '2015'
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+        }
+    }.writeTo("pom.xml")
+}
+
+build.finalizedBy(createPom)
