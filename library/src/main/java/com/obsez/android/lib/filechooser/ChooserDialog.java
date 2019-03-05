@@ -343,6 +343,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     /**
      * allows dialog title follows the current folder name
+     *
      * @param followDir dialog title will follow the changing of directory
      * @return this
      */
@@ -1446,15 +1447,18 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             int position = _adapter.getHoveredIndex();
             onItemClick(_list, _list, position, -1);
             //_list.requestFocus();
+        } else if (buttonsHasFocus()) {
+            _alertDialog.getCurrentFocus().performClick();
         }
         return true;
     }
 
     private boolean buttonsHasFocus() {
-        View v = _alertDialog.getCurrentFocus();
-        return v == _alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL) ||
-            v == _alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE) ||
-            v == _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        Button v = (Button) _alertDialog.getCurrentFocus();
+        return v != null;
+        //return v == _alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL) ||
+        //    v == _alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE) ||
+        //    v == _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
     }
 
     private boolean moveFocusToButtons() {
