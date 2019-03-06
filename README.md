@@ -59,7 +59,15 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 - bugs fixed
 - NOTE: `displayPath` is true by default now.
 
-- ...
+- bumped targer sdk to 1.8 (please include the following into your build.gradle)
+```java
+android {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+```
 
 
 ### Archived History:
