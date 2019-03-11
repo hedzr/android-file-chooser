@@ -463,7 +463,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 case KeyEvent.KEYCODE_DPAD_CENTER:
                     // enter
                     if (event.getAction() == KeyEvent.ACTION_UP) {
-                        return doEnter();
+                        if (!buttonsHasFocus()) {
+                            return doEnter();
+                        }
                     }
                     break;
             }
