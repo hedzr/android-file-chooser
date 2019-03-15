@@ -39,6 +39,7 @@
         <item name="fileChooserTextSecondaryStyle">@style/FileChooserTextPrimaryStyle</item>
         <item name="fileChooserFileIconStyle">@style/FileChooserFileIconStyle</item>
         <item name="android:background">@color/li_row_background</item>
+        <item name="fileListItemSelectedTint">@color/li_row_background_tint</item>
         <item name="android:descendantFocusability">beforeDescendants</item>
         <item name="android:padding">10dp</item>
     </style>
@@ -47,11 +48,13 @@
     <style name="FileChooserTextPrimaryStyle">
         <item name="android:paddingLeft">@dimen/list_item_padding</item>
         <item name="android:paddingRight">@dimen/list_item_padding</item>
+        <item name="android:drawablePadding">@dimen/list_item_padding</item>
         <item name="android:textColor" tools:ignore="PrivateResource">@color/material_deep_teal_500</item>
         <item name="android:textSize">16sp</item>
         <item name="android:ellipsize">marquee</item>
-        <item name="android:gravity">center_vertical</item>
         <item name="android:maxLines">1</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:padding">0dp</item>
     </style>
 
     <public name="FileChooserTextSecondaryStyle" type="style" />
@@ -61,6 +64,8 @@
         <item name="android:textColor" tools:ignore="PrivateResource">@color/material_deep_teal_200</item>
         <item name="android:textSize">13sp</item>
         <item name="android:maxLines">1</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:padding">0dp</item>
     </style>
 
     <public name="FileChooserFileIconStyle" type="style" />
@@ -68,7 +73,8 @@
         <item name="android:layout_marginLeft">12dp</item>
         <item name="android:layout_marginRight">6dp</item>
         <item name="android:scaleType">fitCenter</item>
-        <item name="android:src">@drawable/ic_folder</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:padding">0dp</item>
     </style>
 
 </resources>

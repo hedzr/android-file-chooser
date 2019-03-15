@@ -47,6 +47,7 @@
         android:layout_alignParentLeft="true"
         android:contentDescription="@string/title_choose"
         android:visibility="gone"
+        android:src="@drawable/ic_folder"
         app:srcCompat="@drawable/ic_folder" />
 
 </RelativeLayout>
