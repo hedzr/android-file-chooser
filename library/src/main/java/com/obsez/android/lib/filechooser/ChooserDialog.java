@@ -1056,8 +1056,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         } else {
             String removableRoot = FileUtil.getStoragePath(_context, true);
             String primaryRoot = FileUtil.getStoragePath(_context, false);
-            if (path.contains(removableRoot)) path = path.substring(removableRoot.length() - 1);
-            if (path.contains(primaryRoot)) path = path.substring(primaryRoot.length() - 1);
+            if (path.contains(removableRoot)) path = path.substring(removableRoot.lastIndexOf('/') + 1);
+            if (path.contains(primaryRoot)) path = path.substring(primaryRoot.lastIndexOf('/') + 1);
             _pathView.setText(path);
 
             while (_pathView.getLineCount() > 1) {
