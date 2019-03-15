@@ -4,6 +4,7 @@
     <attr name="fileChooserStyle" format="reference" />
 
     <declare-styleable name="FileChooser">
+        <attr name="fileChooserDialogStyle" format="reference" />
         <attr name="fileChooserListItemStyle" format="reference" />
         <attr name="fileChooserTextPrimaryStyle" format="reference" />
         <attr name="fileChooserTextSecondaryStyle" format="reference" />

@@ -3,38 +3,49 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
-    style="@style/FileChooserListItemStyle"
-    tools:ignore="ResourceName">
+    style="?attr/fileChooserListItemStyle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="ResourceName"
+    tools:theme="@style/FileChooserStyle">
 
     <TextView
         android:id="@+id/text"
+        style="?attr/fileChooserTextPrimaryStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="false"
         android:layout_centerVertical="false"
         android:layout_toRightOf="@+id/icon"
-        tools:text="@string/title_choose"
-        style="@style/FileChooserTextPrimaryStyle"/>
+        tools:text="@string/title_choose" />
 
     <TextView
         android:id="@+id/txt_size"
+        style="?attr/fileChooserTextSecondaryStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/text"
         android:layout_alignLeft="@+id/text"
         android:layout_toLeftOf="@+id/txt_date"
-        tools:text="@string/title_choose"
-        style="@style/FileChooserTextSecondaryStyle" />
+        tools:text="@string/title_choose" />
 
     <TextView
         android:id="@+id/txt_date"
+        style="?attr/fileChooserTextSecondaryStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/text"
         android:layout_alignRight="@+id/text"
-        tools:text="@string/title_choose"
-        style="@style/FileChooserTextSecondaryStyle" />
+        tools:text="@string/title_choose" />
 
     <ImageView
         android:id="@+id/icon"
+        style="?attr/fileChooserFileIconStyle"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_alignParentLeft="true"
         android:contentDescription="@string/title_choose"
         android:visibility="gone"
-        app:srcCompat="@drawable/ic_folder"
-        style="@style/FileChooserFileIconStyle"/>
+        app:srcCompat="@drawable/ic_folder" />
 
 </RelativeLayout>
