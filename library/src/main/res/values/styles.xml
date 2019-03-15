@@ -14,16 +14,59 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
 -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android" tools:ignore="ResourceName">
 
-    <style name="fileChooserName">
-        <item name="android:drawablePadding">@dimen/list_item_padding</item>
-        <item name="android:ellipsize">end</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:maxLines">2</item>
+    <public name="FileChooserStyle" type="style"/>
+    <style name="FileChooserStyle">
+        <item name="fileChooserListItemStyle">@style/FileChooserListItemStyle</item>
+
+    </style>
+
+    <public name="FileChooserListItemStyle" type="style"/>
+    <style name="FileChooserListItemStyle">
+        <item name="fileChooserTextPrimaryStyle">@style/FileChooserTextPrimaryStyle</item>
+        <item name="fileChooserTextSecondaryStyle">@style/FileChooserTextPrimaryStyle</item>
+        <item name="fileChooserFileIconStyle">@style/FileChooserFileIconStyle</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">#fbfbfb</item>
+        <item name="android:descendantFocusability">beforeDescendants</item>
+        <item name="android:padding">10dp</item>
+    </style>
+
+    <public name="FileChooserTextPrimaryStyle" type="style"/>
+    <style name="FileChooserTextPrimaryStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingLeft">@dimen/list_item_padding</item>
         <item name="android:paddingRight">@dimen/list_item_padding</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:textColor">"@color/material_deep_teal_500</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:maxLines">1</item>
     </style>
+
+    <public name="FileChooserTextSecondaryStyle" type="style"/>
+    <style name="FileChooserTextSecondaryStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingLeft">@dimen/list_item_padding</item>
+        <item name="android:paddingRight">@dimen/list_item_padding</item>
+        <item name="android:textColor">"@color/material_deep_teal_200</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <public name="FileChooserFileIconStyle" type="style"/>
+    <style name="FileChooserFileIconStyle">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_marginLeft">12dp</item>
+        <item name="android:layout_marginRight">6dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:src">@drawable/ic_folder</item>
+    </style>
+
 
 </resources>

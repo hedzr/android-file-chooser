@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="ResourceName">
+
+    <attr name="fileChooserStyle" format="reference" />
+
+    <declare-styleable name="FileChooser">
+        <attr name="fileChooserListItemStyle" format="reference" />
+        <attr name="fileChooserTextPrimaryStyle" format="reference" />
+        <attr name="fileChooserTextSecondaryStyle" format="reference" />
+        <attr name="fileChooserFileIconStyle" format="reference" />
+    </declare-styleable>
+
+</resources>

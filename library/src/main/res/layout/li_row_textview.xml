@@ -1,64 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:descendantFocusability="beforeDescendants"
-                android:padding="10dp"
-                android:id="@+id/root"
-                android:background="#fbfbfb">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    style="@style/FileChooserListItemStyle"
+    tools:ignore="ResourceName">
 
-  <TextView
-      android:id="@+id/text"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_alignParentLeft="false"
-      android:layout_centerVertical="false"
-      android:layout_toRightOf="@+id/icon"
-      android:ellipsize="marquee"
-      android:paddingLeft="8dp"
-      android:paddingRight="8dp"
-      android:drawablePadding="8dip"
-      android:text="@string/title_choose"
-      android:textColor="@color/material_deep_teal_500"
-      android:textSize="16sp"/>
+    <TextView
+        android:id="@+id/text"
+        android:layout_alignParentLeft="false"
+        android:layout_centerVertical="false"
+        android:layout_toRightOf="@+id/icon"
+        tools:text="@string/title_choose"
+        style="@style/FileChooserTextPrimaryStyle"/>
 
-  <TextView
-      android:id="@+id/txt_size"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_alignLeft="@+id/text"
-      android:layout_below="@+id/text"
-      android:layout_toLeftOf="@+id/txt_date"
-      android:paddingLeft="8dp"
-      android:paddingRight="8dp"
-      android:text="@string/title_choose"
-      android:textColor="@color/material_deep_teal_200"
-      android:textSize="13sp"/>
+    <TextView
+        android:id="@+id/txt_size"
+        android:layout_below="@+id/text"
+        android:layout_alignLeft="@+id/text"
+        android:layout_toLeftOf="@+id/txt_date"
+        tools:text="@string/title_choose"
+        style="@style/FileChooserTextSecondaryStyle" />
 
-  <TextView
-      android:id="@+id/txt_date"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_alignRight="@+id/text"
-      android:layout_below="@+id/text"
-      android:paddingLeft="8dp"
-      android:paddingRight="8dp"
-      android:text="@string/title_choose"
-      android:textColor="@color/material_deep_teal_200"
-      android:textSize="13sp"/>
+    <TextView
+        android:id="@+id/txt_date"
+        android:layout_below="@+id/text"
+        android:layout_alignRight="@+id/text"
+        tools:text="@string/title_choose"
+        style="@style/FileChooserTextSecondaryStyle" />
 
-  <ImageView
-      android:id="@+id/icon"
-      android:layout_width="48dp"
-      android:layout_height="48dp"
-      android:layout_alignParentLeft="true"
-      android:layout_marginLeft="12dp"
-      android:layout_marginRight="6dp"
-      android:contentDescription="@string/title_choose"
-      android:scaleType="fitCenter"
-      android:src="@drawable/ic_folder"
-      android:visibility="gone"
-      app:srcCompat="@drawable/ic_folder"/>
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_alignParentLeft="true"
+        android:contentDescription="@string/title_choose"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_folder"
+        style="@style/FileChooserFileIconStyle"/>
 
 </RelativeLayout>
