@@ -29,7 +29,7 @@ import timber.log.Timber;
  * A placeholder fragment containing a simple view.
  */
 public class ChooseFileActivityFragment extends Fragment implements View.OnClickListener {
-
+    @SuppressWarnings("unused")
     private static final String TAG = "ChooseFileActivityFragment";
 
     private CheckBox disableTitle;
@@ -43,6 +43,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
     private CheckBox filterImages;
     private CheckBox displayIcon;
     private CheckBox dateFormat;
+    private CheckBox darkTheme;
 
     private String _path = null;
     private TextView _tv;
@@ -66,7 +67,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-        @Nullable Bundle savedInstanceState) {
+                             @Nullable Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
 
         View root = inflater.inflate(R.layout.fragment_choose_file, container, false);
@@ -86,11 +87,11 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
         filterImages = root.findViewById(R.id.checkbox_filter_images);
         displayIcon = root.findViewById(R.id.checkbox_display_icon);
         dateFormat = root.findViewById(R.id.checkbox_date_format);
+        darkTheme = root.findViewById(R.id.checkbox_dark_theme);
 
         root.findViewById(R.id.btn_show_dialog).setOnClickListener(this);
 
-        // since v1.16, we made its true by default.
-        // titleFollowsDir.setChecked(true);
+        // since v1.16, we made this true by default.
         displayPath.setChecked(true);
 
         return root;
@@ -101,11 +102,16 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
         //choose a file
         final Context ctx = this.getActivity();
         assert ctx != null;
+
         final ArrayList<File> files = new ArrayList<>();
 
-        ChooserDialog chooserDialog = new ChooserDialog(ctx)
-            .withResources(dirOnly.isChecked() ? R.string.title_choose_folder : R.string.title_choose_file,
-                R.string.title_choose, R.string.dialog_cancel)
+        ChooserDialog chooserDialog;
+        if (darkTheme.isChecked())
+            chooserDialog = new ChooserDialog(ctx, R.style.FileChooserStyle_Dark);
+        else chooserDialog = new ChooserDialog(ctx);
+
+        chooserDialog.withResources(dirOnly.isChecked() ? R.string.title_choose_folder : R.string.title_choose_file,
+            R.string.title_choose, R.string.dialog_cancel)
             .withOptionResources(R.string.option_create_folder, R.string.options_delete,
                 R.string.new_folder_cancel, R.string.new_folder_ok)
             .disableTitle(disableTitle.isChecked())

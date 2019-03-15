@@ -1,8 +1,39 @@
 <resources>
 
-  <!-- Base application theme. -->
-  <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-    <!-- Customize your theme here. -->
-  </style>
+    <!-- Base application theme -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here -->
+        <!-- <item name="fileChooserStyle">@style/FileChooserStyle.Dark</item> -->
+    </style>
+
+    <!-- Dark theme example for file chooser -->
+    <style name="FileChooserStyle.Dark" parent="FileChooserStyle">
+        <item name="fileChooserDialogStyle">@style/FileChooserDialogStyle.Dark</item>
+        <item name="fileChooserListItemStyle">@style/FileChooserListItemStyle.Dark</item>
+    </style>
+
+    <style name="FileChooserDialogStyle.Dark" parent="@android:style/Theme.Holo.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowTitleStyle">@style/FileChooserTitleStyle.Dark</item>
+    </style>
+
+    <style name="FileChooserTitleStyle.Dark" parent="FileChooserTitleStyle">
+        <item name="android:textAppearance">@android:style/TextAppearance.Holo.DialogWindowTitle</item>
+    </style>
+
+    <style name="FileChooserListItemStyle.Dark" parent="FileChooserListItemStyle">
+        <item name="fileChooserTextPrimaryStyle">@style/FileChooserTextPrimaryStyle.Dark</item>
+        <item name="fileChooserTextSecondaryStyle">@style/FileChooserTextSecondaryStyle.Dark</item>
+        <item name="android:background">#767676</item>
+        <item name="fileListItemSelectedTint">#40ffffff</item>
+    </style>
+
+    <style name="FileChooserTextPrimaryStyle.Dark" parent="FileChooserTextPrimaryStyle">
+        <item name="android:textColor">#fefefe</item>
+    </style>
+
+    <style name="FileChooserTextSecondaryStyle.Dark" parent="FileChooserTextSecondaryStyle">
+        <item name="android:textColor">#fefefe</item>
+    </style>
 
 </resources>
