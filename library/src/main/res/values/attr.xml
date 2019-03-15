@@ -9,8 +9,9 @@
         <attr name="fileChooserTextPrimaryStyle" format="reference" />
         <attr name="fileChooserTextSecondaryStyle" format="reference" />
         <attr name="fileChooserFileIconStyle" format="reference" />
-
         <attr name="fileListItemSelectedTint" format="color|reference" />
+        <attr name="fileChooserPathViewStyle" format="reference" />
+        <attr name="fileChooserPathViewElevation" format="integer|reference" />
     </declare-styleable>
 
 </resources>

@@ -1047,21 +1047,21 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 params = new FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, Gravity.TOP);
             }
 
-            _pathView = new TextView(_context);
-            _pathView.setTextSize(12);
-            _pathView.setLines(1);
-            _pathView.setTextColor(0x40000000);
-            int lr = UiUtil.dip2px(16);
-            _pathView.setPadding(lr, 12, lr, 12);
-            _pathView.setBackgroundColor(0xffffffff);
+            TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
+            int style = ta.getResourceId(R.styleable.FileChooser_fileChooserPathViewStyle, R.style.FileChooserPathViewStyle);
+            final Context context = new ContextThemeWrapper(_context, style);
+
+            _pathView = new TextView(context);
             root.addView(_pathView, 0, params);
 
             _pathView.bringToFront();
+            int elevation = ta.getInt(R.styleable.FileChooser_fileChooserPathViewElevation, 2);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                _pathView.setElevation(2f);
+                _pathView.setElevation(elevation);
             } else {
-                ViewCompat.setElevation(_pathView, 2);
+                ViewCompat.setElevation(_pathView, elevation);
             }
+            ta.recycle();
 
             if (_customizePathView != null) {
                 _customizePathView.customize(_pathView);
