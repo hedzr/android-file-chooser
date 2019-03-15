@@ -38,10 +38,10 @@ import android.support.annotation.StyleRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.view.ContextThemeWrapper;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -422,7 +422,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         }
 
         TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
-        AlertDialog.Builder builder = new AlertDialog.Builder(_context, ta.getResourceId(R.styleable.FileChooser_fileChooserDialogStyle, R.style.FileChooserDialogStyle));
+        int style = ta.getResourceId(R.styleable.FileChooser_fileChooserDialogStyle, R.style.FileChooserDialogStyle);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(_context, style),
+            ta.getResourceId(R.styleable.FileChooser_fileChooserDialogStyle, R.style.FileChooserDialogStyle));
         ta.recycle();
 
         _adapter = new DirAdapter(_context, new ArrayList<File>(),
@@ -528,9 +530,18 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         _alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(final DialogInterface dialog) {
+                final int accentColor = UiUtil.getThemeAccentColor(_context);
+                TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
+                int negativeColor = ta.getColor(R.styleable.FileChooser_fileChooserNegativeButtonTextColor, accentColor);
+                int neutralColor = ta.getColor(R.styleable.FileChooser_fileChooserNeutralButtonTextColor, accentColor);
+                int positiveColor = ta.getColor(R.styleable.FileChooser_fileChooserPositiveButtonTextColor, accentColor);
+
+                Button negative = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+                negative.setTextColor(negativeColor);
+                Button positive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                positive.setTextColor(positiveColor);
+                ta.recycle();
                 if (!_dismissOnButtonClick) {
-                    Button negative = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
-                    Button positive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
 
                     negative.setOnClickListener(v -> {
                         if (_negativeListener != null) {
@@ -552,13 +563,12 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 }
 
                 if (_enableOptions) {
-                    final int color = UiUtil.getThemeAccentColor(_context);
-                    final PorterDuffColorFilter filter = new PorterDuffColorFilter(color,
+                    final PorterDuffColorFilter filter = new PorterDuffColorFilter(accentColor,
                         PorterDuff.Mode.SRC_IN);
 
                     final Button options = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
                     options.setText("");
-                    options.setTextColor(color);
+                    options.setTextColor(accentColor);
                     options.setVisibility(View.VISIBLE);
                     final Drawable drawable = ContextCompat.getDrawable(_context,
                         _optionsIconRes != -1 ? _optionsIconRes : R.drawable.ic_menu_24dp);
@@ -692,7 +702,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                 final Button createDir = new Button(_context, null,
                                     android.R.attr.buttonBarButtonStyle);
                                 createDir.setText(_createDirRes);
-                                createDir.setTextColor(color);
+                                createDir.setTextColor(accentColor);
                                 // Drawable for the button.
                                 final Drawable plus = ContextCompat.getDrawable(_context,
                                     _createDirIconRes != -1 ? _createDirIconRes : R.drawable.ic_add_24dp);
@@ -713,7 +723,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                 final Button delete = new Button(_context, null,
                                     android.R.attr.buttonBarButtonStyle);
                                 delete.setText(_deleteRes);
-                                delete.setTextColor(color);
+                                delete.setTextColor(accentColor);
                                 final Drawable bin = ContextCompat.getDrawable(_context,
                                     _deleteIconRes != -1 ? _deleteIconRes : R.drawable.ic_delete_24dp);
                                 if (bin != null) {
@@ -825,7 +835,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             final Button cancel = new Button(_context, null,
                                                 android.R.attr.buttonBarButtonStyle);
                                             cancel.setText(_newFolderCancelRes);
-                                            cancel.setTextColor(color);
+                                            cancel.setTextColor(accentColor);
                                             params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                                                 START);
                                             buttons.addView(cancel, params);
@@ -834,7 +844,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             final Button ok = new Button(_context, null,
                                                 android.R.attr.buttonBarButtonStyle);
                                             ok.setText(_newFolderOkRes);
-                                            ok.setTextColor(color);
+                                            ok.setTextColor(accentColor);
                                             params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                                                 END);
                                             buttons.addView(ok, params);
@@ -919,9 +929,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                                     AlertDialog.BUTTON_NEUTRAL).getCompoundDrawables()
                                                     [0].clearColorFilter();
                                                 _alertDialog.getButton(
-                                                    AlertDialog.BUTTON_NEUTRAL).setTextColor(color);
+                                                    AlertDialog.BUTTON_NEUTRAL).setTextColor(accentColor);
                                                 delete.getCompoundDrawables()[0].clearColorFilter();
-                                                delete.setTextColor(color);
+                                                delete.setTextColor(accentColor);
                                             }
                                         };
                                     }

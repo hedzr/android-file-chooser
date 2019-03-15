@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="FileChooserDialogStyle.Dark" parent="@android:style/Theme.Material.Dialog.Alert">
-        <item name="android:windowTitleStyle">@style/FileChooserTitleStyle.Dark</item>
+        <item name="android:buttonStyle">@android:style/Widget.Holo.Light.Button</item>
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="colorAccent">@android:style/TextAppearance.Holo.DialogWindowTitle</item>
+        <item name="android:windowTitleStyle">@style/FileChooserTitleStyle.Dark</item>
+        <item name="fileChooserNegativeButtonTextColor">@android:style/TextAppearance.DialogWindowTitle</item>
+        <item name="fileChooserNeutralButtonTextColor">@android:style/TextAppearance.DialogWindowTitle</item>
+        <item name="fileChooserPositiveButtonTextColor">@android:style/TextAppearance.DialogWindowTitle</item>
     </style>
+
 </resources>

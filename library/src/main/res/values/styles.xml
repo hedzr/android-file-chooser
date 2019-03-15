@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
 -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" tools:ignore="ResourceName">
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" tools:ignore="ResourceName,PrivateResource">
 
     <public name="FileChooserStyle" type="style" />
     <style name="FileChooserStyle">
@@ -22,9 +22,16 @@
         <item name="fileChooserPathViewStyle">@style/FileChooserPathViewStyle</item>
     </style>
 
+    <!-- Dialog -->
     <public name="FileChooserDialogStyle" type="style" />
     <style name="FileChooserDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:textColorPrimary">@color/material_deep_teal_500</item>
+        <item name="colorAccent">@color/material_deep_teal_500</item>
         <item name="android:windowTitleStyle">@style/FileChooserTitleStyle</item>
+        <item name="android:buttonStyle">@android:style/DeviceDefault.Light.ButtonBar.AlertDialog</item>
+        <item name="fileChooserNegativeButtonTextColor">?attr/colorAccent</item>
+        <item name="fileChooserNeutralButtonTextColor">?attr/colorAccent</item>
+        <item name="fileChooserPositiveButtonTextColor">?attr/colorAccent</item>
     </style>
 
     <public name="FileChooserTitleStyle" type="style" />
@@ -34,6 +41,7 @@
         <item name="android:textAppearance">@android:style/TextAppearance.DialogWindowTitle</item>
     </style>
 
+    <!-- List -->
     <public name="FileChooserListItemStyle" type="style" />
     <style name="FileChooserListItemStyle">
         <item name="fileChooserTextPrimaryStyle">@style/FileChooserTextPrimaryStyle</item>
@@ -50,7 +58,7 @@
         <item name="android:paddingLeft">@dimen/list_item_padding</item>
         <item name="android:paddingRight">@dimen/list_item_padding</item>
         <item name="android:drawablePadding">@dimen/list_item_padding</item>
-        <item name="android:textColor" tools:ignore="PrivateResource">@color/material_deep_teal_500</item>
+        <item name="android:textColor">@color/material_deep_teal_500</item>
         <item name="android:textSize">16sp</item>
         <item name="android:ellipsize">marquee</item>
         <item name="android:maxLines">1</item>
@@ -62,7 +70,7 @@
     <style name="FileChooserTextSecondaryStyle">
         <item name="android:paddingLeft">@dimen/list_item_padding</item>
         <item name="android:paddingRight">@dimen/list_item_padding</item>
-        <item name="android:textColor" tools:ignore="PrivateResource">@color/material_deep_teal_200</item>
+        <item name="android:textColor">@color/material_deep_teal_200</item>
         <item name="android:textSize">13sp</item>
         <item name="android:maxLines">1</item>
         <item name="android:background">@android:color/transparent</item>
@@ -78,6 +86,7 @@
         <item name="android:padding">0dp</item>
     </style>
 
+    <!-- PathView -->
     <public name="FileChooserPathViewStyle" type="style" />
     <style name="FileChooserPathViewStyle">
         <item name="android:background">#ffffffff</item>

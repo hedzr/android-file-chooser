@@ -16,6 +16,9 @@
     <style name="FileChooserDialogStyle.Dark" parent="@android:style/Theme.Holo.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowTitleStyle">@style/FileChooserTitleStyle.Dark</item>
+        <item name="android:buttonStyle">@android:style/Widget.Holo.Light.Button</item>
+        <item name="android:textColorPrimary">@android:style/TextAppearance.Holo.Medium</item>
+        <item name="colorAccent">@android:style/TextAppearance.Holo.DialogWindowTitle</item>
     </style>
 
     <style name="FileChooserTitleStyle.Dark" parent="FileChooserTitleStyle">

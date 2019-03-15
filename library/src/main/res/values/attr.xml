@@ -5,6 +5,9 @@
 
     <declare-styleable name="FileChooser">
         <attr name="fileChooserDialogStyle" format="reference" />
+        <attr name="fileChooserNegativeButtonTextColor" format="color|reference" />
+        <attr name="fileChooserNeutralButtonTextColor" format="color|reference" />
+        <attr name="fileChooserPositiveButtonTextColor" format="color|reference" />
         <attr name="fileChooserListItemStyle" format="reference" />
         <attr name="fileChooserTextPrimaryStyle" format="reference" />
         <attr name="fileChooserTextSecondaryStyle" format="reference" />
