@@ -23,6 +23,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
@@ -38,6 +39,7 @@ import android.support.v4.view.ViewCompat;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -85,14 +87,17 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     public ChooserDialog(Context cxt) {
         this._context = cxt;
+        init();
     }
 
     public ChooserDialog(Activity activity) {
         this._context = activity;
+        init();
     }
 
     public ChooserDialog(Fragment fragment) {
         this._context = fragment.getActivity();
+        init();
     }
 
     /**
@@ -102,7 +107,16 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
      */
     public ChooserDialog with(Context cxt) {
         this._context = cxt;
+        init();
         return this;
+    }
+
+    private void init(){
+        // Wrap calculator dialog's theme to context
+        TypedArray ta = this._context.obtainStyledAttributes(new int[]{R.attr.fileChooserStyle});
+        int style = ta.getResourceId(0, R.style.FileChooserStyle);
+        ta.recycle();
+        this._context = new ContextThemeWrapper(this._context, style);
     }
 
     public ChooserDialog withFilter(FileFilter ff) {
@@ -382,7 +396,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             throw new RuntimeException("withResources() should be called at first.");
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(_context);
+        TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
+        AlertDialog.Builder builder = new AlertDialog.Builder(_context, ta.getResourceId(R.styleable.FileChooser_fileChooserDialogStyle, R.style.FileChooserDialogStyle));
+        ta.recycle();
 
         _adapter = new DirAdapter(_context, new ArrayList<File>(),
             _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);

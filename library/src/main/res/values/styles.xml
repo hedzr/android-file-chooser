@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
  * Copyright (C) 2013 Paul Burke
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,29 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
 -->
-<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android" tools:ignore="ResourceName">
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" tools:ignore="ResourceName">
 
-    <public name="FileChooserStyle" type="style"/>
+    <public name="FileChooserStyle" type="style" />
     <style name="FileChooserStyle">
+        <item name="fileChooserDialogStyle">@style/FileChooserDialogStyle</item>
         <item name="fileChooserListItemStyle">@style/FileChooserListItemStyle</item>
     </style>
 
-    <public name="FileChooserListItemStyle" type="style"/>
+    <public name="FileChooserDialogStyle" type="style" />
+    <style name="FileChooserDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowTitleStyle">@style/FileChooserTitleStyle</item>
+    </style>
+
+    <public name="FileChooserTitleStyle" type="style" />
+    <style name="FileChooserTitleStyle">
+        <item name="android:maxLines">1</item>
+        <item name="android:scrollHorizontally">true</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.DialogWindowTitle</item>
+    </style>
+
+    <public name="FileChooserListItemStyle" type="style" />
     <style name="FileChooserListItemStyle">
         <item name="fileChooserTextPrimaryStyle">@style/FileChooserTextPrimaryStyle</item>
         <item name="fileChooserTextSecondaryStyle">@style/FileChooserTextPrimaryStyle</item>
         <item name="fileChooserFileIconStyle">@style/FileChooserFileIconStyle</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
         <item name="android:background">@color/li_row_background</item>
         <item name="android:descendantFocusability">beforeDescendants</item>
         <item name="android:padding">10dp</item>
     </style>
 
-    <public name="FileChooserTextPrimaryStyle" type="style"/>
+    <public name="FileChooserTextPrimaryStyle" type="style" />
     <style name="FileChooserTextPrimaryStyle">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingLeft">@dimen/list_item_padding</item>
         <item name="android:paddingRight">@dimen/list_item_padding</item>
         <item name="android:textColor" tools:ignore="PrivateResource">@color/material_deep_teal_500</item>
@@ -46,10 +54,8 @@
         <item name="android:maxLines">1</item>
     </style>
 
-    <public name="FileChooserTextSecondaryStyle" type="style"/>
+    <public name="FileChooserTextSecondaryStyle" type="style" />
     <style name="FileChooserTextSecondaryStyle">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingLeft">@dimen/list_item_padding</item>
         <item name="android:paddingRight">@dimen/list_item_padding</item>
         <item name="android:textColor" tools:ignore="PrivateResource">@color/material_deep_teal_200</item>
@@ -57,10 +63,8 @@
         <item name="android:maxLines">1</item>
     </style>
 
-    <public name="FileChooserFileIconStyle" type="style"/>
+    <public name="FileChooserFileIconStyle" type="style" />
     <style name="FileChooserFileIconStyle">
-        <item name="android:layout_width">48dp</item>
-        <item name="android:layout_height">48dp</item>
         <item name="android:layout_marginLeft">12dp</item>
         <item name="android:layout_marginRight">6dp</item>
         <item name="android:scaleType">fitCenter</item>
