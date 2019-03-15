@@ -112,7 +112,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     private void init(){
-        // Wrap calculator dialog's theme to context
         TypedArray ta = this._context.obtainStyledAttributes(new int[]{R.attr.fileChooserStyle});
         int style = ta.getResourceId(0, R.style.FileChooserStyle);
         ta.recycle();
@@ -1105,12 +1104,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         }
     }
 
-    private static File __sdcardRoot = new File(".. SDCard Storage") {
-        //@NonNull
-        //@Override
-        //public String getAbsolutePath() {
-        //    return FileUtil.getStoragePath(_context, true);
-        //}
+    private static class RootFile extends File{
+        RootFile(String pathname) {
+            super(pathname);
+        }
 
         @Override
         public boolean isDirectory() {
@@ -1126,53 +1123,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         public long lastModified() {
             return 0L;
         }
-    };
-
-    private static File __primaryRoot = new File(".. Primary Storage") {
-        //@NonNull
-        //@Override
-        //public String getAbsolutePath() {
-        //    return FileUtil.getStoragePath(_context, false);
-        //}
-
-        @Override
-        public boolean isDirectory() {
-            return true;
-        }
-
-        @Override
-        public boolean isHidden() {
-            return false;
-        }
-
-        @Override
-        public long lastModified() {
-            return 0L;
-        }
-    };
-
-    private static File __normalParent = new File("..") {
-        //@NonNull
-        //@Override
-        //public String getAbsolutePath() {
-        //    return _currentDir.getParentFile().getAbsolutePath();
-        //}
-
-        @Override
-        public boolean isDirectory() {
-            return true;
-        }
-
-        @Override
-        public boolean isHidden() {
-            return false;
-        }
-
-        @Override
-        public long lastModified() {
-            return 0L;
-        }
-    };
+    }
 
     private void listDirs() {
         _entries.clear();
@@ -1192,15 +1143,15 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             //File f = Environment.getExternalStorageDirectory();
             //File newRoot = _currentDir.getParentFile();
             if (_currentDir.getAbsolutePath().equals(primaryRoot)) {
-                _entries.add(__sdcardRoot); //⇠
+                _entries.add(new RootFile(".. SDCard Storage")); //⇠
                 up = true;
             } else if (_currentDir.getAbsolutePath().equals(removableRoot)) {
-                _entries.add(__primaryRoot); //⇽
+                _entries.add(new RootFile(".. Primary Storage")); //⇽
                 up = true;
             }
         }
         if (!up && _currentDir.getParentFile() != null && _currentDir.getParentFile().canRead()) {
-            _entries.add(__normalParent);
+            _entries.add(new RootFile(".."));
         }
 
         if (files == null) return;
@@ -1296,8 +1247,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         } else if (file.getName().contains(".. SDCard Storage")) {
             String removableRoot = FileUtil.getStoragePath(_context, true);
-            if (removableRoot != null && Environment.MEDIA_MOUNTED.equals(
-                Environment.getExternalStorageState())) {
+            if (Environment.MEDIA_MOUNTED.equals(
+                            Environment.getExternalStorageState())) {
                 _currentDir = new File(removableRoot);
                 _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
                 if (_deleteModeIndicator != null) _deleteModeIndicator.run();
@@ -1305,12 +1256,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             }
         } else if (file.getName().contains(".. Primary Storage")) {
             String primaryRoot = FileUtil.getStoragePath(_context, false);
-            if (primaryRoot != null) {
-                _currentDir = new File(primaryRoot);
-                _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
-                if (_deleteModeIndicator != null) _deleteModeIndicator.run();
-                _adapter.popAll();
-            }
+            _currentDir = new File(primaryRoot);
+            _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
+            if (_deleteModeIndicator != null) _deleteModeIndicator.run();
+            _adapter.popAll();
         } else {
             switch (_chooseMode) {
                 case CHOOSE_MODE_NORMAL:
