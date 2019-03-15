@@ -31,7 +31,6 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.DrawableRes;
-import android.support.annotation.IntegerRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -42,7 +41,6 @@ import android.support.v4.view.ViewCompat;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -133,11 +131,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
-    private void init(){
+    private void init() {
         init(null);
     }
 
-    private void init(@Nullable @StyleRes Integer fileChooserTheme){
+    private void init(@Nullable @StyleRes Integer fileChooserTheme) {
         if (fileChooserTheme == null) {
             this._context = new ContextThemeWrapper(this._context, R.style.FileChooserStyle);
         } else {
@@ -1132,7 +1130,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         }
     }
 
-    private static class RootFile extends File{
+    private static class RootFile extends File {
         RootFile(String pathname) {
             super(pathname);
         }
