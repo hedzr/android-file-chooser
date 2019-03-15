@@ -31,14 +31,18 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.IntegerRes;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.annotation.StyleRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -81,8 +85,26 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         void onChoosePath(String dir, File dirFile);
     }
 
+    /**
+     * @deprecated will be removed at v1.2
+     */
     public ChooserDialog() {
 
+    }
+
+    public ChooserDialog(Context cxt, @StyleRes int fileChooserTheme) {
+        this._context = cxt;
+        init(fileChooserTheme);
+    }
+
+    public ChooserDialog(Activity activity, @StyleRes int fileChooserTheme) {
+        this._context = activity;
+        init(fileChooserTheme);
+    }
+
+    public ChooserDialog(Fragment fragment, @StyleRes int fileChooserTheme) {
+        this._context = fragment.getActivity();
+        init(fileChooserTheme);
     }
 
     public ChooserDialog(Context cxt) {
@@ -112,10 +134,16 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     private void init(){
-        TypedArray ta = this._context.obtainStyledAttributes(new int[]{R.attr.fileChooserStyle});
-        int style = ta.getResourceId(0, R.style.FileChooserStyle);
-        ta.recycle();
-        this._context = new ContextThemeWrapper(this._context, style);
+        init(null);
+    }
+
+    private void init(@Nullable @StyleRes Integer fileChooserTheme){
+        if (fileChooserTheme == null) {
+            this._context = new ContextThemeWrapper(this._context, R.style.FileChooserStyle);
+        } else {
+            //noinspection UnnecessaryUnboxing
+            this._context = new ContextThemeWrapper(this._context, fileChooserTheme.intValue());
+        }
     }
 
     public ChooserDialog withFilter(FileFilter ff) {
