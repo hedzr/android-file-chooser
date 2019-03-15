@@ -1152,6 +1152,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         }
         if (!up && _currentDir.getParentFile() != null && _currentDir.getParentFile().canRead()) {
             _entries.add(new RootFile(".."));
+            up = true;
         }
 
         if (files == null) return;
