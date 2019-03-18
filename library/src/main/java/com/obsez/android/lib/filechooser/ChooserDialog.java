@@ -1197,7 +1197,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         }
         if (!up && _currentDir.getParentFile() != null && _currentDir.getParentFile().canRead()) {
             _entries.add(new RootFile(".."));
-        } else up = true;
+        }
 
         if (files == null) return;
 
@@ -1219,10 +1219,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         // #45: setup dialog title too
         if (_alertDialog != null && !_disableTitle) {
-            if (up) {
-                _alertDialog.setTitle(_titleRes);
-            } else if (_followDir) {
-                _alertDialog.setTitle(_currentDir.getName());
+            if (_followDir) {
+                if (!up) {
+                    _alertDialog.setTitle(_currentDir.getName());
+                } else _alertDialog.setTitle(_titleRes);
+
             }
         }
 
@@ -1289,7 +1290,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             if (!_list.hasFocus()) _list.requestFocus();
             doGoBack();
             return;
-
         } else if (file.getName().contains(".. SDCard Storage")) {
             String removableRoot = FileUtil.getStoragePath(_context, true);
             if (Environment.MEDIA_MOUNTED.equals(
