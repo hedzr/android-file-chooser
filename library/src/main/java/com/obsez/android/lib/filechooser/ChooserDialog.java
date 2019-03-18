@@ -29,7 +29,6 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Handler;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -612,8 +611,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     final Runnable showOptions = new Runnable() {
                         @Override
                         public void run() {
-                            final ViewGroup.MarginLayoutParams params =
-                                (ViewGroup.MarginLayoutParams) _list.getLayoutParams();
                             if (_options.getHeight() == 0) {
                                 ViewTreeObserver viewTreeObserver = _options.getViewTreeObserver();
                                 viewTreeObserver.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -623,14 +620,14 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             return false;
                                         }
                                         _options.getViewTreeObserver().removeOnPreDrawListener(this);
-                                        Handler handler = new Handler();
-                                        handler.postDelayed(() -> {
-                                            scroll.Int = getListYScroll(_list);
-                                            if (_options.getParent() instanceof FrameLayout) {
-                                                params.bottomMargin = _options.getHeight();
-                                            }
-                                            _options.setVisibility(View.VISIBLE);
-                                        }, 100);
+                                        scroll.Int = getListYScroll(_list);
+                                        if (_options.getParent() instanceof FrameLayout) {
+                                            final ViewGroup.MarginLayoutParams params =
+                                                (ViewGroup.MarginLayoutParams) _list.getLayoutParams();
+                                            params.bottomMargin = _options.getHeight();
+                                            _list.setLayoutParams(params);
+                                        }
+                                        _options.setVisibility(View.VISIBLE);
                                         return true;
                                     }
                                 });
@@ -638,7 +635,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                 scroll.Int = getListYScroll(_list);
                                 _options.setVisibility(View.VISIBLE);
                                 if (_options.getParent() instanceof FrameLayout) {
+                                    final ViewGroup.MarginLayoutParams params =
+                                        (ViewGroup.MarginLayoutParams) _list.getLayoutParams();
                                     params.bottomMargin = _options.getHeight();
+                                    _list.setLayoutParams(params);
                                 }
                             }
                         }
@@ -646,10 +646,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     final Runnable hideOptions = () -> {
                         scroll.Int = getListYScroll(_list);
                         _options.setVisibility(View.GONE);
-                        ViewGroup.MarginLayoutParams params =
-                            (ViewGroup.MarginLayoutParams) _list.getLayoutParams();
                         if (_options.getParent() instanceof FrameLayout) {
+                            ViewGroup.MarginLayoutParams params =
+                                (ViewGroup.MarginLayoutParams) _list.getLayoutParams();
                             params.bottomMargin = 0;
+                            _list.setLayoutParams(params);
                         }
                     };
 
@@ -657,13 +658,12 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         @Override
                         public void onClick(final View view) {
                             if (_options == null) {
-                                // region Draw options view. (this only happens the first time one clicks on
-                                // options)
+                                // region Draw options view. (this only happens the first time one clicks on options)
                                 // Root view (FrameLayout) of the ListView in the AlertDialog.
                                 final int rootId = _context.getResources().getIdentifier("contentPanel", "id",
                                     "android");
                                 final ViewGroup root = ((AlertDialog) dialog).findViewById(rootId);
-                                // In case the was changed or not found.
+                                // In case the root id was changed or not found.
                                 if (root == null) return;
 
                                 // Create options view.
@@ -678,10 +678,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                     params = new FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, BOTTOM);
                                 }
                                 root.addView(options, params);
-
-                                options.setOnClickListener(null);
-                                options.setVisibility(View.INVISIBLE);
-                                _options = options;
 
                                 // Create a button for the option to create a new directory/folder.
                                 final Button createDir = new Button(_context, null,
@@ -723,6 +719,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                     END | CENTER_VERTICAL);
                                 params.rightMargin = 10;
                                 options.addView(delete, params);
+
+                                _options = options;
+                                showOptions.run();
 
                                 // Event Listeners.
                                 createDir.setOnClickListener(new View.OnClickListener() {
@@ -939,9 +938,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                     _deleteModeIndicator.run();
                                 });
                                 // endregion
-                            }
-
-                            if (_options.getVisibility() == View.VISIBLE) {
+                            } else if (_options.getVisibility() == View.VISIBLE) {
                                 hideOptions.run();
                             } else {
                                 showOptions.run();
