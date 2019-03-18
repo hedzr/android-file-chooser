@@ -12,7 +12,7 @@
 
     <TextView
         android:id="@+id/text"
-        style="?attr/fileChooserTextPrimaryStyle"
+        style="?attr/fileChooserTextNameStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="false"
@@ -22,7 +22,7 @@
 
     <TextView
         android:id="@+id/txt_size"
-        style="?attr/fileChooserTextSecondaryStyle"
+        style="?attr/fileChooserTextSizeStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/text"
@@ -32,7 +32,7 @@
 
     <TextView
         android:id="@+id/txt_date"
-        style="?attr/fileChooserTextSecondaryStyle"
+        style="?attr/fileChooserTextDateStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/text"

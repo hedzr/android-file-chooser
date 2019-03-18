@@ -6,6 +6,9 @@
     <declare-styleable name="FileChooser">
         <attr name="fileChooserDialogStyle" format="reference" />
         <attr name="fileChooserListItemStyle" format="reference" />
+        <attr name="fileChooserTextNameStyle" format="reference" />
+        <attr name="fileChooserTextSizeStyle" format="reference" />
+        <attr name="fileChooserTextDateStyle" format="reference" />
         <attr name="fileChooserFileIconStyle" format="reference" />
         <attr name="fileListItemSelectedTint" format="color|reference" />
         <attr name="fileChooserPathViewStyle" format="reference" />
