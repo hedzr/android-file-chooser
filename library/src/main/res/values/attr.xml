@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="ResourceName">
+
+    <attr name="fileChooserStyle" format="reference" />
+
+    <declare-styleable name="FileChooser">
+        <attr name="fileChooserDialogStyle" format="reference" />
+        <attr name="fileChooserListItemStyle" format="reference" />
+        <attr name="fileChooserTextNameStyle" format="reference" />
+        <attr name="fileChooserTextSizeStyle" format="reference" />
+        <attr name="fileChooserTextDateStyle" format="reference" />
+        <attr name="fileChooserFileIconStyle" format="reference" />
+        <attr name="fileListItemSelectedTint" format="color|reference" />
+        <attr name="fileChooserPathViewStyle" format="reference" />
+        <attr name="fileChooserPathViewElevation" format="integer|reference" />
+        <attr name="fileChooserNewFolderStyle" format="reference" />
+        <attr name="fileChooserNewFolderOverlayColor" format="color|reference" />
+        <attr name="fileChooserNewFolderBackgroundColor" format="color|reference" />
+        <attr name="fileChooserNewFolderWidthWeight" format="float|reference" />
+        <attr name="fileChooserNewFolderElevation" format="integer|reference" />
+        <attr name="fileChooserNewFolderTextColor" format="color|reference" />
+    </declare-styleable>
+
+</resources>
