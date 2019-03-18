@@ -658,7 +658,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         @Override
                         public void onClick(final View view) {
                             if (_newFolderView != null
-                                && _newFolderView.getVisibility() == VISIBLE) return;
+                                && _newFolderView.getVisibility() == View.VISIBLE) return;
                             
                             if (_options == null) {
                                 // region Draw options view. (this only happens the first time one clicks on options)
