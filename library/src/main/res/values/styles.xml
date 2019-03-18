@@ -25,13 +25,23 @@
     <!-- Dialog -->
     <public name="FileChooserDialogStyle" type="style" />
     <style name="FileChooserDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:alertDialogTheme">@style/FileChooserAlertDialogTheme</item>
+        <!--<item name="android:alertDialogStyle">@style/FileChooserAlertDialogStyle</item>-->
+    </style>
+
+    <public name="FileChooserAlertDialogTheme" type="style" />
+    <style name="FileChooserAlertDialogTheme">
         <item name="android:textColorPrimary">@color/material_deep_teal_500</item>
-        <item name="colorAccent">@color/material_deep_teal_500</item>
+        <item name="colorAccent">@color/material_deep_teal_200</item>
         <item name="android:windowTitleStyle">@style/FileChooserTitleStyle</item>
-        <item name="android:buttonStyle">@android:style/DeviceDefault.Light.ButtonBar.AlertDialog</item>
-        <item name="fileChooserNegativeButtonTextColor">?attr/colorAccent</item>
-        <item name="fileChooserNeutralButtonTextColor">?attr/colorAccent</item>
-        <item name="fileChooserPositiveButtonTextColor">?attr/colorAccent</item>
+        <item name="android:buttonBarStyle">@android:style/Holo.Light.ButtonBar.AlertDialog</item>
+        <item name="android:buttonBarButtonStyle">@style/FileChooserButtonStyle</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
+    <public name="FileChooserAlertDialogStyle" type="style" />
+    <style name="FileChooserAlertDialogStyle">
     </style>
 
     <public name="FileChooserTitleStyle" type="style" />
@@ -41,11 +51,17 @@
         <item name="android:textAppearance">@android:style/TextAppearance.DialogWindowTitle</item>
     </style>
 
+    <public name="FileChooserButtonStyle" type="style" />
+    <style name="FileChooserButtonStyle" parent="@android:style/Holo.Light.ButtonBar.AlertDialog">
+        <item name="android:background">#f00</item>
+        <item name="android:textColor">#0f0</item>
+    </style>
+
     <!-- List -->
     <public name="FileChooserListItemStyle" type="style" />
     <style name="FileChooserListItemStyle">
-        <item name="fileChooserTextPrimaryStyle">@style/FileChooserTextPrimaryStyle</item>
-        <item name="fileChooserTextSecondaryStyle">@style/FileChooserTextPrimaryStyle</item>
+        <item name="fileChooserTextNameStyle">@style/FileChooserTextNameStyle</item>
+        <item name="fileChooserTextSizeStyle">@style/FileChooserTextSizeStyle</item>
         <item name="fileChooserFileIconStyle">@style/FileChooserFileIconStyle</item>
         <item name="android:background">@color/li_row_background</item>
         <item name="fileListItemSelectedTint">@color/li_row_background_tint</item>
@@ -53,8 +69,8 @@
         <item name="android:padding">10dp</item>
     </style>
 
-    <public name="FileChooserTextPrimaryStyle" type="style" />
-    <style name="FileChooserTextPrimaryStyle">
+    <public name="FileChooserTextNameStyle" type="style" />
+    <style name="FileChooserTextNameStyle">
         <item name="android:paddingLeft">@dimen/list_item_padding</item>
         <item name="android:paddingRight">@dimen/list_item_padding</item>
         <item name="android:drawablePadding">@dimen/list_item_padding</item>
@@ -66,8 +82,8 @@
         <item name="android:padding">0dp</item>
     </style>
 
-    <public name="FileChooserTextSecondaryStyle" type="style" />
-    <style name="FileChooserTextSecondaryStyle">
+    <public name="FileChooserTextSizeStyle" type="style" />
+    <style name="FileChooserTextSizeStyle">
         <item name="android:paddingLeft">@dimen/list_item_padding</item>
         <item name="android:paddingRight">@dimen/list_item_padding</item>
         <item name="android:textColor">@color/material_deep_teal_200</item>

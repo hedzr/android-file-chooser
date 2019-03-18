@@ -14,29 +14,38 @@
     </style>
 
     <style name="FileChooserDialogStyle.Dark" parent="@android:style/Theme.Holo.Dialog">
+        <item name="android:alertDialogTheme">@style/FileChooserAlertDialogTheme.Dark</item>
+    </style>
+
+    <style name="FileChooserAlertDialogTheme.Dark" parent="FileChooserAlertDialogTheme">
         <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:textColorPrimary">@android:color/holo_blue_light</item>
+        <item name="colorAccent">@android:color/holo_blue_light</item>
         <item name="android:windowTitleStyle">@style/FileChooserTitleStyle.Dark</item>
-        <item name="android:buttonStyle">@android:style/Widget.Holo.Light.Button</item>
-        <item name="android:textColorPrimary">@android:style/TextAppearance.Holo.Medium</item>
-        <item name="colorAccent">@android:style/TextAppearance.Holo.DialogWindowTitle</item>
+        <item name="android:buttonBarButtonStyle">@style/FileChooserButtonStyle.Dark</item>
     </style>
 
     <style name="FileChooserTitleStyle.Dark" parent="FileChooserTitleStyle">
         <item name="android:textAppearance">@android:style/TextAppearance.Holo.DialogWindowTitle</item>
     </style>
 
+    <style name="FileChooserButtonStyle.Dark" parent="FileChooserButtonStyle">
+        <item name="android:textColor">@android:color/holo_blue_light</item>
+    </style>
+
     <style name="FileChooserListItemStyle.Dark" parent="FileChooserListItemStyle">
-        <item name="fileChooserTextPrimaryStyle">@style/FileChooserTextPrimaryStyle.Dark</item>
-        <item name="fileChooserTextSecondaryStyle">@style/FileChooserTextSecondaryStyle.Dark</item>
+        <item name="fileChooserTextNameStyle">@style/FileChooserTextNameStyle.Dark</item>
+        <item name="fileChooserTextSizeStyle">@style/FileChooserTextSizeDateStyle.Dark</item>
+        <item name="fileChooserTextDateStyle">@style/FileChooserTextSizeDateStyle.Dark</item>
         <item name="android:background">#767676</item>
         <item name="fileListItemSelectedTint">#40ffffff</item>
     </style>
 
-    <style name="FileChooserTextPrimaryStyle.Dark" parent="FileChooserTextPrimaryStyle">
+    <style name="FileChooserTextNameStyle.Dark" parent="FileChooserTextNameStyle">
         <item name="android:textColor">#fefefe</item>
     </style>
 
-    <style name="FileChooserTextSecondaryStyle.Dark" parent="FileChooserTextSecondaryStyle">
+    <style name="FileChooserTextSizeDateStyle.Dark" parent="FileChooserTextSizeStyle">
         <item name="android:textColor">#fefefe</item>
     </style>
 

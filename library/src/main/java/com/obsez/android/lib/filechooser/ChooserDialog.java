@@ -530,18 +530,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         _alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(final DialogInterface dialog) {
-                final int accentColor = UiUtil.getThemeAccentColor(_context);
-                TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
-                int negativeColor = ta.getColor(R.styleable.FileChooser_fileChooserNegativeButtonTextColor, accentColor);
-                int neutralColor = ta.getColor(R.styleable.FileChooser_fileChooserNeutralButtonTextColor, accentColor);
-                int positiveColor = ta.getColor(R.styleable.FileChooser_fileChooserPositiveButtonTextColor, accentColor);
-
-                Button negative = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setTextColor(negativeColor);
-                Button positive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setTextColor(positiveColor);
-                ta.recycle();
                 if (!_dismissOnButtonClick) {
+                    Button negative = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+                    Button positive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
 
                     negative.setOnClickListener(v -> {
                         if (_negativeListener != null) {
@@ -562,6 +553,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     throw new RuntimeException("withOptionResources() should be called at first.");
                 }
 
+                final int accentColor = UiUtil.getThemeAccentColor(_context);
                 if (_enableOptions) {
                     final PorterDuffColorFilter filter = new PorterDuffColorFilter(accentColor,
                         PorterDuff.Mode.SRC_IN);
