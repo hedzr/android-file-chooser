@@ -702,7 +702,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
                                 // Create a button for the option to delete a file.
                                 final Button delete = new Button(_context, null,
-                                    R.style.FileChooserButtonStyle);
+                                    android.R.attr.buttonBarButtonStyle);
                                 delete.setText(_deleteRes);
                                 delete.setTextColor(buttonColor);
                                 final Drawable bin = ContextCompat.getDrawable(_context,
