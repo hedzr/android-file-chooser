@@ -553,14 +553,13 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     throw new RuntimeException("withOptionResources() should be called at first.");
                 }
 
-                final int accentColor = UiUtil.getThemeAccentColor(_context);
+                final Button options = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
+                final int buttonColor = options.getCurrentTextColor();
                 if (_enableOptions) {
-                    final PorterDuffColorFilter filter = new PorterDuffColorFilter(accentColor,
+                    final PorterDuffColorFilter filter = new PorterDuffColorFilter(buttonColor,
                         PorterDuff.Mode.SRC_IN);
 
-                    final Button options = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
                     options.setText("");
-                    options.setTextColor(accentColor);
                     options.setVisibility(View.VISIBLE);
                     final Drawable drawable = ContextCompat.getDrawable(_context,
                         _optionsIconRes != -1 ? _optionsIconRes : R.drawable.ic_menu_24dp);
@@ -694,7 +693,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                 final Button createDir = new Button(_context, null,
                                     android.R.attr.buttonBarButtonStyle);
                                 createDir.setText(_createDirRes);
-                                createDir.setTextColor(accentColor);
+                                createDir.setTextColor(buttonColor);
                                 // Drawable for the button.
                                 final Drawable plus = ContextCompat.getDrawable(_context,
                                     _createDirIconRes != -1 ? _createDirIconRes : R.drawable.ic_add_24dp);
@@ -713,9 +712,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
                                 // Create a button for the option to delete a file.
                                 final Button delete = new Button(_context, null,
-                                    android.R.attr.buttonBarButtonStyle);
+                                    R.style.FileChooserButtonStyle);
                                 delete.setText(_deleteRes);
-                                delete.setTextColor(accentColor);
+                                delete.setTextColor(buttonColor);
                                 final Drawable bin = ContextCompat.getDrawable(_context,
                                     _deleteIconRes != -1 ? _deleteIconRes : R.drawable.ic_delete_24dp);
                                 if (bin != null) {
@@ -827,7 +826,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             final Button cancel = new Button(_context, null,
                                                 android.R.attr.buttonBarButtonStyle);
                                             cancel.setText(_newFolderCancelRes);
-                                            cancel.setTextColor(accentColor);
+                                            cancel.setTextColor(buttonColor);
                                             params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                                                 START);
                                             buttons.addView(cancel, params);
@@ -836,7 +835,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             final Button ok = new Button(_context, null,
                                                 android.R.attr.buttonBarButtonStyle);
                                             ok.setText(_newFolderOkRes);
-                                            ok.setTextColor(accentColor);
+                                            ok.setTextColor(buttonColor);
                                             params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                                                 END);
                                             buttons.addView(ok, params);
@@ -921,9 +920,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                                     AlertDialog.BUTTON_NEUTRAL).getCompoundDrawables()
                                                     [0].clearColorFilter();
                                                 _alertDialog.getButton(
-                                                    AlertDialog.BUTTON_NEUTRAL).setTextColor(accentColor);
+                                                    AlertDialog.BUTTON_NEUTRAL).setTextColor(buttonColor);
                                                 delete.getCompoundDrawables()[0].clearColorFilter();
-                                                delete.setTextColor(accentColor);
+                                                delete.setTextColor(buttonColor);
                                             }
                                         };
                                     }
