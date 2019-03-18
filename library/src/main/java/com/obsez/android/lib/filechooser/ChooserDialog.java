@@ -657,6 +657,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     options.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(final View view) {
+                            if (_newFolderView != null
+                                && _newFolderView.getVisibility() == VISIBLE) return;
+                            
                             if (_options == null) {
                                 // region Draw options view. (this only happens the first time one clicks on options)
                                 // Root view (FrameLayout) of the ListView in the AlertDialog.
