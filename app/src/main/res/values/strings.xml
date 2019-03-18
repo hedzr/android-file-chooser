@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">android-file-chooser demo</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -21,6 +21,6 @@
     <string name="filter_images">Filter images only</string>
     <string name="display_icon">Display an icon</string>
     <string name="display_long_dates">Display long dates</string>
-
-
+    <string name="dark_theme">Use dark theme</string>
+    <string name="reserved">Reserved</string>
 </resources>

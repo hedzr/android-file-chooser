@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
  * Copyright (C) 2013 Paul Burke
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,16 +13,130 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
 -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" tools:ignore="ResourceName,PrivateResource">
 
-    <style name="fileChooserName">
-        <item name="android:drawablePadding">@dimen/list_item_padding</item>
-        <item name="android:ellipsize">end</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:maxLines">2</item>
+    <public name="FileChooserStyle" type="style" />
+    <style name="FileChooserStyle">
+        <item name="android:textColor">@color/material_deep_teal_500</item>
+        <item name="android:textColorPrimary">@color/material_deep_teal_500</item>
+        <item name="android:textColorSecondary">@color/material_deep_teal_500</item>
+        <item name="colorPrimary">@color/material_deep_teal_500</item>
+        <item name="colorPrimaryDark">@color/material_deep_teal_500</item>
+        <item name="colorAccent">@color/material_deep_teal_200</item>
+        <item name="fileChooserDialogGravity">center</item>
+        <item name="fileChooserDialogBackgroundDimAmount">0.3</item>
+        <item name="fileChooserDialogStyle">@style/FileChooserDialogStyle</item>
+        <item name="fileChooserListItemStyle">@style/FileChooserListItemStyle</item>
+        <item name="fileChooserPathViewStyle">@style/FileChooserPathViewStyle</item>
+        <item name="fileChooserNewFolderStyle">@style/FileChooserNewFolderStyle</item>
+    </style>
+
+    <!-- Dialog -->
+    <public name="FileChooserDialogStyle" type="style" />
+    <style name="FileChooserDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowTitleStyle">@style/FileChooserTitleStyle</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
+        <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:buttonBarStyle">@android:style/Holo.Light.ButtonBar.AlertDialog</item>
+        <item name="android:buttonBarButtonStyle">@style/FileChooserButtonStyle</item>
+    </style>
+
+    <public name="FileChooserTitleStyle" type="style" />
+    <style name="FileChooserTitleStyle">
+        <item name="android:maxLines">1</item>
+        <item name="android:scrollHorizontally">true</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.DialogWindowTitle</item>
+        <item name="android:textColor">#f000</item>
+    </style>
+
+    <public name="FileChooserButtonStyle" type="style" />
+    <style name="FileChooserButtonStyle" parent="@android:style/Holo.Light.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/material_deep_teal_500</item>
+    </style>
+
+    <!-- List -->
+    <public name="FileChooserListItemStyle" type="style" />
+    <style name="FileChooserListItemStyle">
+        <item name="fileChooserTextNameStyle">@style/FileChooserTextNameStyle</item>
+        <item name="fileChooserTextSizeStyle">@style/FileChooserTextSizeStyle</item>
+        <item name="fileChooserTextDateStyle">@style/FileChooserTextDateStyle</item>
+        <item name="fileChooserFileIconStyle">@style/FileChooserFileIconStyle</item>
+        <item name="android:background">@color/li_row_background</item>
+        <item name="fileListItemSelectedTint">@color/li_row_background_tint</item>
+        <item name="android:descendantFocusability">beforeDescendants</item>
+        <item name="android:padding">10dp</item>
+    </style>
+
+    <public name="FileChooserTextNameStyle" type="style" />
+    <style name="FileChooserTextNameStyle">
         <item name="android:paddingLeft">@dimen/list_item_padding</item>
         <item name="android:paddingRight">@dimen/list_item_padding</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:drawablePadding">@dimen/list_item_padding</item>
+        <item name="android:textColor">@color/material_deep_teal_500</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:padding">0dp</item>
+    </style>
+
+    <public name="FileChooserTextSizeStyle" type="style" />
+    <style name="FileChooserTextSizeStyle">
+        <item name="android:paddingLeft">@dimen/list_item_padding</item>
+        <item name="android:paddingRight">@dimen/list_item_padding</item>
+        <item name="android:textColor">@color/material_deep_teal_200</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:padding">0dp</item>
+    </style>
+
+    <public name="FileChooserTextDateStyle" type="style" />
+    <style name="FileChooserTextDateStyle">
+        <item name="android:paddingLeft">@dimen/list_item_padding</item>
+        <item name="android:paddingRight">@dimen/list_item_padding</item>
+        <item name="android:textColor">@color/material_deep_teal_200</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:padding">0dp</item>
+    </style>
+
+    <public name="FileChooserFileIconStyle" type="style" />
+    <style name="FileChooserFileIconStyle">
+        <item name="android:layout_marginLeft">12dp</item>
+        <item name="android:layout_marginRight">6dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:padding">0dp</item>
+    </style>
+
+    <!-- PathView -->
+    <public name="FileChooserPathViewStyle" type="style" />
+    <style name="FileChooserPathViewStyle">
+        <item name="android:background">#ffffffff</item>
+        <item name="android:textColor">#40000000</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingTop">3dp</item>
+        <item name="android:paddingBottom">3dp</item>
+        <item name="android:lines">1</item>
+        <item name="android:maxLines">1</item>
+        <item name="fileChooserPathViewElevation">2</item>
+    </style>
+
+    <!-- New Folder -->
+    <public name="FileChooserNewFolderStyle" type="style" />
+    <style name="FileChooserNewFolderStyle">
+        <item name="fileChooserNewFolderOverlayColor">#60ffffff</item>
+        <item name="fileChooserNewFolderBackgroundColor">#ffffffff</item>
+        <item name="fileChooserNewFolderWidthWeight">55.56</item>
+        <item name="fileChooserNewFolderElevation">25</item>
+        <item name="fileChooserNewFolderTextColor">@color/material_deep_teal_500</item>
     </style>
 
 </resources>

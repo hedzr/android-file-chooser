@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
  * Copyright (C) 2012 Paul Burke
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
 -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
-	<dimen name="list_padding">0dp</dimen>
-	<dimen name="list_item_padding">16dp</dimen>
-
-	<color name="material_deep_teal_200">#ff80cbc4</color>
-	<color name="material_deep_teal_500">#ff009688</color>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="ResourceName">
+    <dimen name="list_padding">0dp</dimen>
+    <dimen name="list_item_padding">8dp</dimen>
 </resources>

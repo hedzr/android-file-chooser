@@ -39,8 +39,7 @@ public final class UiUtil {
 
     public static Drawable resolveFileTypeIcon(@NonNull Context ctx, Uri fileUri) {
         final Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(fileUri);
-        intent.setType(getMimeType(ctx, fileUri));
+        intent.setDataAndType(fileUri, getMimeType(ctx, fileUri));
 
         final PackageManager pm = ctx.getPackageManager();
         final List<ResolveInfo> matches = pm.queryIntentActivities(intent, 0);
@@ -62,19 +61,6 @@ public final class UiUtil {
                 fileExtension.toLowerCase());
         }
         return mimeType;
-    }
-
-    public static int getThemeAccentColor(@NonNull Context context) {
-        int colorAttr;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            colorAttr = android.R.attr.colorAccent;
-        } else {
-            //Get colorAccent defined for AppCompat
-            colorAttr = context.getResources().getIdentifier("colorAccent", "attr", context.getPackageName());
-        }
-        TypedValue outValue = new TypedValue();
-        context.getTheme().resolveAttribute(colorAttr, outValue, true);
-        return outValue.data;
     }
 
     public static void hideKeyboard(@NonNull Activity activity) {
