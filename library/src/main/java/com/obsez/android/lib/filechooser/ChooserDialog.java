@@ -47,6 +47,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -136,6 +138,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     private void init(@Nullable @StyleRes Integer fileChooserTheme) {
+        if (this._context instanceof AppCompatActivity || this._context instanceof Activity) {
+            this._activity = (Activity) this._context;
+        }
+
         if (fileChooserTheme == null) {
             this._context = new ContextThemeWrapper(this._context, R.style.FileChooserStyle);
         } else {
@@ -556,9 +562,12 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 final Button options = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
                 final int buttonColor = options.getCurrentTextColor();
                 if (_enableOptions) {
+                    final Button options = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
+
+                    final int buttonColor = options.getCurrentTextColor();
                     final PorterDuffColorFilter filter = new PorterDuffColorFilter(buttonColor,
                         PorterDuff.Mode.SRC_IN);
-
+                    
                     options.setText("");
                     options.setVisibility(View.VISIBLE);
                     final Drawable drawable = ContextCompat.getDrawable(_context,
@@ -968,6 +977,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         // Check for permissions if SDK version is >= 23
         if (Build.VERSION.SDK_INT >= 23) {
+            if (_activity == null) {
+                throw new RuntimeException("Either pass an Activity as Context, or grant READ_EXTERNAL_STORAGE and WRITE_EXTERNAL_STORAGE permission!");
+            }
+
             final int PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE = 0;
             if (_enableOptions) {
                 int readPermissionCheck = ContextCompat.checkSelfPermission(_context,
@@ -978,9 +991,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 //if = permission granted
                 if (readPermissionCheck == PackageManager.PERMISSION_GRANTED
                     && writePermissionCheck == PackageManager.PERMISSION_GRANTED) {
-                    _alertDialog.show();
+                    showDialog();
                 } else {
-                    ActivityCompat.requestPermissions((Activity) _context,
+                    ActivityCompat.requestPermissions(_activity,
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
@@ -992,7 +1005,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
                     if (readPermissionCheck == PackageManager.PERMISSION_GRANTED
                         && writePermissionCheck == PackageManager.PERMISSION_GRANTED) {
-                        _alertDialog.show();
+                        showDialog();
                     } else {
                         Toast.makeText(_context,
                             "Cannot request Read/Write permissions on SDCard, the operation was ignores.",
@@ -1006,9 +1019,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
                 //if = permission granted
                 if (readPermissionCheck == PackageManager.PERMISSION_GRANTED) {
-                    _alertDialog.show();
+                    showDialog();
                 } else {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) _context,
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(_activity,
                         Manifest.permission.READ_CONTACTS)) {
 
                         // Show an expanation to the user *asynchronously* -- don't block
@@ -1021,7 +1034,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
                         // No explanation needed, we can request the permission.
 
-                        ActivityCompat.requestPermissions((Activity) _context,
+                        ActivityCompat.requestPermissions(_activity,
                             new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                             PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
 
@@ -1029,7 +1042,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                             Manifest.permission.READ_EXTERNAL_STORAGE);
 
                         if (readPermissionCheck == PackageManager.PERMISSION_GRANTED) {
-                            _alertDialog.show();
+                            showDialog();
                         } else {
                             Toast.makeText(_context,
                                 "Cannot request Read/Write permissions on SDCard, the operation was ignores.",
@@ -1041,13 +1054,28 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 }
             }
         } else {
-            _alertDialog.show();
+            showDialog();
+        }
+        return this;
+    }
+
+    private void showDialog() {
+        Window window = _alertDialog.getWindow();
+        if (window != null) {
+            TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
+            window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+            window.setGravity(ta.getInt(R.styleable.FileChooser_fileChooserDialogGravity, Gravity.CENTER));
+            WindowManager.LayoutParams lp = window.getAttributes();
+            lp.dimAmount = ta.getFloat(R.styleable.FileChooser_fileChooserDialogBackgroundDimAmount, 0.3f);
+            lp.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+            window.setAttributes(lp);
+            ta.recycle();
         }
 
         if (_enableMultiple) {
             _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
         }
-        return this;
+        _alertDialog.show();
     }
 
     private void displayPath(String path) {
@@ -1194,9 +1222,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 up = true;
             }
         }
+        boolean displayPath = false;
         if (!up && _currentDir.getParentFile() != null && _currentDir.getParentFile().canRead()) {
             _entries.add(new RootFile(".."));
-        } else up = true;
+            displayPath = true;
+        }
 
         if (files == null) return;
 
@@ -1218,18 +1248,19 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         // #45: setup dialog title too
         if (_alertDialog != null && !_disableTitle) {
-            if (up) {
-                _alertDialog.setTitle(_titleRes);
-            } else if (_followDir) {
-                _alertDialog.setTitle(_currentDir.getName());
+            if (_followDir) {
+                if (displayPath) {
+                    _alertDialog.setTitle(_currentDir.getName());
+                } else _alertDialog.setTitle(_titleRes);
+
             }
         }
 
         if (_alertDialog != null && _displayPath) {
-            if (up) {
-                displayPath(null);
-            } else {
+            if (displayPath) {
                 displayPath(_currentDir.getPath());
+            } else {
+                displayPath(null);
             }
         }
         //_hoverIndex = -1;
@@ -1288,7 +1319,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             if (!_list.hasFocus()) _list.requestFocus();
             doGoBack();
             return;
-
         } else if (file.getName().contains(".. SDCard Storage")) {
             String removableRoot = FileUtil.getStoragePath(_context, true);
             if (Environment.MEDIA_MOUNTED.equals(
@@ -1495,6 +1525,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private DirAdapter _adapter;
     private File _currentDir;
     private Context _context;
+    private @Nullable Activity _activity = null;
     private AlertDialog _alertDialog;
     private ListView _list;
     private Result _result = null;

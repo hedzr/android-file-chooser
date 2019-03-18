@@ -8,13 +8,15 @@
 
     <!-- Dark theme example for file chooser -->
     <style name="FileChooserStyle.Dark" parent="FileChooserStyle">
+        <item name="fileChooserDialogGravity">center</item>
+        <item name="fileChooserDialogBackgroundDimAmount">0.8</item>
         <item name="fileChooserDialogStyle">@style/FileChooserDialogStyle.Dark</item>
         <item name="fileChooserListItemStyle">@style/FileChooserListItemStyle.Dark</item>
         <item name="fileChooserPathViewStyle">@style/FileChooserPathViewStyle.Dark</item>
         <item name="fileChooserNewFolderStyle">@style/FileChooserNewFolderStyle.Dark</item>
     </style>
 
-    <style name="FileChooserDialogStyle.Dark" parent="@android:style/Theme.Holo.Dialog">
+    <style name="FileChooserDialogStyle.Dark" parent="@android:style/Theme.DeviceDefault">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:textColorPrimary">@android:color/holo_blue_light</item>
         <item name="colorAccent">@android:color/holo_blue_light</item>

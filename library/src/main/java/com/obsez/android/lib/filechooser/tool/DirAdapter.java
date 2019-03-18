@@ -166,8 +166,17 @@ public class DirAdapter extends ArrayAdapter<File> {
 
     @Override
     public long getItemId(int position) {
-        //noinspection ConstantConditions
-        return getItem(position).hashCode();
+        try {
+            //noinspection ConstantConditions
+            return getItem(position).hashCode();
+        } catch (IndexOutOfBoundsException e) {
+            try {
+                //noinspection ConstantConditions
+                return getItem(0).hashCode();
+            } catch (IndexOutOfBoundsException ex) {
+                return 0;
+            }
+        }
     }
 
     public void selectItem(int position) {

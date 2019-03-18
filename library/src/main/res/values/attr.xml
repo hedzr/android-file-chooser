@@ -4,6 +4,19 @@
     <attr name="fileChooserStyle" format="reference" />
 
     <declare-styleable name="FileChooser">
+        <attr name="fileChooserDialogGravity" format="flags">
+            <flag name="no_gravity" value="0" />
+            <flag name="left" value="3" />
+            <flag name="top" value="48" />
+            <flag name="right" value="5" />
+            <flag name="bottom" value="80" />
+            <flag name="center" value="17" />
+            <flag name="center_horizontal" value="1" />
+            <flag name="center_vertical" value="16" />
+            <flag name="start" value="8388611" />
+            <flag name="end" value="8388613" />
+        </attr>
+        <attr name="fileChooserDialogBackgroundDimAmount" format="float|reference" />
         <attr name="fileChooserDialogStyle" format="reference" />
         <attr name="fileChooserListItemStyle" format="reference" />
         <attr name="fileChooserTextNameStyle" format="reference" />
