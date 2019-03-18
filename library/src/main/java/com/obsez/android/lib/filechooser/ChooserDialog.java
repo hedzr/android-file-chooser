@@ -553,12 +553,13 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     throw new RuntimeException("withOptionResources() should be called at first.");
                 }
 
-                final Button options = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
-                final int buttonColor = options.getCurrentTextColor();
                 if (_enableOptions) {
+                    final Button options = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
+
+                    final int buttonColor = options.getCurrentTextColor();
                     final PorterDuffColorFilter filter = new PorterDuffColorFilter(buttonColor,
                         PorterDuff.Mode.SRC_IN);
-
+                    
                     options.setText("");
                     options.setVisibility(View.VISIBLE);
                     final Drawable drawable = ContextCompat.getDrawable(_context,
