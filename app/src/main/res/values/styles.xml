@@ -14,7 +14,7 @@
         <item name="fileChooserNewFolderStyle">@style/FileChooserNewFolderStyle.Dark</item>
     </style>
 
-    <style name="FileChooserDialogStyle.Dark" parent="@android:style/Theme.Holo.Dialog">
+    <style name="FileChooserDialogStyle.Dark" parent="@android:style/Theme.DeviceDefault">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:textColorPrimary">@android:color/holo_blue_light</item>
         <item name="colorAccent">@android:color/holo_blue_light</item>

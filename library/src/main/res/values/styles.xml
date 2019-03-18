@@ -20,6 +20,8 @@
         <item name="android:textColor">@color/material_deep_teal_500</item>
         <item name="android:textColorPrimary">@color/material_deep_teal_500</item>
         <item name="android:textColorSecondary">@color/material_deep_teal_500</item>
+        <item name="colorPrimary">@color/material_deep_teal_500</item>
+        <item name="colorPrimaryDark">@color/material_deep_teal_500</item>
         <item name="colorAccent">@color/material_deep_teal_200</item>
         <item name="fileChooserDialogStyle">@style/FileChooserDialogStyle</item>
         <item name="fileChooserListItemStyle">@style/FileChooserListItemStyle</item>
@@ -30,6 +32,7 @@
     <!-- Dialog -->
     <public name="FileChooserDialogStyle" type="style" />
     <style name="FileChooserDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowTitleStyle">@style/FileChooserTitleStyle</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
