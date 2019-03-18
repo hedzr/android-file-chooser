@@ -1077,7 +1077,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             _pathView = new TextView(context);
             root.addView(_pathView, 0, params);
 
-            _pathView.bringToFront();
             int elevation = ta.getInt(R.styleable.FileChooser_fileChooserPathViewElevation, 2);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 _pathView.setElevation(elevation);
