@@ -29,7 +29,6 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Handler;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -537,10 +536,22 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         _alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(final DialogInterface dialog) {
-                if (!_dismissOnButtonClick) {
-                    Button negative = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
-                    Button positive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                final Button options = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
+                final Button negative = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+                final Button positive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
 
+                // ensure that the buttons have the right order
+                ViewGroup parentLayout = (ViewGroup) positive.getParent();
+                parentLayout.removeAllViews();
+                parentLayout.addView(options, 0);
+                parentLayout.addView(negative, 1);
+                parentLayout.addView(positive, 2);
+
+                if (_enableMultiple) {
+                    positive.setVisibility(View.INVISIBLE);
+                }
+
+                if (!_dismissOnButtonClick) {
                     negative.setOnClickListener(v -> {
                         if (_negativeListener != null) {
                             _negativeListener.onClick(_alertDialog, AlertDialog.BUTTON_NEGATIVE);
@@ -561,12 +572,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 }
 
                 if (_enableOptions) {
-                    final Button options = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
-
                     final int buttonColor = options.getCurrentTextColor();
                     final PorterDuffColorFilter filter = new PorterDuffColorFilter(buttonColor,
                         PorterDuff.Mode.SRC_IN);
-                    
+
                     options.setText("");
                     options.setVisibility(View.VISIBLE);
                     final Drawable drawable = ContextCompat.getDrawable(_context,
@@ -602,8 +611,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     final Runnable showOptions = new Runnable() {
                         @Override
                         public void run() {
-                            final ViewGroup.MarginLayoutParams params =
-                                (ViewGroup.MarginLayoutParams) _list.getLayoutParams();
                             if (_options.getHeight() == 0) {
                                 ViewTreeObserver viewTreeObserver = _options.getViewTreeObserver();
                                 viewTreeObserver.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -613,89 +620,64 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             return false;
                                         }
                                         _options.getViewTreeObserver().removeOnPreDrawListener(this);
-                                        Handler handler = new Handler();
-                                        handler.postDelayed(() -> {
-                                            scroll.Int = getListYScroll(_list);
-                                            if (_options.getParent() instanceof LinearLayout) {
-                                                params.height =
-                                                    ((LinearLayout) options.getParent()).getHeight()
-                                                        - _options.getHeight()
-                                                        - (_pathView != null
-                                                        && _pathView.getVisibility() == View.VISIBLE
-                                                        ? _pathView.getHeight() : 0);
-                                            } else {
-                                                params.bottomMargin = _options.getHeight();
-                                            }
+                                        scroll.Int = getListYScroll(_list);
+                                        if (_options.getParent() instanceof FrameLayout) {
+                                            final ViewGroup.MarginLayoutParams params =
+                                                (ViewGroup.MarginLayoutParams) _list.getLayoutParams();
+                                            params.bottomMargin = _options.getHeight();
                                             _list.setLayoutParams(params);
-                                            _options.setVisibility(View.VISIBLE);
-                                        }, 100);
+                                        }
+                                        _options.setVisibility(View.VISIBLE);
                                         return true;
                                     }
                                 });
                             } else {
                                 scroll.Int = getListYScroll(_list);
                                 _options.setVisibility(View.VISIBLE);
-                                if (_options.getParent() instanceof LinearLayout) {
-                                    params.height =
-                                        ((LinearLayout) _options.getParent()).getHeight()
-                                            - _options.getHeight()
-                                            - (_pathView != null && _pathView.getVisibility() == View.VISIBLE
-                                            ? _pathView.getHeight() : 0);
-                                } else {
+                                if (_options.getParent() instanceof FrameLayout) {
+                                    final ViewGroup.MarginLayoutParams params =
+                                        (ViewGroup.MarginLayoutParams) _list.getLayoutParams();
                                     params.bottomMargin = _options.getHeight();
+                                    _list.setLayoutParams(params);
                                 }
-                                _list.setLayoutParams(params);
                             }
                         }
                     };
                     final Runnable hideOptions = () -> {
                         scroll.Int = getListYScroll(_list);
-                        _options.setVisibility(View.INVISIBLE);
-                        ViewGroup.MarginLayoutParams params =
-                            (ViewGroup.MarginLayoutParams) _list.getLayoutParams();
-                        if (_options.getParent() instanceof LinearLayout) {
-                            params.height =
-                                ((LinearLayout) _options.getParent()).getHeight()
-                                    - (
-                                    _pathView != null && _pathView.getVisibility() == View.VISIBLE
-                                        ? _pathView.getHeight()
-                                        : 0);
-                        } else {
+                        _options.setVisibility(View.GONE);
+                        if (_options.getParent() instanceof FrameLayout) {
+                            ViewGroup.MarginLayoutParams params =
+                                (ViewGroup.MarginLayoutParams) _list.getLayoutParams();
                             params.bottomMargin = 0;
+                            _list.setLayoutParams(params);
                         }
-                        _list.setLayoutParams(params);
                     };
 
                     options.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(final View view) {
                             if (_options == null) {
-                                // region Draw options view. (this only happens the first time one clicks on
-                                // options)
+                                // region Draw options view. (this only happens the first time one clicks on options)
                                 // Root view (FrameLayout) of the ListView in the AlertDialog.
                                 final int rootId = _context.getResources().getIdentifier("contentPanel", "id",
                                     "android");
-                                ViewGroup root1 = ((AlertDialog) dialog).findViewById(rootId);
-                                boolean linear = root1 instanceof LinearLayout;
-                                final ViewGroup root = root1;
-                                // In case the was changed or not found.
+                                final ViewGroup root = ((AlertDialog) dialog).findViewById(rootId);
+                                // In case the root id was changed or not found.
                                 if (root == null) return;
 
                                 // Create options view.
                                 final FrameLayout options = new FrameLayout(_context);
-                                //options.setBackgroundColor(0x60000000);
                                 ViewGroup.MarginLayoutParams params;
-                                if (linear) {
-                                    params = new LinearLayout.LayoutParams(MATCH_PARENT,
-                                        (int) UiUtil.dip2px(48));
+                                if (root instanceof LinearLayout) {
+                                    params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
+                                    LinearLayout.LayoutParams param = ((LinearLayout.LayoutParams) _list.getLayoutParams());
+                                    param.weight = 1;
+                                    _list.setLayoutParams(param);
                                 } else {
                                     params = new FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, BOTTOM);
                                 }
                                 root.addView(options, params);
-
-                                options.setOnClickListener(null);
-                                options.setVisibility(View.INVISIBLE);
-                                _options = options;
 
                                 // Create a button for the option to create a new directory/folder.
                                 final Button createDir = new Button(_context, null,
@@ -720,7 +702,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
                                 // Create a button for the option to delete a file.
                                 final Button delete = new Button(_context, null,
-                                    android.R.attr.buttonBarButtonStyle);
+                                    R.style.FileChooserButtonStyle);
                                 delete.setText(_deleteRes);
                                 delete.setTextColor(buttonColor);
                                 final Drawable bin = ContextCompat.getDrawable(_context,
@@ -737,6 +719,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                     END | CENTER_VERTICAL);
                                 params.rightMargin = 10;
                                 options.addView(delete, params);
+
+                                _options = options;
+                                showOptions.run();
 
                                 // Event Listeners.
                                 createDir.setOnClickListener(new View.OnClickListener() {
@@ -953,9 +938,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                     _deleteModeIndicator.run();
                                 });
                                 // endregion
-                            }
-
-                            if (_options.getVisibility() == View.VISIBLE) {
+                            } else if (_options.getVisibility() == View.VISIBLE) {
                                 hideOptions.run();
                             } else {
                                 showOptions.run();
@@ -1070,10 +1053,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             window.setAttributes(lp);
             ta.recycle();
         }
-
-        if (_enableMultiple) {
-            _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
-        }
         _alertDialog.show();
     }
 
@@ -1098,7 +1077,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             _pathView = new TextView(context);
             root.addView(_pathView, 0, params);
 
-            _pathView.bringToFront();
             int elevation = ta.getInt(R.styleable.FileChooser_fileChooserPathViewElevation, 2);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 _pathView.setElevation(elevation);
@@ -1116,10 +1094,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             _pathView.setVisibility(View.GONE);
 
             ViewGroup.MarginLayoutParams param = ((ViewGroup.MarginLayoutParams) _list.getLayoutParams());
-            if (_pathView.getParent() instanceof LinearLayout) {
-                param.height = ((LinearLayout) _pathView.getParent()).getHeight() - (
-                    _options != null && _options.getVisibility() == View.VISIBLE ? _options.getHeight() : 0);
-            } else {
+            if (_pathView.getParent() instanceof FrameLayout) {
                 param.topMargin = _pathView.getHeight();
             }
             _list.setLayoutParams(param);
@@ -1151,12 +1126,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                             return false;
                         }
                         _pathView.getViewTreeObserver().removeOnPreDrawListener(this);
-                        if (_pathView.getParent() instanceof LinearLayout) {
-                            param.height =
-                                ((LinearLayout) _pathView.getParent()).getHeight() - _pathView.getHeight() - (
-                                    _options != null && _options.getVisibility() == View.VISIBLE
-                                        ? _options.getHeight() : 0);
-                        } else {
+                        if (_pathView.getParent() instanceof FrameLayout) {
                             param.topMargin = _pathView.getHeight();
                         }
                         _list.setLayoutParams(param);
@@ -1164,10 +1134,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     }
                 });
             } else {
-                if (_pathView.getParent() instanceof LinearLayout) {
-                    param.height = ((LinearLayout) _pathView.getParent()).getHeight() - _pathView.getHeight() - (
-                        _options != null && _options.getVisibility() == View.VISIBLE ? _options.getHeight() : 0);
-                } else {
+                if (_pathView.getParent() instanceof FrameLayout) {
                     param.topMargin = _pathView.getHeight();
                 }
                 _list.setLayoutParams(param);
