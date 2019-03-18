@@ -537,10 +537,22 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         _alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(final DialogInterface dialog) {
-                if (!_dismissOnButtonClick) {
-                    Button negative = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
-                    Button positive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                final Button options = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
+                final Button negative = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+                final Button positive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
 
+                // ensure that the buttons have the right order
+                ViewGroup parentLayout = (ViewGroup) positive.getParent();
+                parentLayout.removeAllViews();
+                parentLayout.addView(options, 0);
+                parentLayout.addView(negative, 1);
+                parentLayout.addView(positive, 2);
+
+                if (_enableMultiple) {
+                    positive.setVisibility(View.INVISIBLE);
+                }
+
+                if (!_dismissOnButtonClick) {
                     negative.setOnClickListener(v -> {
                         if (_negativeListener != null) {
                             _negativeListener.onClick(_alertDialog, AlertDialog.BUTTON_NEGATIVE);
@@ -1069,10 +1081,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             lp.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
             window.setAttributes(lp);
             ta.recycle();
-        }
-
-        if (_enableMultiple) {
-            _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
         }
         _alertDialog.show();
     }
