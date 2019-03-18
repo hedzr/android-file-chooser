@@ -1204,8 +1204,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 up = true;
             }
         }
+        boolean displayPath = false;
         if (!up && _currentDir.getParentFile() != null && _currentDir.getParentFile().canRead()) {
             _entries.add(new RootFile(".."));
+            displayPath = true;
         }
 
         if (files == null) return;
@@ -1229,7 +1231,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         // #45: setup dialog title too
         if (_alertDialog != null && !_disableTitle) {
             if (_followDir) {
-                if (!up) {
+                if (displayPath) {
                     _alertDialog.setTitle(_currentDir.getName());
                 } else _alertDialog.setTitle(_titleRes);
 
@@ -1237,10 +1239,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         }
 
         if (_alertDialog != null && _displayPath) {
-            if (up) {
-                displayPath(null);
-            } else {
+            if (displayPath) {
                 displayPath(_currentDir.getPath());
+            } else {
+                displayPath(null);
             }
         }
         //_hoverIndex = -1;
