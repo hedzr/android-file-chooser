@@ -48,6 +48,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -988,7 +990,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 //if = permission granted
                 if (readPermissionCheck == PackageManager.PERMISSION_GRANTED
                     && writePermissionCheck == PackageManager.PERMISSION_GRANTED) {
-                    _alertDialog.show();
+                    showDialog();
                 } else {
                     ActivityCompat.requestPermissions(_activity,
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -1002,7 +1004,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
                     if (readPermissionCheck == PackageManager.PERMISSION_GRANTED
                         && writePermissionCheck == PackageManager.PERMISSION_GRANTED) {
-                        _alertDialog.show();
+                        showDialog();
                     } else {
                         Toast.makeText(_context,
                             "Cannot request Read/Write permissions on SDCard, the operation was ignores.",
@@ -1016,7 +1018,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
                 //if = permission granted
                 if (readPermissionCheck == PackageManager.PERMISSION_GRANTED) {
-                    _alertDialog.show();
+                    showDialog();
                 } else {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(_activity,
                         Manifest.permission.READ_CONTACTS)) {
@@ -1039,7 +1041,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                             Manifest.permission.READ_EXTERNAL_STORAGE);
 
                         if (readPermissionCheck == PackageManager.PERMISSION_GRANTED) {
-                            _alertDialog.show();
+                            showDialog();
                         } else {
                             Toast.makeText(_context,
                                 "Cannot request Read/Write permissions on SDCard, the operation was ignores.",
@@ -1051,13 +1053,28 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 }
             }
         } else {
-            _alertDialog.show();
+            showDialog();
+        }
+        return this;
+    }
+
+    private void showDialog() {
+        Window window = _alertDialog.getWindow();
+        if (window != null) {
+            TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
+            window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+            window.setGravity(ta.getInt(R.styleable.FileChooser_fileChooserDialogGravity, Gravity.CENTER));
+            WindowManager.LayoutParams lp = window.getAttributes();
+            lp.dimAmount = ta.getFloat(R.styleable.FileChooser_fileChooserDialogBackgroundDimAmount, 0.3f);
+            lp.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+            window.setAttributes(lp);
+            ta.recycle();
         }
 
         if (_enableMultiple) {
             _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
         }
-        return this;
+        _alertDialog.show();
     }
 
     private void displayPath(String path) {

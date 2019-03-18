@@ -8,6 +8,8 @@
 
     <!-- Dark theme example for file chooser -->
     <style name="FileChooserStyle.Dark" parent="FileChooserStyle">
+        <item name="fileChooserDialogGravity">center</item>
+        <item name="fileChooserDialogBackgroundDimAmount">0.8</item>
         <item name="fileChooserDialogStyle">@style/FileChooserDialogStyle.Dark</item>
         <item name="fileChooserListItemStyle">@style/FileChooserListItemStyle.Dark</item>
         <item name="fileChooserPathViewStyle">@style/FileChooserPathViewStyle.Dark</item>
