@@ -761,9 +761,15 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                                 e.printStackTrace();
                                             }
 
+                                            TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
+                                            int style = ta.getResourceId(R.styleable.FileChooser_fileChooserNewFolderStyle, R.style.FileChooserNewFolderStyle);
+                                            final Context context = new ContextThemeWrapper(_context, style);
+                                            ta.recycle();
+                                            ta = context.obtainStyledAttributes(R.styleable.FileChooser);
+
                                             // A semitransparent background overlay.
                                             final FrameLayout overlay = new FrameLayout(_context);
-                                            overlay.setBackgroundColor(0x60ffffff);
+                                            overlay.setBackgroundColor(ta.getColor(R.styleable.FileChooser_fileChooserNewFolderOverlayColor, 0x60ffffff));
                                             overlay.setScrollContainer(true);
                                             ViewGroup.MarginLayoutParams params = new FrameLayout.LayoutParams(
                                                 MATCH_PARENT, MATCH_PARENT, CENTER);
@@ -779,27 +785,35 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                                 CENTER);
                                             overlay.addView(linearLayout, params);
 
+                                            float widthWeight = ta.getFloat(R.styleable.FileChooser_fileChooserNewFolderWidthWeight, 55.56f);
+                                            if (widthWeight <= 0) widthWeight = 55.56f;
+                                            if (widthWeight > 100) widthWeight = 100f;
+
                                             Space leftSpace = new Space(_context);
-                                            params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, 2);
+                                            params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, (100 - widthWeight) / 2);
                                             linearLayout.addView(leftSpace, params);
 
                                             // A solid holder view for the EditText and Buttons.
                                             final LinearLayout holder = new LinearLayout(_context);
                                             holder.setOrientation(LinearLayout.VERTICAL);
-                                            holder.setBackgroundColor(0xffffffff);
+                                            holder.setBackgroundColor(ta.getColor(R.styleable.FileChooser_fileChooserNewFolderBackgroundColor, 0xffffffff));
+                                            final int elevation = ta.getInt(R.styleable.FileChooser_fileChooserNewFolderElevation, 25);
                                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                                holder.setElevation(25f);
+                                                holder.setElevation(elevation);
                                             } else {
-                                                ViewCompat.setElevation(holder, 25);
+                                                ViewCompat.setElevation(holder, elevation);
                                             }
-                                            params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, 5);
+                                            params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, widthWeight);
                                             linearLayout.addView(holder, params);
 
                                             Space rightSpace = new Space(_context);
-                                            params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, 2);
+                                            params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, (100 - widthWeight) / 2);
                                             linearLayout.addView(rightSpace, params);
 
                                             final EditText input = new EditText(_context);
+                                            final int color = ta.getColor(R.styleable.FileChooser_fileChooserNewFolderTextColor, buttonColor);
+                                            input.setTextColor(color);
+                                            input.getBackground().mutate().setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
                                             input.setText(newFolder.getName());
                                             input.setSelectAllOnFocus(true);
                                             input.setSingleLine(true);
@@ -862,6 +876,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                                 UiUtil.hideKeyboardFrom(_context, input);
                                                 overlay.setVisibility(View.INVISIBLE);
                                             });
+
+                                            ta.recycle();
                                             // endregion
                                         }
 
@@ -1083,7 +1099,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         } else {
             String removableRoot = FileUtil.getStoragePath(_context, true);
             String primaryRoot = FileUtil.getStoragePath(_context, false);
-            if (path.contains(removableRoot)) path = path.substring(removableRoot.lastIndexOf('/') + 1);
+            if (path.contains(removableRoot))
+                path = path.substring(removableRoot.lastIndexOf('/') + 1);
             if (path.contains(primaryRoot)) path = path.substring(primaryRoot.lastIndexOf('/') + 1);
             _pathView.setText(path);
 

@@ -24,6 +24,7 @@
         <item name="fileChooserDialogStyle">@style/FileChooserDialogStyle</item>
         <item name="fileChooserListItemStyle">@style/FileChooserListItemStyle</item>
         <item name="fileChooserPathViewStyle">@style/FileChooserPathViewStyle</item>
+        <item name="fileChooserNewFolderStyle">@style/FileChooserNewFolderStyle</item>
     </style>
 
     <!-- Dialog -->
@@ -43,10 +44,12 @@
         <item name="android:maxLines">1</item>
         <item name="android:scrollHorizontally">true</item>
         <item name="android:textAppearance">@android:style/TextAppearance.DialogWindowTitle</item>
+        <item name="android:textColor">#f000</item>
     </style>
 
     <public name="FileChooserButtonStyle" type="style" />
     <style name="FileChooserButtonStyle" parent="@android:style/Holo.Light.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/material_deep_teal_500</item>
     </style>
 
     <!-- List -->
@@ -119,6 +122,16 @@
         <item name="android:lines">1</item>
         <item name="android:maxLines">1</item>
         <item name="fileChooserPathViewElevation">2</item>
+    </style>
+
+    <!-- New Folder -->
+    <public name="FileChooserNewFolderStyle" type="style" />
+    <style name="FileChooserNewFolderStyle">
+        <item name="fileChooserNewFolderOverlayColor">#60ffffff</item>
+        <item name="fileChooserNewFolderBackgroundColor">#ffffffff</item>
+        <item name="fileChooserNewFolderWidthWeight">55.56</item>
+        <item name="fileChooserNewFolderElevation">25</item>
+        <item name="fileChooserNewFolderTextColor">@color/material_deep_teal_500</item>
     </style>
 
 </resources>

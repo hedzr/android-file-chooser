@@ -11,6 +11,7 @@
         <item name="fileChooserDialogStyle">@style/FileChooserDialogStyle.Dark</item>
         <item name="fileChooserListItemStyle">@style/FileChooserListItemStyle.Dark</item>
         <item name="fileChooserPathViewStyle">@style/FileChooserPathViewStyle.Dark</item>
+        <item name="fileChooserNewFolderStyle">@style/FileChooserNewFolderStyle.Dark</item>
     </style>
 
     <style name="FileChooserDialogStyle.Dark" parent="@android:style/Theme.Holo.Dialog">
@@ -48,6 +49,14 @@
     <style name="FileChooserPathViewStyle.Dark" parent="FileChooserPathViewStyle">
         <item name="android:background">#ff3c3c3c</item>
         <item name="android:textColor">#90ffffff</item>
+    </style>
+
+    <style name="FileChooserNewFolderStyle.Dark">
+        <item name="fileChooserNewFolderOverlayColor">#90000000</item>
+        <item name="fileChooserNewFolderBackgroundColor">#ff3c3c3c</item>
+        <item name="fileChooserNewFolderWidthWeight">80</item>
+        <item name="fileChooserNewFolderElevation">50</item>
+        <item name="fileChooserNewFolderTextColor">@android:color/holo_blue_light</item>
     </style>
 
 </resources>
