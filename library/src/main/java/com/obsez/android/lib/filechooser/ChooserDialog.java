@@ -38,6 +38,7 @@ import android.support.annotation.StyleRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ContextThemeWrapper;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -136,6 +137,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     private void init(@Nullable @StyleRes Integer fileChooserTheme) {
+        if (this._context instanceof AppCompatActivity || this._context instanceof Activity) {
+            this._activity = (Activity) this._context;
+        }
+
         if (fileChooserTheme == null) {
             this._context = new ContextThemeWrapper(this._context, R.style.FileChooserStyle);
         } else {
@@ -969,6 +974,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         // Check for permissions if SDK version is >= 23
         if (Build.VERSION.SDK_INT >= 23) {
+            if (_activity == null) {
+                throw new RuntimeException("Either pass an Activity as Context, or grant READ_EXTERNAL_STORAGE and WRITE_EXTERNAL_STORAGE permission!");
+            }
+
             final int PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE = 0;
             if (_enableOptions) {
                 int readPermissionCheck = ContextCompat.checkSelfPermission(_context,
@@ -981,7 +990,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     && writePermissionCheck == PackageManager.PERMISSION_GRANTED) {
                     _alertDialog.show();
                 } else {
-                    ActivityCompat.requestPermissions((Activity) _context,
+                    ActivityCompat.requestPermissions(_activity,
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
@@ -1009,7 +1018,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 if (readPermissionCheck == PackageManager.PERMISSION_GRANTED) {
                     _alertDialog.show();
                 } else {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) _context,
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(_activity,
                         Manifest.permission.READ_CONTACTS)) {
 
                         // Show an expanation to the user *asynchronously* -- don't block
@@ -1022,7 +1031,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
                         // No explanation needed, we can request the permission.
 
-                        ActivityCompat.requestPermissions((Activity) _context,
+                        ActivityCompat.requestPermissions(_activity,
                             new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                             PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
 
@@ -1496,6 +1505,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private DirAdapter _adapter;
     private File _currentDir;
     private Context _context;
+    private @Nullable Activity _activity = null;
     private AlertDialog _alertDialog;
     private ListView _list;
     private Result _result = null;
