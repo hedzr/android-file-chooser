@@ -2,10 +2,6 @@
 <resources>
 
     <style name="FileChooserDialogStyle.Dark" parent="@android:style/Theme.Material.Dialog.Alert">
-        <item name="android:alertDialogTheme">@style/FileChooserAlertDialogTheme.Dark</item>
-    </style>
-
-    <style name="FileChooserAlertDialogTheme.Dark" parent="FileChooserAlertDialogTheme">
         <item name="android:buttonStyle">@android:style/Widget.Holo.Light.Button</item>
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="colorAccent">@android:style/TextAppearance.Holo.DialogWindowTitle</item>

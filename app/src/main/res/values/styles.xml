@@ -14,10 +14,6 @@
     </style>
 
     <style name="FileChooserDialogStyle.Dark" parent="@android:style/Theme.Holo.Dialog">
-        <item name="android:alertDialogTheme">@style/FileChooserAlertDialogTheme.Dark</item>
-    </style>
-
-    <style name="FileChooserAlertDialogTheme.Dark" parent="FileChooserAlertDialogTheme">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:textColorPrimary">@android:color/holo_blue_light</item>
         <item name="colorAccent">@android:color/holo_blue_light</item>

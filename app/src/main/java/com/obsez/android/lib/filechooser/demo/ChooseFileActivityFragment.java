@@ -140,8 +140,8 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                             paths.add(file.getAbsolutePath());
                         }
 
-                        new AlertDialog.Builder(ctx)
-                            .setTitle(files.size() + " files selected:")
+                        AlertDialog.Builder builder = darkTheme.isChecked() ? new AlertDialog.Builder(ctx, R.style.FileChooserDialogStyle_Dark) : new AlertDialog.Builder(ctx, R.style.FileChooserDialogStyle);
+                        builder.setTitle(files.size() + " files selected:")
                             .setAdapter(new ArrayAdapter<>(ctx,
                                 android.R.layout.simple_expandable_list_item_1, paths), null)
                             .create()
@@ -178,8 +178,8 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                         paths.add(file.getAbsolutePath());
                     }
 
-                    new AlertDialog.Builder(ctx)
-                        .setTitle(files.size() + " files selected:")
+                    AlertDialog.Builder builder = darkTheme.isChecked() ? new AlertDialog.Builder(ctx, R.style.FileChooserDialogStyle_Dark) : new AlertDialog.Builder(ctx, R.style.FileChooserDialogStyle);
+                    builder.setTitle(files.size() + " files selected:")
                         .setAdapter(new ArrayAdapter<>(ctx,
                             android.R.layout.simple_expandable_list_item_1, paths), null)
                         .create()

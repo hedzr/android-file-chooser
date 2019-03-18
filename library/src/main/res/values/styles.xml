@@ -17,6 +17,10 @@
 
     <public name="FileChooserStyle" type="style" />
     <style name="FileChooserStyle">
+        <item name="android:textColor">@color/material_deep_teal_500</item>
+        <item name="android:textColorPrimary">@color/material_deep_teal_500</item>
+        <item name="android:textColorSecondary">@color/material_deep_teal_500</item>
+        <item name="colorAccent">@color/material_deep_teal_200</item>
         <item name="fileChooserDialogStyle">@style/FileChooserDialogStyle</item>
         <item name="fileChooserListItemStyle">@style/FileChooserListItemStyle</item>
         <item name="fileChooserPathViewStyle">@style/FileChooserPathViewStyle</item>
@@ -25,23 +29,13 @@
     <!-- Dialog -->
     <public name="FileChooserDialogStyle" type="style" />
     <style name="FileChooserDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="android:alertDialogTheme">@style/FileChooserAlertDialogTheme</item>
-        <!--<item name="android:alertDialogStyle">@style/FileChooserAlertDialogStyle</item>-->
-    </style>
-
-    <public name="FileChooserAlertDialogTheme" type="style" />
-    <style name="FileChooserAlertDialogTheme">
-        <item name="android:textColorPrimary">@color/material_deep_teal_500</item>
-        <item name="colorAccent">@color/material_deep_teal_200</item>
         <item name="android:windowTitleStyle">@style/FileChooserTitleStyle</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
+        <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
+        <item name="android:windowIsFloating">true</item>
         <item name="android:buttonBarStyle">@android:style/Holo.Light.ButtonBar.AlertDialog</item>
         <item name="android:buttonBarButtonStyle">@style/FileChooserButtonStyle</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowIsFloating">true</item>
-    </style>
-
-    <public name="FileChooserAlertDialogStyle" type="style" />
-    <style name="FileChooserAlertDialogStyle">
     </style>
 
     <public name="FileChooserTitleStyle" type="style" />
@@ -53,8 +47,6 @@
 
     <public name="FileChooserButtonStyle" type="style" />
     <style name="FileChooserButtonStyle" parent="@android:style/Holo.Light.ButtonBar.AlertDialog">
-        <item name="android:background">#f00</item>
-        <item name="android:textColor">#0f0</item>
     </style>
 
     <!-- List -->
