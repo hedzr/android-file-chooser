@@ -38,6 +38,7 @@ import android.support.annotation.StyleRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ContextThemeWrapper;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -559,8 +560,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     throw new RuntimeException("withOptionResources() should be called at first.");
                 }
 
-                final Button options = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
-                final int buttonColor = options.getCurrentTextColor();
                 if (_enableOptions) {
                     final Button options = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
 
