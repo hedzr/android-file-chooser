@@ -483,7 +483,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 case KeyEvent.KEYCODE_ESCAPE:
                     if (event.getAction() == KeyEvent.ACTION_UP) {
                         if (_newFolderView != null && _newFolderView.getVisibility() == View.VISIBLE) {
-                            _newFolderView.setVisibility(View.INVISIBLE);
+                            _newFolderView.setVisibility(View.GONE);
                             return true;
                         }
 
@@ -746,7 +746,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                         if (this.input != null) {
                                             this.input.setText(newFolder.getName());
                                         }
-
                                         if (_newFolderView == null) {
                                             // region Draw a view with input to create new folder. (this only
                                             // happens the first time one clicks on New folder)
@@ -771,8 +770,14 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             final FrameLayout overlay = new FrameLayout(_context);
                                             overlay.setBackgroundColor(ta.getColor(R.styleable.FileChooser_fileChooserNewFolderOverlayColor, 0x60ffffff));
                                             overlay.setScrollContainer(true);
-                                            ViewGroup.MarginLayoutParams params = new FrameLayout.LayoutParams(
-                                                MATCH_PARENT, MATCH_PARENT, CENTER);
+                                            ViewGroup.MarginLayoutParams params;
+                                            if (root instanceof FrameLayout) {
+                                                params = new FrameLayout.LayoutParams(
+                                                    MATCH_PARENT, MATCH_PARENT, CENTER);
+                                            } else {
+                                                params = new LinearLayout.LayoutParams(
+                                                    MATCH_PARENT, MATCH_PARENT);
+                                            }
                                             root.addView(overlay, params);
 
                                             overlay.setOnClickListener(null);
@@ -784,6 +789,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             params = new FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT,
                                                 CENTER);
                                             overlay.addView(linearLayout, params);
+
 
                                             float widthWeight = ta.getFloat(R.styleable.FileChooser_fileChooserNewFolderWidthWeight, 0.56f);
                                             if (widthWeight <= 0) widthWeight = 0.56f;
@@ -861,30 +867,30 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                                         ChooserDialog.this.createNewDirectory(
                                                             input.getText().toString());
                                                         UiUtil.hideKeyboardFrom(_context, input);
-                                                        overlay.setVisibility(View.INVISIBLE);
+                                                        overlay.setVisibility(View.GONE);
                                                         return true;
                                                     }
                                                     return false;
                                                 });
                                             cancel.setOnClickListener(v -> {
                                                 UiUtil.hideKeyboardFrom(_context, input);
-                                                overlay.setVisibility(View.INVISIBLE);
+                                                overlay.setVisibility(View.GONE);
                                             });
                                             ok.setOnClickListener(v -> {
                                                 ChooserDialog.this.createNewDirectory(
                                                     input.getText().toString());
                                                 UiUtil.hideKeyboardFrom(_context, input);
-                                                overlay.setVisibility(View.INVISIBLE);
+                                                overlay.setVisibility(View.GONE);
                                             });
 
                                             ta.recycle();
                                             // endregion
                                         }
 
-                                        if (_newFolderView.getVisibility() == View.INVISIBLE) {
+                                        if (_newFolderView.getVisibility() != View.VISIBLE) {
                                             _newFolderView.setVisibility(View.VISIBLE);
                                         } else {
-                                            _newFolderView.setVisibility(View.INVISIBLE);
+                                            _newFolderView.setVisibility(View.GONE);
                                         }
                                     }
                                 });
