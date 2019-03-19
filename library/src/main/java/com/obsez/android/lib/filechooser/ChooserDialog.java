@@ -953,110 +953,120 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         });
     }
 
-    public ChooserDialog show() {
-        //if (_result == null)
-        //    throw new RuntimeException("no chosenListener defined. use withChosenListener() at first.");
-        if (_alertDialog == null || _list == null) {
-            throw new RuntimeException("call build() before show().");
+    /**
+     * check, whether the application has the required permissions
+     *
+     * @return true if application has the required permissions
+     *         false if application hasn't got the required permissions
+     *
+     * @throws RuntimeException if permission needs to be requested,
+     *                          but context passed to ChooserDialog
+     *                          was not instance of {@link Activity}.
+     *
+     * @see android.support.v4.app.ActivityCompat#requestPermissions(Activity, String[], int)
+     */
+    private boolean checkPermissions() {
+        if (Build.VERSION.SDK_INT < 23) return true;
+
+        if (_activity == null) {
+            throw new RuntimeException("Either pass an Activity as Context, or grant READ_EXTERNAL_STORAGE and WRITE_EXTERNAL_STORAGE permission!");
         }
 
-        // Check for permissions if SDK version is >= 23
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (_activity == null) {
-                throw new RuntimeException("Either pass an Activity as Context, or grant READ_EXTERNAL_STORAGE and WRITE_EXTERNAL_STORAGE permission!");
-            }
+        final int PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE = 0;
+        if (_enableOptions) {
+            int readPermissionCheck = ContextCompat.checkSelfPermission(_context,
+                Manifest.permission.READ_EXTERNAL_STORAGE);
+            int writePermissionCheck = ContextCompat.checkSelfPermission(_context,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-            final int PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE = 0;
-            if (_enableOptions) {
-                int readPermissionCheck = ContextCompat.checkSelfPermission(_context,
+            //if = permission granted
+            if (readPermissionCheck == PackageManager.PERMISSION_GRANTED
+                && writePermissionCheck == PackageManager.PERMISSION_GRANTED) {
+                return true;
+            } else {
+                ActivityCompat.requestPermissions(_activity,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
+
+                readPermissionCheck = ContextCompat.checkSelfPermission(_context,
                     Manifest.permission.READ_EXTERNAL_STORAGE);
-                int writePermissionCheck = ContextCompat.checkSelfPermission(_context,
+                writePermissionCheck = ContextCompat.checkSelfPermission(_context,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-                //if = permission granted
                 if (readPermissionCheck == PackageManager.PERMISSION_GRANTED
                     && writePermissionCheck == PackageManager.PERMISSION_GRANTED) {
-                    showDialog();
+                    return true;
                 } else {
+                    Toast.makeText(_context,
+                        "Cannot request Read/Write permissions on SDCard, the operation was ignores.",
+                        Toast.LENGTH_LONG).show();
+                }
+                return false;
+            }
+        } else {
+            int readPermissionCheck = ContextCompat.checkSelfPermission(_context,
+                Manifest.permission.READ_EXTERNAL_STORAGE);
+
+            //if = permission granted
+            if (readPermissionCheck == PackageManager.PERMISSION_GRANTED) {
+                return true;
+            } else {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(_activity,
+                    Manifest.permission.READ_CONTACTS)) {
+
+                    // Show an expanation to the user *asynchronously* -- don't block
+                    // this thread waiting for the user's response! After the user
+                    // sees the explanation, try again to request the permission.
+                    Toast.makeText(_context, "You denied the Read/Write permissions on SDCard.",
+                        Toast.LENGTH_LONG).show();
+
+                } else {
+                    // No explanation needed, we can request the permission.
                     ActivityCompat.requestPermissions(_activity,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                         PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
 
                     readPermissionCheck = ContextCompat.checkSelfPermission(_context,
                         Manifest.permission.READ_EXTERNAL_STORAGE);
-                    writePermissionCheck = ContextCompat.checkSelfPermission(_context,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-                    if (readPermissionCheck == PackageManager.PERMISSION_GRANTED
-                        && writePermissionCheck == PackageManager.PERMISSION_GRANTED) {
-                        showDialog();
+                    if (readPermissionCheck == PackageManager.PERMISSION_GRANTED) {
+                        return true;
                     } else {
                         Toast.makeText(_context,
                             "Cannot request Read/Write permissions on SDCard, the operation was ignores.",
                             Toast.LENGTH_LONG).show();
                     }
-                    return this;
                 }
-            } else {
-                int readPermissionCheck = ContextCompat.checkSelfPermission(_context,
-                    Manifest.permission.READ_EXTERNAL_STORAGE);
-
-                //if = permission granted
-                if (readPermissionCheck == PackageManager.PERMISSION_GRANTED) {
-                    showDialog();
-                } else {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(_activity,
-                        Manifest.permission.READ_CONTACTS)) {
-
-                        // Show an expanation to the user *asynchronously* -- don't block
-                        // this thread waiting for the user's response! After the user
-                        // sees the explanation, try again to request the permission.
-                        Toast.makeText(_context, "You denied the Read/Write permissions on SDCard.",
-                            Toast.LENGTH_LONG).show();
-
-                    } else {
-
-                        // No explanation needed, we can request the permission.
-
-                        ActivityCompat.requestPermissions(_activity,
-                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                            PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
-
-                        readPermissionCheck = ContextCompat.checkSelfPermission(_context,
-                            Manifest.permission.READ_EXTERNAL_STORAGE);
-
-                        if (readPermissionCheck == PackageManager.PERMISSION_GRANTED) {
-                            showDialog();
-                        } else {
-                            Toast.makeText(_context,
-                                "Cannot request Read/Write permissions on SDCard, the operation was ignores.",
-                                Toast.LENGTH_LONG).show();
-                        }
-                    }
-
-                    return this;
-                }
+                return false;
             }
-        } else {
-            showDialog();
         }
-        return this;
     }
 
-    private void showDialog() {
-        Window window = _alertDialog.getWindow();
-        if (window != null) {
-            TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
-            window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
-            window.setGravity(ta.getInt(R.styleable.FileChooser_fileChooserDialogGravity, Gravity.CENTER));
-            WindowManager.LayoutParams lp = window.getAttributes();
-            lp.dimAmount = ta.getFloat(R.styleable.FileChooser_fileChooserDialogBackgroundDimAmount, 0.3f);
-            lp.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-            window.setAttributes(lp);
-            ta.recycle();
+    public ChooserDialog show() {
+        //if (_result == null)
+        //    throw new RuntimeException("no chosenListener defined. use withChosenListener() at first.");
+
+        if (_alertDialog == null || _list == null) {
+            throw new RuntimeException("call build() before show().");
         }
-        _alertDialog.show();
+
+        if (checkPermissions()) {
+            Window window = _alertDialog.getWindow();
+            if (window != null) {
+                TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
+                window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+                window.setGravity(ta.getInt(R.styleable.FileChooser_fileChooserDialogGravity, Gravity.CENTER));
+                WindowManager.LayoutParams lp = window.getAttributes();
+                lp.dimAmount = ta.getFloat(R.styleable.FileChooser_fileChooserDialogBackgroundDimAmount, 0.3f);
+                lp.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+                window.setAttributes(lp);
+                ta.recycle();
+            }
+            _alertDialog.show();
+        }
+
+        return this;
     }
 
     private void displayPath(String path) {
