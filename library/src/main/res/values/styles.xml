@@ -134,7 +134,7 @@
     <style name="FileChooserNewFolderStyle">
         <item name="fileChooserNewFolderOverlayColor">#60ffffff</item>
         <item name="fileChooserNewFolderBackgroundColor">#ffffffff</item>
-        <item name="fileChooserNewFolderWidthWeight">55.56</item>
+        <item name="fileChooserNewFolderWidthWeight">0.56</item>
         <item name="fileChooserNewFolderElevation">25</item>
         <item name="fileChooserNewFolderTextColor">@color/material_deep_teal_500</item>
     </style>
