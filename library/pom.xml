@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.obsez.android.lib.filechooser</groupId>
   <artifactId>android-file-chooser</artifactId>
-  <version>1.1.16</version>
+    <version>1.1.17</version>
   <inceptionYear>2015</inceptionYear>
   <licenses>
     <license>
