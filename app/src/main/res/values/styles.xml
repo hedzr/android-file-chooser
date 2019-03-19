@@ -56,7 +56,7 @@
     <style name="FileChooserNewFolderStyle.Dark">
         <item name="fileChooserNewFolderOverlayColor">#90000000</item>
         <item name="fileChooserNewFolderBackgroundColor">#ff3c3c3c</item>
-        <item name="fileChooserNewFolderWidthWeight">80</item>
+        <item name="fileChooserNewFolderWidthWeight">0.8</item>
         <item name="fileChooserNewFolderElevation">50</item>
         <item name="fileChooserNewFolderTextColor">@android:color/holo_blue_light</item>
     </style>
