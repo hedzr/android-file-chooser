@@ -781,12 +781,12 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                                 CENTER);
                                             overlay.addView(linearLayout, params);
 
-                                            float widthWeight = ta.getFloat(R.styleable.FileChooser_fileChooserNewFolderWidthWeight, 55.56f);
-                                            if (widthWeight <= 0) widthWeight = 55.56f;
-                                            if (widthWeight > 100) widthWeight = 100f;
+                                            float widthWeight = ta.getFloat(R.styleable.FileChooser_fileChooserNewFolderWidthWeight, 0.56f);
+                                            if (widthWeight <= 0) widthWeight = 0.56f;
+                                            if (widthWeight > 1f) widthWeight = 1f;
 
                                             Space leftSpace = new Space(_context);
-                                            params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, (100 - widthWeight) / 2);
+                                            params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, (1f - widthWeight) / 2);
                                             linearLayout.addView(leftSpace, params);
 
                                             // A solid holder view for the EditText and Buttons.
@@ -803,7 +803,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                             linearLayout.addView(holder, params);
 
                                             Space rightSpace = new Space(_context);
-                                            params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, (100 - widthWeight) / 2);
+                                            params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, (1f - widthWeight) / 2);
                                             linearLayout.addView(rightSpace, params);
 
                                             final EditText input = new EditText(_context);
