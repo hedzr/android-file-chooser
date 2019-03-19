@@ -439,7 +439,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             ta.getResourceId(R.styleable.FileChooser_fileChooserDialogStyle, R.style.FileChooserDialogStyle));
         ta.recycle();
 
-        _adapter = new DirAdapter(_context, new ArrayList<File>(),
+        _adapter = new DirAdapter(_context, new ArrayList<>(),
             _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
         if (_adapterSetter != null) _adapterSetter.apply(_adapter);
         refreshDirs();
