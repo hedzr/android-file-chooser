@@ -285,6 +285,9 @@ You **MUST** invoke `dialog.cancel()` while override the default `onCancelListen
         dialog.cancel(); // MUST have
     }
 })
+
+# using java 8:
+.withOnCancelListener(DialogInterface::cancel)
 ```
 
 

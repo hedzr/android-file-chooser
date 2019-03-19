@@ -2,6 +2,7 @@ package com.obsez.android.lib.filechooser.demo;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -67,7 +68,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+        @Nullable Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
 
         View root = inflater.inflate(R.layout.fragment_choose_file, container, false);
@@ -106,11 +107,14 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
         final ArrayList<File> files = new ArrayList<>();
 
         ChooserDialog chooserDialog;
-        if (darkTheme.isChecked())
+        if (darkTheme.isChecked()) {
             chooserDialog = new ChooserDialog(ctx, R.style.FileChooserStyle_Dark);
-        else chooserDialog = new ChooserDialog(ctx);
+        } else {
+            chooserDialog = new ChooserDialog(ctx);
+        }
 
-        chooserDialog.withResources(dirOnly.isChecked() ? R.string.title_choose_folder : R.string.title_choose_file,
+        chooserDialog.withResources(
+            dirOnly.isChecked() ? R.string.title_choose_folder : R.string.title_choose_file,
             R.string.title_choose, R.string.dialog_cancel)
             .withOptionResources(R.string.option_create_folder, R.string.options_delete,
                 R.string.new_folder_cancel, R.string.new_folder_ok)
@@ -140,7 +144,9 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                             paths.add(file.getAbsolutePath());
                         }
 
-                        AlertDialog.Builder builder = darkTheme.isChecked() ? new AlertDialog.Builder(ctx, R.style.FileChooserDialogStyle_Dark) : new AlertDialog.Builder(ctx, R.style.FileChooserDialogStyle);
+                        AlertDialog.Builder builder = darkTheme.isChecked() ? new AlertDialog.Builder(ctx,
+                            R.style.FileChooserDialogStyle_Dark) : new AlertDialog.Builder(ctx,
+                            R.style.FileChooserDialogStyle);
                         builder.setTitle(files.size() + " files selected:")
                             .setAdapter(new ArrayAdapter<>(ctx,
                                 android.R.layout.simple_expandable_list_item_1, paths), null)
@@ -178,7 +184,9 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                         paths.add(file.getAbsolutePath());
                     }
 
-                    AlertDialog.Builder builder = darkTheme.isChecked() ? new AlertDialog.Builder(ctx, R.style.FileChooserDialogStyle_Dark) : new AlertDialog.Builder(ctx, R.style.FileChooserDialogStyle);
+                    AlertDialog.Builder builder = darkTheme.isChecked() ? new AlertDialog.Builder(ctx,
+                        R.style.FileChooserDialogStyle_Dark) : new AlertDialog.Builder(ctx,
+                        R.style.FileChooserDialogStyle);
                     builder.setTitle(files.size() + " files selected:")
                         .setAdapter(new ArrayAdapter<>(ctx,
                             android.R.layout.simple_expandable_list_item_1, paths), null)
@@ -232,6 +240,9 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
             chooserDialog.withDateFormat("dd MMMM yyyy");
         }
 
-        chooserDialog.build().show();
+        chooserDialog
+            .withOnCancelListener(DialogInterface::cancel)
+            .build()
+            .show();
     }
 }
