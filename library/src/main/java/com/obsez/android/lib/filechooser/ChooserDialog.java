@@ -1464,8 +1464,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     private boolean buttonsHasFocus() {
-        Button v = (Button) _alertDialog.getCurrentFocus();
-        return v != null;
+        View v = _alertDialog.getCurrentFocus();
+        return v instanceof Button;
         //return v == _alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL) ||
         //    v == _alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE) ||
         //    v == _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
