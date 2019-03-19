@@ -682,6 +682,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                                 }
                                 root.addView(options, params);
 
+                                if (root instanceof FrameLayout) {
+                                    _list.bringToFront();
+                                }
+
                                 // Create a button for the option to create a new directory/folder.
                                 final Button createDir = new Button(_context, null,
                                     android.R.attr.buttonBarButtonStyle);
