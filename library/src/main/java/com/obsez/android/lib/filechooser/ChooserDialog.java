@@ -1030,9 +1030,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private @LayoutRes
     int _rowLayoutRes = -1;
     private String _dateFormat;
+    DialogInterface.OnClickListener _negativeListener;
     private DialogInterface.OnCancelListener _cancelListener2;
     private DialogInterface.OnDismissListener _onDismissListener;
     private boolean _disableTitle;
+    boolean _enableOptions;
     private boolean _followDir;
     private boolean _displayPath = true;
     private TextView _pathView;
