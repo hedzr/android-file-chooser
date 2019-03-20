@@ -681,6 +681,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         }
     }
 
+    private String removableRoot = null;
+    private String primaryRoot = null;
     private void listDirs() {
         _entries.clear();
 
@@ -693,8 +695,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         // Add the ".." entry
         boolean up = false;
-        String removableRoot = FileUtil.getStoragePath(_context, true);
-        String primaryRoot = FileUtil.getStoragePath(_context, false);
+        if (removableRoot == null || primaryRoot == null) {
+            removableRoot = FileUtil.getStoragePath(_context, true);
+            primaryRoot = FileUtil.getStoragePath(_context, false);
+        }
         if (!removableRoot.equals(primaryRoot)) {
             //File f = Environment.getExternalStorageDirectory();
             //File newRoot = _currentDir.getParentFile();
