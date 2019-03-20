@@ -1127,10 +1127,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             //File f = Environment.getExternalStorageDirectory();
             //File newRoot = _currentDir.getParentFile();
             if (_currentDir.getAbsolutePath().equals(primaryRoot)) {
-                _entries.add(new RootFile(sdcardStorage)); //⇠
+                _entries.add(new RootFile(sSdcardStorage)); //⇠
                 up = true;
             } else if (_currentDir.getAbsolutePath().equals(removableRoot)) {
-                _entries.add(new RootFile(primaryStorage)); //⇽
+                _entries.add(new RootFile(sPrimaryStorage)); //⇽
                 up = true;
             }
         }
@@ -1208,7 +1208,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             if (!_list.hasFocus()) _list.requestFocus();
             doGoBack();
             return;
-        } else if (file.getName().contains(sdcardStorage)) {
+        } else if (file.getName().contains(sSdcardStorage)) {
             String removableRoot = FileUtil.getStoragePath(_context, true);
             if (Environment.MEDIA_MOUNTED.equals(
                 Environment.getExternalStorageState())) {
@@ -1217,7 +1217,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 if (_deleteModeIndicator != null) _deleteModeIndicator.run();
                 _adapter.popAll();
             }
-        } else if (file.getName().contains(primaryStorage)) {
+        } else if (file.getName().contains(sPrimaryStorage)) {
             String primaryRoot = FileUtil.getStoragePath(_context, false);
             _currentDir = new File(primaryRoot);
             _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
@@ -1281,8 +1281,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View list, int position, long id) {
         File file = _entries.get(position);
-        if (file.getName().equals("..") || file.getName().contains(sdcardStorage)
-            || file.getName().contains(primaryStorage) || file.isDirectory()) {
+        if (file.getName().equals("..") || file.getName().contains(sSdcardStorage)
+            || file.getName().contains(sPrimaryStorage) || file.isDirectory()) {
             return true;
         }
         if (_adapter.isSelected(position)) return true;
@@ -1490,8 +1490,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     private OnBackPressedListener _onBackPressed = null;
 
-    final static String sdcardStorage = ".. SDCard Storage";
-    final static String primaryStorage = ".. Primary Storage";
+    final static String sSdcardStorage = ".. SDCard Storage";
+    final static String sPrimaryStorage = ".. Primary Storage";
 
     private static final int CHOOSE_MODE_NORMAL = 0;
     private static final int CHOOSE_MODE_DELETE = 1;

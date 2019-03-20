@@ -1,13 +1,17 @@
 package com.obsez.android.lib.filechooser.demo;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.obsez.android.lib.filechooser.demo.about.AboutActivity;
 
 import java.util.Locale;
 
@@ -76,7 +80,17 @@ public class ChooseFileActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        //if (id == R.id.action_settings) {
+        //    return true;
+        //}
+
+        if (id == R.id.action_about) {
+            startActivity(new Intent(this, AboutActivity.class));
+            return true;
+        }
+        if (id == R.id.action_gh) {
+            startActivity(
+                new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/hedzr/android-file-chooser")));
             return true;
         }
 

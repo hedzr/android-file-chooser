@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 
 
@@ -77,8 +78,8 @@ dependencies {
     // implementation 'com.github.hedzr:android-file-chooser:master-SNAPSHOT'
     // implementation 'com.github.hedzr:android-file-chooser:v1.1.10'
     //unitTestCompile 'com.google.android:android-test:4.1.1.4'
+    implementation 'com.android.support:design:28.0.0'
 }
 repositories {
     mavenCentral()
 }
-
