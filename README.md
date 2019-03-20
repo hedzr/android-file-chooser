@@ -20,7 +20,12 @@
 <img src="captures/choose_file.png" width="360"/>
 </td><td>
 <img src="captures/choose_folder.png" width="360"/>
+</td><td>
+<img src="https://user-images.githubusercontent.com/27736965/53578348-f1d35880-3b90-11e9-9ef4-7ed0276ca603.gif" width="360"/>
 </td></tr></table>
+
+More images (beyond v1.1.16) have been found at [Gallery](https://github.com/hedzr/android-file-chooser/wiki/Gallery)
+
 
 
 ### Demo Application
@@ -32,10 +37,50 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 
 ## Changes
 
-- create new folder on the fly, and the optional multiple select mode for developer, thx [Guiorgy](https://github.com/Guiorgy) and his [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser)
+### `x1.2.0` branch
+
+- **In progress**
+- Plan: uses AndroidX
+- Done:
+  - Keyboard supports: process SPACE and ENTER up event;
+  - file list no focus when dialog first showing;
+  - better storage media detect algorithm for Android M+;
+  - no WRITE_EXTERNAL_STORAGE requests if not `enableOptions(true)`;
+  - after requested permissions, try showing dialog again instead of return directly;
+
+### v1.1.x patches on `master`
+
+- 
+
+### v1.1.16
+
+- #48: add `displayPath(boolean)`, thank you [@Guiorgy](https://github.com/Guiorgy), and your [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser).
+- new style demo app by @Guiorgy.
+- bugs fixed
+- NOTE: `displayPath` is true by default now.
+
+- bumped targer sdk to 1.8 (please include the following into your build.gradle)
+```java
+android {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+```
+
+
+### Archived History:
+
+- no WRITE_EXTERNAL_STORAGE requests if not `enableOptions(true)`;
+- after requested permissions, try showing dialog again instead of return directly;
+- #42: onBackPressedListener not fired.
+  Now, use `withCancelListener` to handle back key. see also [below](#onCancelListener)
+- #45: add `titleFollowsDir(boolean)`  to allow title following the change of current directory.
+- create new folder on the fly, and the optional multiple select mode for developer, thx @Guiorgy.
 - Up (`..`) on the primary storage root will be replaced with `.. SDCard`, it allows to jump to external storage such as a SDCard and going back available too.
 - DPad supports, arrow keys supports (#30)
-- ...
+
 
 
 ## Usages
@@ -73,21 +118,40 @@ allprojects {
 
 ```gradle
 implementation 'com.github.hedzr:android-file-chooser:master-SNAPSHOT'
-// implementation 'com.github.hedzr:android-file-chooser:v1.1.10'
+// implementation 'com.github.hedzr:android-file-chooser:v1.1.14'
 ```
 
-
+> **Tips for using JitPack.io**
+>
+> To disable gradle local cache in your project, add stretegy into your top `build.grable`:
+>
+> ```gradle
+> configurations.all {
+>     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+>     resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
+> }
+> ```
+>
+> ref: https://github.com/spring-gradle-plugins/dependency-management-plugin/issues/74#issuecomment-182484694
+>
+> Sometimes it's right, sometimes ... no more warrants.
 
 ### Codes
 
-FileChooser android library give a simple file/folder chooser in single call:
+> **Tips**
+>
+> 1. I am hands down `AlertDialog`.
+> 2. Any codes about `ChooserDialog`, such as the following demo codes, should be only put into UI thread.
+
+FileChooser android library give a simple file/folder chooser in single call (Fluent):
 
 #### Choose a Folder
 
 ```java
-    new ChooserDialog().with(this)
+    new ChooserDialog(MainActivity.this)
             .withFilter(true, false)
-            .withStartFile(startingDir)
+        	.withStartFile(startingDir)
+        	// to handle the result(s)
             .withChosenListener(new ChooserDialog.Result() {
                 @Override
                 public void onChoosePath(String path, File pathFile) {
@@ -101,7 +165,7 @@ FileChooser android library give a simple file/folder chooser in single call:
 #### Choose a File
 
 ```java
-    new ChooserDialog().with(this)
+    new ChooserDialog(MainActivity.this)
             .withStartFile(path)
             .withChosenListener(new ChooserDialog.Result() {
                 @Override
@@ -109,6 +173,13 @@ FileChooser android library give a simple file/folder chooser in single call:
                     Toast.makeText(MainActivity.this, "FILE: " + path, Toast.LENGTH_SHORT).show();
                 }
             })
+        	// to handle the back key pressed or clicked outside the dialog:
+        	.withOnCancelListener(new DialogInterface.OnCancelListener() {
+    			public void onCancel(DialogInterface dialog) {
+			        Log.d("CANCEL", "CANCEL");
+			        dialog.cancel(); // MUST have
+    			}
+			})
             .build()
             .show();
 
@@ -117,7 +188,7 @@ FileChooser android library give a simple file/folder chooser in single call:
 #### Wild-match
 
 ```java
-    new ChooserDialog().with(this)
+    new ChooserDialog(MainActivity.this)
             .withFilter(false, false, "jpg", "jpeg", "png")
             .withStartFile(path)
             .withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)
@@ -135,7 +206,7 @@ FileChooser android library give a simple file/folder chooser in single call:
 #### Regex filter
 
 ```java
-    new ChooserDialog().with(this)
+    new ChooserDialog(MainActivity.this)
             .withFilterRegex(false, false, ".*\\.(jpe?g|png)")
             .withStartFile(path)
             .withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)
@@ -155,7 +226,7 @@ FileChooser android library give a simple file/folder chooser in single call:
 Since 1.1.3, new builder options `withDateFormat(String)` added.
 
 ```java
-    new ChooserDialog().with(this)
+    new ChooserDialog(MainActivity.this)
             .withFilter(true, false)
             .withStartFile(startingDir)
             .withDateFormat("HH:mm")    // see also SimpleDateFormat format specifiers
@@ -174,7 +245,7 @@ Since 1.1.3, new builder options `withDateFormat(String)` added.
 Since 1.1.6, 2 new options are available:
 
 ```java
-    new ChooserDialog().with(this)
+    new ChooserDialog(MainActivity.this)
             .withFilter(true, false)
             .withStartFile(startingDir)
             .withIcon(R.drawable.ic_file_chooser)
@@ -191,14 +262,44 @@ Since 1.1.6, 2 new options are available:
 
 #### Customizable NegativeButton
 
-1.1.7 or Higher, try `withNegativeButton()` and `withNegativeButtonListener()`.
+1.1.7 or Higher, try `withNegativeButton()` and `withNegativeButtonListener()` **instead of `withOnBackPressedListener()`.**
+
+---
+
+#### withOnBackPressedListener
+
+**deprecated.**
+
+
+
+#### onCancelListener
+
+`onCancelListener` will be triggered on back pressed or clicked outside of dialog.
+
+You **MUST** invoke `dialog.cancel()` while override the default `onCancelListener` :
+
+```java
+.withOnCancelListener(new DialogInterface.OnCancelListener() {
+    public void onCancel(DialogInterface dialog) {
+        Log.d("CANCEL", "CANCEL");
+        dialog.cancel(); // MUST have
+    }
+})
+
+# using java 8:
+.withOnCancelListener(DialogInterface::cancel)
+```
+
+
+
+---
 
 #### New calling chain
 
 1.1.7+, new constructor `ChooserDialog(context)` can simplify the chain invoking, such as:
 
 ```java
-    new ChooserDialog(this)
+    new ChooserDialog(MainActivity.this)
             .withFilter(true, false)
             .withStartFile(startingDir)
             ...
@@ -219,6 +320,7 @@ user-defined file/folder icon.
 `resolveMime`: true means that `DirAdapter` will try get icon from the associated app with the file's mime type.
 
 ```java
+    final Context ctx = MainActivity.this;
     new ChooserDialog(ctx)
             .withStartFile(_path)
             .withResources(R.string.title_choose_any_file, R.string.title_choose, R.string.dialog_cancel)
@@ -238,40 +340,44 @@ user-defined file/folder icon.
 1.1.9+. a `AdapterSetter` can be use to customize the `DirAdapter`.
 
 ```java
-            .withAdapterSetter(new ChooserDialog.AdapterSetter() {
-                @Override
-                public void apply(DirAdapter adapter) {
-                    adapter.setDefaultFileIcon(fileIcon);
-                    adapter.setDefaultFolderIcon(folderIcon);
-                    adapter.setResolveFileType(tryResolveFileTypeAndIcon);
-                }
-            })
+.withAdapterSetter(new ChooserDialog.AdapterSetter() {
+    @Override
+    public void apply(DirAdapter adapter) {
+        adapter.setDefaultFileIcon(fileIcon);
+        adapter.setDefaultFolderIcon(folderIcon);
+        adapter.setResolveFileType(tryResolveFileTypeAndIcon);
+    }
+})
 ```
 
 #### `withNavigateUpTo(CanNavigateUp)`
 
 1.1.10+. `withNavigateUpTo`
 
+You can disallow someone enter some special directories.
+
 ```java
-                .withNavigateUpTo(new ChooserDialog.CanNavigateUp() {
-                    @Override
-                    public boolean canUpTo(File dir) {
-                        return true;
-                    }
-                })
+.withNavigateUpTo(new ChooserDialog.CanNavigateUp() {
+    @Override
+    public boolean canUpTo(File dir) {
+        return true;
+    }
+})
 ```
 
 #### `withNavigateTo(CanNavigateTo)`
 
 1.1.10+. `withNavigateTo`
 
+With `withStartFile()`, you can limit the root folder.
+
 ```java
-                .withNavigateTo(new ChooserDialog.CanNavigateTo() {
-                    @Override
-                    public boolean canNavigate(File dir) {
-                        return true;
-                    }
-                })
+.withNavigateTo(new ChooserDialog.CanNavigateTo() {
+    @Override
+    public boolean canNavigate(File dir) {
+        return true;
+    }
+})
 ```
 
 #### `enableOptions(true)`
@@ -280,18 +386,59 @@ a tri-dot menu icon will be shown at bottom left corner. this icon button allows
 
 further tunes:
 - `withOptionResources(@StringRes int createDirRes, @StringRes int deleteRes, @StringRes int newFolderCancelRes, @StringRes int newFolderOkRes)`
+
 - `withOptionIcons(@DrawableRes int optionsIconRes, @DrawableRes int createDirIconRes, @DrawableRes int deleteRes)`
+
 - `withNewFolderFilter(NewFolderFilter filter)`
-- `withOnBackPressedListener(OnBackPressedListener listener)`
+
+- ~~`withOnBackPressedListener(OnBackPressedListener listener)`~~
+
+  > `onCancelListener()` is recommended.
+
 - `withOnLastBackPressedListener(OnBackPressedListener listener)`
 
 see the sample codes in demo app.
+
+**NOTE**:
+
+1. extra `WRITE_EXTERNAL_STORAGE` permission should be declared in your `AndroidManifest.xml`.
+2. we'll ask the extra runtime permission to `WRITE_EXTERNAL_STORAGE` on Android M and higher too.
+
 
 #### `disableTitle(true)`
 
 as named as working.
 
-#### TODO: psuedo `.. SDCard Storage` and `.. Primary Storage`
+
+
+#### psuedo `.. SDCard Storage` and `.. Primary Storage`
+
+since v1.11, external storage will be detected automatically. That means user can switch between internal and external storage by clicking on psuedo folder names. 
+
+
+
+#### `titleFollowsDir(true)`
+
+since the latest patch of v1.14, it allows the chooser dialog title updated by changing directory.
+
+
+
+#### `displayPath(true)`, `customizePathView(callback)`
+
+since the latest patch of v1.15, it allows a path string displayed below the title area.
+
+since v1.16, its default value is true.
+
+[Screen Snapshot](https://user-images.githubusercontent.com/27736965/53578348-f1d35880-3b90-11e9-9ef4-7ed0276ca603.gif)
+
+As a useful complement, `customizePathView(callback)` allows tuning the path TextView. For example:
+
+```java
+.customizePathView((pathView) -> {
+    pathView.setGravity(Gravity.RIGHT);
+})
+```
+
 
 
 
@@ -311,6 +458,9 @@ class MyFragment : Fragment() {
                     .withStartFile(Environment.getExternalStorageDirectory().absolutePath)
                     // .withStartFile(Environment.getExternalStorageState()+"/")
                     .withFilterRegex(false, false, ".*\\.(jpe?g|png)")
+                    .titleFollowsDir(true)
+                    .displayPath(true)
+                    .customizePathView{ pathView -> pathView.setGravity(Gravity.RIGHT) }
                     .withChosenListener { path, pathFile -> activity!!.toast("FILE: $path / $pathFile") }
                     .build()
                     .show()
@@ -345,25 +495,6 @@ And:
 
 ## Build me
 
-### 1. ~~legacy~~
-
-```bash
-cat >keystore.properties<<EOF
-keyAlias=youKeyAlias
-keyPassword=password
-storeFile=/Users/me/android-file-chooser.keystore
-storePassword=password
-EOF
-git clone git@github.com:hedzr/android-file-chooser.git somewhere
-cd somewhere
-./gradlew assembleDebug
-```
-
-~~you'd better generate a new file `android-file-chooser.keystore` at homedir or else. such as: `keytool -genkey -alias android.keystore -keyalg RSA -validity 20000 -keystore android.keystore`, see also [Sign an app](https://developer.android.com/studio/publish/app-signing).
-Or, erase the `KS_PATH` lines and signature section in app/build.gradle.~~
-
-### 2. current
-
 just fork and build me currently.
 
 ## Contrib
@@ -372,20 +503,22 @@ Contributions and translations are welcome.
 
 ## Feedback
 
-feel free to make an new issue.
+feel free to make a new issue.
 
 ## Acknowledges
 
 many peoples report or contribute to improve me, but only a few of them be put here — it's hard to list all.
 
 - logo and banner by: [**iqbalhood**](https://github.com/iqbalhood)
-- codes and reports: [**bostrot**](https://github.com/bostrot), [**SeppPenner**](https://github.com/SeppPenner), [**lucian-cm**](https://github.com/lucian-cm), [**ghost**](https://github.com/ghost), [**UmeshBaldaniya46**](https://github.com/UmeshBaldaniya46), [**Guiorgy**](https://github.com/Guiorgy) ...
-- DPad s
+- codes and reports: [**bostrot**](https://github.com/bostrot), [**SeppPenner**](https://github.com/SeppPenner), [**lucian-cm**](https://github.com/lucian-cm), [**ghost**](https://github.com/ghost), [**UmeshBaldaniya46**](https://github.com/UmeshBaldaniya46), ...
+- especially, the supporter: [Guiorgy](https://github.com/Guiorgy) and his [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser)
 
 
 ## License
 
-Copyright 2015-2018 Hedzr Yeh.
+Standard Apache 2.0
+
+Copyright 2015-2019 Hedzr Yeh.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

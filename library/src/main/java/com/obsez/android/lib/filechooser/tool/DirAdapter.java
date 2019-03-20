@@ -2,6 +2,7 @@ package com.obsez.android.lib.filechooser.tool;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -54,12 +55,10 @@ public class DirAdapter extends ArrayAdapter<File> {
         _defaultFolderIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_folder);
         _defaultFileIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_file);
 
-        int accentColor = UiUtil.getThemeAccentColor(getContext());
-        int red = Color.red(accentColor);
-        int green = Color.green(accentColor);
-        int blue = Color.blue(accentColor);
-        int accentColorWithAlpha = Color.argb(40, red, green, blue);
-        _colorFilter = new PorterDuffColorFilter(accentColorWithAlpha, PorterDuff.Mode.MULTIPLY);
+        TypedArray ta = getContext().obtainStyledAttributes(R.styleable.FileChooser);
+        int colorFilter = ta.getColor(R.styleable.FileChooser_fileListItemSelectedTint, getContext().getResources().getColor(R.color.li_row_background_tint));
+        ta.recycle();
+        _colorFilter = new PorterDuffColorFilter(colorFilter, PorterDuff.Mode.MULTIPLY);
     }
 
     // This function is called to show each view item
@@ -117,13 +116,18 @@ public class DirAdapter extends ArrayAdapter<File> {
         tvName.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
 
         View root = rl.findViewById(R.id.root);
+        if (root.getBackground() == null) {
+            root.setBackgroundResource(R.color.li_row_background);
+        }
         if (_selected.get(file.hashCode(), null) == null) {
-            if (position == _hoveredIndex)
+            if (position == _hoveredIndex) {
                 root.getBackground().setColorFilter(_colorFilter);
-            else
+            } else {
                 root.getBackground().clearColorFilter();
-        } else
+            }
+        } else {
             root.getBackground().setColorFilter(_colorFilter);
+        }
 
         return rl;
     }
@@ -162,8 +166,17 @@ public class DirAdapter extends ArrayAdapter<File> {
 
     @Override
     public long getItemId(int position) {
-        //noinspection ConstantConditions
-        return getItem(position).hashCode();
+        try {
+            //noinspection ConstantConditions
+            return getItem(position).hashCode();
+        } catch (IndexOutOfBoundsException e) {
+            try {
+                //noinspection ConstantConditions
+                return getItem(0).hashCode();
+            } catch (IndexOutOfBoundsException ex) {
+                return 0;
+            }
+        }
     }
 
     public void selectItem(int position) {

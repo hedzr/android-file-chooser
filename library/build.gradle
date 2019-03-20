@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-//apply plugin: 'com.github.dcendents.android-maven' // ADD THIS
+apply plugin: 'com.github.dcendents.android-maven'
 
 //apply plugin: 'maven'
 //version = "1.1.3"
@@ -13,7 +13,7 @@ android {
     //compileSdkVersion 22
     //buildToolsVersion "23.0.0 rc2"
     compileSdkVersion Integer.parseInt(project.ANDROID_COMPILE_SDK_VERSION)
-    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
+    //buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
     resourcePrefix "obsez_fc__"
 
     defaultConfig {
@@ -37,6 +37,10 @@ android {
 //        }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     lintOptions {
         lintConfig rootProject.file('lint.xml')
         quiet true
@@ -57,7 +61,26 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
+task createPom {
+    pom {
+        project {
+            groupId 'com.obsez.android.lib.filechooser'
+            artifactId 'android-file-chooser'
+            version VERSION_NAME
 
+            inceptionYear '2015'
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+        }
+    }.writeTo("pom.xml")
+}
+
+build.finalizedBy(createPom)
 
 // gradle uploadArchives
 apply from: '_sonatype.gradle'
@@ -65,3 +88,4 @@ apply from: '_sonatype.gradle'
 apply from: '_mavenlocal.gradle'
 // gradle bintrayUpload
 apply from: '_bintray.gradle'
+

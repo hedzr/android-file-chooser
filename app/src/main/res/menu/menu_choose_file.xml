@@ -2,8 +2,24 @@
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context=".ChooseFileActivity">
-  <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:orderInCategory="100"
-        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_gh"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:orderInCategory="80"
+        android:title="@string/action_gh"
+        app:showAsAction="never|ifRoom|withText"/>
+
+    <item
+        android:id="@+id/action_about"
+        android:icon="@drawable/ic_info_outline_black_24dp"
+        android:orderInCategory="80"
+        android:title="@string/action_about"
+        app:showAsAction="never|ifRoom|withText"/>
+
+    <!--<item android:id="@+id/action_settings"-->
+    <!--android:title="@string/action_settings"-->
+    <!--android:orderInCategory="100"-->
+    <!--app:showAsAction="never"/>-->
+
 </menu>

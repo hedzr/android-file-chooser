@@ -2,7 +2,6 @@ package com.obsez.android.lib.filechooser.demo;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,7 +36,8 @@ public class ImageUtil {
             int IMAGE_MAX_SIZE = 1024; // maximum dimension limit
             int scale = 1;
             if (o.outHeight > IMAGE_MAX_SIZE || o.outWidth > IMAGE_MAX_SIZE) {
-                scale = (int) Math.pow(2, (int) Math.round(Math.log(IMAGE_MAX_SIZE / (double) Math.max(o.outHeight, o.outWidth)) / Math.log(0.5)));
+                scale = (int) Math.pow(2, (int) Math.round(
+                    Math.log(IMAGE_MAX_SIZE / (double) Math.max(o.outHeight, o.outWidth)) / Math.log(0.5)));
             }
 
             // Decode with inSampleSize
