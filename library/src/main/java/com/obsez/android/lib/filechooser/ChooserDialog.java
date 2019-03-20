@@ -23,6 +23,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ContextThemeWrapper;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -126,7 +127,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         }
 
         if (fileChooserTheme == null) {
-            this._context = new ContextThemeWrapper(this._context, R.style.FileChooserStyle);
+            TypedValue typedValue = new TypedValue();
+            if (!this._context.getTheme().resolveAttribute(
+                R.attr.fileChooserStyle, typedValue, true))
+                this._context = new ContextThemeWrapper(this._context, R.style.FileChooserStyle);
         } else {
             //noinspection UnnecessaryUnboxing
             this._context = new ContextThemeWrapper(this._context, fileChooserTheme.intValue());
