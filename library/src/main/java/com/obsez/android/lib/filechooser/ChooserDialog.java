@@ -451,6 +451,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         } else {
             _adapter = new DirAdapter(_context, this._dateFormat);
         }
+        if (_adapterSetter != null) _adapterSetter.apply(_adapter);
 
         refreshDirs();
         builder.setAdapter(_adapter, this);
