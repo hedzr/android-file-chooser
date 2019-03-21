@@ -3,7 +3,6 @@ package com.obsez.android.lib.filechooser.tool;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
@@ -16,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.obsez.android.lib.filechooser.ChooserDialog;
 import com.obsez.android.lib.filechooser.R;
 import com.obsez.android.lib.filechooser.internals.FileUtil;
 import com.obsez.android.lib.filechooser.internals.UiUtil;
@@ -33,19 +33,16 @@ import java.util.List;
  */
 public class DirAdapter extends ArrayAdapter<File> {
 
-    public DirAdapter(Context cxt, List<File> entries, int resId) {
-        super(cxt, resId, R.id.text, entries);
-        this.init(null);
-    }
-
-    public DirAdapter(Context cxt, List<File> entries, int resId, String dateFormat) {
-        super(cxt, resId, R.id.text, entries);
+    public DirAdapter(Context cxt, ChooserDialog.AdapterSetter adapterSetter, String dateFormat) {
+        super(cxt, R.layout.li_row_textview, R.id.text, new ArrayList<>());
+        this._adapterSetter = adapterSetter;
         this.init(dateFormat);
     }
 
-    public DirAdapter(Context cxt, List<File> entries, int resource, int textViewResourceId) {
-        super(cxt, resource, textViewResourceId, entries);
-        this.init(null);
+    public DirAdapter(Context cxt, ChooserDialog.AdapterSetter adapterSetter, List<File> entries, int resId, String dateFormat) {
+        super(cxt, resId, R.id.text, entries);
+        this._adapterSetter = adapterSetter;
+        this.init(dateFormat);
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -66,23 +63,20 @@ public class DirAdapter extends ArrayAdapter<File> {
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        ViewGroup rl = (ViewGroup) super.getView(position, convertView, parent);
+        final File file = super.getItem(position);
+        if (file == null) return super.getView(position, convertView, parent);
+        final boolean isSelected = _selected.get(file.hashCode(), null) != null;
+        if (_adapterSetter != null)
+            return _adapterSetter.getView(file, isSelected, position == _hoveredIndex, convertView, parent);
 
-        //if (position == _hoveredIndex) {
-        //    rl.setBackgroundColor(Color.argb(128, 70, 70, 70));
-        //} else {
-        //    rl.setBackgroundColor(Color.argb(255, 255, 255, 255));
-        //}
+        ViewGroup view = (ViewGroup) super.getView(position, convertView, parent);
 
-        TextView tvName = rl.findViewById(R.id.text);
-        TextView tvSize = rl.findViewById(R.id.txt_size);
-        TextView tvDate = rl.findViewById(R.id.txt_date);
-        //ImageView ivIcon = (ImageView) rl.findViewById(R.id.icon);
+        TextView tvName = view.findViewById(R.id.text);
+        TextView tvSize = view.findViewById(R.id.txt_size);
+        TextView tvDate = view.findViewById(R.id.txt_date);
+        //ImageView ivIcon = (ImageView) view.findViewById(R.id.icon);
 
         tvDate.setVisibility(View.VISIBLE);
-
-        File file = super.getItem(position);
-        if (file == null) return rl;
         tvName.setText(file.getName());
         Drawable icon;
         if (file.isDirectory()) {
@@ -115,11 +109,11 @@ public class DirAdapter extends ArrayAdapter<File> {
         }
         tvName.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
 
-        View root = rl.findViewById(R.id.root);
+        View root = view.findViewById(R.id.root);
         if (root.getBackground() == null) {
             root.setBackgroundResource(R.color.li_row_background);
         }
-        if (_selected.get(file.hashCode(), null) == null) {
+        if (!isSelected) {
             if (position == _hoveredIndex) {
                 root.getBackground().setColorFilter(_colorFilter);
             } else {
@@ -129,7 +123,7 @@ public class DirAdapter extends ArrayAdapter<File> {
             root.getBackground().setColorFilter(_colorFilter);
         }
 
-        return rl;
+        return view;
     }
 
     public Drawable getDefaultFolderIcon() {
@@ -264,7 +258,8 @@ public class DirAdapter extends ArrayAdapter<File> {
         _indexStack.clear();
     }
 
-    private static SimpleDateFormat _formatter;
+    private SimpleDateFormat _formatter;
+    private ChooserDialog.AdapterSetter _adapterSetter = null;
     private Drawable _defaultFolderIcon = null;
     private Drawable _defaultFileIcon = null;
     private boolean _resolveFileType = false;

@@ -31,6 +31,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
@@ -294,6 +295,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    /**
+     * @deprecated use {@link AdapterSetter#getView(File, boolean, boolean, View, ViewGroup)} instead
+     */
     public ChooserDialog withRowLayoutView(@LayoutRes int layoutResId) {
         this._rowLayoutRes = layoutResId;
         return this;
@@ -337,31 +341,27 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     public ChooserDialog withFileIcons(final boolean tryResolveFileTypeAndIcon, final Drawable fileIcon,
         final Drawable folderIcon) {
-        _adapterSetter = adapter -> {
-            if (fileIcon != null) adapter.setDefaultFileIcon(fileIcon);
-            if (folderIcon != null) adapter.setDefaultFolderIcon(folderIcon);
-            adapter.setResolveFileType(tryResolveFileTypeAndIcon);
-        };
+        if (fileIcon != null) _defaultFileIcon = fileIcon;
+        if (folderIcon != null) _defaultFolderIcon = folderIcon;
+        _resolveFileType = tryResolveFileTypeAndIcon;
         return this;
     }
 
     public ChooserDialog withFileIconsRes(final boolean tryResolveFileTypeAndIcon, final int fileIcon,
         final int folderIcon) {
-        _adapterSetter = adapter -> {
-            if (fileIcon != -1) {
-                adapter.setDefaultFileIcon(ContextCompat.getDrawable(_context, fileIcon));
-            }
-            if (folderIcon != -1) {
-                adapter.setDefaultFolderIcon(
-                    ContextCompat.getDrawable(_context, folderIcon));
-            }
-            adapter.setResolveFileType(tryResolveFileTypeAndIcon);
-        };
+        if (fileIcon != -1) {
+            _defaultFileIcon = ContextCompat.getDrawable(_context, fileIcon);
+        }
+        if (folderIcon != -1) {
+            _defaultFolderIcon = ContextCompat.getDrawable(_context, folderIcon);
+        }
+        _resolveFileType = tryResolveFileTypeAndIcon;
         return this;
     }
 
     /**
-     * @param setter you can customize the folder navi-adapter with `setter`
+     * @param setter you can override {@link DirAdapter#getView(int, View, ViewGroup)}
+     *               see {@link AdapterSetter} for more information
      * @return this
      */
     public ChooserDialog withAdapterSetter(AdapterSetter setter) {
@@ -439,9 +439,16 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             ta.getResourceId(R.styleable.FileChooser_fileChooserDialogStyle, R.style.FileChooserDialogStyle));
         ta.recycle();
 
-        _adapter = new DirAdapter(_context, new ArrayList<>(),
-            _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
-        if (_adapterSetter != null) _adapterSetter.apply(_adapter);
+        if (_rowLayoutRes != -1) {
+            _adapter = new DirAdapter(_context, _adapterSetter,
+                new ArrayList<>(), _rowLayoutRes, this._dateFormat);
+        } else {
+            _adapter = new DirAdapter(_context, _adapterSetter, this._dateFormat);
+        }
+        _adapter.setDefaultFileIcon(_defaultFileIcon);
+        _adapter.setDefaultFolderIcon(_defaultFolderIcon);
+        _adapter.setResolveFileType(_resolveFileType);
+
         refreshDirs();
         builder.setAdapter(_adapter, this);
 
@@ -623,7 +630,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         public void onClick(final View view) {
                             if (_newFolderView != null
                                 && _newFolderView.getVisibility() == View.VISIBLE) return;
-                            
+
                             if (_options == null) {
                                 // region Draw options view. (this only happens the first time one clicks on options)
                                 // Root view (FrameLayout) of the ListView in the AlertDialog.
@@ -1462,7 +1469,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     int _iconRes = -1;
     private @LayoutRes
     int _layoutRes = -1;
-    private @LayoutRes
+    private @LayoutRes @Deprecated
     int _rowLayoutRes = -1;
     private String _dateFormat;
     private DialogInterface.OnClickListener _negativeListener;
@@ -1486,10 +1493,22 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     @FunctionalInterface
     public interface AdapterSetter {
-        void apply(DirAdapter adapter);
+        /**
+         * @param file file that should me displayed
+         * @param isSelected whether file is selected when _enableMultiple is set to true
+         * @param isFocused whether this file is focused when using dpad controls
+         * @param convertView see {@link android.widget.ArrayAdapter#getView(int, View, ViewGroup)}
+         * @param parent see {@link android.widget.ArrayAdapter#getView(int, View, ViewGroup)}
+         * @return your custom row item view
+         */
+        @NonNull
+        View getView(@NonNull File file, boolean isSelected, boolean isFocused, View convertView, @NonNull ViewGroup parent);
     }
 
     private AdapterSetter _adapterSetter = null;
+    private Drawable _defaultFolderIcon = null;
+    private Drawable _defaultFileIcon = null;
+    private boolean _resolveFileType = false;
 
     @FunctionalInterface
     public interface CanNavigateUp {
