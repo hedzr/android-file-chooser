@@ -643,8 +643,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             }
             _list.setLayoutParams(param);
         } else {
-            String removableRoot = FileUtil.getStoragePath(_context, true);
-            String primaryRoot = FileUtil.getStoragePath(_context, false);
+            if (removableRoot == null || primaryRoot == null) {
+                removableRoot = FileUtil.getStoragePath(_context, true);
+                primaryRoot = FileUtil.getStoragePath(_context, false);
+            }
             if (path.contains(removableRoot))
                 path = path.substring(removableRoot.lastIndexOf('/') + 1);
             if (path.contains(primaryRoot)) path = path.substring(primaryRoot.lastIndexOf('/') + 1);
@@ -790,7 +792,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             doGoBack();
             return;
         } else if (file.getName().contains(sSdcardStorage)) {
-            String removableRoot = FileUtil.getStoragePath(_context, true);
+            if (removableRoot == null) {
+                removableRoot = FileUtil.getStoragePath(_context, true);
+            }
             if (Environment.MEDIA_MOUNTED.equals(
                 Environment.getExternalStorageState())) {
                 _currentDir = new File(removableRoot);
@@ -799,7 +803,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 _adapter.popAll();
             }
         } else if (file.getName().contains(sPrimaryStorage)) {
-            String primaryRoot = FileUtil.getStoragePath(_context, false);
+            if (primaryRoot == null) {
+                primaryRoot = FileUtil.getStoragePath(_context, false);
+            }
             _currentDir = new File(primaryRoot);
             _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
             if (_deleteModeIndicator != null) _deleteModeIndicator.run();
