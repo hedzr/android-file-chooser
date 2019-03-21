@@ -296,7 +296,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     /**
-     * @deprecated use {@link AdapterSetter#getView(File, boolean, boolean, View, ViewGroup)} instead
+     * @deprecated use {@link AdapterSetter#apply(DirAdapter)}
+     *             and then {@link DirAdapter.GetView#getView(File, boolean, boolean, View, ViewGroup)} instead
      */
     public ChooserDialog withRowLayoutView(@LayoutRes int layoutResId) {
         this._rowLayoutRes = layoutResId;
@@ -341,21 +342,26 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     public ChooserDialog withFileIcons(final boolean tryResolveFileTypeAndIcon, final Drawable fileIcon,
         final Drawable folderIcon) {
-        if (fileIcon != null) _defaultFileIcon = fileIcon;
-        if (folderIcon != null) _defaultFolderIcon = folderIcon;
-        _resolveFileType = tryResolveFileTypeAndIcon;
+        _adapterSetter = adapter -> {
+            if (fileIcon != null) adapter.setDefaultFileIcon(fileIcon);
+            if (folderIcon != null) adapter.setDefaultFolderIcon(folderIcon);
+            adapter.setResolveFileType(tryResolveFileTypeAndIcon);
+        };
         return this;
     }
 
     public ChooserDialog withFileIconsRes(final boolean tryResolveFileTypeAndIcon, final int fileIcon,
         final int folderIcon) {
-        if (fileIcon != -1) {
-            _defaultFileIcon = ContextCompat.getDrawable(_context, fileIcon);
-        }
-        if (folderIcon != -1) {
-            _defaultFolderIcon = ContextCompat.getDrawable(_context, folderIcon);
-        }
-        _resolveFileType = tryResolveFileTypeAndIcon;
+        _adapterSetter = adapter -> {
+            if (fileIcon != -1) {
+                adapter.setDefaultFileIcon(ContextCompat.getDrawable(_context, fileIcon));
+            }
+            if (folderIcon != -1) {
+                adapter.setDefaultFolderIcon(
+                    ContextCompat.getDrawable(_context, folderIcon));
+            }
+            adapter.setResolveFileType(tryResolveFileTypeAndIcon);
+        };
         return this;
     }
 
@@ -440,14 +446,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         ta.recycle();
 
         if (_rowLayoutRes != -1) {
-            _adapter = new DirAdapter(_context, _adapterSetter,
+            _adapter = new DirAdapter(_context,
                 new ArrayList<>(), _rowLayoutRes, this._dateFormat);
         } else {
-            _adapter = new DirAdapter(_context, _adapterSetter, this._dateFormat);
+            _adapter = new DirAdapter(_context, this._dateFormat);
         }
-        _adapter.setDefaultFileIcon(_defaultFileIcon);
-        _adapter.setDefaultFolderIcon(_defaultFolderIcon);
-        _adapter.setResolveFileType(_resolveFileType);
 
         refreshDirs();
         builder.setAdapter(_adapter, this);
@@ -1493,22 +1496,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     @FunctionalInterface
     public interface AdapterSetter {
-        /**
-         * @param file file that should me displayed
-         * @param isSelected whether file is selected when _enableMultiple is set to true
-         * @param isFocused whether this file is focused when using dpad controls
-         * @param convertView see {@link android.widget.ArrayAdapter#getView(int, View, ViewGroup)}
-         * @param parent see {@link android.widget.ArrayAdapter#getView(int, View, ViewGroup)}
-         * @return your custom row item view
-         */
-        @NonNull
-        View getView(@NonNull File file, boolean isSelected, boolean isFocused, View convertView, @NonNull ViewGroup parent);
+        void apply(DirAdapter adapter);
     }
 
     private AdapterSetter _adapterSetter = null;
-    private Drawable _defaultFolderIcon = null;
-    private Drawable _defaultFileIcon = null;
-    private boolean _resolveFileType = false;
 
     @FunctionalInterface
     public interface CanNavigateUp {

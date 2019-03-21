@@ -33,15 +33,13 @@ import java.util.List;
  */
 public class DirAdapter extends ArrayAdapter<File> {
 
-    public DirAdapter(Context cxt, ChooserDialog.AdapterSetter adapterSetter, String dateFormat) {
+    public DirAdapter(Context cxt, String dateFormat) {
         super(cxt, R.layout.li_row_textview, R.id.text, new ArrayList<>());
-        this._adapterSetter = adapterSetter;
         this.init(dateFormat);
     }
 
-    public DirAdapter(Context cxt, ChooserDialog.AdapterSetter adapterSetter, List<File> entries, int resId, String dateFormat) {
+    public DirAdapter(Context cxt, List<File> entries, int resId, String dateFormat) {
         super(cxt, resId, R.id.text, entries);
-        this._adapterSetter = adapterSetter;
         this.init(dateFormat);
     }
 
@@ -58,6 +56,24 @@ public class DirAdapter extends ArrayAdapter<File> {
         _colorFilter = new PorterDuffColorFilter(colorFilter, PorterDuff.Mode.MULTIPLY);
     }
 
+    @FunctionalInterface
+    public interface GetView {
+        /**
+         * @param file file that should me displayed
+         * @param isSelected whether file is selected when _enableMultiple is set to true
+         * @param isFocused whether this file is focused when using dpad controls
+         * @param convertView see {@link ArrayAdapter#getView(int, View, ViewGroup)}
+         * @param parent see {@link ArrayAdapter#getView(int, View, ViewGroup)}
+         * @return your custom row item view
+         */
+        @NonNull
+        View getView(@NonNull File file, boolean isSelected, boolean isFocused, View convertView, @NonNull ViewGroup parent);
+    }
+
+    public void overrideGetView(GetView getView) {
+        this._getView = getView;
+    }
+
     // This function is called to show each view item
     @SuppressWarnings("ConstantConditions")
     @NonNull
@@ -66,8 +82,8 @@ public class DirAdapter extends ArrayAdapter<File> {
         final File file = super.getItem(position);
         if (file == null) return super.getView(position, convertView, parent);
         final boolean isSelected = _selected.get(file.hashCode(), null) != null;
-        if (_adapterSetter != null)
-            return _adapterSetter.getView(file, isSelected, position == _hoveredIndex, convertView, parent);
+        if (_getView != null)
+            return _getView.getView(file, isSelected, position == _hoveredIndex, convertView, parent);
 
         ViewGroup view = (ViewGroup) super.getView(position, convertView, parent);
 
@@ -259,7 +275,6 @@ public class DirAdapter extends ArrayAdapter<File> {
     }
 
     private SimpleDateFormat _formatter;
-    private ChooserDialog.AdapterSetter _adapterSetter = null;
     private Drawable _defaultFolderIcon = null;
     private Drawable _defaultFileIcon = null;
     private boolean _resolveFileType = false;
@@ -267,5 +282,6 @@ public class DirAdapter extends ArrayAdapter<File> {
     private SparseArray<File> _selected = new SparseArray<File>();
     private int _hoveredIndex;
     private List<Integer> _indexStack = new LinkedList<>();
+    private GetView _getView = null;
 }
 
