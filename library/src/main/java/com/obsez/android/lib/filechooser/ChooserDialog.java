@@ -237,13 +237,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
-    public ChooserDialog withStrings(@Nullable String title, @Nullable String ok, @Nullable String cancel) {
-        this._title = title;
-        this._ok = ok;
-        this._negative = cancel;
-        return this;
-    }
-
     /**
      * To enable the option pane with create/delete folder on the fly.
      * When u set it true, you may need WRITE_EXTERNAL_STORAGE declaration too.
@@ -306,14 +299,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     public ChooserDialog withNegativeButton(@StringRes int cancelTitle,
         final DialogInterface.OnClickListener listener) {
         this._negativeRes = cancelTitle;
-        this._negativeListener = listener;
-        return this;
-    }
-
-    public ChooserDialog withNegativeButton(@Nullable String cancelTitle,
-        final DialogInterface.OnClickListener listener) {
-        this._negative = cancelTitle;
-        if (cancelTitle != null) this._negativeRes = -1;
         this._negativeListener = listener;
         return this;
     }
@@ -431,6 +416,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     public ChooserDialog build() {
+        if (_titleRes == 0 || _okRes == 0 || _negativeRes == 0) {
+            throw new RuntimeException("withResources() should be called at first.");
+        }
+
         TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
         int style = ta.getResourceId(R.styleable.FileChooser_fileChooserDialogStyle, R.style.FileChooserDialogStyle);
         final AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(_context, style),
@@ -444,12 +433,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         builder.setAdapter(_adapter, this);
 
         if (!_disableTitle) {
-            if (_titleRes != -1)
-                builder.setTitle(_titleRes);
-            else if (_title != null)
-                builder.setTitle(_title);
-            else
-                builder.setTitle(R.string.choose_file);
+            builder.setTitle(_titleRes);
         }
 
         if (_iconRes != -1) {
@@ -464,25 +448,14 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         if (_dirOnly || _enableMultiple) {
             // choosing folder, or multiple files picker
-            DialogInterface.OnClickListener listener = (dialog, which) -> {
+            builder.setPositiveButton(_okRes, (dialog, which) -> {
                 if (_result != null) {
                     _result.onChoosePath(_currentDir.getAbsolutePath(), _currentDir);
                 }
-            };
-            if (_okRes != -1)
-                builder.setPositiveButton(_okRes, listener);
-            else if (_ok != null)
-                builder.setPositiveButton(_ok, listener);
-            else
-                builder.setPositiveButton(R.string.title_choose, listener);
+            });
         }
 
-        if (_negativeRes != -1)
-            builder.setNegativeButton(_negativeRes, _negativeListener);
-        else if (_negative != null)
-            builder.setNegativeButton(_negative, _negativeListener);
-        else
-            builder.setNegativeButton(R.string.dialog_cancel, _negativeListener);
+        builder.setNegativeButton(_negativeRes, _negativeListener);
 
         if (_cancelListener2 != null) {
             builder.setOnCancelListener(_cancelListener2);
@@ -774,12 +747,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 if (displayPath) {
                     _alertDialog.setTitle(_currentDir.getName());
                 } else {
-                    if (_titleRes != -1)
-                        _alertDialog.setTitle(_titleRes);
-                    else if (_title != null)
-                        _alertDialog.setTitle(_title);
-                    else
-                        _alertDialog.setTitle(R.string.choose_file);
+                    _alertDialog.setTitle(_titleRes);
                 }
 
             }
@@ -1051,9 +1019,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     boolean _dirOnly;
     private FileFilter _fileFilter;
     private @StringRes
-    int _titleRes = -1, _okRes = -1, _negativeRes = -1;
-    private @Nullable
-    String _title = null, _ok = null, _negative = null;
+    int _titleRes = R.string.choose_file, _okRes = R.string.title_choose, _negativeRes = R.string.dialog_cancel;
     private @DrawableRes
     int _iconRes = -1;
     private @LayoutRes
