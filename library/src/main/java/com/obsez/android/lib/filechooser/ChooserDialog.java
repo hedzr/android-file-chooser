@@ -954,7 +954,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             _enableOptions ? new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE }
             : new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE };
 
-        PermissionsUtil.checkPermissions(_context, p -> show.run(), p -> Log.d("TEST", (p[0]) + " denied!"), permissions);
+        PermissionsUtil.checkPermissions(_context,
+            p -> {
+                refreshDirs();
+                show.run();
+            }, null, permissions);
 
         return this;
     }
