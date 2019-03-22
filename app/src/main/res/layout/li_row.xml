@@ -1,51 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
-    android:theme="@style/FileChooserListItemStyle"
-    style="@style/FileChooserListItemStyle"
+    style="?attr/fileChooserListItemStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="?attr/fileChooserListItemStyle"
     tools:ignore="ResourceName"
     tools:theme="@style/FileChooserListItemStyle">
 
     <TextView
         android:id="@+id/file_name"
-        style="@style/FileChooserTextNameStyle"
+        style="?attr/fileChooserTextNameStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="false"
         android:layout_toRightOf="@+id/file_date"
         android:gravity="right"
-        tools:text="@string/title_choose" />
+        tools:text="@string/title_choose"
+        tools:theme="@style/FileChooserTextNameStyle" />
 
     <TextView
         android:id="@+id/file_path"
-        style="@style/FileChooserTextSizeStyle"
+        style="?attr/fileChooserTextSizeStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/file_name"
         android:layout_alignRight="@+id/file_name"
         android:layout_toRightOf="@+id/file_date"
+        android:ellipsize="start"
         android:gravity="center"
         android:singleLine="true"
-        android:ellipsize="start"
-        tools:text="@string/title_choose" />
+        tools:text="@string/title_choose"
+        tools:theme="@style/FileChooserTextSizeStyle" />
 
     <TextView
         android:id="@+id/file_date"
-        style="@style/FileChooserTextDateStyle"
+        style="?attr/fileChooserTextDateStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignBottom="@+id/file_path"
-        android:rotation="-90"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:gravity="center"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
-        tools:text="@string/title_choose" />
+        android:rotation="-90"
+        tools:text="@string/title_choose"
+        tools:theme="@style/FileChooserTextDateStyle" />
 
 </RelativeLayout>

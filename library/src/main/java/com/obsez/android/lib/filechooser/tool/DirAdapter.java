@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -63,10 +64,11 @@ public class DirAdapter extends ArrayAdapter<File> {
          * @param isFocused whether this file is focused when using dpad controls
          * @param convertView see {@link ArrayAdapter#getView(int, View, ViewGroup)}
          * @param parent see {@link ArrayAdapter#getView(int, View, ViewGroup)}
+         * @param inflater a layout inflater with the FileChooser theme wrapped context
          * @return your custom row item view
          */
         @NonNull
-        View getView(@NonNull File file, boolean isSelected, boolean isFocused, View convertView, @NonNull ViewGroup parent);
+        View getView(@NonNull File file, boolean isSelected, boolean isFocused, View convertView, @NonNull ViewGroup parent, @NonNull LayoutInflater inflater);
     }
 
     public void overrideGetView(GetView getView) {
@@ -82,7 +84,7 @@ public class DirAdapter extends ArrayAdapter<File> {
         if (file == null) return super.getView(position, convertView, parent);
         final boolean isSelected = _selected.get(file.hashCode(), null) != null;
         if (_getView != null)
-            return _getView.getView(file, isSelected, position == _hoveredIndex, convertView, parent);
+            return _getView.getView(file, isSelected, position == _hoveredIndex, convertView, parent, LayoutInflater.from(getContext()));
 
         ViewGroup view = (ViewGroup) super.getView(position, convertView, parent);
 

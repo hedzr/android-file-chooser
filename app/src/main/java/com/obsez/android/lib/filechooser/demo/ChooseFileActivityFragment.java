@@ -112,10 +112,6 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
             if (isChecked) customLayout.setChecked(false);
         });
 
-        darkTheme.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) customLayout.setChecked(false);
-        });
-
         customLayout.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 dateFormat.setChecked(false);
@@ -286,8 +282,8 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
             fileIcon.mutate().setColorFilter(filter);
             chooserDialog
                 .withAdapterSetter(adapter ->
-                    adapter.overrideGetView((file, isSelected, isFocused, convertView, parent) -> {
-                        ViewGroup view = (ViewGroup) LayoutInflater.from(ctx).inflate(R.layout.li_row, parent, false);
+                    adapter.overrideGetView((file, isSelected, isFocused, convertView, parent, inflater) -> {
+                        ViewGroup view = (ViewGroup) inflater.inflate(R.layout.li_row, parent, false);
 
                         TextView tvName = view.findViewById(R.id.file_name);
                         TextView tvpath = view.findViewById(R.id.file_path);
