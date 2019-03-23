@@ -1,20 +1,5 @@
 package com.obsez.android.lib.filechooser;
 
-import static android.view.Gravity.BOTTOM;
-import static android.view.Gravity.CENTER;
-import static android.view.Gravity.CENTER_HORIZONTAL;
-import static android.view.Gravity.CENTER_VERTICAL;
-import static android.view.Gravity.END;
-import static android.view.Gravity.START;
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
-import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-import static android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE;
-
-import static com.obsez.android.lib.filechooser.internals.FileUtil.NewFolderFilter;
-import static com.obsez.android.lib.filechooser.internals.UiUtil.getListYScroll;
-
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -22,7 +7,6 @@ import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -34,10 +18,8 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ContextThemeWrapper;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -63,6 +45,7 @@ import com.obsez.android.lib.filechooser.internals.ExtFileFilter;
 import com.obsez.android.lib.filechooser.internals.FileUtil;
 import com.obsez.android.lib.filechooser.internals.RegexFileFilter;
 import com.obsez.android.lib.filechooser.internals.UiUtil;
+import com.obsez.android.lib.filechooser.permissions.PermissionsUtil;
 import com.obsez.android.lib.filechooser.tool.DirAdapter;
 import com.obsez.android.lib.filechooser.tool.RootFile;
 
@@ -74,6 +57,20 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import static android.view.Gravity.BOTTOM;
+import static android.view.Gravity.CENTER;
+import static android.view.Gravity.CENTER_HORIZONTAL;
+import static android.view.Gravity.CENTER_VERTICAL;
+import static android.view.Gravity.END;
+import static android.view.Gravity.START;
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
+import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+import static android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE;
+import static com.obsez.android.lib.filechooser.internals.FileUtil.NewFolderFilter;
+import static com.obsez.android.lib.filechooser.internals.UiUtil.getListYScroll;
 
 /**
  * Created by coco on 6/7/15.
@@ -138,10 +135,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     private void init(@Nullable @StyleRes Integer fileChooserTheme) {
         _onBackPressed = new defBackPressed(this);
-
-        if (this._context instanceof AppCompatActivity || this._context instanceof Activity) {
-            this._activity = (Activity) this._context;
-        }
 
         if (fileChooserTheme == null) {
             this._context = new ContextThemeWrapper(this._context, R.style.FileChooserStyle);
@@ -1021,105 +1014,12 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         });
     }
 
-    /**
-     * check, whether the application has the required permissions
-     *
-     * @return true if application has the required permissions
-     * false if application hasn't got the required permissions
-     * @throws RuntimeException if permission needs to be requested,
-     *                          but context passed to ChooserDialog
-     *                          was not instance of {@link Activity}.
-     * @see android.support.v4.app.ActivityCompat#requestPermissions(Activity, String[], int)
-     */
-    private boolean checkPermissions() {
-        if (Build.VERSION.SDK_INT < 23) return true;
-
-        if (_activity == null) {
-            throw new RuntimeException(
-                "Either pass an Activity as Context, or grant READ_EXTERNAL_STORAGE and WRITE_EXTERNAL_STORAGE"
-                    + " permission!");
-        }
-
-        final int PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE = 0;
-        if (_enableOptions) {
-            int readPermissionCheck = ContextCompat.checkSelfPermission(_context,
-                Manifest.permission.READ_EXTERNAL_STORAGE);
-            int writePermissionCheck = ContextCompat.checkSelfPermission(_context,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-            //if = permission granted
-            if (readPermissionCheck == PackageManager.PERMISSION_GRANTED
-                && writePermissionCheck == PackageManager.PERMISSION_GRANTED) {
-                return true;
-            } else {
-                ActivityCompat.requestPermissions(_activity,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
-
-                readPermissionCheck = ContextCompat.checkSelfPermission(_context,
-                    Manifest.permission.READ_EXTERNAL_STORAGE);
-                writePermissionCheck = ContextCompat.checkSelfPermission(_context,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-                if (readPermissionCheck == PackageManager.PERMISSION_GRANTED
-                    && writePermissionCheck == PackageManager.PERMISSION_GRANTED) {
-                    return true;
-                } else {
-                    Toast.makeText(_context,
-                        "Cannot request Read/Write permissions on SDCard, the operation was ignores.",
-                        Toast.LENGTH_LONG).show();
-                }
-                return false;
-            }
-        } else {
-            int readPermissionCheck = ContextCompat.checkSelfPermission(_context,
-                Manifest.permission.READ_EXTERNAL_STORAGE);
-
-            //if = permission granted
-            if (readPermissionCheck == PackageManager.PERMISSION_GRANTED) {
-                return true;
-            } else {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(_activity,
-                    Manifest.permission.READ_CONTACTS)) {
-
-                    // Show an expanation to the user *asynchronously* -- don't block
-                    // this thread waiting for the user's response! After the user
-                    // sees the explanation, try again to request the permission.
-                    Toast.makeText(_context, "You denied the Read/Write permissions on SDCard.",
-                        Toast.LENGTH_LONG).show();
-
-                } else {
-                    // No explanation needed, we can request the permission.
-                    ActivityCompat.requestPermissions(_activity,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        PERMISSION_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
-
-                    readPermissionCheck = ContextCompat.checkSelfPermission(_context,
-                        Manifest.permission.READ_EXTERNAL_STORAGE);
-
-                    if (readPermissionCheck == PackageManager.PERMISSION_GRANTED) {
-                        return true;
-                    } else {
-                        Toast.makeText(_context,
-                            "Cannot request Read/Write permissions on SDCard, the operation was ignores.",
-                            Toast.LENGTH_LONG).show();
-                    }
-                }
-                return false;
-            }
-        }
-    }
-
     public ChooserDialog show() {
-        //if (_result == null)
-        //    throw new RuntimeException("no chosenListener defined. use withChosenListener() at first.");
-
         if (_alertDialog == null || _list == null) {
-            throw new RuntimeException("call build() before show().");
+            throw new RuntimeException("call build() before show()");
         }
 
-        if (checkPermissions()) {
+        final Runnable show = () -> {
             Window window = _alertDialog.getWindow();
             if (window != null) {
                 TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
@@ -1133,7 +1033,22 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 ta.recycle();
             }
             _alertDialog.show();
+        };
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            show.run();
+            return this;
         }
+
+        final String[] permissions =
+            _enableOptions ? new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE }
+            : new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE };
+
+        PermissionsUtil.checkPermissions(_context,
+            p -> {
+                refreshDirs();
+                show.run();
+            }, null, permissions);
 
         return this;
     }
@@ -1546,8 +1461,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private DirAdapter _adapter;
     private File _currentDir;
     private Context _context;
-    private @Nullable
-    Activity _activity = null;
     private AlertDialog _alertDialog;
     ListView _list;
     private Result _result = null;
