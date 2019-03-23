@@ -665,7 +665,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             }
             if (path.contains(removableRoot))
                 path = path.substring(removableRoot.lastIndexOf('/') + 1);
-            if (!removableRoot.equals(primaryRoot) && path.contains(primaryRoot))
+            if (path.contains(primaryRoot))
                 path = path.substring(primaryRoot.lastIndexOf('/') + 1);
             _pathView.setText(path);
 
