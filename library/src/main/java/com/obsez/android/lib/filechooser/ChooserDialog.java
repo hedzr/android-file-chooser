@@ -295,12 +295,12 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     public ChooserDialog withIcon(@Nullable Drawable icon) {
         this._icon = icon;
         return this;
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     public ChooserDialog withLayoutView(@LayoutRes int layoutResId) {
         this._layoutRes = layoutResId;
         return this;
