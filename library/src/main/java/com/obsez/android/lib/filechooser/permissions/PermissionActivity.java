@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +32,7 @@ public class PermissionActivity extends AppCompatActivity {
         if (permissions.length == 0) finish();
         _requestCode = intent.getIntExtra(INTENT_EXTRA_REQUEST_CODE, -1);
         if (_requestCode == -1) finish();
-        Pair<PermissionsUtil.CallBack, PermissionsUtil.CallBack> p = PermissionsUtil.getCallBacks(_requestCode);
-        _onPermissionGranted = p.first;
-        _onPermissionDenied = p.second;
+        _permissionListener = PermissionsUtil.getPermissionListener(_requestCode);
 
         for (String permission : permissions) {
             if (permission == null || permission.isEmpty()) {
@@ -52,7 +49,7 @@ public class PermissionActivity extends AppCompatActivity {
             if (_permissions_granted.isEmpty()) {
                 throw new RuntimeException("there are no permissions");
             } else {
-                if (_onPermissionGranted != null) _onPermissionGranted.callBack(toArray(_permissions_granted));
+                if (_permissionListener != null) _permissionListener.onPermissionGranted(toArray(_permissions_granted));
                 finish();
             }
         } else {
@@ -77,17 +74,17 @@ public class PermissionActivity extends AppCompatActivity {
             if (_permissions_granted.isEmpty()) {
                 throw new RuntimeException("there are no permissions");
             } else {
-                if (_onPermissionGranted != null) _onPermissionGranted.callBack(toArray(_permissions_granted));
+                if (_permissionListener != null) _permissionListener.onPermissionGranted(toArray(_permissions_granted));
                 finish();
             }
         } else {
-            if (_onPermissionDenied != null) _onPermissionDenied.callBack(toArray(_permissions_denied));
+            if (_permissionListener != null) _permissionListener.onPermissionDenied(toArray(_permissions_denied));
             finish();
         }
     }
 
     @Nullable
-    private PermissionsUtil.CallBack _onPermissionGranted, _onPermissionDenied;
+    private PermissionsUtil.OnPermissionListener _permissionListener;
     public int _requestCode;
 
     private List<String> _permissions_granted = new ArrayList<>();

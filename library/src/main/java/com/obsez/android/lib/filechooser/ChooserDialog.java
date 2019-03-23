@@ -76,7 +76,7 @@ import static com.obsez.android.lib.filechooser.internals.UiUtil.getListYScroll;
  * Created by coco on 6/7/15.
  */
 public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInterface.OnClickListener,
-    AdapterView.OnItemLongClickListener {
+    AdapterView.OnItemLongClickListener, PermissionsUtil.OnPermissionListener {
     @FunctionalInterface
     public interface Result {
         void onChoosePath(String dir, File dirFile);
@@ -924,29 +924,57 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         });
     }
 
+    private void showDialog() {
+        Window window = _alertDialog.getWindow();
+        if (window != null) {
+            TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
+            window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT);
+            window.setGravity(ta.getInt(R.styleable.FileChooser_fileChooserDialogGravity, Gravity.CENTER));
+            WindowManager.LayoutParams lp = window.getAttributes();
+            lp.dimAmount = ta.getFloat(R.styleable.FileChooser_fileChooserDialogBackgroundDimAmount, 0.3f);
+            lp.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+            window.setAttributes(lp);
+            ta.recycle();
+        }
+        _alertDialog.show();
+    }
+
+    @Override
+    public void onPermissionGranted(String[] permissions) {
+        boolean show = false;
+        for (String permission : permissions) {
+            if (permission.equals(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                show = true;
+                break;
+            }
+        }
+        if (!show) return;
+        if (_enableOptions) {
+            show = false;
+            for (String permission : permissions) {
+                if (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    show = true;
+                    break;
+                }
+            }
+        }
+        if (!show) return;
+        showDialog();
+    }
+
+    @Override
+    public void onPermissionDenied(String[] permissions) {
+
+    }
+
     public ChooserDialog show() {
         if (_alertDialog == null || _list == null) {
             throw new RuntimeException("call build() before show()");
         }
 
-        final Runnable show = () -> {
-            Window window = _alertDialog.getWindow();
-            if (window != null) {
-                TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
-                window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.WRAP_CONTENT);
-                window.setGravity(ta.getInt(R.styleable.FileChooser_fileChooserDialogGravity, Gravity.CENTER));
-                WindowManager.LayoutParams lp = window.getAttributes();
-                lp.dimAmount = ta.getFloat(R.styleable.FileChooser_fileChooserDialogBackgroundDimAmount, 0.3f);
-                lp.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-                window.setAttributes(lp);
-                ta.recycle();
-            }
-            _alertDialog.show();
-        };
-
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            show.run();
+            showDialog();
             return this;
         }
 
@@ -954,11 +982,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             _enableOptions ? new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE }
             : new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE };
 
-        PermissionsUtil.checkPermissions(_context,
-            p -> {
-                refreshDirs();
-                show.run();
-            }, null, permissions);
+        PermissionsUtil.checkPermissions(_context, this, permissions);
 
         return this;
     }
