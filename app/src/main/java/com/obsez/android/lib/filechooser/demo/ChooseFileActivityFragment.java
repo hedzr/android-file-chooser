@@ -33,7 +33,6 @@ import java.util.Date;
 
 import timber.log.Timber;
 
-
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -286,7 +285,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.li_row, parent, false);
 
                         TextView tvName = view.findViewById(R.id.file_name);
-                        TextView tvpath = view.findViewById(R.id.file_path);
+                        TextView tvPath = view.findViewById(R.id.file_path);
                         TextView tvDate = view.findViewById(R.id.file_date);
 
                         tvDate.setVisibility(View.VISIBLE);
@@ -308,8 +307,8 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                         }
                         tvName.setCompoundDrawablesWithIntrinsicBounds(null, null, icon, null);
 
-                        if (!(file instanceof RootFile)) tvpath.setText(file.getPath());
-                        else tvpath.setText("");
+                        if (!(file instanceof RootFile)) tvPath.setText(file.getPath());
+                        else tvPath.setText("");
 
                         View root = view.findViewById(R.id.root);
                         if (root.getBackground() == null) {
