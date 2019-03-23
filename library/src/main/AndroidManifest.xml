@@ -4,6 +4,7 @@
     <application android:allowBackup="true">
         <activity
             android:name="com.obsez.android.lib.filechooser.permissions.PermissionActivity"
+            android:label=""
             android:theme="@style/Theme.Transparent"/>
     </application>
 

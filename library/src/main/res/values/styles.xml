@@ -16,7 +16,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" tools:ignore="ResourceName,PrivateResource">
 
     <!-- PermissionActivity style -->
-    <style name="Theme.Transparent" parent="Theme.AppCompat">
+    <style name="Theme.Transparent" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
