@@ -143,11 +143,18 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
             chooserDialog = new ChooserDialog(ctx);
         }
 
-        chooserDialog.withResources(
+        chooserDialog
+            .withResources(
             dirOnly.isChecked() ? R.string.title_choose_folder : R.string.title_choose_file,
-            R.string.title_choose, R.string.dialog_cancel)
+                R.string.title_choose, R.string.dialog_cancel)
             .withOptionResources(R.string.option_create_folder, R.string.options_delete,
                 R.string.new_folder_cancel, R.string.new_folder_ok)
+            // Optionally, you can use Strings instead:
+            /*.withStringResources(
+            dirOnly.isChecked() ? "Choose a folder" : "Choose a file",
+                "Choose", "Cancel")
+            .withOptionStringResources("New folder",
+                "Delete", "Cancel", "Ok")*/
             .disableTitle(disableTitle.isChecked())
             .enableOptions(enableOptions.isChecked())
             .titleFollowsDir(titleFollowsDir.isChecked())
@@ -330,7 +337,6 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
 
         chooserDialog
             .withOnCancelListener(DialogInterface::cancel)
-            .build()
             .show();
     }
 }
