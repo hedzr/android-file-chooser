@@ -94,12 +94,17 @@ class onShowListener implements DialogInterface.OnShowListener {
 
             options.setText("");
             options.setVisibility(View.VISIBLE);
+            Drawable dots;
             if (_c.get()._optionsIconRes != -1) {
-                options.setCompoundDrawablesWithIntrinsicBounds(_c.get()._optionsIconRes, 0, 0, 0);
+                dots = ContextCompat.getDrawable(_c.get()._context, _c.get()._optionsIconRes);
             } else if (_c.get()._optionsIcon != null) {
-                options.setCompoundDrawablesWithIntrinsicBounds(_c.get()._optionsIcon, null, null, null);
+                dots = _c.get()._optionsIcon;
             } else
-                options.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_24dp, 0, 0, 0);
+                dots = ContextCompat.getDrawable(_c.get()._context, R.drawable.ic_menu_24dp);
+            if (dots != null) {
+                dots.setColorFilter(filter);
+                options.setCompoundDrawablesWithIntrinsicBounds(dots, null, null, null);
+            }
 
             final class Integer {
                 int Int = 0;
