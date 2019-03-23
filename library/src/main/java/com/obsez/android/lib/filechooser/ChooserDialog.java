@@ -8,36 +8,32 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.view.ContextThemeWrapper;
-import android.text.InputFilter;
-import android.text.InputType;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,19 +54,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static android.view.Gravity.BOTTOM;
-import static android.view.Gravity.CENTER;
-import static android.view.Gravity.CENTER_HORIZONTAL;
-import static android.view.Gravity.CENTER_VERTICAL;
-import static android.view.Gravity.END;
-import static android.view.Gravity.START;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
-import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-import static android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE;
 import static com.obsez.android.lib.filechooser.internals.FileUtil.NewFolderFilter;
-import static com.obsez.android.lib.filechooser.internals.UiUtil.getListYScroll;
 
 /**
  * Created by coco on 6/7/15.
@@ -137,7 +123,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         _onBackPressed = new defBackPressed(this);
 
         if (fileChooserTheme == null) {
-            this._context = new ContextThemeWrapper(this._context, R.style.FileChooserStyle);
+            TypedValue typedValue = new TypedValue();
+            if (!this._context.getTheme().resolveAttribute(
+                R.attr.fileChooserStyle, typedValue, true))
+                this._context = new ContextThemeWrapper(this._context, R.style.FileChooserStyle);
         } else {
             //noinspection UnnecessaryUnboxing
             this._context = new ContextThemeWrapper(this._context, fileChooserTheme.intValue());
@@ -306,6 +295,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     public ChooserDialog withIcon(@Nullable Drawable icon) {
         this._icon = icon;
         return this;
@@ -316,6 +306,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    /**
+     * @deprecated use {@link AdapterSetter#apply(DirAdapter)}
+     *             and then {@link DirAdapter.GetView#getView(File, boolean, boolean, View, ViewGroup, LayoutInflater)} instead
+     */
     public ChooserDialog withRowLayoutView(@LayoutRes int layoutResId) {
         this._rowLayoutRes = layoutResId;
         return this;
@@ -358,10 +352,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public ChooserDialog withOnDismissListener(final DialogInterface.OnDismissListener listener) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            _onDismissListener = listener;
-        }
+        _onDismissListener = listener;
         return this;
     }
 
@@ -391,7 +384,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     /**
-     * @param setter you can customize the folder navi-adapter with `setter`
+     * @param setter you can override {@link DirAdapter#getView(int, View, ViewGroup)}
+     *               see {@link AdapterSetter} for more information
      * @return this
      */
     public ChooserDialog withAdapterSetter(AdapterSetter setter) {
@@ -466,9 +460,14 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             ta.getResourceId(R.styleable.FileChooser_fileChooserDialogStyle, R.style.FileChooserDialogStyle));
         ta.recycle();
 
-        _adapter = new DirAdapter(_context, new ArrayList<>(),
-            _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
+        if (_rowLayoutRes != -1) {
+            _adapter = new DirAdapter(_context,
+                new ArrayList<>(), _rowLayoutRes, this._dateFormat);
+        } else {
+            _adapter = new DirAdapter(_context, this._dateFormat);
+        }
         if (_adapterSetter != null) _adapterSetter.apply(_adapter);
+
         refreshDirs();
         builder.setAdapter(_adapter, this);
 
@@ -532,486 +531,13 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         _alertDialog = builder.create();
 
-        setupOnShowListener();
+        _alertDialog.setOnShowListener(new onShowListener(this));
         _list = _alertDialog.getListView();
         _list.setOnItemClickListener(this);
         if (_enableMultiple) {
             _list.setOnItemLongClickListener(this);
         }
         return this;
-    }
-
-    private void setupOnShowListener() {
-        _alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(final DialogInterface dialog) {
-                final Button options = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
-                final Button negative = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
-                final Button positive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-
-                // ensure that the buttons have the right order
-                ViewGroup parentLayout = (ViewGroup) positive.getParent();
-                parentLayout.removeAllViews();
-                parentLayout.addView(options, 0);
-                parentLayout.addView(negative, 1);
-                parentLayout.addView(positive, 2);
-
-                if (_enableMultiple) {
-                    positive.setVisibility(View.INVISIBLE);
-                }
-
-                if (!_dismissOnButtonClick) {
-                    negative.setOnClickListener(v -> {
-                        if (_negativeListener != null) {
-                            _negativeListener.onClick(_alertDialog, AlertDialog.BUTTON_NEGATIVE);
-                        }
-                    });
-
-                    positive.setOnClickListener(v -> {
-                        if (_result != null) {
-                            if (_dirOnly || _enableMultiple) {
-                                _result.onChoosePath(_currentDir.getAbsolutePath(), _currentDir);
-                            }
-                        }
-                    });
-                }
-
-                if (_enableOptions) {
-                    final int buttonColor = options.getCurrentTextColor();
-                    final PorterDuffColorFilter filter = new PorterDuffColorFilter(buttonColor,
-                        PorterDuff.Mode.SRC_IN);
-
-                    options.setText("");
-                    options.setVisibility(View.VISIBLE);
-                    if (_optionsIconRes != -1) {
-                        options.setCompoundDrawablesWithIntrinsicBounds(_optionsIconRes, 0, 0, 0);
-                    } else if (_optionsIcon != null) {
-                        options.setCompoundDrawablesWithIntrinsicBounds(_optionsIcon, null, null, null);
-                    } else
-                        options.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_24dp, 0, 0, 0);
-
-                    final class Integer {
-                        int Int = 0;
-                    }
-                    final Integer scroll = new Integer();
-
-                    _list.addOnLayoutChangeListener(
-                        (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-                            int oldHeight = oldBottom - oldTop;
-                            if (v.getHeight() != oldHeight) {
-                                int offset = oldHeight - v.getHeight();
-                                int newScroll = getListYScroll(_list);
-                                if (scroll.Int != newScroll) offset += scroll.Int - newScroll;
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                    _list.scrollListBy(offset);
-                                } else {
-                                    _list.scrollBy(0, offset);
-                                }
-                            }
-                        });
-
-                    final Runnable showOptions = new Runnable() {
-                        @Override
-                        public void run() {
-                            if (_options.getHeight() == 0) {
-                                ViewTreeObserver viewTreeObserver = _options.getViewTreeObserver();
-                                viewTreeObserver.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                                    @Override
-                                    public boolean onPreDraw() {
-                                        if (_options.getHeight() <= 0) {
-                                            return false;
-                                        }
-                                        _options.getViewTreeObserver().removeOnPreDrawListener(this);
-                                        scroll.Int = getListYScroll(_list);
-                                        if (_options.getParent() instanceof FrameLayout) {
-                                            final ViewGroup.MarginLayoutParams params =
-                                                (ViewGroup.MarginLayoutParams) _list.getLayoutParams();
-                                            params.bottomMargin = _options.getHeight();
-                                            _list.setLayoutParams(params);
-                                        }
-                                        _options.setVisibility(View.VISIBLE);
-                                        return true;
-                                    }
-                                });
-                            } else {
-                                scroll.Int = getListYScroll(_list);
-                                _options.setVisibility(View.VISIBLE);
-                                if (_options.getParent() instanceof FrameLayout) {
-                                    final ViewGroup.MarginLayoutParams params =
-                                        (ViewGroup.MarginLayoutParams) _list.getLayoutParams();
-                                    params.bottomMargin = _options.getHeight();
-                                    _list.setLayoutParams(params);
-                                }
-                            }
-                        }
-                    };
-                    final Runnable hideOptions = () -> {
-                        scroll.Int = getListYScroll(_list);
-                        _options.setVisibility(View.GONE);
-                        if (_options.getParent() instanceof FrameLayout) {
-                            ViewGroup.MarginLayoutParams params =
-                                (ViewGroup.MarginLayoutParams) _list.getLayoutParams();
-                            params.bottomMargin = 0;
-                            _list.setLayoutParams(params);
-                        }
-                    };
-
-                    options.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(final View view) {
-                            if (_newFolderView != null
-                                && _newFolderView.getVisibility() == View.VISIBLE) {
-                                return;
-                            }
-
-                            if (_options == null) {
-                                // region Draw options view. (this only happens the first time one clicks on
-                                // options)
-                                // Root view (FrameLayout) of the ListView in the AlertDialog.
-                                final int rootId = _context.getResources().getIdentifier("contentPanel", "id",
-                                    "android");
-                                final ViewGroup root = ((AlertDialog) dialog).findViewById(rootId);
-                                // In case the root id was changed or not found.
-                                if (root == null) return;
-
-                                // Create options view.
-                                final FrameLayout options = new FrameLayout(_context);
-                                ViewGroup.MarginLayoutParams params;
-                                if (root instanceof LinearLayout) {
-                                    params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
-                                    LinearLayout.LayoutParams param =
-                                        ((LinearLayout.LayoutParams) _list.getLayoutParams());
-                                    param.weight = 1;
-                                    _list.setLayoutParams(param);
-                                } else {
-                                    params = new FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, BOTTOM);
-                                }
-                                root.addView(options, params);
-
-                                if (root instanceof FrameLayout) {
-                                    _list.bringToFront();
-                                }
-
-                                // Create a button for the option to create a new directory/folder.
-                                final Button createDir = new Button(_context, null,
-                                    android.R.attr.buttonBarButtonStyle);
-
-                                if (_createDirRes != -1) {
-                                    createDir.setText(_createDirRes);
-                                } else if (_createDir != null) {
-                                    createDir.setText(_createDir);
-                                } else
-                                    createDir.setText(R.string.option_create_folder);
-
-                                createDir.setTextColor(buttonColor);
-                                // Drawable for the button.
-                                Drawable plus;
-                                if (_createDirIconRes != -1) {
-                                    plus = ContextCompat.getDrawable(_context, _createDirIconRes);
-                                } else if (_createDirIcon != null) {
-                                    plus = _createDirIcon;
-                                } else
-                                    plus = ContextCompat.getDrawable(_context, R.drawable.ic_add_24dp);
-                                if (plus != null) {
-                                    plus.setColorFilter(filter);
-                                    createDir.setCompoundDrawablesWithIntrinsicBounds(plus, null, null, null);
-                                }
-                                params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
-                                    START | CENTER_VERTICAL);
-                                params.leftMargin = 10;
-                                options.addView(createDir, params);
-
-                                // Create a button for the option to delete a file.
-                                final Button delete = new Button(_context, null,
-                                    android.R.attr.buttonBarButtonStyle);
-
-                                if (_deleteRes != -1) {
-                                    delete.setText(_deleteRes);
-                                } else if (_delete != null) {
-                                    delete.setText(_delete);
-                                } else
-                                    delete.setText(R.string.options_delete);
-
-                                delete.setTextColor(buttonColor);
-                                Drawable bin;
-                                if (_deleteIconRes != -1) {
-                                    bin = ContextCompat.getDrawable(_context, _deleteIconRes);
-                                } else if (_deleteIcon != null) {
-                                    bin = _deleteIcon;
-                                } else
-                                    bin = ContextCompat.getDrawable(_context, R.drawable.ic_delete_24dp);
-                                if (bin != null) {
-                                    bin.setColorFilter(filter);
-                                    delete.setCompoundDrawablesWithIntrinsicBounds(bin, null, null, null);
-                                }
-                                params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
-                                    END | CENTER_VERTICAL);
-                                params.rightMargin = 10;
-                                options.addView(delete, params);
-
-                                _options = options;
-                                showOptions.run();
-
-                                // Event Listeners.
-                                createDir.setOnClickListener(new View.OnClickListener() {
-                                    private EditText input = null;
-
-                                    @Override
-                                    public void onClick(final View view) {
-                                        //Toast.makeText(getBaseContext(), "new folder clicked", Toast
-                                        // .LENGTH_SHORT).show();
-                                        hideOptions.run();
-                                        File newFolder = new File(_currentDir, "New folder");
-                                        for (int i = 1; newFolder.exists(); i++) {
-                                            newFolder = new File(_currentDir, "New folder (" + i + ')');
-                                        }
-                                        if (this.input != null) {
-                                            this.input.setText(newFolder.getName());
-                                        }
-
-                                        if (_newFolderView == null) {
-                                            // region Draw a view with input to create new folder. (this only
-                                            // happens the first time one clicks on New folder)
-                                            try {
-                                                //noinspection ConstantConditions
-                                                ((AlertDialog) dialog).getWindow().clearFlags(
-                                                    FLAG_NOT_FOCUSABLE | FLAG_ALT_FOCUSABLE_IM);
-                                                //noinspection ConstantConditions
-                                                ((AlertDialog) dialog).getWindow().setSoftInputMode(
-                                                    SOFT_INPUT_STATE_VISIBLE);
-                                            } catch (NullPointerException e) {
-                                                e.printStackTrace();
-                                            }
-
-                                            TypedArray ta = _context.obtainStyledAttributes(
-                                                R.styleable.FileChooser);
-                                            int style = ta.getResourceId(
-                                                R.styleable.FileChooser_fileChooserNewFolderStyle,
-                                                R.style.FileChooserNewFolderStyle);
-                                            final Context context = new ContextThemeWrapper(_context, style);
-                                            ta.recycle();
-                                            ta = context.obtainStyledAttributes(R.styleable.FileChooser);
-
-                                            // A semitransparent background overlay.
-                                            final FrameLayout overlay = new FrameLayout(_context);
-                                            overlay.setBackgroundColor(ta.getColor(
-                                                R.styleable.FileChooser_fileChooserNewFolderOverlayColor,
-                                                0x60ffffff));
-                                            overlay.setScrollContainer(true);
-                                            ViewGroup.MarginLayoutParams params;
-                                            if (root instanceof FrameLayout) {
-                                                params = new FrameLayout.LayoutParams(
-                                                    MATCH_PARENT, MATCH_PARENT, CENTER);
-                                            } else {
-                                                params = new LinearLayout.LayoutParams(
-                                                    MATCH_PARENT, MATCH_PARENT);
-                                            }
-                                            root.addView(overlay, params);
-
-                                            overlay.setOnClickListener(null);
-                                            overlay.setVisibility(View.INVISIBLE);
-                                            _newFolderView = overlay;
-
-                                            // A LinearLayout and a pair of Space to center views.
-                                            LinearLayout linearLayout = new LinearLayout(_context);
-                                            params = new FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT,
-                                                CENTER);
-                                            overlay.addView(linearLayout, params);
-
-
-                                            float widthWeight = ta.getFloat(
-                                                R.styleable.FileChooser_fileChooserNewFolderWidthWeight, 0.56f);
-                                            if (widthWeight <= 0) widthWeight = 0.56f;
-                                            if (widthWeight > 1f) widthWeight = 1f;
-
-                                            Space leftSpace = new Space(_context);
-                                            params = new LinearLayout.LayoutParams(0, WRAP_CONTENT,
-                                                (1f - widthWeight) / 2);
-                                            linearLayout.addView(leftSpace, params);
-
-                                            // A solid holder view for the EditText and Buttons.
-                                            final LinearLayout holder = new LinearLayout(_context);
-                                            holder.setOrientation(LinearLayout.VERTICAL);
-                                            holder.setBackgroundColor(ta.getColor(
-                                                R.styleable.FileChooser_fileChooserNewFolderBackgroundColor,
-                                                0xffffffff));
-                                            final int elevation = ta.getInt(
-                                                R.styleable.FileChooser_fileChooserNewFolderElevation, 25);
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                                holder.setElevation(elevation);
-                                            } else {
-                                                ViewCompat.setElevation(holder, elevation);
-                                            }
-                                            params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, widthWeight);
-                                            linearLayout.addView(holder, params);
-
-                                            Space rightSpace = new Space(_context);
-                                            params = new LinearLayout.LayoutParams(0, WRAP_CONTENT,
-                                                (1f - widthWeight) / 2);
-                                            linearLayout.addView(rightSpace, params);
-
-                                            final EditText input = new EditText(_context);
-                                            final int color = ta.getColor(
-                                                R.styleable.FileChooser_fileChooserNewFolderTextColor,
-                                                buttonColor);
-                                            input.setTextColor(color);
-                                            input.getBackground().mutate().setColorFilter(color,
-                                                PorterDuff.Mode.SRC_ATOP);
-                                            input.setText(newFolder.getName());
-                                            input.setSelectAllOnFocus(true);
-                                            input.setSingleLine(true);
-                                            // There should be no suggestions, but...
-                                            input.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
-                                                | InputType.TYPE_TEXT_VARIATION_FILTER
-                                                | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                                            input.setFilters(new InputFilter[]{
-                                                _newFolderFilter != null ? _newFolderFilter
-                                                    : new NewFolderFilter()});
-                                            input.setGravity(CENTER_HORIZONTAL);
-                                            params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
-                                            params.setMargins(3, 2, 3, 0);
-                                            holder.addView(input, params);
-
-                                            this.input = input;
-
-                                            // A horizontal LinearLayout to hold buttons
-                                            final FrameLayout buttons = new FrameLayout(_context);
-                                            params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
-                                            holder.addView(buttons, params);
-
-                                            // The Cancel button.
-                                            final Button cancel = new Button(_context, null,
-                                                android.R.attr.buttonBarButtonStyle);
-
-                                            if (_newFolderCancelRes != -1) {
-                                                cancel.setText(_newFolderCancelRes);
-                                            } else if (_newFolderCancel != null) {
-                                                cancel.setText(_newFolderCancel);
-                                            } else
-                                                cancel.setText(R.string.new_folder_cancel);
-
-                                            cancel.setTextColor(buttonColor);
-                                            params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
-                                                START);
-                                            buttons.addView(cancel, params);
-
-                                            // The OK button.
-                                            final Button ok = new Button(_context, null,
-                                                android.R.attr.buttonBarButtonStyle);
-
-                                            if (_newFolderOkRes != -1) {
-                                                ok.setText(_newFolderOkRes);
-                                            } else if (_newFolderOk != null) {
-                                                ok.setText(_newFolderOk);
-                                            } else
-                                                ok.setText(R.string.new_folder_ok);
-
-                                            ok.setTextColor(buttonColor);
-                                            params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
-                                                END);
-                                            buttons.addView(ok, params);
-
-                                            // Event Listeners.
-                                            input.setOnEditorActionListener(
-                                                (v, actionId, event) -> {
-                                                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-                                                        ChooserDialog.this.createNewDirectory(
-                                                            input.getText().toString());
-                                                        UiUtil.hideKeyboardFrom(_context, input);
-                                                        overlay.setVisibility(View.GONE);
-                                                        return true;
-                                                    }
-                                                    return false;
-                                                });
-                                            cancel.setOnClickListener(v -> {
-                                                UiUtil.hideKeyboardFrom(_context, input);
-                                                overlay.setVisibility(View.GONE);
-                                            });
-                                            ok.setOnClickListener(v -> {
-                                                ChooserDialog.this.createNewDirectory(
-                                                    input.getText().toString());
-                                                UiUtil.hideKeyboardFrom(_context, input);
-                                                overlay.setVisibility(View.GONE);
-                                            });
-
-                                            ta.recycle();
-                                            // endregion
-                                        }
-
-                                        if (_newFolderView.getVisibility() != View.VISIBLE) {
-                                            _newFolderView.setVisibility(View.VISIBLE);
-                                        } else {
-                                            _newFolderView.setVisibility(View.GONE);
-                                        }
-                                    }
-                                });
-                                delete.setOnClickListener(v1 -> {
-                                    //Toast.makeText(_context, "delete clicked", Toast.LENGTH_SHORT).show();
-                                    hideOptions.run();
-
-                                    if (_chooseMode == CHOOSE_MODE_SELECT_MULTIPLE) {
-                                        boolean success = true;
-                                        for (File file : _adapter.getSelected()) {
-                                            _result.onChoosePath(file.getAbsolutePath(), file);
-                                            if (success) {
-                                                try {
-                                                    FileUtil.deleteFileRecursively(file);
-                                                } catch (IOException e) {
-                                                    Toast.makeText(_context, e.getMessage(),
-                                                        Toast.LENGTH_LONG).show();
-                                                    success = false;
-                                                }
-                                            }
-                                        }
-                                        _adapter.clearSelected();
-                                        _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(
-                                            View.INVISIBLE);
-                                        _chooseMode = CHOOSE_MODE_NORMAL;
-                                        refreshDirs();
-                                        return;
-                                    }
-
-                                    _chooseMode = _chooseMode != CHOOSE_MODE_DELETE ? CHOOSE_MODE_DELETE
-                                        : CHOOSE_MODE_NORMAL;
-                                    if (_deleteModeIndicator == null) {
-                                        _deleteModeIndicator = () -> {
-                                            if (_chooseMode == CHOOSE_MODE_DELETE) {
-                                                final int color1 = 0x80ff0000;
-                                                final PorterDuffColorFilter red =
-                                                    new PorterDuffColorFilter(color1,
-                                                        PorterDuff.Mode.SRC_IN);
-                                                _alertDialog.getButton(
-                                                    AlertDialog.BUTTON_NEUTRAL).getCompoundDrawables()
-                                                    [0].setColorFilter(
-                                                    red);
-                                                _alertDialog.getButton(
-                                                    AlertDialog.BUTTON_NEUTRAL).setTextColor(color1);
-                                                delete.getCompoundDrawables()[0].setColorFilter(red);
-                                                delete.setTextColor(color1);
-                                            } else {
-                                                _alertDialog.getButton(
-                                                    AlertDialog.BUTTON_NEUTRAL).getCompoundDrawables()
-                                                    [0].clearColorFilter();
-                                                _alertDialog.getButton(
-                                                    AlertDialog.BUTTON_NEUTRAL).setTextColor(buttonColor);
-                                                delete.getCompoundDrawables()[0].clearColorFilter();
-                                                delete.setTextColor(buttonColor);
-                                            }
-                                        };
-                                    }
-                                    _deleteModeIndicator.run();
-                                });
-                                // endregion
-                            } else if (_options.getVisibility() == View.VISIBLE) {
-                                hideOptions.run();
-                            } else {
-                                showOptions.run();
-                            }
-                        }
-                    });
-                }
-            }
-        });
     }
 
     private void showDialog() {
@@ -1032,7 +558,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     public ChooserDialog show() {
         if (_alertDialog == null || _list == null) {
-            throw new RuntimeException("call build() before show()");
+            build();
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
@@ -1077,6 +603,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 }
             };
         }
+
 
         final String[] permissions =
             _enableOptions ? new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE }
@@ -1131,9 +658,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             }
             _list.setLayoutParams(param);
         } else {
-            String removableRoot = FileUtil.getStoragePath(_context, true);
-            String primaryRoot = FileUtil.getStoragePath(_context, false);
-            if (path.contains(removableRoot)) {
+            if (removableRoot == null || primaryRoot == null) {
+                removableRoot = FileUtil.getStoragePath(_context, true);
+                primaryRoot = FileUtil.getStoragePath(_context, false);
+            }
+            if (path.contains(removableRoot))
                 path = path.substring(removableRoot.lastIndexOf('/') + 1);
             }
             if (path.contains(primaryRoot)) path = path.substring(primaryRoot.lastIndexOf('/') + 1);
@@ -1173,8 +702,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 _list.setLayoutParams(param);
             }
         }
-    }
 
+    private String removableRoot = null;
+    private String primaryRoot = null;
     private void listDirs() {
         _entries.clear();
 
@@ -1187,8 +717,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         // Add the ".." entry
         boolean up = false;
-        String removableRoot = FileUtil.getStoragePath(_context, true);
-        String primaryRoot = FileUtil.getStoragePath(_context, false);
+        if (removableRoot == null || primaryRoot == null) {
+            removableRoot = FileUtil.getStoragePath(_context, true);
+            primaryRoot = FileUtil.getStoragePath(_context, false);
+        }
         if (!removableRoot.equals(primaryRoot)) {
             //File f = Environment.getExternalStorageDirectory();
             //File newRoot = _currentDir.getParentFile();
@@ -1255,7 +787,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         Collections.sort(list, (f1, f2) -> f1.getName().toLowerCase().compareTo(f2.getName().toLowerCase()));
     }
 
-    private void createNewDirectory(String name) {
+    void createNewDirectory(String name) {
         if (FileUtil.createNewDirectory(name, _currentDir)) {
             refreshDirs();
             return;
@@ -1267,7 +799,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             Toast.LENGTH_LONG).show();
     }
 
-    private Runnable _deleteModeIndicator;
+    Runnable _deleteModeIndicator;
 
     @Override
     public void onItemClick(AdapterView<?> parent_, View list_, int position, long id_) {
@@ -1280,7 +812,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             doGoBack();
             return;
         } else if (file.getName().contains(sSdcardStorage)) {
-            String removableRoot = FileUtil.getStoragePath(_context, true);
+            if (removableRoot == null) {
+                removableRoot = FileUtil.getStoragePath(_context, true);
+            }
             if (Environment.MEDIA_MOUNTED.equals(
                 Environment.getExternalStorageState())) {
                 _currentDir = new File(removableRoot);
@@ -1289,7 +823,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 _adapter.popAll();
             }
         } else if (file.getName().contains(sPrimaryStorage)) {
-            String primaryRoot = FileUtil.getStoragePath(_context, false);
+            if (primaryRoot == null) {
+                primaryRoot = FileUtil.getStoragePath(_context, false);
+            }
             _currentDir = new File(primaryRoot);
             _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
             if (_deleteModeIndicator != null) _deleteModeIndicator.run();
@@ -1370,7 +906,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         //
     }
 
-    private void refreshDirs() {
+    void refreshDirs() {
         listDirs();
         _adapter.setEntries(_entries);
     }
@@ -1492,13 +1028,13 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     //private int _hoverIndex = -1;
     List<File> _entries = new ArrayList<>();
-    private DirAdapter _adapter;
-    private File _currentDir;
-    private Context _context;
-    private AlertDialog _alertDialog;
+    DirAdapter _adapter;
+    File _currentDir;
+    Context _context;
+    AlertDialog _alertDialog;
     ListView _list;
-    private Result _result = null;
-    private boolean _dirOnly;
+    Result _result = null;
+    boolean _dirOnly;
     private FileFilter _fileFilter;
     private @StringRes
     int _titleRes = -1, _okRes = -1, _negativeRes = -1;
@@ -1510,30 +1046,31 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     Drawable _icon;
     private @LayoutRes
     int _layoutRes = -1;
-    private @LayoutRes
+    private @LayoutRes @Deprecated
     int _rowLayoutRes = -1;
     private String _dateFormat;
-    private DialogInterface.OnClickListener _negativeListener;
+    DialogInterface.OnClickListener _negativeListener;
     private DialogInterface.OnCancelListener _cancelListener2;
     private DialogInterface.OnDismissListener _onDismissListener;
     private boolean _disableTitle;
-    private boolean _enableOptions;
+    boolean _enableOptions;
     private boolean _followDir;
     private boolean _displayPath = true;
     private TextView _pathView;
     private CustomizePathView _customizePathView;
-    private View _options;
-    private @StringRes
+    View _options;
+    @StringRes
     int _createDirRes = -1, _deleteRes = -1, _newFolderCancelRes = -1, _newFolderOkRes = -1;
-    private @Nullable
+    @Nullable
     String _createDir, _delete, _newFolderCancel, _newFolderOk;
-    private @DrawableRes
+    @DrawableRes
     int _optionsIconRes = -1, _createDirIconRes = -1, _deleteIconRes = -1;
-    private @Nullable
+    @Nullable
     Drawable _optionsIcon, _createDirIcon, _deleteIcon;
-    private View _newFolderView;
-    private boolean _dismissOnButtonClick = true;
-    private boolean _enableMultiple;
+    @Nullable
+    View _newFolderView;
+    boolean _dismissOnButtonClick = true;
+    boolean _enableMultiple;
     private PermissionsUtil.OnPermissionListener _permissionListener;
 
     @FunctionalInterface
@@ -1570,17 +1107,16 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     final static String sSdcardStorage = ".. SDCard Storage";
     final static String sPrimaryStorage = ".. Primary Storage";
 
-    private static final int CHOOSE_MODE_NORMAL = 0;
-    private static final int CHOOSE_MODE_DELETE = 1;
-    private static final int CHOOSE_MODE_SELECT_MULTIPLE = 2;
+    static final int CHOOSE_MODE_NORMAL = 0;
+    static final int CHOOSE_MODE_DELETE = 1;
+    static final int CHOOSE_MODE_SELECT_MULTIPLE = 2;
 
-    private int _chooseMode = CHOOSE_MODE_NORMAL;
+    int _chooseMode = CHOOSE_MODE_NORMAL;
 
-    private NewFolderFilter _newFolderFilter;
+    NewFolderFilter _newFolderFilter;
 
     @FunctionalInterface
     public interface CustomizePathView {
         void customize(TextView pathView);
     }
-
 }
