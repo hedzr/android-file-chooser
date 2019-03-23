@@ -260,7 +260,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
-    public ChooserDialog withOptionources(@Nullable String createDir, @Nullable String delete,
+    public ChooserDialog withOptionStringResources(@Nullable String createDir, @Nullable String delete,
         @Nullable String newFolderCancel, @Nullable String newFolderOk) {
         this._createDir = createDir;
         this._delete = delete;
