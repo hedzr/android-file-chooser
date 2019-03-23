@@ -665,8 +665,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             }
             if (path.contains(removableRoot))
                 path = path.substring(removableRoot.lastIndexOf('/') + 1);
-            }
-            if (path.contains(primaryRoot)) path = path.substring(primaryRoot.lastIndexOf('/') + 1);
+            if (!removableRoot.equals(primaryRoot) && path.contains(primaryRoot))
+                path = path.substring(primaryRoot.lastIndexOf('/') + 1);
             _pathView.setText(path);
 
             while (_pathView.getLineCount() > 1) {
@@ -703,6 +703,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 _list.setLayoutParams(param);
             }
         }
+    }
 
     private String removableRoot = null;
     private String primaryRoot = null;
