@@ -87,10 +87,6 @@ class onShowListener implements DialogInterface.OnShowListener {
             });
         }
 
-        if (_c.get()._createDirRes == 0 || _c.get()._newFolderCancelRes == 0 || _c.get()._newFolderOkRes == 0) {
-            throw new RuntimeException("withOptionResources() should be called at first.");
-        }
-
         if (_c.get()._enableOptions) {
             final int buttonColor = options.getCurrentTextColor();
             final PorterDuffColorFilter filter = new PorterDuffColorFilter(buttonColor,
@@ -98,15 +94,12 @@ class onShowListener implements DialogInterface.OnShowListener {
 
             options.setText("");
             options.setVisibility(View.VISIBLE);
-            final Drawable drawable = ContextCompat.getDrawable(_c.get()._context,
-                _c.get()._optionsIconRes != -1 ? _c.get()._optionsIconRes : R.drawable.ic_menu_24dp);
-            if (drawable != null) {
-                drawable.setColorFilter(filter);
-                options.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
-            } else {
-                options.setCompoundDrawablesWithIntrinsicBounds(
-                    _c.get()._optionsIconRes != -1 ? _c.get()._optionsIconRes : R.drawable.ic_menu_24dp, 0, 0, 0);
-            }
+            if (_c.get()._optionsIconRes != -1) {
+                options.setCompoundDrawablesWithIntrinsicBounds(_c.get()._optionsIconRes, 0, 0, 0);
+            } else if (_c.get()._optionsIcon != null) {
+                options.setCompoundDrawablesWithIntrinsicBounds(_c.get()._optionsIcon, null, null, null);
+            } else
+                options.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_24dp, 0, 0, 0);
 
             final class Integer {
                 int Int = 0;
@@ -209,18 +202,24 @@ class onShowListener implements DialogInterface.OnShowListener {
                         // Create a button for the option to create a new directory/folder.
                         final Button createDir = new Button(_c.get()._context, null,
                             android.R.attr.buttonBarButtonStyle);
-                        createDir.setText(_c.get()._createDirRes);
+                        if ( _c.get()._createDirRes != -1) {
+                            createDir.setText( _c.get()._createDirRes);
+                        } else if ( _c.get()._createDir != null) {
+                            createDir.setText( _c.get()._createDir);
+                        } else
+                            createDir.setText(R.string.option_create_folder);
                         createDir.setTextColor(buttonColor);
                         // Drawable for the button.
-                        final Drawable plus = ContextCompat.getDrawable(_c.get()._context,
-                            _c.get()._createDirIconRes != -1 ? _c.get()._createDirIconRes : R.drawable.ic_add_24dp);
+                        final Drawable plus;
+                        if (_c.get()._createDirIconRes != -1) {
+                            plus = ContextCompat.getDrawable(_c.get()._context, _c.get()._createDirIconRes);
+                        } else if (_c.get()._createDirIcon != null) {
+                            plus = _c.get()._createDirIcon;
+                        } else
+                            plus = ContextCompat.getDrawable(_c.get()._context, R.drawable.ic_add_24dp);
                         if (plus != null) {
                             plus.setColorFilter(filter);
                             createDir.setCompoundDrawablesWithIntrinsicBounds(plus, null, null, null);
-                        } else {
-                            createDir.setCompoundDrawablesWithIntrinsicBounds(
-                                _c.get()._createDirIconRes != -1 ? _c.get()._createDirIconRes : R.drawable.ic_add_24dp, 0,
-                                0, 0);
                         }
                         params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                             START | CENTER_VERTICAL);
@@ -230,17 +229,23 @@ class onShowListener implements DialogInterface.OnShowListener {
                         // Create a button for the option to delete a file.
                         final Button delete = new Button(_c.get()._context, null,
                             android.R.attr.buttonBarButtonStyle);
-                        delete.setText(_c.get()._deleteRes);
+                        if (_c.get()._deleteRes != -1) {
+                            delete.setText(_c.get()._deleteRes);
+                        } else if (_c.get()._delete != null) {
+                            delete.setText(_c.get()._delete);
+                        } else
+                            delete.setText(R.string.options_delete);
                         delete.setTextColor(buttonColor);
-                        final Drawable bin = ContextCompat.getDrawable(_c.get()._context,
-                            _c.get()._deleteIconRes != -1 ? _c.get()._deleteIconRes : R.drawable.ic_delete_24dp);
+                        final Drawable bin;
+                        if (_c.get()._deleteIconRes != -1) {
+                            bin = ContextCompat.getDrawable(_c.get()._context, _c.get()._deleteIconRes);
+                        } else if (_c.get()._deleteIcon != null) {
+                            bin = _c.get()._deleteIcon;
+                        } else
+                            bin = ContextCompat.getDrawable(_c.get()._context, R.drawable.ic_delete_24dp);
                         if (bin != null) {
                             bin.setColorFilter(filter);
                             delete.setCompoundDrawablesWithIntrinsicBounds(bin, null, null, null);
-                        } else {
-                            delete.setCompoundDrawablesWithIntrinsicBounds(
-                                _c.get()._deleteIconRes != -1 ? _c.get()._deleteIconRes : R.drawable.ic_delete_24dp, 0, 0,
-                                0);
                         }
                         params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                             END | CENTER_VERTICAL);
@@ -369,7 +374,12 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     // The Cancel button.
                                     final Button cancel = new Button(_c.get()._context, null,
                                         android.R.attr.buttonBarButtonStyle);
-                                    cancel.setText(_c.get()._newFolderCancelRes);
+                                    if (_c.get()._newFolderCancelRes != -1) {
+                                        cancel.setText(_c.get()._newFolderCancelRes);
+                                    } else if (_c.get()._newFolderCancel != null) {
+                                        cancel.setText(_c.get()._newFolderCancel);
+                                    } else
+                                        cancel.setText(R.string.new_folder_cancel);
                                     cancel.setTextColor(buttonColor);
                                     params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                                         START);
@@ -378,7 +388,12 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     // The OK button.
                                     final Button ok = new Button(_c.get()._context, null,
                                         android.R.attr.buttonBarButtonStyle);
-                                    ok.setText(_c.get()._newFolderOkRes);
+                                    if (_c.get()._newFolderOkRes != -1) {
+                                        ok.setText(_c.get()._newFolderOkRes);
+                                    } else if (_c.get()._newFolderOk != null) {
+                                        ok.setText(_c.get()._newFolderOk);
+                                    } else
+                                        ok.setText(R.string.new_folder_ok);
                                     ok.setTextColor(buttonColor);
                                     params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                                         END);
