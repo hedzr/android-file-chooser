@@ -232,6 +232,13 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    public ChooserDialog withStringResources(@Nullable String titleRes, @Nullable String okRes, @Nullable String cancelRes) {
+        this._title = titleRes;
+        this._ok = okRes;
+        this._negative = cancelRes;
+        return this;
+    }
+
     /**
      * To enable the option pane with create/delete folder on the fly.
      * When u set it true, you may need WRITE_EXTERNAL_STORAGE declaration too.
@@ -253,11 +260,28 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    public ChooserDialog withOptionources(@Nullable String createDir, @Nullable String delete,
+        @Nullable String newFolderCancel, @Nullable String newFolderOk) {
+        this._createDir = createDir;
+        this._delete = delete;
+        this._newFolderCancel = newFolderCancel;
+        this._newFolderOk = newFolderOk;
+        return this;
+    }
+
     public ChooserDialog withOptionIcons(@DrawableRes int optionsIconRes, @DrawableRes int createDirIconRes,
         @DrawableRes int deleteRes) {
         this._optionsIconRes = optionsIconRes;
         this._createDirIconRes = createDirIconRes;
         this._deleteIconRes = deleteRes;
+        return this;
+    }
+
+    public ChooserDialog withOptionIcons(@Nullable Drawable optionsIcon, @Nullable Drawable createDirIcon,
+        @Nullable Drawable delete) {
+        this._optionsIcon = optionsIcon;
+        this._createDirIcon = createDirIcon;
+        this._deleteIcon = delete;
         return this;
     }
 
@@ -272,6 +296,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    public ChooserDialog withIcon(@Nullable Drawable icon) {
+        this._icon = icon;
+        return this;
+    }
+
     public ChooserDialog withLayoutView(@LayoutRes int layoutResId) {
         this._layoutRes = layoutResId;
         return this;
@@ -298,6 +327,14 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     public ChooserDialog withNegativeButton(@StringRes int cancelTitle,
         final DialogInterface.OnClickListener listener) {
         this._negativeRes = cancelTitle;
+        this._negativeListener = listener;
+        return this;
+    }
+
+    public ChooserDialog withNegativeButton(@Nullable String cancelTitle,
+        final DialogInterface.OnClickListener listener) {
+        this._negative = cancelTitle;
+        if (cancelTitle != null) this._negativeRes = -1;
         this._negativeListener = listener;
         return this;
     }
@@ -416,12 +453,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     public ChooserDialog build() {
-        if (_titleRes == 0 || _okRes == 0 || _negativeRes == 0) {
-            throw new RuntimeException("withResources() should be called at first.");
-        }
-
         TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
-        int style = ta.getResourceId(R.styleable.FileChooser_fileChooserDialogStyle, R.style.FileChooserDialogStyle);
+        int style = ta.getResourceId(R.styleable.FileChooser_fileChooserDialogStyle,
+            R.style.FileChooserDialogStyle);
         final AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(_context, style),
             ta.getResourceId(R.styleable.FileChooser_fileChooserDialogStyle, R.style.FileChooserDialogStyle));
         ta.recycle();
@@ -438,11 +472,18 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         builder.setAdapter(_adapter, this);
 
         if (!_disableTitle) {
-            builder.setTitle(_titleRes);
+            if (_titleRes != -1)
+                builder.setTitle(_titleRes);
+            else if (_title != null)
+                builder.setTitle(_title);
+            else
+                builder.setTitle(R.string.choose_file);
         }
 
         if (_iconRes != -1) {
             builder.setIcon(_iconRes);
+        } else if (_icon != null) {
+            builder.setIcon(_icon);
         }
 
         if (_layoutRes != -1) {
@@ -453,14 +494,25 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         if (_dirOnly || _enableMultiple) {
             // choosing folder, or multiple files picker
-            builder.setPositiveButton(_okRes, (dialog, which) -> {
+            DialogInterface.OnClickListener listener = (dialog, which) -> {
                 if (_result != null) {
                     _result.onChoosePath(_currentDir.getAbsolutePath(), _currentDir);
                 }
-            });
+            };
+            if (_okRes != -1)
+                builder.setPositiveButton(_okRes, listener);
+            else if (_ok != null)
+                builder.setPositiveButton(_ok, listener);
+            else
+                builder.setPositiveButton(R.string.title_choose, listener);
         }
 
-        builder.setNegativeButton(_negativeRes, _negativeListener);
+        if (_negativeRes != -1)
+            builder.setNegativeButton(_negativeRes, _negativeListener);
+        else if (_negative != null)
+            builder.setNegativeButton(_negative, _negativeListener);
+        else
+            builder.setNegativeButton(R.string.dialog_cancel, _negativeListener);
 
         if (_cancelListener2 != null) {
             builder.setOnCancelListener(_cancelListener2);
@@ -577,7 +629,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             }
 
             TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
-            int style = ta.getResourceId(R.styleable.FileChooser_fileChooserPathViewStyle, R.style.FileChooserPathViewStyle);
+            int style = ta.getResourceId(R.styleable.FileChooser_fileChooserPathViewStyle,
+                R.style.FileChooserPathViewStyle);
             final Context context = new ContextThemeWrapper(_context, style);
 
             _pathView = new TextView(context);
@@ -611,6 +664,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             }
             if (path.contains(removableRoot))
                 path = path.substring(removableRoot.lastIndexOf('/') + 1);
+            }
             if (path.contains(primaryRoot)) path = path.substring(primaryRoot.lastIndexOf('/') + 1);
             _pathView.setText(path);
 
@@ -648,7 +702,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 _list.setLayoutParams(param);
             }
         }
-    }
 
     private String removableRoot = null;
     private String primaryRoot = null;
@@ -709,7 +762,12 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 if (displayPath) {
                     _alertDialog.setTitle(_currentDir.getName());
                 } else {
-                    _alertDialog.setTitle(_titleRes);
+                    if (_titleRes != -1)
+                        _alertDialog.setTitle(_titleRes);
+                    else if (_title != null)
+                        _alertDialog.setTitle(_title);
+                    else
+                        _alertDialog.setTitle(R.string.choose_file);
                 }
 
             }
@@ -979,9 +1037,13 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     boolean _dirOnly;
     private FileFilter _fileFilter;
     private @StringRes
-    int _titleRes = R.string.choose_file, _okRes = R.string.title_choose, _negativeRes = R.string.dialog_cancel;
+    int _titleRes = -1, _okRes = -1, _negativeRes = -1;
+    private @Nullable
+    String _title, _ok, _negative;
     private @DrawableRes
     int _iconRes = -1;
+    private @Nullable
+    Drawable _icon;
     private @LayoutRes
     int _layoutRes = -1;
     private @LayoutRes @Deprecated
@@ -998,10 +1060,14 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private CustomizePathView _customizePathView;
     View _options;
     @StringRes
-    int _createDirRes = R.string.option_create_folder, _deleteRes = R.string.options_delete,
-        _newFolderCancelRes = R.string.new_folder_cancel, _newFolderOkRes = R.string.new_folder_ok;
+    int _createDirRes = -1, _deleteRes = -1, _newFolderCancelRes = -1, _newFolderOkRes = -1;
+    @Nullable
+    String _createDir, _delete, _newFolderCancel, _newFolderOk;
     @DrawableRes
     int _optionsIconRes = -1, _createDirIconRes = -1, _deleteIconRes = -1;
+    @Nullable
+    Drawable _optionsIcon, _createDirIcon, _deleteIcon;
+    @Nullable
     View _newFolderView;
     boolean _dismissOnButtonClick = true;
     boolean _enableMultiple;
@@ -1053,5 +1119,4 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     public interface CustomizePathView {
         void customize(TextView pathView);
     }
-
 }
