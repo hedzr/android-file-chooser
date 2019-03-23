@@ -574,11 +574,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     public ChooserDialog show() {
-        //if (_result == null)
-        //    throw new RuntimeException("no chosenListener defined. use withChosenListener() at first.");
-
         if (_alertDialog == null || _list == null) {
-            throw new RuntimeException("call build() before show().");
+            build();
         }
 
         if (checkPermissions()) {
