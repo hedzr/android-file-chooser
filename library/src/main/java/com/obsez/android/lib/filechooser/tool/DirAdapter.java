@@ -228,6 +228,10 @@ public class DirAdapter extends ArrayAdapter<File> {
         _selected.clear();
     }
 
+    public boolean isEmpty() {
+        return getCount() == 1 && (getItem(0) instanceof RootFile);
+    }
+
     public int getHoveredIndex() {
         return _hoveredIndex;
     }
