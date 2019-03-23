@@ -1014,41 +1014,75 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         });
     }
 
+    private void showDialog() {
+        Window window = _alertDialog.getWindow();
+        if (window != null) {
+            TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
+            window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT);
+            window.setGravity(ta.getInt(R.styleable.FileChooser_fileChooserDialogGravity, Gravity.CENTER));
+            WindowManager.LayoutParams lp = window.getAttributes();
+            lp.dimAmount = ta.getFloat(R.styleable.FileChooser_fileChooserDialogBackgroundDimAmount, 0.3f);
+            lp.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+            window.setAttributes(lp);
+            ta.recycle();
+        }
+        _alertDialog.show();
+    }
+
     public ChooserDialog show() {
         if (_alertDialog == null || _list == null) {
             throw new RuntimeException("call build() before show()");
         }
 
-        final Runnable show = () -> {
-            Window window = _alertDialog.getWindow();
-            if (window != null) {
-                TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
-                window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.WRAP_CONTENT);
-                window.setGravity(ta.getInt(R.styleable.FileChooser_fileChooserDialogGravity, Gravity.CENTER));
-                WindowManager.LayoutParams lp = window.getAttributes();
-                lp.dimAmount = ta.getFloat(R.styleable.FileChooser_fileChooserDialogBackgroundDimAmount, 0.3f);
-                lp.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-                window.setAttributes(lp);
-                ta.recycle();
-            }
-            _alertDialog.show();
-        };
-
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            show.run();
+            showDialog();
             return this;
+        }
+
+        if (_permissionListener == null) {
+            _permissionListener = new PermissionsUtil.OnPermissionListener() {
+                @Override
+                public void onPermissionGranted(String[] permissions) {
+                    boolean show = false;
+                    for (String permission : permissions) {
+                        if (permission.equals(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                            show = true;
+                            break;
+                        }
+                    }
+                    if (!show) return;
+                    if (_enableOptions) {
+                        show = false;
+                        for (String permission : permissions) {
+                            if (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                                show = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!show) return;
+                    showDialog();
+                }
+
+                @Override
+                public void onPermissionDenied(String[] permissions) {
+                    //
+                }
+
+                @Override
+                public void onShouldShowRequestPermissionRationale(final String[] permissions) {
+                    Toast.makeText(_context, "You denied the Read/Write permissions on SDCard.",
+                        Toast.LENGTH_LONG).show();
+                }
+            };
         }
 
         final String[] permissions =
             _enableOptions ? new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE }
             : new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE };
 
-        PermissionsUtil.checkPermissions(_context,
-            p -> {
-                refreshDirs();
-                show.run();
-            }, null, permissions);
+        PermissionsUtil.checkPermissions(_context, _permissionListener, permissions);
 
         return this;
     }
@@ -1500,6 +1534,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private View _newFolderView;
     private boolean _dismissOnButtonClick = true;
     private boolean _enableMultiple;
+    private PermissionsUtil.OnPermissionListener _permissionListener;
 
     @FunctionalInterface
     public interface AdapterSetter {
