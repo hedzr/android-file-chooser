@@ -17,6 +17,7 @@ public final class PermissionsUtil {
     {
         void onPermissionGranted(final String[] permissions);
         void onPermissionDenied(final String[] permissions);
+        void onShouldShowRequestPermissionRationale(final String[] permissions);
     }
 
     public static void checkPermissions(@NonNull Context context, @Nullable final OnPermissionListener onPermissionListener, final String... permissions) {

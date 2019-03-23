@@ -49,7 +49,8 @@ public class PermissionActivity extends AppCompatActivity {
             if (_permissions_granted.isEmpty()) {
                 throw new RuntimeException("there are no permissions");
             } else {
-                if (_permissionListener != null) _permissionListener.onPermissionGranted(toArray(_permissions_granted));
+                if (_permissionListener != null)
+                    _permissionListener.onPermissionGranted(toArray(_permissions_granted));
                 finish();
             }
         } else {
@@ -74,11 +75,20 @@ public class PermissionActivity extends AppCompatActivity {
             if (_permissions_granted.isEmpty()) {
                 throw new RuntimeException("there are no permissions");
             } else {
-                if (_permissionListener != null) _permissionListener.onPermissionGranted(toArray(_permissions_granted));
+                if (_permissionListener != null)
+                    _permissionListener.onPermissionGranted(toArray(_permissions_granted));
                 finish();
             }
         } else {
-            if (_permissionListener != null) _permissionListener.onPermissionDenied(toArray(_permissions_denied));
+            List<String> permissionsShouldRequest = new ArrayList<>();
+            for (String permission : _permissions_denied) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission))
+                    permissionsShouldRequest.add(permission);
+            }
+            if (_permissionListener != null) {
+                _permissionListener.onPermissionDenied(toArray(_permissions_denied));
+                _permissionListener.onShouldShowRequestPermissionRationale(toArray(permissionsShouldRequest));
+            }
             finish();
         }
     }

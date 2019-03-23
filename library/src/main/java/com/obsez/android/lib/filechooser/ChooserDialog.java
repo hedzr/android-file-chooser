@@ -76,7 +76,7 @@ import static com.obsez.android.lib.filechooser.internals.UiUtil.getListYScroll;
  * Created by coco on 6/7/15.
  */
 public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInterface.OnClickListener,
-    AdapterView.OnItemLongClickListener, PermissionsUtil.OnPermissionListener {
+    AdapterView.OnItemLongClickListener {
     @FunctionalInterface
     public interface Result {
         void onChoosePath(String dir, File dirFile);
@@ -940,34 +940,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         _alertDialog.show();
     }
 
-    @Override
-    public void onPermissionGranted(String[] permissions) {
-        boolean show = false;
-        for (String permission : permissions) {
-            if (permission.equals(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                show = true;
-                break;
-            }
-        }
-        if (!show) return;
-        if (_enableOptions) {
-            show = false;
-            for (String permission : permissions) {
-                if (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    show = true;
-                    break;
-                }
-            }
-        }
-        if (!show) return;
-        showDialog();
-    }
-
-    @Override
-    public void onPermissionDenied(String[] permissions) {
-
-    }
-
     public ChooserDialog show() {
         if (_alertDialog == null || _list == null) {
             throw new RuntimeException("call build() before show()");
@@ -978,11 +950,49 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             return this;
         }
 
+        if (_permissionListener == null) {
+            _permissionListener = new PermissionsUtil.OnPermissionListener() {
+                @Override
+                public void onPermissionGranted(String[] permissions) {
+                    boolean show = false;
+                    for (String permission : permissions) {
+                        if (permission.equals(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                            show = true;
+                            break;
+                        }
+                    }
+                    if (!show) return;
+                    if (_enableOptions) {
+                        show = false;
+                        for (String permission : permissions) {
+                            if (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                                show = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!show) return;
+                    showDialog();
+                }
+
+                @Override
+                public void onPermissionDenied(String[] permissions) {
+                    //
+                }
+
+                @Override
+                public void onShouldShowRequestPermissionRationale(final String[] permissions) {
+                    Toast.makeText(_context, "You denied the Read/Write permissions on SDCard.",
+                        Toast.LENGTH_LONG).show();
+                }
+            };
+        }
+
         final String[] permissions =
             _enableOptions ? new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE }
             : new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE };
 
-        PermissionsUtil.checkPermissions(_context, this, permissions);
+        PermissionsUtil.checkPermissions(_context, _permissionListener, permissions);
 
         return this;
     }
@@ -1420,6 +1430,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private View _newFolderView;
     private boolean _dismissOnButtonClick = true;
     private boolean _enableMultiple;
+    private PermissionsUtil.OnPermissionListener _permissionListener;
 
     @FunctionalInterface
     public interface AdapterSetter {
