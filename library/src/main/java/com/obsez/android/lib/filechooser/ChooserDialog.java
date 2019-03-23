@@ -26,6 +26,7 @@ import android.support.v7.view.ContextThemeWrapper;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -58,6 +59,19 @@ import java.util.regex.Pattern;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.obsez.android.lib.filechooser.internals.FileUtil.NewFolderFilter;
+import static android.view.Gravity.BOTTOM;
+import static android.view.Gravity.CENTER;
+import static android.view.Gravity.CENTER_HORIZONTAL;
+import static android.view.Gravity.CENTER_VERTICAL;
+import static android.view.Gravity.END;
+import static android.view.Gravity.START;
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
+import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+import static android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE;
+import static com.obsez.android.lib.filechooser.internals.FileUtil.NewFolderFilter;
+import static com.obsez.android.lib.filechooser.internals.UiUtil.getListYScroll;
 
 /**
  * Created by coco on 6/7/15.
@@ -282,6 +296,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    /**
+     * @deprecated use {@link AdapterSetter#apply(DirAdapter)}
+     *             and then {@link DirAdapter.GetView#getView(File, boolean, boolean, View, ViewGroup, LayoutInflater)} instead
+     */
     public ChooserDialog withRowLayoutView(@LayoutRes int layoutResId) {
         this._rowLayoutRes = layoutResId;
         return this;
@@ -348,7 +366,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     /**
-     * @param setter you can customize the folder navi-adapter with `setter`
+     * @param setter you can override {@link DirAdapter#getView(int, View, ViewGroup)}
+     *               see {@link AdapterSetter} for more information
      * @return this
      */
     public ChooserDialog withAdapterSetter(AdapterSetter setter) {
@@ -426,9 +445,14 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             ta.getResourceId(R.styleable.FileChooser_fileChooserDialogStyle, R.style.FileChooserDialogStyle));
         ta.recycle();
 
-        _adapter = new DirAdapter(_context, new ArrayList<>(),
-            _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
+        if (_rowLayoutRes != -1) {
+            _adapter = new DirAdapter(_context,
+                new ArrayList<>(), _rowLayoutRes, this._dateFormat);
+        } else {
+            _adapter = new DirAdapter(_context, this._dateFormat);
+        }
         if (_adapterSetter != null) _adapterSetter.apply(_adapter);
+
         refreshDirs();
         builder.setAdapter(_adapter, this);
 
@@ -1021,7 +1045,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     int _iconRes = -1;
     private @LayoutRes
     int _layoutRes = -1;
-    private @LayoutRes
+    private @LayoutRes @Deprecated
     int _rowLayoutRes = -1;
     private String _dateFormat;
     DialogInterface.OnClickListener _negativeListener;

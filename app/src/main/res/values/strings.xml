@@ -24,6 +24,7 @@
     <string name="display_icon">Display an icon</string>
     <string name="display_long_dates">Display long dates</string>
     <string name="dark_theme">Use dark theme</string>
+    <string name="custom_layout">With a custom row layout</string>
     <string name="reserved">Reserved</string>
     <string name="title_activity_about">AboutActivity</string>
 </resources>

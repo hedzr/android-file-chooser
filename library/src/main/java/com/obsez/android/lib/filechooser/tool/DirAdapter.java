@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -32,19 +33,14 @@ import java.util.List;
  */
 public class DirAdapter extends ArrayAdapter<File> {
 
-    public DirAdapter(Context cxt, List<File> entries, int resId) {
-        super(cxt, resId, R.id.text, entries);
-        this.init(null);
+    public DirAdapter(Context cxt, String dateFormat) {
+        super(cxt, R.layout.li_row_textview, R.id.text, new ArrayList<>());
+        this.init(dateFormat);
     }
 
     public DirAdapter(Context cxt, List<File> entries, int resId, String dateFormat) {
         super(cxt, resId, R.id.text, entries);
         this.init(dateFormat);
-    }
-
-    public DirAdapter(Context cxt, List<File> entries, int resource, int textViewResourceId) {
-        super(cxt, resource, textViewResourceId, entries);
-        this.init(null);
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -60,28 +56,44 @@ public class DirAdapter extends ArrayAdapter<File> {
         _colorFilter = new PorterDuffColorFilter(colorFilter, PorterDuff.Mode.MULTIPLY);
     }
 
+    @FunctionalInterface
+    public interface GetView {
+        /**
+         * @param file file that should me displayed
+         * @param isSelected whether file is selected when _enableMultiple is set to true
+         * @param isFocused whether this file is focused when using dpad controls
+         * @param convertView see {@link ArrayAdapter#getView(int, View, ViewGroup)}
+         * @param parent see {@link ArrayAdapter#getView(int, View, ViewGroup)}
+         * @param inflater a layout inflater with the FileChooser theme wrapped context
+         * @return your custom row item view
+         */
+        @NonNull
+        View getView(@NonNull File file, boolean isSelected, boolean isFocused, View convertView, @NonNull ViewGroup parent, @NonNull LayoutInflater inflater);
+    }
+
+    public void overrideGetView(GetView getView) {
+        this._getView = getView;
+    }
+
     // This function is called to show each view item
     @SuppressWarnings("ConstantConditions")
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        ViewGroup rl = (ViewGroup) super.getView(position, convertView, parent);
+        final File file = super.getItem(position);
+        if (file == null) return super.getView(position, convertView, parent);
+        final boolean isSelected = _selected.get(file.hashCode(), null) != null;
+        if (_getView != null)
+            return _getView.getView(file, isSelected, position == _hoveredIndex, convertView, parent, LayoutInflater.from(getContext()));
 
-        //if (position == _hoveredIndex) {
-        //    rl.setBackgroundColor(Color.argb(128, 70, 70, 70));
-        //} else {
-        //    rl.setBackgroundColor(Color.argb(255, 255, 255, 255));
-        //}
+        ViewGroup view = (ViewGroup) super.getView(position, convertView, parent);
 
-        TextView tvName = rl.findViewById(R.id.text);
-        TextView tvSize = rl.findViewById(R.id.txt_size);
-        TextView tvDate = rl.findViewById(R.id.txt_date);
-        //ImageView ivIcon = (ImageView) rl.findViewById(R.id.icon);
+        TextView tvName = view.findViewById(R.id.text);
+        TextView tvSize = view.findViewById(R.id.txt_size);
+        TextView tvDate = view.findViewById(R.id.txt_date);
+        //ImageView ivIcon = (ImageView) view.findViewById(R.id.icon);
 
         tvDate.setVisibility(View.VISIBLE);
-
-        File file = super.getItem(position);
-        if (file == null) return rl;
         tvName.setText(file.getName());
         Drawable icon;
         if (file.isDirectory()) {
@@ -114,11 +126,11 @@ public class DirAdapter extends ArrayAdapter<File> {
         }
         tvName.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
 
-        View root = rl.findViewById(R.id.root);
+        View root = view.findViewById(R.id.root);
         if (root.getBackground() == null) {
             root.setBackgroundResource(R.color.li_row_background);
         }
-        if (_selected.get(file.hashCode(), null) == null) {
+        if (!isSelected) {
             if (position == _hoveredIndex) {
                 root.getBackground().setColorFilter(_colorFilter);
             } else {
@@ -128,7 +140,7 @@ public class DirAdapter extends ArrayAdapter<File> {
             root.getBackground().setColorFilter(_colorFilter);
         }
 
-        return rl;
+        return view;
     }
 
     public Drawable getDefaultFolderIcon() {
@@ -263,7 +275,7 @@ public class DirAdapter extends ArrayAdapter<File> {
         _indexStack.clear();
     }
 
-    private static SimpleDateFormat _formatter;
+    private SimpleDateFormat _formatter;
     private Drawable _defaultFolderIcon = null;
     private Drawable _defaultFileIcon = null;
     private boolean _resolveFileType = false;
@@ -271,5 +283,6 @@ public class DirAdapter extends ArrayAdapter<File> {
     private SparseArray<File> _selected = new SparseArray<File>();
     private int _hoveredIndex;
     private List<Integer> _indexStack = new LinkedList<>();
+    private GetView _getView = null;
 }
 
