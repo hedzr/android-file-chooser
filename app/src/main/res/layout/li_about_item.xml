@@ -4,13 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
-    style="?attr/fileChooserListItemStyle"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:theme="?attr/fileChooserListItemStyle"
-    tools:ignore="ResourceName"
-    tools:theme="@style/FileChooserListItemStyle">
+    tools:ignore="ResourceName">
 
 
     <TextView
@@ -24,16 +21,20 @@
         android:textAllCaps="true"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textStyle="bold"
-        tools:text="Catalog"/>
+        tools:text="Catalog"
+        android:paddingStart="12dp"/>
 
     <RelativeLayout
         android:id="@+id/row"
         android:layout_width="match_parent"
         android:layout_height="48dp"
+        android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
-        android:focusable="auto"
+        android:focusable="true"
         android:layout_marginLeft="24dp"
-        android:layout_marginRight="12dp">
+        android:layout_marginRight="12dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="12dp">
 
         <TextView
             android:id="@+id/title"
@@ -51,6 +52,7 @@
             android:layout_toRightOf="@+id/icon"
             android:gravity="center_vertical"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            app:fontFamily="@font/adamina"
             tools:text="@string/title_choose"/>
 
         <TextView
@@ -66,7 +68,10 @@
             android:layout_toEndOf="@+id/icon"
             android:layout_toRightOf="@+id/icon"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            tools:text="@string/title_choose"/>
+            android:textSize="10sp"
+            app:fontFamily="@font/amita"
+            tools:text="@string/title_choose"
+            tools:ignore="SmallSp"/>
 
         <TextView
             android:id="@+id/value"
@@ -78,7 +83,7 @@
             android:layout_centerVertical="true"
             android:autoLink="all"
             android:clickable="true"
-            android:focusable="auto"
+            android:focusable="true"
             android:gravity="center_vertical"
             android:padding="6dp"
             android:singleLine="true"

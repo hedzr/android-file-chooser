@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="BarTextAppearance">
+        <!--<item name="android:textSize">20sp</item>-->
+        <!--<item name="android:textColor">@color/white</item>-->
+        <item name="android:fontFamily">@font/adamina</item>
+    </style>
+
+    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="android:fontFamily">@font/adamina</item>
+    </style>
+
+</resources>
