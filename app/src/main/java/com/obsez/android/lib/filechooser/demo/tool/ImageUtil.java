@@ -1,4 +1,4 @@
-package com.obsez.android.lib.filechooser.demo;
+package com.obsez.android.lib.filechooser.demo.tool;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

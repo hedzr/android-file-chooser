@@ -12,6 +12,7 @@
         <activity
             android:name=".about.AboutActivity"
             android:label="@string/title_activity_about"
+            android:icon="@mipmap/ic_launcher"
             android:parentActivityName=".ChooseFileActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -20,6 +21,7 @@
         </activity>
         <activity
             android:name=".ChooseFileActivity"
+            android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

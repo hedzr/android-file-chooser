@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.obsez.android.lib.filechooser.ChooserDialog;
+import com.obsez.android.lib.filechooser.demo.tool.ImageUtil;
 import com.obsez.android.lib.filechooser.internals.FileUtil;
 
 import java.io.File;
