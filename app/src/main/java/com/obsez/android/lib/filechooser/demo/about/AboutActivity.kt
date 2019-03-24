@@ -1,5 +1,6 @@
 package com.obsez.android.lib.filechooser.demo.about
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -18,6 +19,7 @@ import com.obsez.android.lib.filechooser.demo.R
 import com.obsez.android.lib.filechooser.internals.UiUtil
 import kotlinx.android.synthetic.main.activity_about.*
 import kotlinx.android.synthetic.main.content_about.*
+
 
 class AboutActivity : AppCompatActivity() {
     
@@ -79,6 +81,18 @@ class AboutActivity : AppCompatActivity() {
                     when {
                         link.startsWith("mailto:") -> ctx.startActivity(Intent(Intent.ACTION_SENDTO, Uri.parse(link)))
                         link.startsWith("tel:") -> ctx.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse(link)))
+                        link.startsWith("market:") -> {
+                            val intent = Intent(Intent.ACTION_DIAL, Uri.parse(link))
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or
+                                Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
+                                Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+                            try {
+                                ctx.startActivity(intent)
+                            } catch (e: ActivityNotFoundException) {
+                                ctx.startActivity(Intent(Intent.ACTION_VIEW,
+                                    Uri.parse("http://play.google.com/store/apps/details?id=" + ctx.getPackageName())))
+                            }
+                        }
                         else -> ctx.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(link)))
                     }
                 }
@@ -132,7 +146,9 @@ class AboutActivity : AppCompatActivity() {
             Items("Information", listOf(
                 Item("Homepage", "Goto", "https://github.com/hedzr/android-file-chooser"),
                 Item("Issues", "Report to us", "https://github.com/hedzr/android-file-chooser/issues/new"),
-                Item("License", "Apache 2.0", "https://github.com/hedzr/android-file-chooser/blob/master/LICENSE")
+                Item("License", "Apache 2.0", "https://github.com/hedzr/android-file-chooser/blob/master/LICENSE"),
+                Item("Rate me", "Like!", "market://details?id=" + "com.obsez.android.lib.filechooser")
+            
             )),
             Items("Authors & Collaborators", listOf(
                 Item("Hedzr Yeh", "Email", "mailto:hedzrz@gmail.com"),
