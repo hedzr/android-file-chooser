@@ -12,17 +12,18 @@
 
     <TextView
         android:id="@+id/catalog"
-        style="?attr/fileChooserTextNameStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="12dp"
+        android:paddingStart="12dp"
+        android:paddingRight="12dp"
+        android:paddingEnd="12dp"
         android:paddingTop="20dp"
         android:paddingBottom="12dp"
         android:textAllCaps="true"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textStyle="bold"
-        tools:text="Catalog"
-        android:paddingStart="12dp"/>
+        tools:text="Catalog"/>
 
     <RelativeLayout
         android:id="@+id/row"
@@ -38,7 +39,6 @@
 
         <TextView
             android:id="@+id/title"
-            style="?attr/fileChooserTextNameStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/sub_title"
@@ -57,7 +57,6 @@
 
         <TextView
             android:id="@+id/sub_title"
-            style="?attr/fileChooserTextSizeStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignStart="@+id/title"
@@ -68,32 +67,26 @@
             android:layout_toEndOf="@+id/icon"
             android:layout_toRightOf="@+id/icon"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textSize="10sp"
             app:fontFamily="@font/amita"
             tools:text="@string/title_choose"
             tools:ignore="SmallSp"/>
 
         <TextView
             android:id="@+id/value"
-            style="?attr/fileChooserTextDateStyle"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:autoLink="all"
-            android:clickable="true"
-            android:focusable="true"
             android:gravity="center_vertical"
             android:padding="6dp"
             android:singleLine="true"
-            android:textAppearance="@style/Base.Widget.AppCompat.Spinner.Underlined"
             android:textSize="16sp"
             tools:text="@string/title_choose"/>
 
         <ImageView
             android:id="@+id/icon"
-            style="?attr/fileChooserFileIconStyle"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_alignParentStart="true"
