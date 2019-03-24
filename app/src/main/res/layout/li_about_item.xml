@@ -27,8 +27,11 @@
         tools:text="Catalog"/>
 
     <RelativeLayout
+        android:id="@+id/row"
         android:layout_width="match_parent"
         android:layout_height="48dp"
+        android:clickable="true"
+        android:focusable="auto"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="12dp">
 

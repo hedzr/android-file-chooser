@@ -134,7 +134,10 @@ class AboutActivity : AppCompatActivity() {
             internal var mIconView = view.findViewById<ImageView>(R.id.icon)
             
             init {
-                mValueView.setOnClickListener {
+                //                mValueView.setOnClickListener {
+                //                    clicking?.invoke(it, this)
+                //                }
+                view.findViewById<View>(R.id.row)?.setOnClickListener {
                     clicking?.invoke(it, this)
                 }
             }
@@ -150,7 +153,7 @@ class AboutActivity : AppCompatActivity() {
                 Item("Rate me", "Like!", "market://details?id=" + "com.obsez.android.lib.filechooser")
             
             )),
-            Items("Authors & Collaborators", listOf(
+            Items("Credits", listOf(
                 Item("Hedzr Yeh", "Email", "mailto:hedzrz@gmail.com"),
                 Item("Guiorgy Potskhishvili", "Email", "mailto:guiorgy123@gmail.com"),
                 Item("More Contributors", "Goto", "https://github.com/hedzr/android-file-chooser#Acknowledges", "and supporters")
