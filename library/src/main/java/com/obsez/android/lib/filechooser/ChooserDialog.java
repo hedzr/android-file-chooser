@@ -1087,6 +1087,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    private boolean displayRoot;
     private void displayPath(String path) {
         if (_pathView == null) {
             final int rootId = _context.getResources().getIdentifier("contentPanel", "id", "android");
@@ -1105,6 +1106,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             int style = ta.getResourceId(R.styleable.FileChooser_fileChooserPathViewStyle,
                 R.style.FileChooserPathViewStyle);
             final Context context = new ContextThemeWrapper(_context, style);
+            ta.recycle();
+            ta = context.obtainStyledAttributes(R.styleable.FileChooser);
+
+            displayRoot = ta.getBoolean(R.styleable.FileChooser_fileChooserPathViewDisplayRoot, true);
 
             _pathView = new TextView(context);
             root.addView(_pathView, 0, params);
@@ -1133,10 +1138,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         } else {
             String removableRoot = FileUtil.getStoragePath(_context, true);
             String primaryRoot = FileUtil.getStoragePath(_context, false);
-            if (path.contains(removableRoot)) {
-                path = path.substring(removableRoot.lastIndexOf('/') + 1);
-            }
-            if (path.contains(primaryRoot)) path = path.substring(primaryRoot.lastIndexOf('/') + 1);
+            if (path.contains(removableRoot))
+                path = path.substring(displayRoot ? removableRoot.lastIndexOf('/') + 1 : removableRoot.length());
+            if (path.contains(primaryRoot))
+                path = path.substring(displayRoot ? primaryRoot.lastIndexOf('/') + 1 : primaryRoot.length());
             _pathView.setText(path);
 
             while (_pathView.getLineCount() > 1) {
