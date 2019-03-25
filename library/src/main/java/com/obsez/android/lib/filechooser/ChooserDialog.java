@@ -655,7 +655,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
             ViewGroup.MarginLayoutParams param = ((ViewGroup.MarginLayoutParams) _list.getLayoutParams());
             if (_pathView.getParent() instanceof FrameLayout) {
-                param.topMargin = _pathView.getHeight();
+                param.topMargin = 0;
             }
             _list.setLayoutParams(param);
         } else {
