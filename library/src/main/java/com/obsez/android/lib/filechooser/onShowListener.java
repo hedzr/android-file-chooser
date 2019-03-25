@@ -175,6 +175,7 @@ class onShowListener implements DialogInterface.OnShowListener {
             options.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
+                    //noinspection ConstantConditions
                     if (_c.get()._newFolderView != null
                         && _c.get()._newFolderView.getVisibility() == View.VISIBLE) return;
 
@@ -270,12 +271,10 @@ class onShowListener implements DialogInterface.OnShowListener {
                                 // .LENGTH_SHORT).show();
                                 hideOptions.run();
                                 File newFolder = new File(_c.get()._currentDir, "New folder");
-                                for (int i = 1; newFolder.exists(); i++) {
+                                for (int i = 1; newFolder.exists(); i++)
                                     newFolder = new File(_c.get()._currentDir, "New folder (" + i + ')');
-                                }
-                                if (this.input != null) {
+                                if (this.input != null)
                                     this.input.setText(newFolder.getName());
-                                }
 
                                 if (_c.get()._newFolderView == null) {
                                     // region Draw a view with input to create new folder. (this only
@@ -292,14 +291,16 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     }
 
                                     TypedArray ta = _c.get()._context.obtainStyledAttributes(R.styleable.FileChooser);
-                                    int style = ta.getResourceId(R.styleable.FileChooser_fileChooserNewFolderStyle, R.style.FileChooserNewFolderStyle);
+                                    int style = ta.getResourceId(
+                                        R.styleable.FileChooser_fileChooserNewFolderStyle, R.style.FileChooserNewFolderStyle);
                                     final Context context = new ContextThemeWrapper(_c.get()._context, style);
                                     ta.recycle();
                                     ta = context.obtainStyledAttributes(R.styleable.FileChooser);
 
                                     // A semitransparent background overlay.
                                     final FrameLayout overlay = new FrameLayout(_c.get()._context);
-                                    overlay.setBackgroundColor(ta.getColor(R.styleable.FileChooser_fileChooserNewFolderOverlayColor, 0x60ffffff));
+                                    overlay.setBackgroundColor(
+                                        ta.getColor(R.styleable.FileChooser_fileChooserNewFolderOverlayColor, 0x60ffffff));
                                     overlay.setScrollContainer(true);
                                     ViewGroup.MarginLayoutParams params;
                                     if (root instanceof FrameLayout) {
@@ -335,7 +336,8 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     // A solid holder view for the EditText and Buttons.
                                     final LinearLayout holder = new LinearLayout(_c.get()._context);
                                     holder.setOrientation(LinearLayout.VERTICAL);
-                                    holder.setBackgroundColor(ta.getColor(R.styleable.FileChooser_fileChooserNewFolderBackgroundColor, 0xffffffff));
+                                    holder.setBackgroundColor(
+                                        ta.getColor(R.styleable.FileChooser_fileChooserNewFolderBackgroundColor, 0xffffffff));
                                     final int elevation = ta.getInt(R.styleable.FileChooser_fileChooserNewFolderElevation, 25);
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                         holder.setElevation(elevation);
@@ -431,9 +433,12 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     // endregion
                                 }
 
+                                //noinspection ConstantConditions
                                 if (_c.get()._newFolderView.getVisibility() != View.VISIBLE) {
+                                    //noinspection ConstantConditions
                                     _c.get()._newFolderView.setVisibility(View.VISIBLE);
                                 } else {
+                                    //noinspection ConstantConditions
                                     _c.get()._newFolderView.setVisibility(View.GONE);
                                 }
                             }
