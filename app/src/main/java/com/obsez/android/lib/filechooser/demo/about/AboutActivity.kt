@@ -134,9 +134,9 @@ class AboutActivity : AppCompatActivity() {
             internal var mIconView = view.findViewById<ImageView>(R.id.icon)
             
             init {
-                mValueView.setOnClickListener {
-                    clicking?.invoke(it, this)
-                }
+                // mValueView.setOnClickListener {
+                //     clicking?.invoke(it, this)
+                // }
                 view.findViewById<View>(R.id.row)?.setOnClickListener {
                     clicking?.invoke(it, this)
                 }
