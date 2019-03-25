@@ -890,8 +890,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View list, int position, long id) {
         File file = _entries.get(position);
-        if (file.getName().equals("..") || file.getName().contains(sSdcardStorage)
-            || file.getName().contains(sPrimaryStorage) || file.isDirectory()) {
+        if (file instanceof RootFile || file.isDirectory()) {
             return true;
         }
         if (_adapter.isSelected(position)) return true;
