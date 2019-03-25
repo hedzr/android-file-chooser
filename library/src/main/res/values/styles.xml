@@ -138,6 +138,7 @@
         <item name="android:lines">1</item>
         <item name="android:maxLines">1</item>
         <item name="fileChooserPathViewElevation">2</item>
+        <item name="fileChooserPathViewDisplayRoot">true</item>
     </style>
 
     <!-- New Folder -->

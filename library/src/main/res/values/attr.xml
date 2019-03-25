@@ -26,6 +26,7 @@
         <attr name="fileListItemSelectedTint" format="color|reference" />
         <attr name="fileChooserPathViewStyle" format="reference" />
         <attr name="fileChooserPathViewElevation" format="integer|reference" />
+        <attr name="fileChooserPathViewDisplayRoot" format="boolean|reference" />
         <attr name="fileChooserNewFolderStyle" format="reference" />
         <attr name="fileChooserNewFolderOverlayColor" format="color|reference" />
         <attr name="fileChooserNewFolderBackgroundColor" format="color|reference" />
