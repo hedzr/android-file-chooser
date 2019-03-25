@@ -120,8 +120,8 @@ class AboutActivity : AppCompatActivity() {
             } else {
                 holder.mCatalogView.visibility = View.GONE
             }
-            
-            holder.mValueView.isClickable = !it.valueLink.isBlank()
+    
+            //holder.mValueView.isClickable = !it.valueLink.isBlank()
             holder.mValueView.tag = it.valueLink
             //holder.mIconView.text = it.title
         }
