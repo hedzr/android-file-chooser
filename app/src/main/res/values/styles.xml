@@ -70,4 +70,14 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
+    <style name="BarTextAppearance" parent="@android:style/TextAppearance">
+        <!--<item name="android:textSize">20sp</item>-->
+        <!--<item name="android:textColor">@color/white</item>-->
+        <!--<item name="android:fontFamily">@font/adamina</item>-->
+    </style>
+
+    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Dark">
+        <!--<item name="android:fontFamily">@font/adamina</item>-->
+    </style>
+
 </resources>

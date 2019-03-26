@@ -1,5 +1,7 @@
 package com.obsez.android.lib.filechooser.permissions;
 
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,8 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 public class PermissionActivity extends AppCompatActivity {
     @SuppressWarnings("unused")
@@ -49,8 +49,9 @@ public class PermissionActivity extends AppCompatActivity {
             if (_permissions_granted.isEmpty()) {
                 throw new RuntimeException("there are no permissions");
             } else {
-                if (_permissionListener != null)
+                if (_permissionListener != null) {
                     _permissionListener.onPermissionGranted(toArray(_permissions_granted));
+                }
                 finish();
             }
         } else {
@@ -59,7 +60,8 @@ public class PermissionActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+        @NonNull int[] grantResults) {
         if (requestCode != _requestCode) {
             finish();
         }
@@ -75,15 +77,17 @@ public class PermissionActivity extends AppCompatActivity {
             if (_permissions_granted.isEmpty()) {
                 throw new RuntimeException("there are no permissions");
             } else {
-                if (_permissionListener != null)
+                if (_permissionListener != null) {
                     _permissionListener.onPermissionGranted(toArray(_permissions_granted));
+                }
                 finish();
             }
         } else {
             List<String> permissionsShouldRequest = new ArrayList<>();
             for (String permission : _permissions_denied) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission))
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
                     permissionsShouldRequest.add(permission);
+                }
             }
             if (_permissionListener != null) {
                 _permissionListener.onPermissionDenied(toArray(_permissions_denied));

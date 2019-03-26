@@ -51,7 +51,8 @@ public class DirAdapter extends ArrayAdapter<File> {
         _defaultFileIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_file);
 
         TypedArray ta = getContext().obtainStyledAttributes(R.styleable.FileChooser);
-        int colorFilter = ta.getColor(R.styleable.FileChooser_fileListItemSelectedTint, getContext().getResources().getColor(R.color.li_row_background_tint));
+        int colorFilter = ta.getColor(R.styleable.FileChooser_fileListItemSelectedTint,
+            getContext().getResources().getColor(R.color.li_row_background_tint));
         ta.recycle();
         _colorFilter = new PorterDuffColorFilter(colorFilter, PorterDuff.Mode.MULTIPLY);
     }
@@ -59,16 +60,17 @@ public class DirAdapter extends ArrayAdapter<File> {
     @FunctionalInterface
     public interface GetView {
         /**
-         * @param file file that should me displayed
-         * @param isSelected whether file is selected when _enableMultiple is set to true
-         * @param isFocused whether this file is focused when using dpad controls
+         * @param file        file that should me displayed
+         * @param isSelected  whether file is selected when _enableMultiple is set to true
+         * @param isFocused   whether this file is focused when using dpad controls
          * @param convertView see {@link ArrayAdapter#getView(int, View, ViewGroup)}
-         * @param parent see {@link ArrayAdapter#getView(int, View, ViewGroup)}
-         * @param inflater a layout inflater with the FileChooser theme wrapped context
+         * @param parent      see {@link ArrayAdapter#getView(int, View, ViewGroup)}
+         * @param inflater    a layout inflater with the FileChooser theme wrapped context
          * @return your custom row item view
          */
         @NonNull
-        View getView(@NonNull File file, boolean isSelected, boolean isFocused, View convertView, @NonNull ViewGroup parent, @NonNull LayoutInflater inflater);
+        View getView(@NonNull File file, boolean isSelected, boolean isFocused, View convertView,
+            @NonNull ViewGroup parent, @NonNull LayoutInflater inflater);
     }
 
     public void overrideGetView(GetView getView) {
@@ -83,8 +85,10 @@ public class DirAdapter extends ArrayAdapter<File> {
         final File file = super.getItem(position);
         if (file == null) return super.getView(position, convertView, parent);
         final boolean isSelected = _selected.get(file.hashCode(), null) != null;
-        if (_getView != null)
-            return _getView.getView(file, isSelected, position == _hoveredIndex, convertView, parent, LayoutInflater.from(getContext()));
+        if (_getView != null) {
+            return _getView.getView(file, isSelected, position == _hoveredIndex, convertView, parent,
+                LayoutInflater.from(getContext()));
+        }
 
         ViewGroup view = (ViewGroup) super.getView(position, convertView, parent);
 

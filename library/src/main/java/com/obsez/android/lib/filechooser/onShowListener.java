@@ -1,5 +1,22 @@
 package com.obsez.android.lib.filechooser;
 
+import static android.view.Gravity.BOTTOM;
+import static android.view.Gravity.CENTER;
+import static android.view.Gravity.CENTER_HORIZONTAL;
+import static android.view.Gravity.CENTER_VERTICAL;
+import static android.view.Gravity.END;
+import static android.view.Gravity.START;
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
+import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+import static android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE;
+
+import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_DELETE;
+import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_NORMAL;
+import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_SELECT_MULTIPLE;
+import static com.obsez.android.lib.filechooser.internals.UiUtil.getListYScroll;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -30,22 +47,6 @@ import com.obsez.android.lib.filechooser.internals.UiUtil;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-
-import static android.view.Gravity.BOTTOM;
-import static android.view.Gravity.CENTER;
-import static android.view.Gravity.CENTER_HORIZONTAL;
-import static android.view.Gravity.CENTER_VERTICAL;
-import static android.view.Gravity.END;
-import static android.view.Gravity.START;
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
-import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-import static android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE;
-import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_DELETE;
-import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_NORMAL;
-import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_SELECT_MULTIPLE;
-import static com.obsez.android.lib.filechooser.internals.UiUtil.getListYScroll;
 
 class onShowListener implements DialogInterface.OnShowListener {
     private WeakReference<ChooserDialog> _c;
@@ -81,7 +82,8 @@ class onShowListener implements DialogInterface.OnShowListener {
             positive.setOnClickListener(v -> {
                 if (_c.get()._result != null) {
                     if (_c.get()._dirOnly || _c.get()._enableMultiple) {
-                        _c.get()._result.onChoosePath(_c.get()._currentDir.getAbsolutePath(), _c.get()._currentDir);
+                        _c.get()._result.onChoosePath(_c.get()._currentDir.getAbsolutePath(),
+                            _c.get()._currentDir);
                     }
                 }
             });
@@ -99,8 +101,9 @@ class onShowListener implements DialogInterface.OnShowListener {
                 dots = ContextCompat.getDrawable(_c.get()._context, _c.get()._optionsIconRes);
             } else if (_c.get()._optionsIcon != null) {
                 dots = _c.get()._optionsIcon;
-            } else
+            } else {
                 dots = ContextCompat.getDrawable(_c.get()._context, R.drawable.ic_menu_24dp);
+            }
             if (dots != null) {
                 dots.setColorFilter(filter);
                 options.setCompoundDrawablesWithIntrinsicBounds(dots, null, null, null);
@@ -176,7 +179,9 @@ class onShowListener implements DialogInterface.OnShowListener {
                 @Override
                 public void onClick(final View view) {
                     if (_c.get()._newFolderView != null
-                        && _c.get()._newFolderView.getVisibility() == View.VISIBLE) return;
+                        && _c.get()._newFolderView.getVisibility() == View.VISIBLE) {
+                        return;
+                    }
 
                     if (_c.get()._options == null) {
                         // region Draw options view. (this only happens the first time one clicks on options)
@@ -192,7 +197,8 @@ class onShowListener implements DialogInterface.OnShowListener {
                         ViewGroup.MarginLayoutParams params;
                         if (root instanceof LinearLayout) {
                             params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
-                            LinearLayout.LayoutParams param = ((LinearLayout.LayoutParams) _c.get()._list.getLayoutParams());
+                            LinearLayout.LayoutParams param =
+                                ((LinearLayout.LayoutParams) _c.get()._list.getLayoutParams());
                             param.weight = 1;
                             _c.get()._list.setLayoutParams(param);
                         } else {
@@ -207,12 +213,13 @@ class onShowListener implements DialogInterface.OnShowListener {
                         // Create a button for the option to create a new directory/folder.
                         final Button createDir = new Button(_c.get()._context, null,
                             android.R.attr.buttonBarButtonStyle);
-                        if ( _c.get()._createDirRes != -1) {
-                            createDir.setText( _c.get()._createDirRes);
-                        } else if ( _c.get()._createDir != null) {
-                            createDir.setText( _c.get()._createDir);
-                        } else
+                        if (_c.get()._createDirRes != -1) {
+                            createDir.setText(_c.get()._createDirRes);
+                        } else if (_c.get()._createDir != null) {
+                            createDir.setText(_c.get()._createDir);
+                        } else {
                             createDir.setText(R.string.option_create_folder);
+                        }
                         createDir.setTextColor(buttonColor);
                         // Drawable for the button.
                         final Drawable plus;
@@ -220,8 +227,9 @@ class onShowListener implements DialogInterface.OnShowListener {
                             plus = ContextCompat.getDrawable(_c.get()._context, _c.get()._createDirIconRes);
                         } else if (_c.get()._createDirIcon != null) {
                             plus = _c.get()._createDirIcon;
-                        } else
+                        } else {
                             plus = ContextCompat.getDrawable(_c.get()._context, R.drawable.ic_add_24dp);
+                        }
                         if (plus != null) {
                             plus.setColorFilter(filter);
                             createDir.setCompoundDrawablesWithIntrinsicBounds(plus, null, null, null);
@@ -238,16 +246,18 @@ class onShowListener implements DialogInterface.OnShowListener {
                             delete.setText(_c.get()._deleteRes);
                         } else if (_c.get()._delete != null) {
                             delete.setText(_c.get()._delete);
-                        } else
+                        } else {
                             delete.setText(R.string.options_delete);
+                        }
                         delete.setTextColor(buttonColor);
                         final Drawable bin;
                         if (_c.get()._deleteIconRes != -1) {
                             bin = ContextCompat.getDrawable(_c.get()._context, _c.get()._deleteIconRes);
                         } else if (_c.get()._deleteIcon != null) {
                             bin = _c.get()._deleteIcon;
-                        } else
+                        } else {
                             bin = ContextCompat.getDrawable(_c.get()._context, R.drawable.ic_delete_24dp);
+                        }
                         if (bin != null) {
                             bin.setColorFilter(filter);
                             delete.setCompoundDrawablesWithIntrinsicBounds(bin, null, null, null);
@@ -291,15 +301,20 @@ class onShowListener implements DialogInterface.OnShowListener {
                                         e.printStackTrace();
                                     }
 
-                                    TypedArray ta = _c.get()._context.obtainStyledAttributes(R.styleable.FileChooser);
-                                    int style = ta.getResourceId(R.styleable.FileChooser_fileChooserNewFolderStyle, R.style.FileChooserNewFolderStyle);
+                                    TypedArray ta = _c.get()._context.obtainStyledAttributes(
+                                        R.styleable.FileChooser);
+                                    int style = ta.getResourceId(
+                                        R.styleable.FileChooser_fileChooserNewFolderStyle,
+                                        R.style.FileChooserNewFolderStyle);
                                     final Context context = new ContextThemeWrapper(_c.get()._context, style);
                                     ta.recycle();
                                     ta = context.obtainStyledAttributes(R.styleable.FileChooser);
 
                                     // A semitransparent background overlay.
                                     final FrameLayout overlay = new FrameLayout(_c.get()._context);
-                                    overlay.setBackgroundColor(ta.getColor(R.styleable.FileChooser_fileChooserNewFolderOverlayColor, 0x60ffffff));
+                                    overlay.setBackgroundColor(
+                                        ta.getColor(R.styleable.FileChooser_fileChooserNewFolderOverlayColor,
+                                            0x60ffffff));
                                     overlay.setScrollContainer(true);
                                     ViewGroup.MarginLayoutParams params;
                                     if (root instanceof FrameLayout) {
@@ -335,8 +350,11 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     // A solid holder view for the EditText and Buttons.
                                     final LinearLayout holder = new LinearLayout(_c.get()._context);
                                     holder.setOrientation(LinearLayout.VERTICAL);
-                                    holder.setBackgroundColor(ta.getColor(R.styleable.FileChooser_fileChooserNewFolderBackgroundColor, 0xffffffff));
-                                    final int elevation = ta.getInt(R.styleable.FileChooser_fileChooserNewFolderElevation, 25);
+                                    holder.setBackgroundColor(
+                                        ta.getColor(R.styleable.FileChooser_fileChooserNewFolderBackgroundColor,
+                                            0xffffffff));
+                                    final int elevation = ta.getInt(
+                                        R.styleable.FileChooser_fileChooserNewFolderElevation, 25);
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                         holder.setElevation(elevation);
                                     } else {
@@ -351,9 +369,11 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     linearLayout.addView(rightSpace, params);
 
                                     final EditText input = new EditText(_c.get()._context);
-                                    final int color = ta.getColor(R.styleable.FileChooser_fileChooserNewFolderTextColor, buttonColor);
+                                    final int color = ta.getColor(
+                                        R.styleable.FileChooser_fileChooserNewFolderTextColor, buttonColor);
                                     input.setTextColor(color);
-                                    input.getBackground().mutate().setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+                                    input.getBackground().mutate().setColorFilter(color,
+                                        PorterDuff.Mode.SRC_ATOP);
                                     input.setText(newFolder.getName());
                                     input.setSelectAllOnFocus(true);
                                     input.setSingleLine(true);
@@ -383,8 +403,9 @@ class onShowListener implements DialogInterface.OnShowListener {
                                         cancel.setText(_c.get()._newFolderCancelRes);
                                     } else if (_c.get()._newFolderCancel != null) {
                                         cancel.setText(_c.get()._newFolderCancel);
-                                    } else
+                                    } else {
                                         cancel.setText(R.string.new_folder_cancel);
+                                    }
                                     cancel.setTextColor(buttonColor);
                                     params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                                         START);
@@ -397,8 +418,9 @@ class onShowListener implements DialogInterface.OnShowListener {
                                         ok.setText(_c.get()._newFolderOkRes);
                                     } else if (_c.get()._newFolderOk != null) {
                                         ok.setText(_c.get()._newFolderOk);
-                                    } else
+                                    } else {
                                         ok.setText(R.string.new_folder_ok);
+                                    }
                                     ok.setTextColor(buttonColor);
                                     params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                                         END);
@@ -464,8 +486,9 @@ class onShowListener implements DialogInterface.OnShowListener {
                                 return;
                             }
 
-                            _c.get()._chooseMode = _c.get()._chooseMode != CHOOSE_MODE_DELETE ? CHOOSE_MODE_DELETE
-                                : CHOOSE_MODE_NORMAL;
+                            _c.get()._chooseMode =
+                                _c.get()._chooseMode != CHOOSE_MODE_DELETE ? CHOOSE_MODE_DELETE
+                                    : CHOOSE_MODE_NORMAL;
                             if (_c.get()._deleteModeIndicator == null) {
                                 _c.get()._deleteModeIndicator = () -> {
                                     if (_c.get()._chooseMode == CHOOSE_MODE_DELETE) {

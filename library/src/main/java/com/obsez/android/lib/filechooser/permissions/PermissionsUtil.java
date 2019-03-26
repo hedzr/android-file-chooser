@@ -13,14 +13,16 @@ public final class PermissionsUtil {
     @SuppressWarnings("unused")
     public static final String TAG = PermissionsUtil.class.getName();
 
-    public interface OnPermissionListener
-    {
+    public interface OnPermissionListener {
         void onPermissionGranted(final String[] permissions);
+
         void onPermissionDenied(final String[] permissions);
+
         void onShouldShowRequestPermissionRationale(final String[] permissions);
     }
 
-    public static void checkPermissions(@NonNull Context context, @Nullable final OnPermissionListener onPermissionListener, final String... permissions) {
+    public static void checkPermissions(@NonNull Context context,
+        @Nullable final OnPermissionListener onPermissionListener, final String... permissions) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || permissions.length == 0) {
             if (onPermissionListener != null) onPermissionListener.onPermissionGranted(permissions);
             return;

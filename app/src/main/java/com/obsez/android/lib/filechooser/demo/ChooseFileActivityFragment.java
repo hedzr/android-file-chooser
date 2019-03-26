@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.obsez.android.lib.filechooser.ChooserDialog;
+import com.obsez.android.lib.filechooser.demo.tool.ImageUtil;
 import com.obsez.android.lib.filechooser.internals.FileUtil;
 import com.obsez.android.lib.filechooser.tool.RootFile;
 
@@ -145,7 +146,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
 
         chooserDialog
             .withResources(
-            dirOnly.isChecked() ? R.string.title_choose_folder : R.string.title_choose_file,
+                dirOnly.isChecked() ? R.string.title_choose_folder : R.string.title_choose_file,
                 R.string.title_choose, R.string.dialog_cancel)
             .withOptionResources(R.string.option_create_folder, R.string.options_delete,
                 R.string.new_folder_cancel, R.string.new_folder_ok)
@@ -280,8 +281,10 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
             @SuppressLint("SimpleDateFormat")
             SimpleDateFormat format = new SimpleDateFormat("yyyy");
             PorterDuffColorFilter colorFilter = new PorterDuffColorFilter(0x6033b5e5, PorterDuff.Mode.MULTIPLY);
-            Drawable folderIcon = ContextCompat.getDrawable(ctx, com.obsez.android.lib.filechooser.R.drawable.ic_folder);
-            Drawable fileIcon = ContextCompat.getDrawable(ctx, com.obsez.android.lib.filechooser.R.drawable.ic_file);
+            Drawable folderIcon = ContextCompat.getDrawable(ctx,
+                com.obsez.android.lib.filechooser.R.drawable.ic_folder);
+            Drawable fileIcon = ContextCompat.getDrawable(ctx,
+                com.obsez.android.lib.filechooser.R.drawable.ic_file);
             final PorterDuffColorFilter filter = new PorterDuffColorFilter(0x600000aa,
                 PorterDuff.Mode.SRC_ATOP);
             folderIcon.mutate().setColorFilter(filter);
@@ -314,8 +317,11 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                         }
                         tvName.setCompoundDrawablesWithIntrinsicBounds(null, null, icon, null);
 
-                        if (!(file instanceof RootFile)) tvPath.setText(file.getPath());
-                        else tvPath.setText("");
+                        if (!(file instanceof RootFile)) {
+                            tvPath.setText(file.getPath());
+                        } else {
+                            tvPath.setText("");
+                        }
 
                         View root = view.findViewById(R.id.root);
                         if (root.getBackground() == null) {

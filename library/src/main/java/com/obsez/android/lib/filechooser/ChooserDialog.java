@@ -1,5 +1,10 @@
 package com.obsez.android.lib.filechooser;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+
+import static com.obsez.android.lib.filechooser.internals.FileUtil.NewFolderFilter;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -14,7 +19,6 @@ import android.os.Environment;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
 import android.support.v4.content.ContextCompat;
@@ -53,10 +57,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static com.obsez.android.lib.filechooser.internals.FileUtil.NewFolderFilter;
 
 /**
  * Created by coco on 6/7/15.
@@ -125,8 +125,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         if (fileChooserTheme == null) {
             TypedValue typedValue = new TypedValue();
             if (!this._context.getTheme().resolveAttribute(
-                R.attr.fileChooserStyle, typedValue, true))
+                R.attr.fileChooserStyle, typedValue, true)) {
                 this._context = new ContextThemeWrapper(this._context, R.style.FileChooserStyle);
+            }
         } else {
             //noinspection UnnecessaryUnboxing
             this._context = new ContextThemeWrapper(this._context, fileChooserTheme.intValue());
@@ -232,7 +233,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
-    public ChooserDialog withStringResources(@Nullable String titleRes, @Nullable String okRes, @Nullable String cancelRes) {
+    public ChooserDialog withStringResources(@Nullable String titleRes, @Nullable String okRes,
+        @Nullable String cancelRes) {
         this._title = titleRes;
         this._ok = okRes;
         this._negative = cancelRes;
@@ -300,7 +302,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     public ChooserDialog withLayoutView(@LayoutRes int layoutResId) {
         this._layoutRes = layoutResId;
         return this;
@@ -308,7 +309,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     /**
      * @deprecated use {@link AdapterSetter#apply(DirAdapter)}
-     *             and then {@link DirAdapter.GetView#getView(File, boolean, boolean, View, ViewGroup, LayoutInflater)} instead
+     * and then {@link DirAdapter.GetView#getView(File, boolean, boolean, View, ViewGroup, LayoutInflater)}
+     * instead
      */
     public ChooserDialog withRowLayoutView(@LayoutRes int layoutResId) {
         this._rowLayoutRes = layoutResId;
@@ -352,9 +354,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public ChooserDialog withOnDismissListener(final DialogInterface.OnDismissListener listener) {
-        _onDismissListener = listener;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            _onDismissListener = listener;
+        }
         return this;
     }
 
@@ -467,17 +470,21 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             _adapter = new DirAdapter(_context, this._dateFormat);
         }
         if (_adapterSetter != null) _adapterSetter.apply(_adapter);
+        //_adapter = new DirAdapter(_context, new ArrayList<>(),
+        //    _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
+        //if (_adapterSetter != null) _adapterSetter.apply(_adapter);
 
         refreshDirs();
         builder.setAdapter(_adapter, this);
 
         if (!_disableTitle) {
-            if (_titleRes != -1)
+            if (_titleRes != -1) {
                 builder.setTitle(_titleRes);
-            else if (_title != null)
+            } else if (_title != null) {
                 builder.setTitle(_title);
-            else
+            } else {
                 builder.setTitle(R.string.choose_file);
+            }
         }
 
         if (_iconRes != -1) {
@@ -499,20 +506,22 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     _result.onChoosePath(_currentDir.getAbsolutePath(), _currentDir);
                 }
             };
-            if (_okRes != -1)
+            if (_okRes != -1) {
                 builder.setPositiveButton(_okRes, listener);
-            else if (_ok != null)
+            } else if (_ok != null) {
                 builder.setPositiveButton(_ok, listener);
-            else
+            } else {
                 builder.setPositiveButton(R.string.title_choose, listener);
+            }
         }
 
-        if (_negativeRes != -1)
+        if (_negativeRes != -1) {
             builder.setNegativeButton(_negativeRes, _negativeListener);
-        else if (_negative != null)
+        } else if (_negative != null) {
             builder.setNegativeButton(_negative, _negativeListener);
-        else
+        } else {
             builder.setNegativeButton(R.string.dialog_cancel, _negativeListener);
+        }
 
         if (_cancelListener2 != null) {
             builder.setOnCancelListener(_cancelListener2);
@@ -588,7 +597,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         }
                     }
                     if (!show) return;
-                    if (_adapter.isEmpty()) refreshDirs();
                     showDialog();
                 }
 
@@ -605,10 +613,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             };
         }
 
-
         final String[] permissions =
-            _enableOptions ? new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE }
-            : new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE };
+            _enableOptions ? new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE}
+                : new String[]{Manifest.permission.READ_EXTERNAL_STORAGE};
 
         PermissionsUtil.checkPermissions(_context, _permissionListener, permissions);
 
@@ -663,10 +671,12 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 removableRoot = FileUtil.getStoragePath(_context, true);
                 primaryRoot = FileUtil.getStoragePath(_context, false);
             }
-            if (path.contains(removableRoot))
+            if (path.contains(removableRoot)) {
                 path = path.substring(removableRoot.lastIndexOf('/') + 1);
-            if (path.contains(primaryRoot))
+            }
+            if (path.contains(primaryRoot)) {
                 path = path.substring(primaryRoot.lastIndexOf('/') + 1);
+            }
             _pathView.setText(path);
 
             while (_pathView.getLineCount() > 1) {
@@ -707,6 +717,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     private String removableRoot = null;
     private String primaryRoot = null;
+
     private void listDirs() {
         _entries.clear();
 
@@ -764,12 +775,13 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 if (displayPath) {
                     _alertDialog.setTitle(_currentDir.getName());
                 } else {
-                    if (_titleRes != -1)
+                    if (_titleRes != -1) {
                         _alertDialog.setTitle(_titleRes);
-                    else if (_title != null)
+                    } else if (_title != null) {
                         _alertDialog.setTitle(_title);
-                    else
+                    } else {
                         _alertDialog.setTitle(R.string.choose_file);
+                    }
                 }
 
             }
@@ -1048,7 +1060,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     Drawable _icon;
     private @LayoutRes
     int _layoutRes = -1;
-    private @LayoutRes @Deprecated
+    private @LayoutRes
+    @Deprecated
     int _rowLayoutRes = -1;
     private String _dateFormat;
     DialogInterface.OnClickListener _negativeListener;
@@ -1121,4 +1134,5 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     public interface CustomizePathView {
         void customize(TextView pathView);
     }
+
 }
