@@ -128,6 +128,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             if (!this._context.getTheme().resolveAttribute(
                 R.attr.fileChooserStyle, typedValue, true)) {
                 this._context = new ContextThemeWrapper(this._context, R.style.FileChooserStyle);
+            } else {
+                this._context = new ContextThemeWrapper(this._context, typedValue.resourceId);
             }
         } else {
             //noinspection UnnecessaryUnboxing
