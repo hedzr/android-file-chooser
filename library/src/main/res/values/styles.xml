@@ -15,6 +15,17 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" tools:ignore="ResourceName,PrivateResource">
 
+    <!-- PermissionActivity style -->
+    <style name="Theme.Transparent" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <!-- ChooserDialog style -->
     <public name="FileChooserStyle" type="style" />
     <style name="FileChooserStyle">
         <item name="android:textColor">@color/material_deep_teal_500</item>
@@ -127,6 +138,7 @@
         <item name="android:lines">1</item>
         <item name="android:maxLines">1</item>
         <item name="fileChooserPathViewElevation">2</item>
+        <item name="fileChooserPathViewDisplayRoot">true</item>
     </style>
 
     <!-- New Folder -->

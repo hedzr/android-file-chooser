@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation,ResourceName">
   <string name="title_choose">Choose</string>
   <string name="title_choose_dict_file">Pick a dictionary</string>
   <string name="dialog_ok">Select</string>

@@ -70,15 +70,21 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation project(':library')
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.android.support:design:28.0.0'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.jakewharton.timber:timber:4.7.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    // implementation 'com.obsez.android.lib.filechooser:filechooser:1.1.6'
-    // implementation 'com.github.hedzr:android-file-chooser:master-SNAPSHOT'
-    // implementation 'com.github.hedzr:android-file-chooser:v1.1.10'
+
+    implementation project(':library')
+//    debugImplementation project(':library')
+//    //releaseImplementation 'com.github.hedzr:android-file-chooser:v1.1.17'
+//    releaseImplementation 'com.obsez.android.lib.filechooser:filechooser:1.1.17'
+//    // implementation 'com.github.hedzr:android-file-chooser:master-SNAPSHOT'
+//    // implementation 'com.github.hedzr:android-file-chooser:v1.1.10'
+
     //unitTestCompile 'com.google.android:android-test:4.1.1.4'
-    implementation 'com.android.support:design:28.0.0'
 }
 repositories {
     mavenCentral()

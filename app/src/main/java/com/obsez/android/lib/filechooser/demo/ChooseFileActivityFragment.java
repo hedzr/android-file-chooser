@@ -1,13 +1,18 @@
 package com.obsez.android.lib.filechooser.demo;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,13 +23,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.obsez.android.lib.filechooser.ChooserDialog;
+import com.obsez.android.lib.filechooser.demo.tool.ImageUtil;
 import com.obsez.android.lib.filechooser.internals.FileUtil;
+import com.obsez.android.lib.filechooser.tool.RootFile;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import timber.log.Timber;
-
 
 /**
  * A placeholder fragment containing a simple view.
@@ -44,6 +52,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
     private CheckBox filterImages;
     private CheckBox displayIcon;
     private CheckBox dateFormat;
+    private CheckBox customLayout;
     private CheckBox darkTheme;
 
     private String _path = null;
@@ -88,7 +97,29 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
         filterImages = root.findViewById(R.id.checkbox_filter_images);
         displayIcon = root.findViewById(R.id.checkbox_display_icon);
         dateFormat = root.findViewById(R.id.checkbox_date_format);
+        customLayout = root.findViewById(R.id.checkbox_custom_layout);
         darkTheme = root.findViewById(R.id.checkbox_dark_theme);
+
+        titleFollowsDir.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) customLayout.setChecked(false);
+        });
+
+        displayPath.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) customLayout.setChecked(false);
+        });
+
+        dateFormat.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) customLayout.setChecked(false);
+        });
+
+        customLayout.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                dateFormat.setChecked(false);
+                darkTheme.setChecked(false);
+                titleFollowsDir.setChecked(false);
+                displayPath.setChecked(false);
+            }
+        });
 
         root.findViewById(R.id.btn_show_dialog).setOnClickListener(this);
 
@@ -113,11 +144,18 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
             chooserDialog = new ChooserDialog(ctx);
         }
 
-        chooserDialog.withResources(
-            dirOnly.isChecked() ? R.string.title_choose_folder : R.string.title_choose_file,
-            R.string.title_choose, R.string.dialog_cancel)
+        chooserDialog
+            .withResources(
+                dirOnly.isChecked() ? R.string.title_choose_folder : R.string.title_choose_file,
+                R.string.title_choose, R.string.dialog_cancel)
             .withOptionResources(R.string.option_create_folder, R.string.options_delete,
                 R.string.new_folder_cancel, R.string.new_folder_ok)
+            // Optionally, you can use Strings instead:
+            /*.withStringResources(
+            dirOnly.isChecked() ? "Choose a folder" : "Choose a file",
+                "Choose", "Cancel")
+            .withOptionStringResources("New folder",
+                "Delete", "Cancel", "Ok")*/
             .disableTitle(disableTitle.isChecked())
             .enableOptions(enableOptions.isChecked())
             .titleFollowsDir(titleFollowsDir.isChecked())
@@ -239,10 +277,72 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
         if (dateFormat.isChecked()) {
             chooserDialog.withDateFormat("dd MMMM yyyy");
         }
+        if (customLayout.isChecked()) {
+            @SuppressLint("SimpleDateFormat")
+            SimpleDateFormat format = new SimpleDateFormat("yyyy");
+            PorterDuffColorFilter colorFilter = new PorterDuffColorFilter(0x6033b5e5, PorterDuff.Mode.MULTIPLY);
+            Drawable folderIcon = ContextCompat.getDrawable(ctx,
+                com.obsez.android.lib.filechooser.R.drawable.ic_folder);
+            Drawable fileIcon = ContextCompat.getDrawable(ctx,
+                com.obsez.android.lib.filechooser.R.drawable.ic_file);
+            final PorterDuffColorFilter filter = new PorterDuffColorFilter(0x600000aa,
+                PorterDuff.Mode.SRC_ATOP);
+            folderIcon.mutate().setColorFilter(filter);
+            fileIcon.mutate().setColorFilter(filter);
+            chooserDialog
+                .withAdapterSetter(adapter ->
+                    adapter.overrideGetView((file, isSelected, isFocused, convertView, parent, inflater) -> {
+                        ViewGroup view = (ViewGroup) inflater.inflate(R.layout.li_row, parent, false);
+
+                        TextView tvName = view.findViewById(R.id.file_name);
+                        TextView tvPath = view.findViewById(R.id.file_path);
+                        TextView tvDate = view.findViewById(R.id.file_date);
+
+                        tvDate.setVisibility(View.VISIBLE);
+                        tvName.setText(file.getName());
+                        Drawable icon;
+                        if (file.isDirectory()) {
+                            icon = folderIcon.getConstantState().newDrawable();
+                            if (file.lastModified() != 0L) {
+                                tvDate.setText(format.format(new Date(file.lastModified())));
+                            } else {
+                                tvDate.setVisibility(View.GONE);
+                            }
+                        } else {
+                            icon = fileIcon.getConstantState().newDrawable();
+                            tvDate.setText(format.format(new Date(file.lastModified())));
+                        }
+                        if (file.isHidden()) {
+                            tvName.setText("HIDDEN");
+                        }
+                        tvName.setCompoundDrawablesWithIntrinsicBounds(null, null, icon, null);
+
+                        if (!(file instanceof RootFile)) {
+                            tvPath.setText(file.getPath());
+                        } else {
+                            tvPath.setText("");
+                        }
+
+                        View root = view.findViewById(R.id.root);
+                        if (root.getBackground() == null) {
+                            root.setBackgroundResource(android.R.color.holo_blue_light);
+                        }
+                        if (!isSelected) {
+                            if (isFocused) {
+                                root.getBackground().setColorFilter(colorFilter);
+                            } else {
+                                root.getBackground().clearColorFilter();
+                            }
+                        } else {
+                            root.getBackground().setColorFilter(colorFilter);
+                        }
+
+                        return view;
+                    }));
+        }
 
         chooserDialog
             .withOnCancelListener(DialogInterface::cancel)
-            .build()
             .show();
     }
 }

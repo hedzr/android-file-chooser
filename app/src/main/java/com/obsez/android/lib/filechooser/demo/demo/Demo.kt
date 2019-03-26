@@ -1,9 +1,10 @@
 @file:Suppress("unused")
 
-package com.obsez.android.lib.filechooser.demo
+package com.obsez.android.lib.filechooser.demo.demo
 
 import android.content.Context
 import com.obsez.android.lib.filechooser.ChooserDialog
+import com.obsez.android.lib.filechooser.demo.R
 
 object Demo {
     fun demo1(context: Context, startPath: String, callback: ChooserDialog.Result) {

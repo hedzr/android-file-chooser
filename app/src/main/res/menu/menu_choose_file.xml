@@ -5,14 +5,14 @@
 
     <item
         android:id="@+id/action_gh"
-        android:icon="@drawable/ic_home_black_24dp"
+        android:icon="@drawable/ic_home_999_24dp"
         android:orderInCategory="80"
         android:title="@string/action_gh"
         app:showAsAction="never|ifRoom|withText"/>
 
     <item
         android:id="@+id/action_about"
-        android:icon="@drawable/ic_info_outline_black_24dp"
+        android:icon="@drawable/ic_info_outline_999_24dp"
         android:orderInCategory="80"
         android:title="@string/action_about"
         app:showAsAction="never|ifRoom|withText"/>
