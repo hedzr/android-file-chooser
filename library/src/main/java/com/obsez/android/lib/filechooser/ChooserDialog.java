@@ -19,6 +19,7 @@ import android.os.Environment;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
 import android.support.v4.content.ContextCompat;
@@ -302,6 +303,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     public ChooserDialog withLayoutView(@LayoutRes int layoutResId) {
         this._layoutRes = layoutResId;
         return this;
@@ -354,10 +356,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public ChooserDialog withOnDismissListener(final DialogInterface.OnDismissListener listener) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            _onDismissListener = listener;
-        }
+        _onDismissListener = listener;
         return this;
     }
 
