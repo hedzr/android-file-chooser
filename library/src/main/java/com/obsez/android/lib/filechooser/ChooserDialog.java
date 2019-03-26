@@ -597,6 +597,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         }
                     }
                     if (!show) return;
+                    if (_adapter.isEmpty()) refreshDirs();
                     showDialog();
                 }
 

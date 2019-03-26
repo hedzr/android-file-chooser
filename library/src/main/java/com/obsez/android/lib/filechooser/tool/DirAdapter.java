@@ -233,7 +233,7 @@ public class DirAdapter extends ArrayAdapter<File> {
     }
 
     public boolean isEmpty() {
-        return getCount() == 1 && (getItem(0) instanceof RootFile);
+        return getCount() == 0 || (getCount() == 1 && (getItem(0) instanceof RootFile));
     }
 
     public int getHoveredIndex() {
