@@ -1,5 +1,16 @@
 # RELEASES
 
+## 1.1.17 - 2019-03-28
+
+- bugs fixed
+- rewrite demo app
+- small tunes
+  - show dlg after permissions granted, without fault
+  - better text color and dark facade
+  - displaying the current path string
+  - etc.
+
+
 ## 1.1.16 - 2019-03-03
 
 - #46, #47, #48
