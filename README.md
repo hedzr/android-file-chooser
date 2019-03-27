@@ -41,25 +41,27 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 
 - **In progress**
 - Plan: uses AndroidX
-- Done:
-  - Keyboard supports: process SPACE and ENTER up event;
-  - file list no focus when dialog first showing;
-  - better storage media detect algorithm for Android M+;
-  - no WRITE_EXTERNAL_STORAGE requests if not `enableOptions(true)`;
-  - after requested permissions, try showing dialog again instead of return directly;
 
 ### v1.1.x patches on `master`
 
 - 
 
-### v1.1.16
+### v1.1.17
+
+- bugs fixed.
+- rewrite demo app
+- small tunes
+  - show dlg after permissions granted, without fault
+  - better text color and dark facade
+  - displaying the current path string
+  - etc.
+
+### Archived History:
 
 - #48: add `displayPath(boolean)`, thank you [@Guiorgy](https://github.com/Guiorgy), and your [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser).
 - new style demo app by @Guiorgy.
-- bugs fixed
 - NOTE: `displayPath` is true by default now.
-
-- bumped targer sdk to 1.8 (please include the following into your build.gradle)
+- since v1.1.16, bumped targer sdk to 1.8 (please include the following into your build.gradle)
 ```java
 android {
     compileOptions {
@@ -68,9 +70,6 @@ android {
     }
 }
 ```
-
-
-### Archived History:
 
 - no WRITE_EXTERNAL_STORAGE requests if not `enableOptions(true)`;
 - after requested permissions, try showing dialog again instead of return directly;
@@ -311,6 +310,8 @@ And, old style is still available. No need to modify your existing codes.
 
 1.1.8+. Now you can customize each row.
 
+since 1.1.17, `DirAdatper.GetView#getView` allows you do the same thing, and `withRowLayoutView` will be deprecated. See also: `withAdapterSetter(setter)`
+
 #### `withFileIcons`
 
 1.1.9+. `withFileIcons(resolveMime, fileIcon, folderIcon)` and
@@ -350,6 +351,29 @@ user-defined file/folder icon.
 })
 ```
 
+More information in source code of `DirAdapter`.
+
+since 1.1.17, `DirAdapter.overrideGetView()` supports GetView interface.
+
+```java
+    public interface GetView {
+        /**
+         * @param file        file that should me displayed
+         * @param isSelected  whether file is selected when _enableMultiple is set to true
+         * @param isFocused   whether this file is focused when using dpad controls
+         * @param convertView see {@link ArrayAdapter#getView(int, View, ViewGroup)}
+         * @param parent      see {@link ArrayAdapter#getView(int, View, ViewGroup)}
+         * @param inflater    a layout inflater with the FileChooser theme wrapped context
+         * @return your custom row item view
+         */
+        @NonNull
+        View getView(@NonNull File file, boolean isSelected, boolean isFocused, View convertView,
+            @NonNull ViewGroup parent, @NonNull LayoutInflater inflater);
+    }
+```
+
+
+
 #### `withNavigateUpTo(CanNavigateUp)`
 
 1.1.10+. `withNavigateUpTo`
@@ -386,6 +410,11 @@ a tri-dot menu icon will be shown at bottom left corner. this icon button allows
 
 further tunes:
 - `withOptionResources(@StringRes int createDirRes, @StringRes int deleteRes, @StringRes int newFolderCancelRes, @StringRes int newFolderOkRes)`
+
+- `withOptionStringResources(@Nullable String createDir, @Nullable String delete,
+          @Nullable String newFolderCancel, @Nullable String newFolderOk)`
+
+  *since v1.1.17*
 
 - `withOptionIcons(@DrawableRes int optionsIconRes, @DrawableRes int createDirIconRes, @DrawableRes int deleteRes)`
 
@@ -437,6 +466,17 @@ As a useful complement, `customizePathView(callback)` allows tuning the path Tex
 .customizePathView((pathView) -> {
     pathView.setGravity(Gravity.RIGHT);
 })
+```
+
+
+
+#### withResources, withStringResources
+
+you can customize the text of buttons:
+
+```java
+            .withResources(R.string.title_choose_any_file, R.string.title_choose, R.string.dialog_cancel)
+            .withStringResources("Title", "OK", "Cancel")
 ```
 
 

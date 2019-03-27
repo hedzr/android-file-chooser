@@ -19,6 +19,7 @@ import android.os.Environment;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
 import android.support.v4.content.ContextCompat;
@@ -127,6 +128,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             if (!this._context.getTheme().resolveAttribute(
                 R.attr.fileChooserStyle, typedValue, true)) {
                 this._context = new ContextThemeWrapper(this._context, R.style.FileChooserStyle);
+            } else {
+                this._context = new ContextThemeWrapper(this._context, typedValue.resourceId);
             }
         } else {
             //noinspection UnnecessaryUnboxing
@@ -302,6 +305,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     public ChooserDialog withLayoutView(@LayoutRes int layoutResId) {
         this._layoutRes = layoutResId;
         return this;
@@ -354,10 +358,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public ChooserDialog withOnDismissListener(final DialogInterface.OnDismissListener listener) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            _onDismissListener = listener;
-        }
+        _onDismissListener = listener;
         return this;
     }
 
@@ -624,6 +627,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    private boolean displayRoot;
     private void displayPath(String path) {
         if (_pathView == null) {
             final int rootId = _context.getResources().getIdentifier("contentPanel", "id", "android");
@@ -642,6 +646,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             int style = ta.getResourceId(R.styleable.FileChooser_fileChooserPathViewStyle,
                 R.style.FileChooserPathViewStyle);
             final Context context = new ContextThemeWrapper(_context, style);
+            ta.recycle();
+            ta = context.obtainStyledAttributes(R.styleable.FileChooser);
+
+            displayRoot = ta.getBoolean(R.styleable.FileChooser_fileChooserPathViewDisplayRoot, true);
 
             _pathView = new TextView(context);
             root.addView(_pathView, 0, params);
@@ -673,10 +681,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 primaryRoot = FileUtil.getStoragePath(_context, false);
             }
             if (path.contains(removableRoot)) {
-                path = path.substring(removableRoot.lastIndexOf('/') + 1);
+                path = path.substring(displayRoot ? removableRoot.lastIndexOf('/') + 1 : removableRoot.length());
             }
             if (path.contains(primaryRoot)) {
-                path = path.substring(primaryRoot.lastIndexOf('/') + 1);
+                path = path.substring(displayRoot ? primaryRoot.lastIndexOf('/') + 1 : primaryRoot.length());
             }
             _pathView.setText(path);
 

@@ -61,6 +61,7 @@
         <item name="fileChooserNewFolderTextColor">@android:color/holo_blue_light</item>
     </style>
 
+    <!-- AboutActivity -->
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
