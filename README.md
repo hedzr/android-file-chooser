@@ -7,24 +7,15 @@
 
 `android-file-library` is a lightweight file/folder chooser.
 
+The usages at [HERE](#Usages), and [Acknowledges](#Acknowledges).
+
+
+
 ## Overview
 
 ![banner](captures/banner.svg)
 
 
-
-
-### Snapshots
-
-<table><tr><td>
-<img src="captures/choose_file.png" width="360"/>
-</td><td>
-<img src="captures/choose_folder.png" width="360"/>
-</td><td>
-<img src="https://user-images.githubusercontent.com/27736965/53578348-f1d35880-3b90-11e9-9ef4-7ed0276ca603.gif" width="360"/>
-</td></tr></table>
-
-More images (beyond v1.1.16) have been found at [Gallery](https://github.com/hedzr/android-file-chooser/wiki/Gallery)
 
 
 
@@ -33,6 +24,19 @@ More images (beyond v1.1.16) have been found at [Gallery](https://github.com/hed
 A demo-app can be installed from [Play Store](https://play.google.com/store/apps/details?id=com.obsez.android.lib.filechooser.demo).
 
 <a href='https://play.google.com/store/apps/details?id=com.obsez.android.lib.filechooser.demo&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' width='240' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
+
+
+
+### Xamarin Port
+
+An Xamarin nuget package by [@Guiorgy](https://github.com/Guiorgy) can be found at:
+
+<https://www.nuget.org/packages/XamarinFileChooser/>
+
+Thanks.
+
+
+
 
 
 ## Changes
@@ -79,6 +83,23 @@ android {
 - create new folder on the fly, and the optional multiple select mode for developer, thx @Guiorgy.
 - Up (`..`) on the primary storage root will be replaced with `.. SDCard`, it allows to jump to external storage such as a SDCard and going back available too.
 - DPad supports, arrow keys supports (#30)
+
+
+
+
+
+### Snapshots
+
+<table><tr><td>
+<img src="captures/choose_file.png" width="360"/>
+</td><td>
+<img src="captures/choose_folder.png" width="360"/>
+</td><td>
+<img src="https://user-images.githubusercontent.com/27736965/53578348-f1d35880-3b90-11e9-9ef4-7ed0276ca603.gif" width="360"/>
+</td></tr></table>
+
+More images (beyond v1.1.16) have been found at [Gallery](https://github.com/hedzr/android-file-chooser/wiki/Gallery)
+
 
 
 
@@ -485,7 +506,7 @@ you can customize the text of buttons:
 
 ---
 
-## Under Kotlin
+### Under Kotlin
 
 ```kotlin
 class MyFragment : Fragment() {
@@ -533,17 +554,24 @@ And:
 ```
 
 
-## Build me
 
-just fork and build me currently.
+## For Library Developers
+
+Just fork and build me currently.
+
+
 
 ## Contrib
 
 Contributions and translations are welcome.
 
+
+
 ## Feedback
 
 feel free to make a new issue.
+
+
 
 ## Acknowledges
 
@@ -551,7 +579,8 @@ many peoples report or contribute to improve me, but only a few of them be put h
 
 - logo and banner by: [**iqbalhood**](https://github.com/iqbalhood)
 - codes and reports: [**bostrot**](https://github.com/bostrot), [**SeppPenner**](https://github.com/SeppPenner), [**lucian-cm**](https://github.com/lucian-cm), [**ghost**](https://github.com/ghost), [**UmeshBaldaniya46**](https://github.com/UmeshBaldaniya46), ...
-- especially, the supporter: [Guiorgy](https://github.com/Guiorgy) and his [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser)
+- especially, the Supporter/Collabotor: [Guiorgy](https://github.com/Guiorgy) and his [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser)
+
 
 
 ## License
@@ -560,15 +589,5 @@ Standard Apache 2.0
 
 Copyright 2015-2019 Hedzr Yeh.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
 
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
 
