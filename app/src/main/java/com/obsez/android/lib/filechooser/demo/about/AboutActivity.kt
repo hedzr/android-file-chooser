@@ -154,8 +154,9 @@ class AboutActivity : AppCompatActivity() {
             
             )),
             Items("Credits", listOf(
-                Item("Hedzr Yeh", "Email", "mailto:hedzrz@gmail.com"),
-                Item("Guiorgy Potskhishvili", "Email", "mailto:guiorgy123@gmail.com"),
+                Item("Hedzr Yeh", "Email", "mailto:hedzrz@gmail.com", "Maintainer"),
+                Item("Guiorgy Potskhishvili", "Email", "mailto:guiorgy123@gmail.com", "Maintainer"),
+                Item("iqbalhood", "Email", "iqbalhood@gmail.com", "Logo and banner maker"),
                 Item("More Contributors", "Goto", "https://github.com/hedzr/android-file-chooser#Acknowledges", "and supporters")
             ))
         )
