@@ -27,15 +27,9 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 
 
 
-### Xamarin Port
+### Xamarin Binding
 
-An Xamarin nuget package by [@Guiorgy](https://github.com/Guiorgy) can be found at:
-
-<https://www.nuget.org/packages/XamarinFileChooser/>
-
-Thanks.
-
-
+A Xamarin nuget package by [@Guiorgy](https://github.com/Guiorgy) can be found at [![NuGet](https://img.shields.io/nuget/v/XamarinFileChooser.svg?style=flat&max-age=86400)](https://www.nuget.org/packages/XamarinFileChooser/)
 
 
 
