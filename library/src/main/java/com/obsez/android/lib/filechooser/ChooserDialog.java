@@ -62,7 +62,7 @@ import java.util.regex.Pattern;
  * Created by coco on 6/7/15.
  */
 public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInterface.OnClickListener,
-    AdapterView.OnItemLongClickListener {
+    AdapterView.OnItemLongClickListener, AdapterView.OnItemSelectedListener {
     @FunctionalInterface
     public interface Result {
         void onChoosePath(String dir, File dirFile);
@@ -445,6 +445,16 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    public ChooserDialog setCancelable(boolean cancelable) {
+        this._cancelable = cancelable;
+        return this;
+    }
+
+    public ChooserDialog cancelOnTouchOutside(boolean cancelOnTouchOutside) {
+        this._cancelOnTouchOutside = cancelOnTouchOutside;
+        return this;
+    }
+
     public ChooserDialog enableDpad(boolean enableDpad) {
         this._enableDpad = enableDpad;
         return this;
@@ -528,15 +538,24 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             builder.setOnDismissListener(_onDismissListener);
         }
 
-        builder.setOnKeyListener(new keyListener(this));
+        builder.setCancelable(_cancelable)
+            .setOnItemSelectedListener(this)
+            .setOnKeyListener(new keyListener(this));
 
         _alertDialog = builder.create();
 
+        _alertDialog.setCanceledOnTouchOutside(this._cancelOnTouchOutside);
         _alertDialog.setOnShowListener(new onShowListener(this));
+
         _list = _alertDialog.getListView();
         _list.setOnItemClickListener(this);
         if (_enableMultiple) {
             _list.setOnItemLongClickListener(this);
+        }
+
+        if (_enableDpad) {
+            this._list.setDrawSelectorOnTop(true);
+            this._list.setItemsCanFocus(true);
         }
         return this;
     }
@@ -933,6 +952,18 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         _alertDialog.dismiss();
     }
 
+    private boolean lastSelected = false;
+
+    @Override
+    public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
+        lastSelected = position == _entries.size() - 1;
+    }
+
+    @Override
+    public void onNothingSelected(final AdapterView<?> parent) {
+        lastSelected = false;
+    }
+
     boolean doMoveUp() {
         if (_list.hasFocus()) {
             Log.d("z", "move up at " + _adapter.getHoveredIndex());
@@ -1090,6 +1121,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     View _newFolderView;
     boolean _enableMultiple;
     private PermissionsUtil.OnPermissionListener _permissionListener;
+    private boolean _cancelable = true;
+    private boolean _cancelOnTouchOutside;
     private boolean _enableDpad = true;
 
     @FunctionalInterface
