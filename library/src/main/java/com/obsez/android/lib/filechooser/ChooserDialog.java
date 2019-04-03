@@ -848,22 +848,16 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             if (!_list.hasFocus()) _list.requestFocus();
             doGoBack();
             return;
-        } else if (file.getName().contains(sSdcardStorage)) {
-            if (removableRoot == null) {
-                removableRoot = FileUtil.getStoragePath(_context, true);
-            }
-            if (Environment.MEDIA_MOUNTED.equals(
+        } else if (file instanceof RootFile) {
+            if (file.getName().contains(sPrimaryStorage)) {
+                if (primaryRoot == null) {
+                    primaryRoot = FileUtil.getStoragePath(_context, false);
+                }
+                _currentDir = new File(primaryRoot);
+            } else if (Environment.MEDIA_MOUNTED.equals(
                 Environment.getExternalStorageState())) {
                 _currentDir = new File(removableRoot);
-                _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
-                if (_deleteModeIndicator != null) _deleteModeIndicator.run();
-                _adapter.popAll();
             }
-        } else if (file.getName().contains(sPrimaryStorage)) {
-            if (primaryRoot == null) {
-                primaryRoot = FileUtil.getStoragePath(_context, false);
-            }
-            _currentDir = new File(primaryRoot);
             _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
             if (_deleteModeIndicator != null) _deleteModeIndicator.run();
             _adapter.popAll();
@@ -925,8 +919,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View list, int position, long id) {
         File file = _entries.get(position);
-        if (file.getName().equals("..") || file.getName().contains(sSdcardStorage)
-            || file.getName().contains(sPrimaryStorage) || file.isDirectory()) {
+        if (file instanceof RootFile || file.isDirectory()) {
             return true;
         }
         if (_adapter.isSelected(position)) return true;
