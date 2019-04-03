@@ -30,6 +30,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.view.ContextThemeWrapper;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -70,23 +71,6 @@ class onShowListener implements DialogInterface.OnShowListener {
 
         if (_c.get()._enableMultiple) {
             positive.setVisibility(View.INVISIBLE);
-        }
-
-        if (!_c.get()._dismissOnButtonClick) {
-            negative.setOnClickListener(v -> {
-                if (_c.get()._negativeListener != null) {
-                    _c.get()._negativeListener.onClick(_c.get()._alertDialog, AlertDialog.BUTTON_NEGATIVE);
-                }
-            });
-
-            positive.setOnClickListener(v -> {
-                if (_c.get()._result != null) {
-                    if (_c.get()._dirOnly || _c.get()._enableMultiple) {
-                        _c.get()._result.onChoosePath(_c.get()._currentDir.getAbsolutePath(),
-                            _c.get()._currentDir);
-                    }
-                }
-            });
         }
 
         if (_c.get()._enableOptions) {

@@ -195,17 +195,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    @Deprecated
     public ChooserDialog dismissOnButtonClick(final boolean dismissOnButtonClick) {
-        this._dismissOnButtonClick = dismissOnButtonClick;
-        if (this._onBackPressed instanceof defBackPressed) {
-            defBackPressed dbp = ((defBackPressed) this._onBackPressed);
-            if (dismissOnButtonClick) {
-                dbp._defaultLastBack = Dialog::dismiss;
-            } else {
-                dbp._defaultLastBack = dialog -> {
-                };
-            }
-        }
         return this;
     }
 
@@ -214,9 +205,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
-    /**
-     * @deprecated by {@link #withNegativeButtonListener(DialogInterface.OnClickListener)}
-     */
     public ChooserDialog withOnBackPressedListener(OnBackPressedListener listener) {
         this._onBackPressed = listener;
         return this;
@@ -354,7 +342,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
      * onCancelListener will be triggered on back pressed or clicked outside of dialog
      */
     public ChooserDialog withOnCancelListener(final DialogInterface.OnCancelListener listener) {
-        this._cancelListener2 = listener;
+        this._cancelListener = listener;
         return this;
     }
 
@@ -473,9 +461,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             _adapter = new DirAdapter(_context, this._dateFormat);
         }
         if (_adapterSetter != null) _adapterSetter.apply(_adapter);
-        //_adapter = new DirAdapter(_context, new ArrayList<>(),
-        //    _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
-        //if (_adapterSetter != null) _adapterSetter.apply(_adapter);
 
         refreshDirs();
         builder.setAdapter(_adapter, this);
@@ -526,8 +511,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             builder.setNegativeButton(R.string.dialog_cancel, _negativeListener);
         }
 
-        if (_cancelListener2 != null) {
-            builder.setOnCancelListener(_cancelListener2);
+        if (_cancelListener != null) {
+            builder.setOnCancelListener(_cancelListener);
         } else {
             builder.setOnCancelListener(dialog -> {
                 Log.v("Cancel", "Cancel");
@@ -870,7 +855,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                             _adapter.push(position);
                         }
                     } else if ((!_dirOnly) && _result != null) {
-                        if (_dismissOnButtonClick) _alertDialog.dismiss();
+                        _alertDialog.dismiss();
                         _result.onChoosePath(file.getAbsolutePath(), file);
                         if (_enableMultiple) {
                             _result.onChoosePath(_currentDir.getAbsolutePath(), _currentDir);
@@ -1063,7 +1048,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     AlertDialog _alertDialog;
     ListView _list;
     Result _result = null;
-    boolean _dirOnly;
+    private boolean _dirOnly;
     private FileFilter _fileFilter;
     private @StringRes
     int _titleRes = -1, _okRes = -1, _negativeRes = -1;
@@ -1079,8 +1064,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     @Deprecated
     int _rowLayoutRes = -1;
     private String _dateFormat;
-    DialogInterface.OnClickListener _negativeListener;
-    private DialogInterface.OnCancelListener _cancelListener2;
+    private DialogInterface.OnClickListener _negativeListener;
+    private DialogInterface.OnCancelListener _cancelListener;
     private DialogInterface.OnDismissListener _onDismissListener;
     private boolean _disableTitle;
     boolean _enableOptions;
@@ -1099,7 +1084,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     Drawable _optionsIcon, _createDirIcon, _deleteIcon;
     @Nullable
     View _newFolderView;
-    boolean _dismissOnButtonClick = true;
     boolean _enableMultiple;
     private PermissionsUtil.OnPermissionListener _permissionListener;
 
@@ -1149,5 +1133,4 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     public interface CustomizePathView {
         void customize(TextView pathView);
     }
-
 }
