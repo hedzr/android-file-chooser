@@ -34,7 +34,6 @@ import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -44,7 +43,6 @@ import android.widget.Toast;
 import com.obsez.android.lib.filechooser.internals.ExtFileFilter;
 import com.obsez.android.lib.filechooser.internals.FileUtil;
 import com.obsez.android.lib.filechooser.internals.RegexFileFilter;
-import com.obsez.android.lib.filechooser.internals.UiUtil;
 import com.obsez.android.lib.filechooser.permissions.PermissionsUtil;
 import com.obsez.android.lib.filechooser.tool.DirAdapter;
 import com.obsez.android.lib.filechooser.tool.RootFile;
@@ -554,6 +552,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         }
 
         if (_enableDpad) {
+            this._list.setSelector(R.drawable.listview_item_selector);
             this._list.setDrawSelectorOnTop(true);
             this._list.setItemsCanFocus(true);
         }
@@ -747,25 +746,20 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         File[] files = _currentDir.listFiles(_fileFilter);
 
         // Add the ".." entry
-        boolean up = false;
         if (removableRoot == null || primaryRoot == null) {
             removableRoot = FileUtil.getStoragePath(_context, true);
             primaryRoot = FileUtil.getStoragePath(_context, false);
         }
         if (!removableRoot.equals(primaryRoot)) {
-            //File f = Environment.getExternalStorageDirectory();
-            //File newRoot = _currentDir.getParentFile();
             if (_currentDir.getAbsolutePath().equals(primaryRoot)) {
-                _entries.add(new RootFile(sSdcardStorage)); //⇠
-                up = true;
+                _entries.add(new RootFile(removableRoot, sSdcardStorage)); //⇠
             } else if (_currentDir.getAbsolutePath().equals(removableRoot)) {
-                _entries.add(new RootFile(sPrimaryStorage)); //⇽
-                up = true;
+                _entries.add(new RootFile(primaryRoot, sPrimaryStorage)); //⇽
             }
         }
         boolean displayPath = false;
-        if (!up && _currentDir.getParentFile() != null && _currentDir.getParentFile().canRead()) {
-            _entries.add(new RootFile(".."));
+        if (_entries.isEmpty() && _currentDir.getParentFile() != null && _currentDir.getParentFile().canRead()) {
+            _entries.add(new RootFile(_currentDir.getParentFile().getAbsolutePath(), ".."));
             displayPath = true;
         }
 
@@ -817,7 +811,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 displayPath(null);
             }
         }
-        //_hoverIndex = -1;
     }
 
     private void sortByName(List<File> list) {
@@ -839,28 +832,19 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     Runnable _deleteModeIndicator;
 
     @Override
-    public void onItemClick(AdapterView<?> parent_, View list_, int position, long id_) {
+    public void onItemClick(AdapterView<?> parent_, View list_, int position, long id_) { // todo: focus last item on back
         if (position < 0 || position >= _entries.size()) return;
 
         boolean scrollToTop = false;
         File file = _entries.get(position);
-        if (file.getName().equals("..")) {
-            if (!_list.hasFocus()) _list.requestFocus();
-            doGoBack();
-            return;
-        } else if (file instanceof RootFile) {
-            if (file.getName().contains(sPrimaryStorage)) {
-                if (primaryRoot == null) {
-                    primaryRoot = FileUtil.getStoragePath(_context, false);
-                }
-                _currentDir = new File(primaryRoot);
-            } else if (Environment.MEDIA_MOUNTED.equals(
-                Environment.getExternalStorageState())) {
-                _currentDir = new File(removableRoot);
+        if (file instanceof RootFile) {
+            if (_folderNavUpCB == null) _folderNavUpCB = _defaultNavUpCB;
+            if (_folderNavUpCB.canUpTo(file)) {
+                _currentDir = file;
+                _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
+                if (_deleteModeIndicator != null) _deleteModeIndicator.run();
+                lastSelected = false;
             }
-            _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
-            if (_deleteModeIndicator != null) _deleteModeIndicator.run();
-            _adapter.popAll();
         } else {
             switch (_chooseMode) {
                 case CHOOSE_MODE_NORMAL:
@@ -869,7 +853,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         if (_folderNavToCB.canNavigate(file)) {
                             _currentDir = file;
                             scrollToTop = true;
-                            _adapter.push(position);
                         }
                     } else if ((!_dirOnly) && _result != null) {
                         _alertDialog.dismiss();
@@ -879,6 +862,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         }
                         return;
                     }
+                    lastSelected = false;
                     break;
                 case CHOOSE_MODE_SELECT_MULTIPLE:
                     if (file.isDirectory()) {
@@ -886,7 +870,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         if (_folderNavToCB.canNavigate(file)) {
                             _currentDir = file;
                             scrollToTop = true;
-                            _adapter.push();
                         }
                     } else {
                         _adapter.selectItem(position);
@@ -945,7 +928,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         _alertDialog.dismiss();
     }
 
-    private boolean lastSelected = false;
+    boolean lastSelected = false;
 
     @Override
     public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
@@ -957,118 +940,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         lastSelected = false;
     }
 
-    boolean doMoveUp() {
-        if (_list.hasFocus()) {
-            Log.d("z", "move up at " + _adapter.getHoveredIndex());
-            int indexOld = _adapter.getHoveredIndex();
-            int index = _adapter.decreaseHoveredIndex();
-            if (indexOld >= 0 && indexOld != index) {
-                UiUtil.ensureVisible(_list, index);
-                _list.requestFocus();
-            } else {
-                _list.setSelection(index); // to prevent the list scroll to top.
-                //moveFocusToButtons();
-            }
-        } else if (buttonsHasFocus()) {
-            _list.requestFocus();
-        }
-        return true;
-    }
-
-    boolean doMoveDown() {
-        if (_list.hasFocus()) {
-            Log.d("z", "move down at " + _adapter.getHoveredIndex());
-            int indexOld = _adapter.getHoveredIndex();
-            int index = _adapter.increaseHoveredIndex();
-            if (indexOld >= 0 && indexOld != index) {
-                UiUtil.ensureVisible(_list, index);
-                _list.requestFocus();
-            } else {
-                _list.setSelection(index); // to prevent the list scroll to top.
-                moveFocusToButtons();
-            }
-            //} else if (buttonsHasFocus()) {
-            //    _list.requestFocus();
-        }
-        return true;
-    }
-
-    boolean doGoBack() {
-        if (_list.hasFocus()) {
-            //Log.d("z", "go back at " + _adapter.getHoveredIndex());
-            //int position = _adapter.getHoveredIndex();
-
-            //boolean scrollToTop = false;
-            //File file = _entries.get(position);
-
-            File f = _currentDir.getParentFile();
-            Log.d("z", "go back at " + _adapter.getHoveredIndex() + ", go up level: " + f.getAbsolutePath());
-            if (_folderNavUpCB == null) _folderNavUpCB = _defaultNavUpCB;
-            if (_folderNavUpCB.canUpTo(f)) {
-                _currentDir = f;
-                _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
-                if (_deleteModeIndicator != null) _deleteModeIndicator.run();
-                //scrollToTop = true;
-                _adapter.pop();
-
-                refreshDirs();
-                //if (scrollToTop) _list.setSelection(0);
-                //_list.requestFocus();
-                _list.setSelection(_adapter.getHoveredIndex());
-            }
-        }
-        return true;
-    }
-
-    boolean doEnter() {
-        if (_list.hasFocus()) {
-            Log.d("z", "enter at " + _adapter.getHoveredIndex());
-            int position = _adapter.getHoveredIndex();
-            onItemClick(_list, _list, position, -1);
-            //_list.requestFocus();
-        } else if (buttonsHasFocus()) {
-            _alertDialog.getCurrentFocus().performClick();
-        }
-        return true;
-    }
-
-    boolean buttonsHasFocus() {
-        View v = _alertDialog.getCurrentFocus();
-        return v instanceof Button;
-        //return v == _alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL) ||
-        //    v == _alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE) ||
-        //    v == _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-    }
-
-    private boolean moveFocusToButtons() {
-        View v = null;
-        if (_alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).getVisibility() == View.VISIBLE) {
-            v = _alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-        }
-        if (v == null && _alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).getVisibility() == View.VISIBLE) {
-            v = _alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-        }
-        if (v == null && _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).getVisibility() == View.VISIBLE) {
-            v = _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        }
-        if (v != null) {
-            v.requestFocus();
-            return true;
-        }
-        return false;
-    }
-
-    boolean cancelFolderViewOrBack(DialogInterface dialog) {
-        if (_newFolderView != null && _newFolderView.getVisibility() == View.VISIBLE) {
-            _newFolderView.setVisibility(View.GONE);
-            return true;
-        } else {
-            _onBackPressed.onBackPressed((AlertDialog) dialog);
-            return true;
-        }
-    }
-
-    //private int _hoverIndex = -1;
     List<File> _entries = new ArrayList<>();
     DirAdapter _adapter;
     File _currentDir;
@@ -1116,7 +987,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private PermissionsUtil.OnPermissionListener _permissionListener;
     private boolean _cancelable = true;
     private boolean _cancelOnTouchOutside;
-    private boolean _enableDpad = true;
+    boolean _enableDpad = true;
 
     @FunctionalInterface
     public interface AdapterSetter {
@@ -1147,7 +1018,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         void onBackPressed(AlertDialog dialog);
     }
 
-    private OnBackPressedListener _onBackPressed = null;
+    OnBackPressedListener _onBackPressed = null;
 
     final static String sSdcardStorage = ".. SDCard Storage";
     final static String sPrimaryStorage = ".. Primary Storage";

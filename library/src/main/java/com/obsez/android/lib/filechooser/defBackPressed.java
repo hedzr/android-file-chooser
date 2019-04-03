@@ -34,5 +34,4 @@ class defBackPressed implements ChooserDialog.OnBackPressedListener {
     ChooserDialog.OnBackPressedListener _onLastBackPressed;
 
     ChooserDialog.OnBackPressedListener _defaultLastBack = Dialog::dismiss;
-
 }

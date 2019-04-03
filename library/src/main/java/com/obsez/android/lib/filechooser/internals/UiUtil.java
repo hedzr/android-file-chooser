@@ -73,7 +73,7 @@ public final class UiUtil {
     // This only works assuming that all list items have the same height!
     public static int getListYScroll(@NonNull final ListView list) {
         View child = list.getChildAt(0);
-        return list.getFirstVisiblePosition() * child.getHeight() - child.getTop() + list.getPaddingTop();
+        return child == null ? -1 : list.getFirstVisiblePosition() * child.getHeight() - child.getTop() + list.getPaddingTop();
     }
 
     public static void hideKeyboardFrom(@NonNull Context context, @NonNull View view) {

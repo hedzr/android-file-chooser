@@ -25,7 +25,6 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -58,23 +57,42 @@ public class DirAdapter extends ArrayAdapter<File> {
     }
 
     @FunctionalInterface
-    public interface GetView {
+    public interface GetViewListener {
         /**
          * @param file        file that should me displayed
          * @param isSelected  whether file is selected when _enableMultiple is set to true
-         * @param isFocused   whether this file is focused when using dpad controls
          * @param convertView see {@link ArrayAdapter#getView(int, View, ViewGroup)}
          * @param parent      see {@link ArrayAdapter#getView(int, View, ViewGroup)}
          * @param inflater    a layout inflater with the FileChooser theme wrapped context
          * @return your custom row item view
          */
         @NonNull
+        View getView(@NonNull File file, boolean isSelected, View convertView,
+                     @NonNull ViewGroup parent, @NonNull LayoutInflater inflater);
+    }
+
+    @FunctionalInterface
+    @Deprecated
+    public interface GetView {
+        /**
+         * @param isFocused   deprecated
+         * @deprecated use {@link GetViewListener} instead
+         */
+        @NonNull
+        @Deprecated
         View getView(@NonNull File file, boolean isSelected, boolean isFocused, View convertView,
             @NonNull ViewGroup parent, @NonNull LayoutInflater inflater);
     }
 
+    /**
+     * @deprecated use {@link #overrideGetView(GetViewListener)} instead
+     */
+    @Deprecated
     public void overrideGetView(GetView getView) {
         this._getView = getView;
+    }
+    public void overrideGetView(GetViewListener getViewListener) {
+        this._getViewListener = getViewListener;
     }
 
     // This function is called to show each view item
@@ -86,7 +104,11 @@ public class DirAdapter extends ArrayAdapter<File> {
         if (file == null) return super.getView(position, convertView, parent);
         final boolean isSelected = _selected.get(file.hashCode(), null) != null;
         if (_getView != null) {
-            return _getView.getView(file, isSelected, position == _hoveredIndex, convertView, parent,
+            return _getView.getView(file, isSelected, isSelected(position), convertView, parent,
+                LayoutInflater.from(getContext()));
+        }
+        if (_getViewListener != null) {
+            return _getViewListener.getView(file, isSelected, convertView, parent,
                 LayoutInflater.from(getContext()));
         }
 
@@ -135,11 +157,7 @@ public class DirAdapter extends ArrayAdapter<File> {
             root.setBackgroundResource(R.color.li_row_background);
         }
         if (!isSelected) {
-            if (position == _hoveredIndex) {
-                root.getBackground().setColorFilter(_colorFilter);
-            } else {
-                root.getBackground().clearColorFilter();
-            }
+            root.getBackground().clearColorFilter();
         } else {
             root.getBackground().setColorFilter(_colorFilter);
         }
@@ -236,61 +254,14 @@ public class DirAdapter extends ArrayAdapter<File> {
         return getCount() == 0 || (getCount() == 1 && (getItem(0) instanceof RootFile));
     }
 
-    public int getHoveredIndex() {
-        return _hoveredIndex;
-    }
-
-    public void setHoveredIndex(int i) {
-        _hoveredIndex = i;
-    }
-
-    public int increaseHoveredIndex() {
-        _hoveredIndex++;
-        if (_hoveredIndex >= super.getCount()) _hoveredIndex = super.getCount() - 1;
-        notifyDataSetInvalidated();
-        return _hoveredIndex;
-    }
-
-    public int decreaseHoveredIndex() {
-        _hoveredIndex--;
-        if (_hoveredIndex < 0) _hoveredIndex = 0;
-        notifyDataSetInvalidated();
-        return _hoveredIndex;
-    }
-
-    public int push() {
-        _indexStack.add(_hoveredIndex);
-        return _hoveredIndex;
-    }
-
-    public int push(int index) {
-        _indexStack.add(index);
-        _hoveredIndex = index;
-        return index;
-    }
-
-    public int pop() {
-        if (!_indexStack.isEmpty()) {
-            int x = _indexStack.get(_indexStack.size() - 1);
-            _indexStack.remove(_indexStack.size() - 1);
-            _hoveredIndex = x;
-            return x;
-        }
-        return -1;
-    }
-
-    public void popAll() {
-        _indexStack.clear();
-    }
-
     private SimpleDateFormat _formatter;
     private Drawable _defaultFolderIcon = null;
     private Drawable _defaultFileIcon = null;
     private boolean _resolveFileType = false;
     private PorterDuffColorFilter _colorFilter;
     private SparseArray<File> _selected = new SparseArray<File>();
-    private int _hoveredIndex;
-    private List<Integer> _indexStack = new LinkedList<>();
+    @Deprecated
     private GetView _getView = null;
+    private GetViewListener _getViewListener = null;
 }
 

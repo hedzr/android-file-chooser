@@ -30,7 +30,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.view.ContextThemeWrapper;
 import android.text.InputFilter;
 import android.text.InputType;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -71,6 +70,12 @@ class onShowListener implements DialogInterface.OnShowListener {
 
         if (_c.get()._enableMultiple) {
             positive.setVisibility(View.INVISIBLE);
+        }
+
+        if (_c.get()._enableDpad) {
+            options.setBackgroundResource(R.drawable.listview_item_selector);
+            negative.setBackgroundResource(R.drawable.listview_item_selector);
+            positive.setBackgroundResource(R.drawable.listview_item_selector);
         }
 
         if (_c.get()._enableOptions) {
@@ -133,12 +138,14 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     _c.get()._list.setLayoutParams(params);
                                 }
                                 _c.get()._options.setVisibility(View.VISIBLE);
+                                _c.get()._options.requestFocus();
                                 return true;
                             }
                         });
                     } else {
                         scroll.Int = getListYScroll(_c.get()._list);
                         _c.get()._options.setVisibility(View.VISIBLE);
+                        _c.get()._options.requestFocus();
                         if (_c.get()._options.getParent() instanceof FrameLayout) {
                             final ViewGroup.MarginLayoutParams params =
                                 (ViewGroup.MarginLayoutParams) _c.get()._list.getLayoutParams();
@@ -189,6 +196,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                             params = new FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, BOTTOM);
                         }
                         root.addView(options, params);
+                        options.setFocusable(false);
 
                         if (root instanceof FrameLayout) {
                             _c.get()._list.bringToFront();
@@ -218,6 +226,9 @@ class onShowListener implements DialogInterface.OnShowListener {
                             plus.setColorFilter(filter);
                             createDir.setCompoundDrawablesWithIntrinsicBounds(plus, null, null, null);
                         }
+                        if (_c.get()._enableDpad) {
+                            createDir.setBackgroundResource(R.drawable.listview_item_selector);
+                        }
                         params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                             START | CENTER_VERTICAL);
                         params.leftMargin = 10;
@@ -245,6 +256,9 @@ class onShowListener implements DialogInterface.OnShowListener {
                         if (bin != null) {
                             bin.setColorFilter(filter);
                             delete.setCompoundDrawablesWithIntrinsicBounds(bin, null, null, null);
+                        }
+                        if (_c.get()._enableDpad) {
+                            delete.setBackgroundResource(R.drawable.listview_item_selector);
                         }
                         params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                             END | CENTER_VERTICAL);
@@ -319,7 +333,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     params = new FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT,
                                         CENTER);
                                     overlay.addView(linearLayout, params);
-
+                                    overlay.setFocusable(false);
 
                                     float widthWeight = ta.getFloat(
                                         R.styleable.FileChooser_fileChooserNewFolderWidthWeight, 0.56f);
@@ -330,6 +344,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     params = new LinearLayout.LayoutParams(0, WRAP_CONTENT,
                                         (1f - widthWeight) / 2);
                                     linearLayout.addView(leftSpace, params);
+                                    leftSpace.setFocusable(false);
 
                                     // A solid holder view for the EditText and Buttons.
                                     final LinearLayout holder = new LinearLayout(_c.get()._context);
@@ -346,11 +361,13 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     }
                                     params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, widthWeight);
                                     linearLayout.addView(holder, params);
+                                    holder.setFocusable(false);
 
                                     Space rightSpace = new Space(_c.get()._context);
                                     params = new LinearLayout.LayoutParams(0, WRAP_CONTENT,
                                         (1f - widthWeight) / 2);
                                     linearLayout.addView(rightSpace, params);
+                                    rightSpace.setFocusable(false);
 
                                     final EditText input = new EditText(_c.get()._context);
                                     final int color = ta.getColor(
@@ -391,6 +408,9 @@ class onShowListener implements DialogInterface.OnShowListener {
                                         cancel.setText(R.string.new_folder_cancel);
                                     }
                                     cancel.setTextColor(buttonColor);
+                                    if (_c.get()._enableDpad) {
+                                        cancel.setBackgroundResource(R.drawable.listview_item_selector);
+                                    }
                                     params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                                         START);
                                     buttons.addView(cancel, params);
@@ -406,6 +426,9 @@ class onShowListener implements DialogInterface.OnShowListener {
                                         ok.setText(R.string.new_folder_ok);
                                     }
                                     ok.setTextColor(buttonColor);
+                                    if (_c.get()._enableDpad) {
+                                        ok.setBackgroundResource(R.drawable.listview_item_selector);
+                                    }
                                     params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                                         END);
                                     buttons.addView(ok, params);
@@ -414,10 +437,17 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     input.setOnEditorActionListener(
                                         (v, actionId, event) -> {
                                             if (actionId == EditorInfo.IME_ACTION_DONE) {
+                                                UiUtil.hideKeyboardFrom(_c.get()._context, input);
                                                 _c.get().createNewDirectory(
                                                     input.getText().toString());
-                                                UiUtil.hideKeyboardFrom(_c.get()._context, input);
                                                 overlay.setVisibility(View.GONE);
+                                                overlay.clearFocus();
+                                                if (_c.get()._enableDpad) {
+                                                    Button b = _c.get()._alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+                                                    b.setFocusable(true);
+                                                    b.requestFocus();
+                                                    _c.get()._list.setFocusable(true);
+                                                }
                                                 return true;
                                             }
                                             return false;
@@ -425,22 +455,46 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     cancel.setOnClickListener(v -> {
                                         UiUtil.hideKeyboardFrom(_c.get()._context, input);
                                         overlay.setVisibility(View.GONE);
+                                        overlay.clearFocus();
+                                        if (_c.get()._enableDpad) {
+                                            Button b = _c.get()._alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+                                            b.setFocusable(true);
+                                            b.requestFocus();
+                                            _c.get()._list.setFocusable(true);
+                                        }
                                     });
                                     ok.setOnClickListener(v -> {
+                                        UiUtil.hideKeyboardFrom(_c.get()._context, input);
                                         _c.get().createNewDirectory(
                                             input.getText().toString());
                                         UiUtil.hideKeyboardFrom(_c.get()._context, input);
                                         overlay.setVisibility(View.GONE);
+                                        overlay.clearFocus();
+                                        if (_c.get()._enableDpad) {
+                                            Button b = _c.get()._alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+                                            b.setFocusable(true);
+                                            b.requestFocus();
+                                            _c.get()._list.setFocusable(true);
+                                        }
                                     });
-
                                     ta.recycle();
                                     // endregion
                                 }
 
                                 if (_c.get()._newFolderView.getVisibility() != View.VISIBLE) {
                                     _c.get()._newFolderView.setVisibility(View.VISIBLE);
+                                    if (_c.get()._enableDpad) {
+                                        _c.get()._newFolderView.requestFocus();
+                                        _c.get()._alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setFocusable(false);
+                                        _c.get()._list.setFocusable(false);
+                                    }
                                 } else {
                                     _c.get()._newFolderView.setVisibility(View.GONE);
+                                    if (_c.get()._enableDpad) {
+                                        _c.get()._newFolderView.clearFocus();
+                                        _c.get()._alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setFocusable(true);
+                                        _c.get()._list.setFocusable(true);
+                                    }
                                 }
                             }
                         });
