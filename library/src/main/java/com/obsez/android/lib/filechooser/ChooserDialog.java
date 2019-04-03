@@ -8,7 +8,6 @@ import static com.obsez.android.lib.filechooser.internals.FileUtil.NewFolderFilt
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -443,6 +442,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     public ChooserDialog enableMultiple(boolean enableMultiple) {
         this._enableMultiple = enableMultiple;
+        return this;
+    }
+
+    public ChooserDialog enableDpad(boolean enableDpad) {
+        this._enableDpad = enableDpad;
         return this;
     }
 
@@ -1086,6 +1090,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     View _newFolderView;
     boolean _enableMultiple;
     private PermissionsUtil.OnPermissionListener _permissionListener;
+    private boolean _enableDpad = true;
 
     @FunctionalInterface
     public interface AdapterSetter {
