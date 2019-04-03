@@ -482,7 +482,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                                 _c.get()._alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(
                                     View.INVISIBLE);
                                 _c.get()._chooseMode = CHOOSE_MODE_NORMAL;
-                                _c.get().refreshDirs(false);
+                                _c.get().refreshDirs();
                                 return;
                             }
 

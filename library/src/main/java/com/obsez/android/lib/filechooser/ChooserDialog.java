@@ -477,7 +477,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         //    _rowLayoutRes != -1 ? _rowLayoutRes : R.layout.li_row_textview, this._dateFormat);
         //if (_adapterSetter != null) _adapterSetter.apply(_adapter);
 
-        refreshDirs(true);
+        refreshDirs();
         builder.setAdapter(_adapter, this);
 
         if (!_disableTitle) {
@@ -600,7 +600,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         }
                     }
                     if (!show) return;
-                    if (_adapter.isEmpty()) refreshDirs(true);
+                    if (_adapter.isEmpty()) refreshDirs();
                     showDialog();
                 }
 
@@ -728,7 +728,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private String removableRoot = null;
     private String primaryRoot = null;
 
-    private void listDirs(boolean delayedDisplayPath) {
+    private void listDirs() {
         _entries.clear();
 
         if (_currentDir == null) {
@@ -797,18 +797,16 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             }
         }
 
-        // don't display path before alert dialog created
+        // don't display path before alert dialog is shown
         // to avoid the exception under android M:
         //   Caused by android.util.AndroidRuntimeException: requestFeature() must be called before adding
         // content
         // issue #60
-        if (!delayedDisplayPath) {
-            if (_alertDialog != null && _displayPath) {
-                if (displayPath) {
-                    displayPath(_currentDir.getPath());
-                } else {
-                    displayPath(null);
-                }
+        if (_alertDialog != null && _alertDialog.isShowing() && _displayPath) {
+            if (displayPath) {
+                displayPath(_currentDir.getPath());
+            } else {
+                displayPath(null);
             }
         }
         //_hoverIndex = -1;
@@ -820,7 +818,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     void createNewDirectory(String name) {
         if (FileUtil.createNewDirectory(name, _currentDir)) {
-            refreshDirs(false);
+            refreshDirs();
             return;
         }
 
@@ -912,7 +910,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     break;
             }
         }
-        refreshDirs(false);
+        refreshDirs();
         if (scrollToTop) _list.setSelection(0);
     }
 
@@ -937,8 +935,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         //
     }
 
-    void refreshDirs(boolean delayedDisplayPath) {
-        listDirs(delayedDisplayPath);
+    void refreshDirs() {
+        listDirs();
         _adapter.setEntries(_entries);
     }
 
@@ -1000,7 +998,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 //scrollToTop = true;
                 _adapter.pop();
 
-                refreshDirs(false);
+                refreshDirs();
                 //if (scrollToTop) _list.setSelection(0);
                 //_list.requestFocus();
                 _list.setSelection(_adapter.getHoveredIndex());
