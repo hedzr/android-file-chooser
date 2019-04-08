@@ -180,7 +180,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         if (startFile != null) {
             _currentDir = new File(startFile);
         } else {
-            _currentDir = Environment.getExternalStorageDirectory();
+            _currentDir = new File(FileUtil.getStoragePath(_context, false));
         }
 
         if (!_currentDir.isDirectory()) {
@@ -188,7 +188,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         }
 
         if (_currentDir == null) {
-            _currentDir = Environment.getExternalStorageDirectory();
+            _currentDir = new File(FileUtil.getStoragePath(_context, false));
         }
 
         return this;
