@@ -77,6 +77,7 @@
         <item name="fileChooserFileIconStyle">@style/FileChooserFileIconStyle</item>
         <item name="android:background">@color/li_row_background</item>
         <item name="fileListItemSelectedTint">@color/li_row_background_tint</item>
+        <item name="fileListItemFocusedDrawable">@drawable/listview_item_selector</item>
         <item name="android:descendantFocusability">beforeDescendants</item>
         <item name="android:padding">10dp</item>
     </style>

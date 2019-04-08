@@ -38,6 +38,7 @@
         <item name="fileChooserTextDateStyle">@style/FileChooserTextSizeDateStyle.Dark</item>
         <item name="android:background">#767676</item>
         <item name="fileListItemSelectedTint">#40ffffff</item>
+        <item name="fileListItemFocusedDrawable">@drawable/listview_item_selector_dark</item>
     </style>
 
     <style name="FileChooserTextNameStyle.Dark" parent="FileChooserTextNameStyle">
