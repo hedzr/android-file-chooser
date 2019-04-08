@@ -455,11 +455,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
-    public ChooserDialog setCancelable(boolean cancelable) {
-        this._cancelable = cancelable;
-        return this;
-    }
-
     public ChooserDialog cancelOnTouchOutside(boolean cancelOnTouchOutside) {
         this._cancelOnTouchOutside = cancelOnTouchOutside;
         return this;
@@ -1010,7 +1005,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     View _newFolderView;
     boolean _enableMultiple;
     private PermissionsUtil.OnPermissionListener _permissionListener;
-    private boolean _cancelable = true;
     private boolean _cancelOnTouchOutside;
     boolean _enableDpad = true;
     Button _neutralBtn;
