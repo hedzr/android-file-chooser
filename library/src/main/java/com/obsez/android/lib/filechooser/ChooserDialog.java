@@ -563,6 +563,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             this._list.setDrawSelectorOnTop(true);
             this._list.setItemsCanFocus(true);
         }
+
+        _list.requestFocus();
         return this;
     }
 
