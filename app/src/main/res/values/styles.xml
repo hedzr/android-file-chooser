@@ -36,27 +36,27 @@
         <item name="fileChooserTextNameStyle">@style/FileChooserTextNameStyle.Dark</item>
         <item name="fileChooserTextSizeStyle">@style/FileChooserTextSizeDateStyle.Dark</item>
         <item name="fileChooserTextDateStyle">@style/FileChooserTextSizeDateStyle.Dark</item>
-        <item name="android:background">#767676</item>
-        <item name="fileListItemSelectedTint">#40ffffff</item>
+        <item name="android:background">@color/li_row_background_dark</item>
+        <item name="fileListItemSelectedTint">@color/li_row_background_tint_dark</item>
         <item name="fileListItemFocusedDrawable">@drawable/listview_item_selector_dark</item>
     </style>
 
     <style name="FileChooserTextNameStyle.Dark" parent="FileChooserTextNameStyle">
-        <item name="android:textColor">#fefefe</item>
+        <item name="android:textColor">@color/text_light</item>
     </style>
 
     <style name="FileChooserTextSizeDateStyle.Dark" parent="FileChooserTextSizeStyle">
-        <item name="android:textColor">#fefefe</item>
+        <item name="android:textColor">@color/text_light</item>
     </style>
 
     <style name="FileChooserPathViewStyle.Dark" parent="FileChooserPathViewStyle">
-        <item name="android:background">#ff3c3c3c</item>
-        <item name="android:textColor">#90ffffff</item>
+        <item name="android:background">@color/background_dark</item>
+        <item name="android:textColor">@color/text_light_opaque</item>
     </style>
 
     <style name="FileChooserNewFolderStyle.Dark">
-        <item name="fileChooserNewFolderOverlayColor">#90000000</item>
-        <item name="fileChooserNewFolderBackgroundColor">#ff3c3c3c</item>
+        <item name="fileChooserNewFolderOverlayColor">@color/overlay_dark</item>
+        <item name="fileChooserNewFolderBackgroundColor">@color/background_dark</item>
         <item name="fileChooserNewFolderWidthWeight">0.8</item>
         <item name="fileChooserNewFolderElevation">50</item>
         <item name="fileChooserNewFolderTextColor">@android:color/holo_blue_light</item>
