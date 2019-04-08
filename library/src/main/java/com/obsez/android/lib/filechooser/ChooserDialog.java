@@ -549,8 +549,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             builder.setOnDismissListener(_onDismissListener);
         }
 
-        builder.setCancelable(_cancelable)
-            .setOnItemSelectedListener(this)
+        builder.setOnItemSelectedListener(this)
             .setOnKeyListener(new keyListener(this));
 
         _alertDialog = builder.create();
