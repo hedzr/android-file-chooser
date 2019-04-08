@@ -282,21 +282,24 @@ Since 1.1.6, 2 new options are available:
 
 #### Customizable NegativeButton
 
-1.1.7 or Higher, try `withNegativeButton()` and `withNegativeButtonListener()` **instead of `withOnBackPressedListener()`.**
+1.1.7 or Higher, try `withNegativeButton()` and/or `withNegativeButtonListener()`
 
 ---
 
 #### withOnBackPressedListener
 
-**deprecated.**
+`BackPressedListener` will be called every time back key is pressed, and current directory is not the root of Primary/SdCard storage.
+`LastBackPressedListener` will be called if back key is pressed, and current directory is the root of Primary/SdCard storage.
 
+```java
+.withOnBackPressedListener(dialog -> chooserDialog.goBack())
+.withOnLastBackPressedListener(dialog -> dialog.cancel())
+```
 
 
 #### onCancelListener
 
-`onCancelListener` will be triggered on back pressed or clicked outside of dialog.
-
-You **MUST** invoke `dialog.cancel()` while override the default `onCancelListener` :
+`OnCancelListener` will be triggered on back pressed or clicked outside of dialog.
 
 ```java
 .withOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -306,23 +309,18 @@ You **MUST** invoke `dialog.cancel()` while override the default `onCancelListen
     }
 })
 
-# using java 8:
-.withOnCancelListener(DialogInterface::cancel)
-```
-
-
-
 ---
 
 #### New calling chain
 
-1.1.7+, new constructor `ChooserDialog(context)` can simplify the chain invoking, such as:
+1.1.7+, new constructor `ChooserDialog(context)` can simplify the chain invoking. Also `build()` is no longer obligatory to be called:
 
 ```java
     new ChooserDialog(MainActivity.this)
             .withFilter(true, false)
             .withStartFile(startingDir)
             ...
+			.show();
 ```
 
 And, old style is still available. No need to modify your existing codes.
@@ -331,7 +329,7 @@ And, old style is still available. No need to modify your existing codes.
 
 1.1.8+. Now you can customize each row.
 
-since 1.1.17, `DirAdatper.GetView#getView` allows you do the same thing, and `withRowLayoutView` will be deprecated. See also: `withAdapterSetter(setter)`
+since 1.1.17, `DirAdatper.GetViewListener#getView` allows you do the same thing and more, and `withRowLayoutView` will be deprecated. See also: `withAdapterSetter(setter)`
 
 #### `withFileIcons`
 
@@ -368,13 +366,19 @@ user-defined file/folder icon.
         adapter.setDefaultFileIcon(fileIcon);
         adapter.setDefaultFolderIcon(folderIcon);
         adapter.setResolveFileType(tryResolveFileTypeAndIcon);
+		// since 1.1.17
+		adapter.overrideGetView((file, isSelected, isFocused, convertView, parent, inflater) -> {
+			ViewGroup view = (ViewGroup) inflater.inflate(R.layout.li_row, parent, false);
+			...
+			return view;
+		}
     }
 })
 ```
 
 More information in source code of `DirAdapter`.
 
-since 1.1.17, `DirAdapter.overrideGetView()` supports GetView interface.
+since 1.1.17, `DirAdapter.overrideGetView()` supports GetViewListener interface.
 
 ```java
     public interface GetView {
@@ -382,8 +386,9 @@ since 1.1.17, `DirAdapter.overrideGetView()` supports GetView interface.
          * @param file        file that should me displayed
          * @param isSelected  whether file is selected when _enableMultiple is set to true
          * @param isFocused   whether this file is focused when using dpad controls
-         * @param convertView see {@link ArrayAdapter#getView(int, View, ViewGroup)}
-         * @param parent      see {@link ArrayAdapter#getView(int, View, ViewGroup)}
+		 					  deprecated since 1.1.18! use fileListItemFocusedDrawable attribute instead
+         * @param convertView see ArrayAdapter#getView(int, View, ViewGroup)
+         * @param parent      see ArrayAdapter#getView(int, View, ViewGroup)
          * @param inflater    a layout inflater with the FileChooser theme wrapped context
          * @return your custom row item view
          */
@@ -441,9 +446,7 @@ further tunes:
 
 - `withNewFolderFilter(NewFolderFilter filter)`
 
-- ~~`withOnBackPressedListener(OnBackPressedListener listener)`~~
-
-  > `onCancelListener()` is recommended.
+- `withOnBackPressedListener(OnBackPressedListener listener)`
 
 - `withOnLastBackPressedListener(OnBackPressedListener listener)`
 
@@ -460,17 +463,14 @@ see the sample codes in demo app.
 as named as working.
 
 
-
 #### psuedo `.. SDCard Storage` and `.. Primary Storage`
 
 since v1.11, external storage will be detected automatically. That means user can switch between internal and external storage by clicking on psuedo folder names. 
 
 
-
 #### `titleFollowsDir(true)`
 
 since the latest patch of v1.14, it allows the chooser dialog title updated by changing directory.
-
 
 
 #### `displayPath(true)`, `customizePathView(callback)`
@@ -489,7 +489,22 @@ As a useful complement, `customizePathView(callback)` allows tuning the path Tex
 })
 ```
 
+simce 1.1.17, this can also be done through a custom theme:
 
+```xml
+<style name="FileChooserStyle">
+	...
+	<item name="fileChooserPathViewStyle">@style/FileChooserPathViewStyle</item>
+</style>
+
+<style name="FileChooserPathViewStyle">
+	<item name="android:background">#ffffffff</item>
+	<item name="android:textColor">#40000000</item>
+	<item name="android:textSize">12sp</item>
+	<item name="fileChooserPathViewElevation">2</item>
+	<item name="fileChooserPathViewDisplayRoot">true</item>
+</style>
+```
 
 #### withResources, withStringResources
 
