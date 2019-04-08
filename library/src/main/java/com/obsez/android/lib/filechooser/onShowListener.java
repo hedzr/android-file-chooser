@@ -50,9 +50,11 @@ import java.lang.ref.WeakReference;
 
 class onShowListener implements DialogInterface.OnShowListener {
     private WeakReference<ChooserDialog> _c;
+    private int _selector;
 
-    onShowListener(ChooserDialog c) {
+    onShowListener(ChooserDialog c, int selector) {
         this._c = new WeakReference<>(c);
+        this._selector = selector;
     }
 
     @Override
@@ -79,9 +81,9 @@ class onShowListener implements DialogInterface.OnShowListener {
         }
 
         if (_c.get()._enableDpad) {
-            _c.get()._neutralBtn.setBackgroundResource(R.drawable.listview_item_selector);
-            _c.get()._negativeBtn.setBackgroundResource(R.drawable.listview_item_selector);
-            _c.get()._positiveBtn.setBackgroundResource(R.drawable.listview_item_selector);
+            _c.get()._neutralBtn.setBackgroundResource(_selector);
+            _c.get()._negativeBtn.setBackgroundResource(_selector);
+            _c.get()._positiveBtn.setBackgroundResource(_selector);
         }
 
         if (_c.get()._enableOptions) {
@@ -233,7 +235,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                             createDir.setCompoundDrawablesWithIntrinsicBounds(plus, null, null, null);
                         }
                         if (_c.get()._enableDpad) {
-                            createDir.setBackgroundResource(R.drawable.listview_item_selector);
+                            createDir.setBackgroundResource(_selector);
                         }
                         params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                             START | CENTER_VERTICAL);
@@ -264,7 +266,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                             delete.setCompoundDrawablesWithIntrinsicBounds(bin, null, null, null);
                         }
                         if (_c.get()._enableDpad) {
-                            delete.setBackgroundResource(R.drawable.listview_item_selector);
+                            delete.setBackgroundResource(_selector);
                         }
                         params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                             END | CENTER_VERTICAL);
@@ -415,7 +417,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     }
                                     cancel.setTextColor(buttonColor);
                                     if (_c.get()._enableDpad) {
-                                        cancel.setBackgroundResource(R.drawable.listview_item_selector);
+                                        cancel.setBackgroundResource(_selector);
                                     }
                                     params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                                         START);
@@ -433,7 +435,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     }
                                     ok.setTextColor(buttonColor);
                                     if (_c.get()._enableDpad) {
-                                        ok.setBackgroundResource(R.drawable.listview_item_selector);
+                                        ok.setBackgroundResource(_selector);
                                     }
                                     params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                                         END);
