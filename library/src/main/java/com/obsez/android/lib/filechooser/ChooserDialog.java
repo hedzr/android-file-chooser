@@ -14,7 +14,6 @@ import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.Environment;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -24,7 +23,6 @@ import android.support.annotation.StyleRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.view.ContextThemeWrapper;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -538,11 +536,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         if (_cancelListener != null) {
             builder.setOnCancelListener(_cancelListener);
-        } else {
-            builder.setOnCancelListener(dialog -> {
-                Log.v("Cancel", "Cancel");
-                dialog.cancel();
-            });
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && _onDismissListener != null) {
