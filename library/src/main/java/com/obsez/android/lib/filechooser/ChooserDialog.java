@@ -461,18 +461,23 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     public ChooserDialog build() {
         TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
-        final int style = ta.getResourceId(R.styleable.FileChooser_fileChooserDialogStyle,
+        int style = ta.getResourceId(R.styleable.FileChooser_fileChooserDialogStyle,
             R.style.FileChooserDialogStyle);
         final AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(_context, style),
             ta.getResourceId(R.styleable.FileChooser_fileChooserDialogStyle, R.style.FileChooserDialogStyle));
-        final int listview_item_selector = ta.getResourceId(R.styleable.FileChooser_fileListItemFocusedTint, R.drawable.listview_item_selector);
+        style = ta.getResourceId(R.styleable.FileChooser_fileChooserListItemStyle, R.style.FileChooserListItemStyle);
+        ta.recycle();
+        final Context context = new ContextThemeWrapper(_context, style);
+        ta = context.obtainStyledAttributes(R.styleable.FileChooser);
+        final int listview_item_selector = ta.getResourceId(R.styleable.FileChooser_fileListItemFocusedDrawable,
+            R.drawable.listview_item_selector);
         ta.recycle();
 
         if (_rowLayoutRes != -1) {
-            _adapter = new DirAdapter(_context,
+            _adapter = new DirAdapter(context,
                 new ArrayList<>(), _rowLayoutRes, this._dateFormat);
         } else {
-            _adapter = new DirAdapter(_context, this._dateFormat);
+            _adapter = new DirAdapter(context, this._dateFormat);
         }
         if (_adapterSetter != null) _adapterSetter.apply(_adapter);
 
