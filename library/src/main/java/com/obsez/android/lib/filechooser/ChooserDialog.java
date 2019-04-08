@@ -890,6 +890,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                             _positiveBtn.setVisibility(View.INVISIBLE);
                         }
                         _result.onChoosePath(file.getAbsolutePath(), file);
+                        return;
                     }
                     break;
                 case CHOOSE_MODE_DELETE:
