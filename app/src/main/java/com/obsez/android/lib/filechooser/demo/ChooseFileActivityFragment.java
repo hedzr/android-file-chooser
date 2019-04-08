@@ -3,7 +3,6 @@ package com.obsez.android.lib.filechooser.demo;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
@@ -54,6 +53,8 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
     private CheckBox dateFormat;
     private CheckBox customLayout;
     private CheckBox darkTheme;
+    private CheckBox dpad;
+    private CheckBox back;
 
     private String _path = null;
     private TextView _tv;
@@ -99,6 +100,8 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
         dateFormat = root.findViewById(R.id.checkbox_date_format);
         customLayout = root.findViewById(R.id.checkbox_custom_layout);
         darkTheme = root.findViewById(R.id.checkbox_dark_theme);
+        dpad = root.findViewById(R.id.checkbox_dpad);
+        back = root.findViewById(R.id.checkbox_back);
 
         titleFollowsDir.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) customLayout.setChecked(false);
@@ -125,6 +128,8 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
 
         // since v1.16, we made this true by default.
         displayPath.setChecked(true);
+
+        dpad.setChecked(true);
 
         return root;
     }
@@ -159,7 +164,8 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
             .disableTitle(disableTitle.isChecked())
             .enableOptions(enableOptions.isChecked())
             .titleFollowsDir(titleFollowsDir.isChecked())
-            .displayPath(displayPath.isChecked());
+            .displayPath(displayPath.isChecked())
+            .enableDpad(dpad.isChecked());
         if (filterImages.isChecked()) {
             // Most common image file extensions (source: http://preservationtutorial.library.cornell
             // .edu/presentation/table7-1.html)
@@ -336,9 +342,10 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                         return view;
                     }));
         }
+        if (back.isChecked()) {
+            chooserDialog.withOnBackPressedListener(dialog -> chooserDialog.goBack());
+        }
 
-        chooserDialog
-            .withOnCancelListener(DialogInterface::cancel)
-            .show();
+        chooserDialog.show();
     }
 }
