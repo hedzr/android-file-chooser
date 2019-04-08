@@ -13,15 +13,9 @@ import static android.view.View.VISIBLE;
 
 class keyListener implements DialogInterface.OnKeyListener {
     private WeakReference<ChooserDialog> _c;
-    private WeakReference<Button> _neutral;
-    private WeakReference<Button> _negative;
-    private WeakReference<Button> _positive;
 
     keyListener(ChooserDialog c) {
         this._c = new WeakReference<>(c);
-        this._neutral = new WeakReference<>(c._alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL));
-        this._negative = new WeakReference<>(c._alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE));
-        this._positive = new WeakReference<>(c._alertDialog.getButton(AlertDialog.BUTTON_POSITIVE));
     }
 
     /**
@@ -53,7 +47,7 @@ class keyListener implements DialogInterface.OnKeyListener {
         if (!_c.get()._list.hasFocus()) {
             switch (keyCode) {
                 case KeyEvent.KEYCODE_DPAD_UP:
-                    if (_neutral.get().hasFocus() || _negative.get().hasFocus() || _positive.get().hasFocus()) {
+                    if (_c.get()._neutralBtn.hasFocus() || _c.get()._negativeBtn.hasFocus() ||_c.get()._positiveBtn.hasFocus()) {
                         if (_c.get()._options != null && _c.get()._options.getVisibility() == VISIBLE) {
                             _c.get()._options.requestFocus(View.FOCUS_LEFT);
                             return true;
@@ -93,9 +87,9 @@ class keyListener implements DialogInterface.OnKeyListener {
                         if (_c.get()._options != null && _c.get()._options.getVisibility() == VISIBLE) {
                             _c.get()._options.requestFocus();
                         } else {
-                            if (_neutral.get().getVisibility() == VISIBLE)
-                                _neutral.get().requestFocus();
-                            else _negative.get().requestFocus();
+                            if (_c.get()._neutralBtn.getVisibility() == VISIBLE)
+                                _c.get()._neutralBtn.requestFocus();
+                            else _c.get()._negativeBtn.requestFocus();
                         }
                         return true;
                     }
@@ -110,13 +104,7 @@ class keyListener implements DialogInterface.OnKeyListener {
     @Override
     protected void finalize() throws Throwable {
         this._c.clear();
-        this._neutral.clear();
-        this._negative.clear();
-        this._positive.clear();
         this._c = null;
-        this._neutral = null;
-        this._negative = null;
-        this._positive = null;
         super.finalize();
     }
 }

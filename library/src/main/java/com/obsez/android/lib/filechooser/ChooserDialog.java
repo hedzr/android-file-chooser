@@ -34,6 +34,7 @@ import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -460,10 +461,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     public ChooserDialog build() {
         TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
-        int style = ta.getResourceId(R.styleable.FileChooser_fileChooserDialogStyle,
+        final int style = ta.getResourceId(R.styleable.FileChooser_fileChooserDialogStyle,
             R.style.FileChooserDialogStyle);
         final AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(_context, style),
             ta.getResourceId(R.styleable.FileChooser_fileChooserDialogStyle, R.style.FileChooserDialogStyle));
+        final int listview_item_selector = ta.getResourceId(R.styleable.FileChooser_fileListItemFocusedTint, R.drawable.listview_item_selector);
         ta.recycle();
 
         if (_rowLayoutRes != -1) {
@@ -542,6 +544,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         _alertDialog = builder.create();
 
+        _neutralBtn = _alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        _negativeBtn = _alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        _positiveBtn = _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+
         _alertDialog.setCanceledOnTouchOutside(this._cancelOnTouchOutside);
         _alertDialog.setOnShowListener(new onShowListener(this));
 
@@ -552,7 +558,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         }
 
         if (_enableDpad) {
-            this._list.setSelector(R.drawable.listview_item_selector);
+            this._list.setSelector(listview_item_selector);
             this._list.setDrawSelectorOnTop(true);
             this._list.setItemsCanFocus(true);
         }
@@ -875,7 +881,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         _adapter.selectItem(position);
                         if (!_adapter.isAnySelected()) {
                             _chooseMode = CHOOSE_MODE_NORMAL;
-                            _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
+                            _positiveBtn.setVisibility(View.INVISIBLE);
                         }
                         _result.onChoosePath(file.getAbsolutePath(), file);
                     }
@@ -909,7 +915,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         _result.onChoosePath(file.getAbsolutePath(), file);
         _adapter.selectItem(position);
         _chooseMode = CHOOSE_MODE_SELECT_MULTIPLE;
-        _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
+        _positiveBtn.setVisibility(View.VISIBLE);
         if (_deleteModeIndicator != null) _deleteModeIndicator.run();
         return true;
     }
@@ -988,6 +994,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     private boolean _cancelable = true;
     private boolean _cancelOnTouchOutside;
     boolean _enableDpad = true;
+    Button _neutralBtn;
+    Button _negativeBtn;
+    Button _positiveBtn;
+
 
     @FunctionalInterface
     public interface AdapterSetter {

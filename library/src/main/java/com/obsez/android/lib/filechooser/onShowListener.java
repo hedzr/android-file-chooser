@@ -57,34 +57,30 @@ class onShowListener implements DialogInterface.OnShowListener {
 
     @Override
     public void onShow(final DialogInterface dialog) {
-        final Button options = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
-        final Button negative = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
-        final Button positive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-
         // ensure that the buttons have the right order
-        ViewGroup parentLayout = (ViewGroup) positive.getParent();
-        parentLayout.removeAllViews();
-        parentLayout.addView(options, 0);
-        parentLayout.addView(negative, 1);
-        parentLayout.addView(positive, 2);
+        ViewGroup buttonBar = (ViewGroup) _c.get()._positiveBtn.getParent();
+        buttonBar.removeAllViews();
+        buttonBar.addView(_c.get()._neutralBtn, 0);
+        buttonBar.addView(_c.get()._negativeBtn, 1);
+        buttonBar.addView(_c.get()._positiveBtn, 2);
 
         if (_c.get()._enableMultiple) {
-            positive.setVisibility(View.INVISIBLE);
+            _c.get()._positiveBtn.setVisibility(View.INVISIBLE);
         }
 
         if (_c.get()._enableDpad) {
-            options.setBackgroundResource(R.drawable.listview_item_selector);
-            negative.setBackgroundResource(R.drawable.listview_item_selector);
-            positive.setBackgroundResource(R.drawable.listview_item_selector);
+            _c.get()._neutralBtn.setBackgroundResource(R.drawable.listview_item_selector);
+            _c.get()._negativeBtn.setBackgroundResource(R.drawable.listview_item_selector);
+            _c.get()._positiveBtn.setBackgroundResource(R.drawable.listview_item_selector);
         }
 
         if (_c.get()._enableOptions) {
-            final int buttonColor = options.getCurrentTextColor();
+            final int buttonColor = _c.get()._neutralBtn.getCurrentTextColor();
             final PorterDuffColorFilter filter = new PorterDuffColorFilter(buttonColor,
                 PorterDuff.Mode.SRC_IN);
 
-            options.setText("");
-            options.setVisibility(View.VISIBLE);
+            _c.get()._neutralBtn.setText("");
+            _c.get()._neutralBtn.setVisibility(View.VISIBLE);
             Drawable dots;
             if (_c.get()._optionsIconRes != -1) {
                 dots = ContextCompat.getDrawable(_c.get()._context, _c.get()._optionsIconRes);
@@ -95,7 +91,7 @@ class onShowListener implements DialogInterface.OnShowListener {
             }
             if (dots != null) {
                 dots.setColorFilter(filter);
-                options.setCompoundDrawablesWithIntrinsicBounds(dots, null, null, null);
+                _c.get()._neutralBtn.setCompoundDrawablesWithIntrinsicBounds(dots, null, null, null);
             }
 
             final class Integer {
@@ -166,7 +162,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                 }
             };
 
-            options.setOnClickListener(new View.OnClickListener() {
+            _c.get()._neutralBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
                     if (_c.get()._newFolderView != null
@@ -443,7 +439,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                                                 overlay.setVisibility(View.GONE);
                                                 overlay.clearFocus();
                                                 if (_c.get()._enableDpad) {
-                                                    Button b = _c.get()._alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+                                                    Button b = _c.get()._neutralBtn;
                                                     b.setFocusable(true);
                                                     b.requestFocus();
                                                     _c.get()._list.setFocusable(true);
@@ -457,7 +453,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                                         overlay.setVisibility(View.GONE);
                                         overlay.clearFocus();
                                         if (_c.get()._enableDpad) {
-                                            Button b = _c.get()._alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+                                            Button b = _c.get()._neutralBtn;
                                             b.setFocusable(true);
                                             b.requestFocus();
                                             _c.get()._list.setFocusable(true);
@@ -471,7 +467,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                                         overlay.setVisibility(View.GONE);
                                         overlay.clearFocus();
                                         if (_c.get()._enableDpad) {
-                                            Button b = _c.get()._alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+                                            Button b = _c.get()._neutralBtn;
                                             b.setFocusable(true);
                                             b.requestFocus();
                                             _c.get()._list.setFocusable(true);
@@ -485,14 +481,14 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     _c.get()._newFolderView.setVisibility(View.VISIBLE);
                                     if (_c.get()._enableDpad) {
                                         _c.get()._newFolderView.requestFocus();
-                                        _c.get()._alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setFocusable(false);
+                                        _c.get()._neutralBtn.setFocusable(false);
                                         _c.get()._list.setFocusable(false);
                                     }
                                 } else {
                                     _c.get()._newFolderView.setVisibility(View.GONE);
                                     if (_c.get()._enableDpad) {
                                         _c.get()._newFolderView.clearFocus();
-                                        _c.get()._alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setFocusable(true);
+                                        _c.get()._neutralBtn.setFocusable(true);
                                         _c.get()._list.setFocusable(true);
                                     }
                                 }
@@ -517,7 +513,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     }
                                 }
                                 _c.get()._adapter.clearSelected();
-                                _c.get()._alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(
+                                _c.get()._positiveBtn.setVisibility(
                                     View.INVISIBLE);
                                 _c.get()._chooseMode = CHOOSE_MODE_NORMAL;
                                 _c.get().refreshDirs();
@@ -534,20 +530,16 @@ class onShowListener implements DialogInterface.OnShowListener {
                                         final PorterDuffColorFilter red =
                                             new PorterDuffColorFilter(color1,
                                                 PorterDuff.Mode.SRC_IN);
-                                        _c.get()._alertDialog.getButton(
-                                            AlertDialog.BUTTON_NEUTRAL).getCompoundDrawables()
+                                        _c.get()._neutralBtn.getCompoundDrawables()
                                             [0].setColorFilter(
                                             red);
-                                        _c.get()._alertDialog.getButton(
-                                            AlertDialog.BUTTON_NEUTRAL).setTextColor(color1);
+                                        _c.get()._neutralBtn.setTextColor(color1);
                                         delete.getCompoundDrawables()[0].setColorFilter(red);
                                         delete.setTextColor(color1);
                                     } else {
-                                        _c.get()._alertDialog.getButton(
-                                            AlertDialog.BUTTON_NEUTRAL).getCompoundDrawables()
+                                        _c.get()._neutralBtn.getCompoundDrawables()
                                             [0].clearColorFilter();
-                                        _c.get()._alertDialog.getButton(
-                                            AlertDialog.BUTTON_NEUTRAL).setTextColor(buttonColor);
+                                        _c.get()._neutralBtn.setTextColor(buttonColor);
                                         delete.getCompoundDrawables()[0].clearColorFilter();
                                         delete.setTextColor(buttonColor);
                                     }
