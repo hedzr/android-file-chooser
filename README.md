@@ -85,9 +85,6 @@ android {
 - DPad supports, arrow keys supports (#30)
 
 
-
-
-
 ### Snapshots
 
 <table><tr><td>
@@ -95,8 +92,12 @@ android {
 </td><td>
 <img src="captures/choose_folder.png" width="360"/>
 </td><td>
-<img src="https://user-images.githubusercontent.com/27736965/53578348-f1d35880-3b90-11e9-9ef4-7ed0276ca603.gif" width="360"/>
-</td></tr></table>
+<img src="https://user-images.githubusercontent.com/27736965/55721190-c0616e80-5a13-11e9-982e-6fa1431be8ed.gif" width="360"/>
+</td></tr>
+<tr align="center">
+<img src="https://user-images.githubusercontent.com/27736965/55720938-1b469600-5a13-11e9-8953-70cf86f4af11.gif" width="1080"/>
+</tr>
+</table>
 
 More images (beyond v1.1.16) have been found at [Gallery](https://github.com/hedzr/android-file-chooser/wiki/Gallery)
 
