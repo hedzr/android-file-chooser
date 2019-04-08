@@ -64,9 +64,15 @@ class onShowListener implements DialogInterface.OnShowListener {
 
         ViewGroup buttonBar = (ViewGroup) _c.get()._positiveBtn.getParent();
         buttonBar.removeAllViews();
-        buttonBar.addView(_c.get()._neutralBtn, 0);
-        buttonBar.addView(_c.get()._negativeBtn, 1);
-        buttonBar.addView(_c.get()._positiveBtn, 2);
+        ViewGroup.LayoutParams btnParams = _c.get()._neutralBtn.getLayoutParams();
+        if (buttonBar instanceof LinearLayout) {
+            ((LinearLayout.LayoutParams) btnParams).weight = 1;
+        } else if (buttonBar instanceof FrameLayout) {
+            ((FrameLayout.LayoutParams) btnParams).gravity = CENTER;
+        }
+        buttonBar.addView(_c.get()._neutralBtn, 0, btnParams);
+        buttonBar.addView(_c.get()._negativeBtn, 1, btnParams);
+        buttonBar.addView(_c.get()._positiveBtn, 2, btnParams);
 
         if (_c.get()._enableMultiple) {
             _c.get()._positiveBtn.setVisibility(View.INVISIBLE);
