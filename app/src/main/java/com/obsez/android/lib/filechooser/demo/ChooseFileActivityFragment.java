@@ -297,7 +297,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
             fileIcon.mutate().setColorFilter(filter);
             chooserDialog
                 .withAdapterSetter(adapter ->
-                    adapter.overrideGetView((file, isSelected, convertView, parent, inflater) -> {
+                    adapter.overrideGetView((file, isSelected, isFocused, convertView, parent, inflater) -> {
                         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.li_row, parent, false);
 
                         TextView tvName = view.findViewById(R.id.file_name);

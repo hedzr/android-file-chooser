@@ -58,43 +58,25 @@ public class DirAdapter extends ArrayAdapter<File> {
         _colorFilter = new PorterDuffColorFilter(colorFilter, PorterDuff.Mode.MULTIPLY);
     }
 
+
     @FunctionalInterface
-    public interface GetViewListener {
+    public interface GetView {
         /**
          * @param file        file that should me displayed
          * @param isSelected  whether file is selected when _enableMultiple is set to true
+         * @param isFocused   @deprecated! use fileListItemFocusedDrawable attribute instead
          * @param convertView see {@link ArrayAdapter#getView(int, View, ViewGroup)}
          * @param parent      see {@link ArrayAdapter#getView(int, View, ViewGroup)}
          * @param inflater    a layout inflater with the FileChooser theme wrapped context
          * @return your custom row item view
          */
         @NonNull
-        View getView(@NonNull File file, boolean isSelected, View convertView,
-                     @NonNull ViewGroup parent, @NonNull LayoutInflater inflater);
-    }
-
-    @FunctionalInterface
-    @Deprecated
-    public interface GetView {
-        /**
-         * @param isFocused   deprecated
-         * @deprecated use {@link GetViewListener} instead
-         */
-        @NonNull
-        @Deprecated
-        View getView(@NonNull File file, boolean isSelected, boolean isFocused, View convertView,
+        View getView(@NonNull File file, boolean isSelected, @Deprecated boolean isFocused, View convertView,
             @NonNull ViewGroup parent, @NonNull LayoutInflater inflater);
     }
 
-    /**
-     * @deprecated use {@link #overrideGetView(GetViewListener)} instead
-     */
-    @Deprecated
     public void overrideGetView(GetView getView) {
         this._getView = getView;
-    }
-    public void overrideGetView(GetViewListener getViewListener) {
-        this._getViewListener = getViewListener;
     }
 
     // This function is called to show each view item
@@ -106,11 +88,7 @@ public class DirAdapter extends ArrayAdapter<File> {
         if (file == null) return super.getView(position, convertView, parent);
         final boolean isSelected = _selected.get(file.hashCode(), null) != null;
         if (_getView != null) {
-            return _getView.getView(file, isSelected, isSelected(position), convertView, parent,
-                LayoutInflater.from(getContext()));
-        }
-        if (_getViewListener != null) {
-            return _getViewListener.getView(file, isSelected, convertView, parent,
+            return _getView.getView(file, isSelected, false, convertView, parent,
                 LayoutInflater.from(getContext()));
         }
 
@@ -266,9 +244,7 @@ public class DirAdapter extends ArrayAdapter<File> {
     private boolean _resolveFileType = false;
     private PorterDuffColorFilter _colorFilter;
     private SparseArray<File> _selected = new SparseArray<File>();
-    @Deprecated
     private GetView _getView = null;
-    private GetViewListener _getViewListener = null;
     private Stack<Integer> _indexStack = new Stack<>();
 }
 
