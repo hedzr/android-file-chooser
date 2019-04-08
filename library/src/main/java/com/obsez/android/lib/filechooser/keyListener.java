@@ -1,6 +1,5 @@
 package com.obsez.android.lib.filechooser;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.view.KeyEvent;
 import android.view.View;
@@ -37,7 +36,7 @@ class keyListener implements DialogInterface.OnKeyListener {
                 _c.get()._newFolderView.setVisibility(GONE);
                 return true;
             }
-            _c.get()._onBackPressed.onBackPressed((AlertDialog) dialog);
+            _c.get()._onBackPressed.onBackPressed(_c.get()._alertDialog);
             return true;
         }
 

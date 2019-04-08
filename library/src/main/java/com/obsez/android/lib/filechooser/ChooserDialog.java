@@ -27,6 +27,7 @@ import android.support.v7.view.ContextThemeWrapper;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -203,11 +204,21 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
+    /**
+     *  called every time {@link KeyEvent#KEYCODE_BACK} is caught,
+     *  and current directory is not the root of Primary/SdCard storage.
+     */
     public ChooserDialog withOnBackPressedListener(OnBackPressedListener listener) {
-        this._onBackPressed = listener;
+        if (this._onBackPressed instanceof defBackPressed) {
+            ((defBackPressed) this._onBackPressed)._onBackPressed = listener;
+        }
         return this;
     }
 
+    /**
+     *  called if {@link KeyEvent#KEYCODE_BACK} is caught,
+     *  and current directory is the root of Primary/SdCard storage.
+     */
     public ChooserDialog withOnLastBackPressedListener(OnBackPressedListener listener) {
         if (this._onBackPressed instanceof defBackPressed) {
             ((defBackPressed) this._onBackPressed)._onLastBackPressed = listener;
@@ -1031,15 +1042,29 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     private final static CanNavigateTo _defaultNavToCB = dir -> true;
 
+    /**
+     * attempts to move to the parent directory
+     *
+     * @return true if successful. false otherwise
+     */
+    public boolean goBack() {
+        if (_entries.size() > 0 &&
+            (_entries.get(0).getName().equals(".."))) {
+            _list.performItemClick(_list, 0, 0);
+            return true;
+        }
+        return false;
+    }
+
     @FunctionalInterface
     public interface OnBackPressedListener {
         void onBackPressed(AlertDialog dialog);
     }
 
-    OnBackPressedListener _onBackPressed = null;
+    OnBackPressedListener _onBackPressed;
 
-    final static String sSdcardStorage = ".. SDCard Storage";
-    final static String sPrimaryStorage = ".. Primary Storage";
+    private final static String sSdcardStorage = ".. SDCard Storage";
+    private final static String sPrimaryStorage = ".. Primary Storage";
 
     static final int CHOOSE_MODE_NORMAL = 0;
     static final int CHOOSE_MODE_DELETE = 1;
