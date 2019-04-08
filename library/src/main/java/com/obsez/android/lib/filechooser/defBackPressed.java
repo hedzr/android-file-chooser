@@ -18,9 +18,7 @@ class defBackPressed implements ChooserDialog.OnBackPressedListener {
     @Override
     public void onBackPressed(AlertDialog dialog) {
         if (_c.get()._entries.size() > 0
-            && (_c.get()._entries.get(0).getName().equals("..")) ||
-            _c.get()._entries.get(0).getName().contains(sSdcardStorage) ||
-            _c.get()._entries.get(0).getName().contains(sPrimaryStorage)) {
+            && (_c.get()._entries.get(0).getName().equals(".."))) {
             _c.get().onItemClick(null, _c.get()._list, 0, 0);
         } else {
             if (_onLastBackPressed != null) {
