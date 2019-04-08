@@ -25,7 +25,9 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * Created by coco on 6/7/15.
@@ -254,6 +256,10 @@ public class DirAdapter extends ArrayAdapter<File> {
         return getCount() == 0 || (getCount() == 1 && (getItem(0) instanceof RootFile));
     }
 
+    public Stack<Integer> getIndexStack() {
+        return _indexStack;
+    }
+
     private SimpleDateFormat _formatter;
     private Drawable _defaultFolderIcon = null;
     private Drawable _defaultFileIcon = null;
@@ -263,5 +269,6 @@ public class DirAdapter extends ArrayAdapter<File> {
     @Deprecated
     private GetView _getView = null;
     private GetViewListener _getViewListener = null;
+    private Stack<Integer> _indexStack = new Stack<>();
 }
 

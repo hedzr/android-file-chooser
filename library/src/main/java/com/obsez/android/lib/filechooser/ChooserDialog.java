@@ -839,10 +839,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     Runnable _deleteModeIndicator;
 
     @Override
-    public void onItemClick(AdapterView<?> parent_, View list_, int position, long id_) { // todo: focus last item on back
+    public void onItemClick(AdapterView<?> parent_, View list_, int position, long id_) {
         if (position < 0 || position >= _entries.size()) return;
 
-        boolean scrollToTop = false;
+        int scrollTo = 0;
         File file = _entries.get(position);
         if (file instanceof RootFile) {
             if (_folderNavUpCB == null) _folderNavUpCB = _defaultNavUpCB;
@@ -851,6 +851,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                 _chooseMode = _chooseMode == CHOOSE_MODE_DELETE ? CHOOSE_MODE_NORMAL : _chooseMode;
                 if (_deleteModeIndicator != null) _deleteModeIndicator.run();
                 lastSelected = false;
+                if (!_adapter.getIndexStack().empty()) {
+                    scrollTo = _adapter.getIndexStack().pop();
+                }
             }
         } else {
             switch (_chooseMode) {
@@ -859,7 +862,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         if (_folderNavToCB == null) _folderNavToCB = _defaultNavToCB;
                         if (_folderNavToCB.canNavigate(file)) {
                             _currentDir = file;
-                            scrollToTop = true;
+                            scrollTo = 0;
+                            _adapter.getIndexStack().push(position);
                         }
                     } else if ((!_dirOnly) && _result != null) {
                         _alertDialog.dismiss();
@@ -876,7 +880,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         if (_folderNavToCB == null) _folderNavToCB = _defaultNavToCB;
                         if (_folderNavToCB.canNavigate(file)) {
                             _currentDir = file;
-                            scrollToTop = true;
+                            scrollTo = 0;
+                            _adapter.getIndexStack().push(position);
                         }
                     } else {
                         _adapter.selectItem(position);
@@ -903,7 +908,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             }
         }
         refreshDirs();
-        if (scrollToTop) _list.setSelection(0);
+        _list.setSelection(scrollTo);
     }
 
     @Override
