@@ -544,10 +544,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         _alertDialog = builder.create();
 
-        _neutralBtn = _alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-        _negativeBtn = _alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-        _positiveBtn = _alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-
         _alertDialog.setCanceledOnTouchOutside(this._cancelOnTouchOutside);
         _alertDialog.setOnShowListener(new onShowListener(this));
 

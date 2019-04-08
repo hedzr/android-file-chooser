@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
 
 import java.lang.ref.WeakReference;
 

@@ -58,6 +58,10 @@ class onShowListener implements DialogInterface.OnShowListener {
     @Override
     public void onShow(final DialogInterface dialog) {
         // ensure that the buttons have the right order
+        _c.get()._neutralBtn = _c.get()._alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        _c.get()._negativeBtn = _c.get()._alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        _c.get()._positiveBtn = _c.get()._alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+
         ViewGroup buttonBar = (ViewGroup) _c.get()._positiveBtn.getParent();
         buttonBar.removeAllViews();
         buttonBar.addView(_c.get()._neutralBtn, 0);
