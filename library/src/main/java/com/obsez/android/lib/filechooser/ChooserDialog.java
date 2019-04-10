@@ -844,6 +844,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     public void onItemClick(AdapterView<?> parent_, View list_, int position, long id_) {
         if (position < 0 || position >= _entries.size()) return;
 
+        scrollTo = 0;
         File file = _entries.get(position);
         if (file instanceof RootFile) {
             if (_folderNavUpCB == null) _folderNavUpCB = _defaultNavUpCB;
