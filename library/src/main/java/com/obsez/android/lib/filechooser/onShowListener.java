@@ -330,6 +330,8 @@ class onShowListener implements DialogInterface.OnShowListener {
                                         params = new LinearLayout.LayoutParams(
                                             MATCH_PARENT, MATCH_PARENT);
                                     }
+                                    params.topMargin = UiUtil.dip2px(32);
+                                    params.bottomMargin = UiUtil.dip2px(12);
                                     root.addView(overlay, params);
 
                                     overlay.setOnClickListener(null);
