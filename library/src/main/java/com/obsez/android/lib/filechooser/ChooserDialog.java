@@ -983,7 +983,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     boolean _enableOptions;
     private boolean _followDir;
     private boolean _displayPath = true;
-    private TextView _pathView;
+    TextView _pathView;
     private CustomizePathView _customizePathView;
     View _options;
     @StringRes

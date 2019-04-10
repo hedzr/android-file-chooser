@@ -331,8 +331,6 @@ class onShowListener implements DialogInterface.OnShowListener {
                                         params = new LinearLayout.LayoutParams(
                                             MATCH_PARENT, MATCH_PARENT);
                                     }
-                                    params.topMargin = UiUtil.dip2px(32);
-                                    params.bottomMargin = UiUtil.dip2px(12);
                                     root.addView(overlay, params);
 
                                     overlay.setOnClickListener(null);
@@ -498,6 +496,14 @@ class onShowListener implements DialogInterface.OnShowListener {
                                         _c.get()._newFolderView.requestFocus();
                                         _c.get()._neutralBtn.setFocusable(false);
                                         _c.get()._list.setFocusable(false);
+                                    }
+                                    if (_c.get()._pathView != null &&
+                                        _c.get()._pathView.getVisibility() == View.VISIBLE) {
+                                        _c.get()._newFolderView.setPadding(0, UiUtil.dip2px(32),
+                                            0, UiUtil.dip2px(12));
+                                    } else {
+                                        _c.get()._newFolderView.setPadding(0, UiUtil.dip2px(12),
+                                            0, UiUtil.dip2px(12));
                                     }
                                 } else {
                                     _c.get()._newFolderView.setVisibility(View.GONE);
