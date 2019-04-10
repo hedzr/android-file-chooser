@@ -727,6 +727,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                             param.topMargin = _pathView.getHeight();
                         }
                         _list.setLayoutParams(param);
+                        _list.scrollBy(0, -_pathView.getHeight());
                         return true;
                     }
                 });
