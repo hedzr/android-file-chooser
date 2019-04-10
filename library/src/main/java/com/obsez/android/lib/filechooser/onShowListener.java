@@ -296,17 +296,6 @@ class onShowListener implements DialogInterface.OnShowListener {
                                 if (_c.get()._newFolderView == null) {
                                     // region Draw a view with input to create new folder. (this only
                                     // happens the first time one clicks on New folder)
-                                    try {
-                                        //noinspection ConstantConditions
-                                        ((AlertDialog) dialog).getWindow().clearFlags(
-                                            FLAG_NOT_FOCUSABLE | FLAG_ALT_FOCUSABLE_IM);
-                                        //noinspection ConstantConditions
-                                        ((AlertDialog) dialog).getWindow().setSoftInputMode(
-                                            SOFT_INPUT_STATE_VISIBLE);
-                                    } catch (NullPointerException e) {
-                                        e.printStackTrace();
-                                    }
-
                                     TypedArray ta = _c.get()._context.obtainStyledAttributes(
                                         R.styleable.FileChooser);
                                     int style = ta.getResourceId(
@@ -315,6 +304,18 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     final Context context = new ContextThemeWrapper(_c.get()._context, style);
                                     ta.recycle();
                                     ta = context.obtainStyledAttributes(R.styleable.FileChooser);
+
+                                    try {
+                                        //noinspection ConstantConditions
+                                        ((AlertDialog) dialog).getWindow().clearFlags(
+                                            FLAG_NOT_FOCUSABLE | FLAG_ALT_FOCUSABLE_IM);
+                                        //noinspection ConstantConditions
+                                        ((AlertDialog) dialog).getWindow().setSoftInputMode(
+                                            SOFT_INPUT_STATE_VISIBLE |
+                                                ta.getInt(R.styleable.FileChooser_fileChooserNewFolderSoftInputMode, 0x30));
+                                    } catch (NullPointerException e) {
+                                        e.printStackTrace();
+                                    }
 
                                     // A semitransparent background overlay.
                                     final FrameLayout overlay = new FrameLayout(_c.get()._context);

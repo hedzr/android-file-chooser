@@ -34,6 +34,12 @@
         <attr name="fileChooserNewFolderWidthWeight" format="float|reference" />
         <attr name="fileChooserNewFolderElevation" format="integer|reference" />
         <attr name="fileChooserNewFolderTextColor" format="color|reference" />
+        <attr name="fileChooserNewFolderSoftInputMode" format="flags">
+            <flag name="adjustUnspecified" value="0x00" />
+            <flag name="adjustResize" value="0x10" />
+            <flag name="adjustPan" value="0x20" />
+            <flag name="adjustNothing" value="0x30" />
+        </attr>
     </declare-styleable>
 
 </resources>

@@ -60,6 +60,7 @@
         <item name="fileChooserNewFolderWidthWeight">0.8</item>
         <item name="fileChooserNewFolderElevation">50</item>
         <item name="fileChooserNewFolderTextColor">@android:color/holo_blue_light</item>
+        <item name="fileChooserNewFolderSoftInputMode">adjustResize</item>
     </style>
 
     <!-- AboutActivity -->

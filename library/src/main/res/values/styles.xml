@@ -150,6 +150,7 @@
         <item name="fileChooserNewFolderWidthWeight">0.56</item>
         <item name="fileChooserNewFolderElevation">25</item>
         <item name="fileChooserNewFolderTextColor">@color/material_deep_teal_500</item>
+        <item name="fileChooserNewFolderSoftInputMode">adjustNothing</item>
     </style>
 
 </resources>
