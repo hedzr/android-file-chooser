@@ -264,7 +264,7 @@ Since 1.1.6, 2 new options are available:
             .withFilter(true, false)
             .withStartFile(startingDir)
             .withIcon(R.drawable.ic_file_chooser)
-            .withLayoutView(R.layout.alert_file_chooser)
+            .withLayoutView(R.layout.alert_file_chooser) // (API > 20)
             .withChosenListener(new ChooserDialog.Result() {
                 @Override
                 public void onChoosePath(String path, File pathFile) {
