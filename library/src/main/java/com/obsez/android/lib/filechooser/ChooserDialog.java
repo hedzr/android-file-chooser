@@ -560,6 +560,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             this._list.setSelector(listview_item_selector);
             this._list.setDrawSelectorOnTop(true);
             this._list.setItemsCanFocus(true);
+            this._list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         }
 
         _list.requestFocus();
@@ -837,12 +838,12 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     Runnable _deleteModeIndicator;
+    private int scrollTo;
 
     @Override
     public void onItemClick(AdapterView<?> parent_, View list_, int position, long id_) {
         if (position < 0 || position >= _entries.size()) return;
 
-        int scrollTo = 0;
         File file = _entries.get(position);
         if (file instanceof RootFile) {
             if (_folderNavUpCB == null) _folderNavUpCB = _defaultNavUpCB;
@@ -905,11 +906,12 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     break;
                 default:
                     // ERROR! It shouldn't get here...
-                    break;
+                    return;
             }
         }
         refreshDirs();
         _list.setSelection(scrollTo);
+        _list.post(() -> _list.setSelection(scrollTo));
     }
 
     @Override
