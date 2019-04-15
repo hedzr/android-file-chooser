@@ -65,16 +65,22 @@ class onShowListener implements DialogInterface.OnShowListener {
         _c.get()._positiveBtn = _c.get()._alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
 
         ViewGroup buttonBar = (ViewGroup) _c.get()._positiveBtn.getParent();
+        ViewGroup.LayoutParams btnParams = buttonBar.getLayoutParams();
+        btnParams.width = MATCH_PARENT;
+        buttonBar.setLayoutParams(btnParams);
         buttonBar.removeAllViews();
-        ViewGroup.LayoutParams btnParams = _c.get()._neutralBtn.getLayoutParams();
+        btnParams = _c.get()._neutralBtn.getLayoutParams();
         if (buttonBar instanceof LinearLayout) {
             ((LinearLayout.LayoutParams) btnParams).weight = 1;
-        } else if (buttonBar instanceof FrameLayout) {
-            ((FrameLayout.LayoutParams) btnParams).gravity = CENTER;
+            ((LinearLayout.LayoutParams) btnParams).width = 0;
         }
-        buttonBar.addView(_c.get()._neutralBtn, 0, btnParams);
-        buttonBar.addView(_c.get()._negativeBtn, 1, btnParams);
-        buttonBar.addView(_c.get()._positiveBtn, 2, btnParams);
+        if (_c.get()._enableOptions) {
+            buttonBar.addView(_c.get()._neutralBtn, 0, btnParams);
+        } else {
+            buttonBar.addView(new Space(_c.get()._context), 0, btnParams);
+        }
+        buttonBar.addView(_c.get()._negativeBtn, 1);
+        buttonBar.addView(_c.get()._positiveBtn, 2);
 
         if (_c.get()._enableMultiple) {
             _c.get()._positiveBtn.setVisibility(View.INVISIBLE);
