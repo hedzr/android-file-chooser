@@ -197,6 +197,10 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                             .create()
                             .show();
                     })
+                    .withOnBackPressedListener(dialog -> {
+                        files.clear();
+                        dialog.dismiss();
+                    })
                     .withOnLastBackPressedListener(dialog -> {
                         files.clear();
                         dialog.dismiss();
@@ -239,6 +243,11 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                 };
 
                 chooserDialog
+                    .withOnBackPressedListener(dialog -> {
+                        files.clear();
+                        dialog.dismiss();
+                        onDismiss.run();
+                    })
                     .withOnLastBackPressedListener(dialog -> {
                         files.clear();
                         dialog.dismiss();
