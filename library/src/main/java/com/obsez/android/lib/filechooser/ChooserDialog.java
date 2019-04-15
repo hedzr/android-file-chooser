@@ -31,7 +31,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -465,11 +464,9 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     public ChooserDialog build() {
         TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
-        int style = ta.getResourceId(R.styleable.FileChooser_fileChooserDialogStyle,
-            R.style.FileChooserDialogStyle);
-        final AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(_context, style),
+        final AlertDialog.Builder builder = new AlertDialog.Builder(_context,
             ta.getResourceId(R.styleable.FileChooser_fileChooserDialogStyle, R.style.FileChooserDialogStyle));
-        style = ta.getResourceId(R.styleable.FileChooser_fileChooserListItemStyle, R.style.FileChooserListItemStyle);
+        final int style = ta.getResourceId(R.styleable.FileChooser_fileChooserListItemStyle, R.style.FileChooserListItemStyle);
         ta.recycle();
         final Context context = new ContextThemeWrapper(_context, style);
         ta = context.obtainStyledAttributes(R.styleable.FileChooser);
@@ -571,13 +568,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         Window window = _alertDialog.getWindow();
         if (window != null) {
             TypedArray ta = _context.obtainStyledAttributes(R.styleable.FileChooser);
-            window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT);
             window.setGravity(ta.getInt(R.styleable.FileChooser_fileChooserDialogGravity, Gravity.CENTER));
-            WindowManager.LayoutParams lp = window.getAttributes();
-            lp.dimAmount = ta.getFloat(R.styleable.FileChooser_fileChooserDialogBackgroundDimAmount, 0.3f);
-            lp.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-            window.setAttributes(lp);
             ta.recycle();
         }
         _alertDialog.show();

@@ -146,7 +146,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
         if (darkTheme.isChecked()) {
             chooserDialog = new ChooserDialog(ctx, R.style.FileChooserStyle_Dark);
         } else {
-            chooserDialog = new ChooserDialog(ctx);
+            chooserDialog = new ChooserDialog(ctx, R.style.FileChooserStyle);
         }
 
         chooserDialog

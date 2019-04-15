@@ -16,7 +16,6 @@
             <flag name="start" value="8388611" />
             <flag name="end" value="8388613" />
         </attr>
-        <attr name="fileChooserDialogBackgroundDimAmount" format="float|reference" />
         <attr name="fileChooserDialogStyle" format="reference" />
         <attr name="fileChooserListItemStyle" format="reference" />
         <attr name="fileChooserTextNameStyle" format="reference" />
