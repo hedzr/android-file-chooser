@@ -246,7 +246,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                         }
                         params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                             START | CENTER_VERTICAL);
-                        params.leftMargin = 10;
+                        params.leftMargin = UiUtil.dip2px(10);
                         options.addView(createDir, params);
 
                         // Create a button for the option to delete a file.
@@ -277,7 +277,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                         }
                         params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                             END | CENTER_VERTICAL);
-                        params.rightMargin = 10;
+                        params.rightMargin = UiUtil.dip2px(10);
                         options.addView(delete, params);
 
                         _c.get()._options = options;
