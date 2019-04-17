@@ -153,6 +153,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                                 }
                                 _c.get()._options.setVisibility(View.VISIBLE);
                                 _c.get()._options.requestFocus();
+                                viewTreeObserver.removeOnPreDrawListener(this);
                                 return true;
                             }
                         });
