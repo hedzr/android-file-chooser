@@ -714,12 +714,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                         if (_pathView.getHeight() <= 0) {
                             return false;
                         }
-                        _pathView.getViewTreeObserver().removeOnPreDrawListener(this);
+                        viewTreeObserver.removeOnPreDrawListener(this);
                         if (_pathView.getParent() instanceof FrameLayout) {
                             param.topMargin = _pathView.getHeight();
                         }
                         _list.setLayoutParams(param);
-                        viewTreeObserver.removeOnPreDrawListener(this);
                         return true;
                     }
                 });

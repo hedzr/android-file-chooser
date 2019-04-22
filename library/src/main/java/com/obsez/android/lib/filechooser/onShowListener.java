@@ -143,7 +143,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                                 if (_c.get()._options.getHeight() <= 0) {
                                     return false;
                                 }
-                                _c.get()._options.getViewTreeObserver().removeOnPreDrawListener(this);
+                                viewTreeObserver.removeOnPreDrawListener(this);
                                 scroll.Int = getListYScroll(_c.get()._list);
                                 if (_c.get()._options.getParent() instanceof FrameLayout) {
                                     final ViewGroup.MarginLayoutParams params =
@@ -153,7 +153,6 @@ class onShowListener implements DialogInterface.OnShowListener {
                                 }
                                 _c.get()._options.setVisibility(View.VISIBLE);
                                 _c.get()._options.requestFocus();
-                                viewTreeObserver.removeOnPreDrawListener(this);
                                 return true;
                             }
                         });
