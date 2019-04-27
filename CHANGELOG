@@ -1,6 +1,24 @@
 # Changelog
 
 
+## 1.1.19 - 2019-04-27
+
+- bugs fixed
+- minor fixes for themes
+- #60, #61, #62 fixed
+- revamped Dpad controls
+- added cancelOnTouchOutside and enableDpad (true by default)
+- mainly by Guiorgy.
+
+
+
+## 1.1.18 - 2019-04-27
+
+- temporary release with gradle 5.1.1 compartibility test.
+- this library works within androidx project.
+
+
+
 ## 1.1.17 - 2019-03-28
 
 - bugs fixed

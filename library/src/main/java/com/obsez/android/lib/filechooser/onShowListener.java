@@ -50,52 +50,55 @@ import java.lang.ref.WeakReference;
 
 class onShowListener implements DialogInterface.OnShowListener {
     private WeakReference<ChooserDialog> _c;
+    private int _selector;
 
-    onShowListener(ChooserDialog c) {
+    onShowListener(ChooserDialog c, int selector) {
         this._c = new WeakReference<>(c);
+        this._selector = selector;
     }
 
     @Override
     public void onShow(final DialogInterface dialog) {
-        final Button options = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
-        final Button negative = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
-        final Button positive = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-
         // ensure that the buttons have the right order
-        ViewGroup parentLayout = (ViewGroup) positive.getParent();
-        parentLayout.removeAllViews();
-        parentLayout.addView(options, 0);
-        parentLayout.addView(negative, 1);
-        parentLayout.addView(positive, 2);
+        _c.get()._neutralBtn = _c.get()._alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        _c.get()._negativeBtn = _c.get()._alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        _c.get()._positiveBtn = _c.get()._alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+
+        ViewGroup buttonBar = (ViewGroup) _c.get()._positiveBtn.getParent();
+        ViewGroup.LayoutParams btnParams = buttonBar.getLayoutParams();
+        btnParams.width = MATCH_PARENT;
+        buttonBar.setLayoutParams(btnParams);
+        buttonBar.removeAllViews();
+        btnParams = _c.get()._neutralBtn.getLayoutParams();
+        if (buttonBar instanceof LinearLayout) {
+            ((LinearLayout.LayoutParams) btnParams).weight = 1;
+            ((LinearLayout.LayoutParams) btnParams).width = 0;
+        }
+        if (_c.get()._enableOptions) {
+            buttonBar.addView(_c.get()._neutralBtn, 0, btnParams);
+        } else {
+            buttonBar.addView(new Space(_c.get()._context), 0, btnParams);
+        }
+        buttonBar.addView(_c.get()._negativeBtn, 1);
+        buttonBar.addView(_c.get()._positiveBtn, 2);
 
         if (_c.get()._enableMultiple) {
-            positive.setVisibility(View.INVISIBLE);
+            _c.get()._positiveBtn.setVisibility(View.INVISIBLE);
         }
 
-        if (!_c.get()._dismissOnButtonClick) {
-            negative.setOnClickListener(v -> {
-                if (_c.get()._negativeListener != null) {
-                    _c.get()._negativeListener.onClick(_c.get()._alertDialog, AlertDialog.BUTTON_NEGATIVE);
-                }
-            });
-
-            positive.setOnClickListener(v -> {
-                if (_c.get()._result != null) {
-                    if (_c.get()._dirOnly || _c.get()._enableMultiple) {
-                        _c.get()._result.onChoosePath(_c.get()._currentDir.getAbsolutePath(),
-                            _c.get()._currentDir);
-                    }
-                }
-            });
+        if (_c.get()._enableDpad) {
+            _c.get()._neutralBtn.setBackgroundResource(_selector);
+            _c.get()._negativeBtn.setBackgroundResource(_selector);
+            _c.get()._positiveBtn.setBackgroundResource(_selector);
         }
 
         if (_c.get()._enableOptions) {
-            final int buttonColor = options.getCurrentTextColor();
+            final int buttonColor = _c.get()._neutralBtn.getCurrentTextColor();
             final PorterDuffColorFilter filter = new PorterDuffColorFilter(buttonColor,
                 PorterDuff.Mode.SRC_IN);
 
-            options.setText("");
-            options.setVisibility(View.VISIBLE);
+            _c.get()._neutralBtn.setText("");
+            _c.get()._neutralBtn.setVisibility(View.VISIBLE);
             Drawable dots;
             if (_c.get()._optionsIconRes != -1) {
                 dots = ContextCompat.getDrawable(_c.get()._context, _c.get()._optionsIconRes);
@@ -106,7 +109,7 @@ class onShowListener implements DialogInterface.OnShowListener {
             }
             if (dots != null) {
                 dots.setColorFilter(filter);
-                options.setCompoundDrawablesWithIntrinsicBounds(dots, null, null, null);
+                _c.get()._neutralBtn.setCompoundDrawablesWithIntrinsicBounds(dots, null, null, null);
             }
 
             final class Integer {
@@ -140,7 +143,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                                 if (_c.get()._options.getHeight() <= 0) {
                                     return false;
                                 }
-                                _c.get()._options.getViewTreeObserver().removeOnPreDrawListener(this);
+                                viewTreeObserver.removeOnPreDrawListener(this);
                                 scroll.Int = getListYScroll(_c.get()._list);
                                 if (_c.get()._options.getParent() instanceof FrameLayout) {
                                     final ViewGroup.MarginLayoutParams params =
@@ -149,12 +152,14 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     _c.get()._list.setLayoutParams(params);
                                 }
                                 _c.get()._options.setVisibility(View.VISIBLE);
+                                _c.get()._options.requestFocus();
                                 return true;
                             }
                         });
                     } else {
                         scroll.Int = getListYScroll(_c.get()._list);
                         _c.get()._options.setVisibility(View.VISIBLE);
+                        _c.get()._options.requestFocus();
                         if (_c.get()._options.getParent() instanceof FrameLayout) {
                             final ViewGroup.MarginLayoutParams params =
                                 (ViewGroup.MarginLayoutParams) _c.get()._list.getLayoutParams();
@@ -175,7 +180,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                 }
             };
 
-            options.setOnClickListener(new View.OnClickListener() {
+            _c.get()._neutralBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
                     if (_c.get()._newFolderView != null
@@ -205,6 +210,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                             params = new FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, BOTTOM);
                         }
                         root.addView(options, params);
+                        options.setFocusable(false);
 
                         if (root instanceof FrameLayout) {
                             _c.get()._list.bringToFront();
@@ -234,9 +240,12 @@ class onShowListener implements DialogInterface.OnShowListener {
                             plus.setColorFilter(filter);
                             createDir.setCompoundDrawablesWithIntrinsicBounds(plus, null, null, null);
                         }
+                        if (_c.get()._enableDpad) {
+                            createDir.setBackgroundResource(_selector);
+                        }
                         params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                             START | CENTER_VERTICAL);
-                        params.leftMargin = 10;
+                        params.leftMargin = UiUtil.dip2px(10);
                         options.addView(createDir, params);
 
                         // Create a button for the option to delete a file.
@@ -262,9 +271,12 @@ class onShowListener implements DialogInterface.OnShowListener {
                             bin.setColorFilter(filter);
                             delete.setCompoundDrawablesWithIntrinsicBounds(bin, null, null, null);
                         }
+                        if (_c.get()._enableDpad) {
+                            delete.setBackgroundResource(_selector);
+                        }
                         params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                             END | CENTER_VERTICAL);
-                        params.rightMargin = 10;
+                        params.rightMargin = UiUtil.dip2px(10);
                         options.addView(delete, params);
 
                         _c.get()._options = options;
@@ -290,17 +302,6 @@ class onShowListener implements DialogInterface.OnShowListener {
                                 if (_c.get()._newFolderView == null) {
                                     // region Draw a view with input to create new folder. (this only
                                     // happens the first time one clicks on New folder)
-                                    try {
-                                        //noinspection ConstantConditions
-                                        ((AlertDialog) dialog).getWindow().clearFlags(
-                                            FLAG_NOT_FOCUSABLE | FLAG_ALT_FOCUSABLE_IM);
-                                        //noinspection ConstantConditions
-                                        ((AlertDialog) dialog).getWindow().setSoftInputMode(
-                                            SOFT_INPUT_STATE_VISIBLE);
-                                    } catch (NullPointerException e) {
-                                        e.printStackTrace();
-                                    }
-
                                     TypedArray ta = _c.get()._context.obtainStyledAttributes(
                                         R.styleable.FileChooser);
                                     int style = ta.getResourceId(
@@ -309,6 +310,20 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     final Context context = new ContextThemeWrapper(_c.get()._context, style);
                                     ta.recycle();
                                     ta = context.obtainStyledAttributes(R.styleable.FileChooser);
+
+                                    try {
+                                        //noinspection ConstantConditions
+                                        ((AlertDialog) dialog).getWindow().clearFlags(
+                                            FLAG_NOT_FOCUSABLE | FLAG_ALT_FOCUSABLE_IM);
+                                        //noinspection ConstantConditions
+                                        ((AlertDialog) dialog).getWindow().setSoftInputMode(
+                                            SOFT_INPUT_STATE_VISIBLE |
+                                                ta.getInt(
+                                                    R.styleable.FileChooser_fileChooserNewFolderSoftInputMode,
+                                                    0x30));
+                                    } catch (NullPointerException e) {
+                                        e.printStackTrace();
+                                    }
 
                                     // A semitransparent background overlay.
                                     final FrameLayout overlay = new FrameLayout(_c.get()._context);
@@ -335,7 +350,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     params = new FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT,
                                         CENTER);
                                     overlay.addView(linearLayout, params);
-
+                                    overlay.setFocusable(false);
 
                                     float widthWeight = ta.getFloat(
                                         R.styleable.FileChooser_fileChooserNewFolderWidthWeight, 0.56f);
@@ -346,6 +361,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     params = new LinearLayout.LayoutParams(0, WRAP_CONTENT,
                                         (1f - widthWeight) / 2);
                                     linearLayout.addView(leftSpace, params);
+                                    leftSpace.setFocusable(false);
 
                                     // A solid holder view for the EditText and Buttons.
                                     final LinearLayout holder = new LinearLayout(_c.get()._context);
@@ -362,11 +378,13 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     }
                                     params = new LinearLayout.LayoutParams(0, WRAP_CONTENT, widthWeight);
                                     linearLayout.addView(holder, params);
+                                    holder.setFocusable(false);
 
                                     Space rightSpace = new Space(_c.get()._context);
                                     params = new LinearLayout.LayoutParams(0, WRAP_CONTENT,
                                         (1f - widthWeight) / 2);
                                     linearLayout.addView(rightSpace, params);
+                                    rightSpace.setFocusable(false);
 
                                     final EditText input = new EditText(_c.get()._context);
                                     final int color = ta.getColor(
@@ -407,6 +425,9 @@ class onShowListener implements DialogInterface.OnShowListener {
                                         cancel.setText(R.string.new_folder_cancel);
                                     }
                                     cancel.setTextColor(buttonColor);
+                                    if (_c.get()._enableDpad) {
+                                        cancel.setBackgroundResource(_selector);
+                                    }
                                     params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                                         START);
                                     buttons.addView(cancel, params);
@@ -422,6 +443,9 @@ class onShowListener implements DialogInterface.OnShowListener {
                                         ok.setText(R.string.new_folder_ok);
                                     }
                                     ok.setTextColor(buttonColor);
+                                    if (_c.get()._enableDpad) {
+                                        ok.setBackgroundResource(_selector);
+                                    }
                                     params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                                         END);
                                     buttons.addView(ok, params);
@@ -430,10 +454,17 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     input.setOnEditorActionListener(
                                         (v, actionId, event) -> {
                                             if (actionId == EditorInfo.IME_ACTION_DONE) {
+                                                UiUtil.hideKeyboardFrom(_c.get()._context, input);
                                                 _c.get().createNewDirectory(
                                                     input.getText().toString());
-                                                UiUtil.hideKeyboardFrom(_c.get()._context, input);
                                                 overlay.setVisibility(View.GONE);
+                                                overlay.clearFocus();
+                                                if (_c.get()._enableDpad) {
+                                                    Button b = _c.get()._neutralBtn;
+                                                    b.setFocusable(true);
+                                                    b.requestFocus();
+                                                    _c.get()._list.setFocusable(true);
+                                                }
                                                 return true;
                                             }
                                             return false;
@@ -441,22 +472,54 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     cancel.setOnClickListener(v -> {
                                         UiUtil.hideKeyboardFrom(_c.get()._context, input);
                                         overlay.setVisibility(View.GONE);
+                                        overlay.clearFocus();
+                                        if (_c.get()._enableDpad) {
+                                            Button b = _c.get()._neutralBtn;
+                                            b.setFocusable(true);
+                                            b.requestFocus();
+                                            _c.get()._list.setFocusable(true);
+                                        }
                                     });
                                     ok.setOnClickListener(v -> {
+                                        UiUtil.hideKeyboardFrom(_c.get()._context, input);
                                         _c.get().createNewDirectory(
                                             input.getText().toString());
                                         UiUtil.hideKeyboardFrom(_c.get()._context, input);
                                         overlay.setVisibility(View.GONE);
+                                        overlay.clearFocus();
+                                        if (_c.get()._enableDpad) {
+                                            Button b = _c.get()._neutralBtn;
+                                            b.setFocusable(true);
+                                            b.requestFocus();
+                                            _c.get()._list.setFocusable(true);
+                                        }
                                     });
-
                                     ta.recycle();
                                     // endregion
                                 }
 
                                 if (_c.get()._newFolderView.getVisibility() != View.VISIBLE) {
                                     _c.get()._newFolderView.setVisibility(View.VISIBLE);
+                                    if (_c.get()._enableDpad) {
+                                        _c.get()._newFolderView.requestFocus();
+                                        _c.get()._neutralBtn.setFocusable(false);
+                                        _c.get()._list.setFocusable(false);
+                                    }
+                                    if (_c.get()._pathView != null &&
+                                        _c.get()._pathView.getVisibility() == View.VISIBLE) {
+                                        _c.get()._newFolderView.setPadding(0, UiUtil.dip2px(32),
+                                            0, UiUtil.dip2px(12));
+                                    } else {
+                                        _c.get()._newFolderView.setPadding(0, UiUtil.dip2px(12),
+                                            0, UiUtil.dip2px(12));
+                                    }
                                 } else {
                                     _c.get()._newFolderView.setVisibility(View.GONE);
+                                    if (_c.get()._enableDpad) {
+                                        _c.get()._newFolderView.clearFocus();
+                                        _c.get()._neutralBtn.setFocusable(true);
+                                        _c.get()._list.setFocusable(true);
+                                    }
                                 }
                             }
                         });
@@ -479,7 +542,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     }
                                 }
                                 _c.get()._adapter.clearSelected();
-                                _c.get()._alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(
+                                _c.get()._positiveBtn.setVisibility(
                                     View.INVISIBLE);
                                 _c.get()._chooseMode = CHOOSE_MODE_NORMAL;
                                 _c.get().refreshDirs();
@@ -496,20 +559,16 @@ class onShowListener implements DialogInterface.OnShowListener {
                                         final PorterDuffColorFilter red =
                                             new PorterDuffColorFilter(color1,
                                                 PorterDuff.Mode.SRC_IN);
-                                        _c.get()._alertDialog.getButton(
-                                            AlertDialog.BUTTON_NEUTRAL).getCompoundDrawables()
+                                        _c.get()._neutralBtn.getCompoundDrawables()
                                             [0].setColorFilter(
                                             red);
-                                        _c.get()._alertDialog.getButton(
-                                            AlertDialog.BUTTON_NEUTRAL).setTextColor(color1);
+                                        _c.get()._neutralBtn.setTextColor(color1);
                                         delete.getCompoundDrawables()[0].setColorFilter(red);
                                         delete.setTextColor(color1);
                                     } else {
-                                        _c.get()._alertDialog.getButton(
-                                            AlertDialog.BUTTON_NEUTRAL).getCompoundDrawables()
+                                        _c.get()._neutralBtn.getCompoundDrawables()
                                             [0].clearColorFilter();
-                                        _c.get()._alertDialog.getButton(
-                                            AlertDialog.BUTTON_NEUTRAL).setTextColor(buttonColor);
+                                        _c.get()._neutralBtn.setTextColor(buttonColor);
                                         delete.getCompoundDrawables()[0].clearColorFilter();
                                         delete.setTextColor(buttonColor);
                                     }

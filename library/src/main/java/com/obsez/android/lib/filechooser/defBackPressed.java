@@ -1,8 +1,5 @@
 package com.obsez.android.lib.filechooser;
 
-import static com.obsez.android.lib.filechooser.ChooserDialog.sPrimaryStorage;
-import static com.obsez.android.lib.filechooser.ChooserDialog.sSdcardStorage;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 
@@ -18,10 +15,12 @@ class defBackPressed implements ChooserDialog.OnBackPressedListener {
     @Override
     public void onBackPressed(AlertDialog dialog) {
         if (_c.get()._entries.size() > 0
-            && (_c.get()._entries.get(0).getName().equals("..")) ||
-            _c.get()._entries.get(0).getName().contains(sSdcardStorage) ||
-            _c.get()._entries.get(0).getName().contains(sPrimaryStorage)) {
-            _c.get().onItemClick(null, _c.get()._list, 0, 0);
+            && (_c.get()._entries.get(0).getName().equals(".."))) {
+            if (_onBackPressed != null) {
+                _onBackPressed.onBackPressed(dialog);
+            } else {
+                _defaultBack.onBackPressed(dialog);
+            }
         } else {
             if (_onLastBackPressed != null) {
                 _onLastBackPressed.onBackPressed(dialog);
@@ -31,8 +30,9 @@ class defBackPressed implements ChooserDialog.OnBackPressedListener {
         }
     }
 
+    ChooserDialog.OnBackPressedListener _onBackPressed;
     ChooserDialog.OnBackPressedListener _onLastBackPressed;
 
-    ChooserDialog.OnBackPressedListener _defaultLastBack = Dialog::dismiss;
-
+    private static final ChooserDialog.OnBackPressedListener _defaultLastBack = Dialog::cancel;
+    private static final ChooserDialog.OnBackPressedListener _defaultBack = Dialog::cancel;
 }

@@ -66,10 +66,13 @@
             android:layout_toLeftOf="@+id/value"
             android:layout_toEndOf="@+id/icon"
             android:layout_toRightOf="@+id/icon"
+            android:textAllCaps="true"
             android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="12sp"
+            android:textStyle="italic"
             app:fontFamily="@font/amita"
-            tools:text="@string/title_choose"
-            tools:ignore="SmallSp"/>
+            tools:ignore="SmallSp"
+            tools:text="@string/title_choose"/>
 
         <TextView
             android:id="@+id/value"

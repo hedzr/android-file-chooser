@@ -27,15 +27,9 @@ A demo-app can be installed from [Play Store](https://play.google.com/store/apps
 
 
 
-### Xamarin Port
+### Xamarin Binding
 
-An Xamarin nuget package by [@Guiorgy](https://github.com/Guiorgy) can be found at:
-
-<https://www.nuget.org/packages/XamarinFileChooser/>
-
-Thanks.
-
-
+A Xamarin nuget package by [@Guiorgy](https://github.com/Guiorgy) can be found at [![NuGet](https://img.shields.io/nuget/v/XamarinFileChooser.svg?style=flat&max-age=86400)](https://www.nuget.org/packages/XamarinFileChooser/)
 
 
 
@@ -49,6 +43,21 @@ Thanks.
 ### v1.1.x patches on `master`
 
 - 
+
+### v1.1.19
+
+- bugs fixed
+- minor fixes for themes
+- #60, #61, #62 fixed
+- revamped Dpad controls
+- added cancelOnTouchOutside and enableDpad (true by default)
+- mainly by Guiorgy.
+
+### v1.1.18
+
+temporary release with gradle 5.1.1 compartibility test.
+
+this library works within androidx project.
 
 ### v1.1.17
 
@@ -270,7 +279,7 @@ Since 1.1.6, 2 new options are available:
             .withFilter(true, false)
             .withStartFile(startingDir)
             .withIcon(R.drawable.ic_file_chooser)
-            .withLayoutView(R.layout.alert_file_chooser)
+            .withLayoutView(R.layout.alert_file_chooser) // (API > 20)
             .withChosenListener(new ChooserDialog.Result() {
                 @Override
                 public void onChoosePath(String path, File pathFile) {
@@ -300,13 +309,14 @@ Since 1.1.6, 2 new options are available:
 
 #### onCancelListener
 
-`OnCancelListener` will be triggered on back pressed or clicked outside of dialog.
+`OnCancelListener` will be called when touching outside the dialog (`cancelOnTouchOutside` must be set true), and when pressing back key.
+If `BackPressedListener` is overridden, it wont be called if `dialog.dismiss` is used instead of `dialog.cancel`.
+`OnCancelListener` will **NOT** be called when pressing the negative button. use `withNegativeButtonListener` for that.
 
 ```java
 .withOnCancelListener(new DialogInterface.OnCancelListener() {
     public void onCancel(DialogInterface dialog) {
         Log.d("CANCEL", "CANCEL");
-        dialog.cancel(); // MUST have
     }
 })
 
@@ -316,7 +326,7 @@ Since 1.1.6, 2 new options are available:
 
 1.1.7+, new constructor `ChooserDialog(context)` can simplify the chain invoking. Also `build()` is no longer obligatory to be called:
 
-```java
+​```java
     new ChooserDialog(MainActivity.this)
             .withFilter(true, false)
             .withStartFile(startingDir)
@@ -490,7 +500,7 @@ As a useful complement, `customizePathView(callback)` allows tuning the path Tex
 })
 ```
 
-simce 1.1.17, this can also be done through a custom theme:
+since 1.1.17, this can also be done through a custom theme:
 
 ```xml
 <style name="FileChooserStyle">
@@ -604,6 +614,5 @@ many peoples report or contribute to improve me, but only a few of them be put h
 Standard Apache 2.0
 
 Copyright 2015-2019 Hedzr Yeh.
-
 
 

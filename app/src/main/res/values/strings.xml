@@ -21,6 +21,8 @@
     <string name="display_long_dates">Display long dates</string>
     <string name="dark_theme">Use dark theme</string>
     <string name="custom_layout">With a custom row layout</string>
+    <string name="dpad">Enable Dpad controls</string>
+    <string name="back">Move up on back pressed</string>
     <string name="reserved">Reserved</string>
     <string name="title_activity_about">About Us</string>
     <!--<string name="large_text">-->
