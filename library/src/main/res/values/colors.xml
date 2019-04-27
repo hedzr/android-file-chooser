@@ -4,4 +4,5 @@
     <color name="material_deep_teal_500">#ff009688</color>
     <color name="li_row_background">#fffbfbfb</color>
     <color name="li_row_background_tint">#4027bfad</color>
+    <color name="li_row_selector">#4080cbc4</color>
 </resources>

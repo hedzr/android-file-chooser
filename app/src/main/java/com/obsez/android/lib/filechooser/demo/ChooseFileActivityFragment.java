@@ -3,7 +3,6 @@ package com.obsez.android.lib.filechooser.demo;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
@@ -54,6 +53,8 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
     private CheckBox dateFormat;
     private CheckBox customLayout;
     private CheckBox darkTheme;
+    private CheckBox dpad;
+    private CheckBox back;
 
     private String _path = null;
     private TextView _tv;
@@ -99,6 +100,8 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
         dateFormat = root.findViewById(R.id.checkbox_date_format);
         customLayout = root.findViewById(R.id.checkbox_custom_layout);
         darkTheme = root.findViewById(R.id.checkbox_dark_theme);
+        dpad = root.findViewById(R.id.checkbox_dpad);
+        back = root.findViewById(R.id.checkbox_back);
 
         titleFollowsDir.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) customLayout.setChecked(false);
@@ -126,6 +129,8 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
         // since v1.16, we made this true by default.
         displayPath.setChecked(true);
 
+        dpad.setChecked(true);
+
         return root;
     }
 
@@ -141,7 +146,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
         if (darkTheme.isChecked()) {
             chooserDialog = new ChooserDialog(ctx, R.style.FileChooserStyle_Dark);
         } else {
-            chooserDialog = new ChooserDialog(ctx);
+            chooserDialog = new ChooserDialog(ctx, R.style.FileChooserStyle);
         }
 
         chooserDialog
@@ -159,7 +164,8 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
             .disableTitle(disableTitle.isChecked())
             .enableOptions(enableOptions.isChecked())
             .titleFollowsDir(titleFollowsDir.isChecked())
-            .displayPath(displayPath.isChecked());
+            .displayPath(displayPath.isChecked())
+            .enableDpad(dpad.isChecked());
         if (filterImages.isChecked()) {
             // Most common image file extensions (source: http://preservationtutorial.library.cornell
             // .edu/presentation/table7-1.html)
@@ -190,6 +196,10 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                                 android.R.layout.simple_expandable_list_item_1, paths), null)
                             .create()
                             .show();
+                    })
+                    .withOnBackPressedListener(dialog -> {
+                        files.clear();
+                        dialog.dismiss();
                     })
                     .withOnLastBackPressedListener(dialog -> {
                         files.clear();
@@ -233,6 +243,11 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                 };
 
                 chooserDialog
+                    .withOnBackPressedListener(dialog -> {
+                        files.clear();
+                        dialog.dismiss();
+                        onDismiss.run();
+                    })
                     .withOnLastBackPressedListener(dialog -> {
                         files.clear();
                         dialog.dismiss();
@@ -328,11 +343,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                             root.setBackgroundResource(android.R.color.holo_blue_light);
                         }
                         if (!isSelected) {
-                            if (isFocused) {
-                                root.getBackground().setColorFilter(colorFilter);
-                            } else {
-                                root.getBackground().clearColorFilter();
-                            }
+                            root.getBackground().clearColorFilter();
                         } else {
                             root.getBackground().setColorFilter(colorFilter);
                         }
@@ -340,9 +351,10 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                         return view;
                     }));
         }
+        if (back.isChecked()) {
+            chooserDialog.withOnBackPressedListener(dialog -> chooserDialog.goBack());
+        }
 
-        chooserDialog
-            .withOnCancelListener(DialogInterface::cancel)
-            .show();
+        chooserDialog.show();
     }
 }

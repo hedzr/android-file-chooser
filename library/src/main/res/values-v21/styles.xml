@@ -7,6 +7,9 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
         <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
+        <item name="android:backgroundDimAmount">0.3</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:buttonBarStyle">@android:style/Holo.Light.ButtonBar.AlertDialog</item>
         <item name="android:buttonBarButtonStyle">@style/FileChooserButtonStyle</item>

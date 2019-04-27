@@ -302,6 +302,44 @@
             app:layout_constraintVertical_bias="1.0"
             app:layout_constraintWidth_max="@+id/calc_guideline_half" />
 
+        <CheckBox
+            android:id="@+id/checkbox_dpad"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:checked="false"
+            android:text="@string/dpad"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toStartOf="@+id/calc_guideline_half"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/checkbox_dark_theme"
+            app:layout_constraintWidth_max="@+id/calc_guideline_half"/>
+
+        <CheckBox
+            android:id="@+id/checkbox_back"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:checked="false"
+            android:text="@string/back"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="@+id/checkbox_dpad"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/calc_guideline_half"
+            app:layout_constraintTop_toTopOf="@+id/checkbox_dpad"
+            app:layout_constraintVertical_bias="1.0"
+            app:layout_constraintWidth_max="@+id/calc_guideline_half"/>
+
         <TextView
             android:id="@+id/textView"
             android:layout_width="0dp"
@@ -317,7 +355,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/checkbox_dark_theme" />
+            app:layout_constraintTop_toBottomOf="@+id/checkbox_dpad"/>
 
         <ImageView
             android:id="@+id/imageView"
