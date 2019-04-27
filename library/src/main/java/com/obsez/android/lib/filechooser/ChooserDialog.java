@@ -277,10 +277,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     }
 
     public ChooserDialog withOptionIcons(@Nullable Drawable optionsIcon, @Nullable Drawable createDirIcon,
-        @Nullable Drawable delete) {
+        @Nullable Drawable deleteIcon) {
         this._optionsIcon = optionsIcon;
         this._createDirIcon = createDirIcon;
-        this._deleteIcon = delete;
+        this._deleteIcon = deleteIcon;
         return this;
     }
 
