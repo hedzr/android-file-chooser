@@ -44,6 +44,21 @@ A Xamarin nuget package by [@Guiorgy](https://github.com/Guiorgy) can be found a
 
 - 
 
+### v1.1.19
+
+- bugs fixed
+- minor fixes for themes
+- #60, #61, #62 fixed
+- revamped Dpad controls
+- added cancelOnTouchOutside and enableDpad (true by default)
+- mainly by Guiorgy.
+
+### v1.1.18
+
+temporary release with gradle 5.1.1 compartibility test.
+
+this library works within androidx project.
+
 ### v1.1.17
 
 - bugs fixed.
@@ -311,7 +326,7 @@ If `BackPressedListener` is overridden, it wont be called if `dialog.dismiss` is
 
 1.1.7+, new constructor `ChooserDialog(context)` can simplify the chain invoking. Also `build()` is no longer obligatory to be called:
 
-```java
+​```java
     new ChooserDialog(MainActivity.this)
             .withFilter(true, false)
             .withStartFile(startingDir)
