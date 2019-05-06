@@ -17,7 +17,6 @@ import static com.obsez.android.lib.filechooser.internals.UiUtil.getListYScroll;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -31,6 +30,7 @@ import android.os.Handler;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.util.Log;
+import androidx.appcompat.app.AlertDialog;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
