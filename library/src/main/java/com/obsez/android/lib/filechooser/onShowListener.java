@@ -17,7 +17,6 @@ import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_NORMAL
 import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_SELECT_MULTIPLE;
 import static com.obsez.android.lib.filechooser.internals.UiUtil.getListYScroll;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
@@ -28,6 +27,7 @@ import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.view.ContextThemeWrapper;
+import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.view.View;

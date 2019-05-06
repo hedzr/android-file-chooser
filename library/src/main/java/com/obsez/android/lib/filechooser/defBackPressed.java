@@ -1,7 +1,7 @@
 package com.obsez.android.lib.filechooser;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatDialog;
 
 import java.lang.ref.WeakReference;
 
@@ -33,6 +33,6 @@ class defBackPressed implements ChooserDialog.OnBackPressedListener {
     ChooserDialog.OnBackPressedListener _onBackPressed;
     ChooserDialog.OnBackPressedListener _onLastBackPressed;
 
-    private static final ChooserDialog.OnBackPressedListener _defaultLastBack = Dialog::cancel;
-    private static final ChooserDialog.OnBackPressedListener _defaultBack = Dialog::cancel;
+    private static final ChooserDialog.OnBackPressedListener _defaultLastBack = AppCompatDialog::cancel;
+    private static final ChooserDialog.OnBackPressedListener _defaultBack = AppCompatDialog::cancel;
 }
