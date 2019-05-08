@@ -21,11 +21,12 @@
         <item name="colorAccent">@android:color/holo_blue_light</item>
         <item name="android:windowTitleStyle">@style/FileChooserTitleStyle_Dark</item>
         <item name="android:buttonBarButtonStyle">@style/FileChooserButtonStyle_Dark</item>
+        <item name="buttonBarButtonStyle">@style/FileChooserButtonStyle_Dark</item>
         <item name="android:backgroundDimAmount">0.8</item>
     </style>
 
     <style name="FileChooserTitleStyle_Dark" parent="FileChooserTitleStyle">
-        <item name="android:textAppearance">@android:style/TextAppearance.Holo.DialogWindowTitle</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Title.Inverse</item>
         <item name="android:textColor">@android:color/holo_blue_light</item>
     </style>
 
