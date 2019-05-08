@@ -643,7 +643,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             // In case the root id was changed or not found.
             if (root == null) {
                 rootId = _c.get()._context.getResources().getIdentifier("contentPanel", "id", "android");
-                ViewGroup root = ((AlertDialog) dialog).findViewById(rootId);
+                root = ((AlertDialog) dialog).findViewById(rootId);
                 if (root == null) return;
             }
 
