@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="FileChooserDialogStyle_Dark" parent="@android:style/Theme.Material.Dialog.Alert">
+    <!--<style name="FileChooserDialogStyle_Dark" parent="@android:style/Theme.Material.Dialog.Alert">
         <item name="android:buttonStyle">@android:style/Widget.Holo.Light.Button</item>
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="colorAccent">@android:style/TextAppearance.Holo.DialogWindowTitle</item>
@@ -17,6 +17,6 @@
 
     <style name="FileChooserButtonStyle_Dark" parent="FileChooserButtonStyle">
         <item name="android:textColor">@android:color/holo_blue_light</item>
-    </style>
+    </style>-->
 
 </resources>
