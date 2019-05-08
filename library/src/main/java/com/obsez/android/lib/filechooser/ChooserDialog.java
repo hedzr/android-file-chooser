@@ -638,10 +638,14 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     private void displayPath(String path) {
         if (_pathView == null) {
-            final int rootId = _context.getResources().getIdentifier("contentPanel", "id", "android");
-            final ViewGroup root = ((AlertDialog) _alertDialog).findViewById(rootId);
-            // In case the id was changed or not found.
-            if (root == null) return;
+            int rootId = _c.get()._context.getResources().getIdentifier("contentPanel", "id", _c.get()._context.getPackageName());
+            ViewGroup root = ((AlertDialog) dialog).findViewById(rootId);
+            // In case the root id was changed or not found.
+            if (root == null) {
+                rootId = _c.get()._context.getResources().getIdentifier("contentPanel", "id", "android");
+                ViewGroup root = ((AlertDialog) dialog).findViewById(rootId);
+                if (root == null) return;
+            }
 
             ViewGroup.MarginLayoutParams params;
             if (root instanceof LinearLayout) {
