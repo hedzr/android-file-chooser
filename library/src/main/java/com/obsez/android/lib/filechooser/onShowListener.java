@@ -192,13 +192,14 @@ class onShowListener implements DialogInterface.OnShowListener {
                         // region Draw options view. (this only happens the first time one clicks on options)
                         // Root view (FrameLayout) of the ListView in the AlertDialog.
                         int rootId = _c.get()._context.getResources().getIdentifier("contentPanel", "id", _c.get()._context.getPackageName());
-                        ViewGroup root = ((AlertDialog) dialog).findViewById(rootId);
+                        ViewGroup tmpRoot = ((AlertDialog) dialog).findViewById(rootId);
                         // In case the root id was changed or not found.
-                        if (root == null) {
+                        if (tmpRoot == null) {
                             rootId = _c.get()._context.getResources().getIdentifier("contentPanel", "id", "android");
-                            root = ((AlertDialog) dialog).findViewById(rootId);
-                            if (root == null) return;
+                            tmpRoot = ((AlertDialog) dialog).findViewById(rootId);
+                            if (tmpRoot == null) return;
                         }
+                        final ViewGroup root = tmpRoot;
 
                         // Create options view.
                         final FrameLayout options = new FrameLayout(_c.get()._context);
