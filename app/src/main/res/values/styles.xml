@@ -16,7 +16,7 @@
     </style>
 
     <style name="FileChooserDialogStyle_Dark">
-        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--<item name="android:windowBackground">@android:color/transparent</item>-->
         <item name="android:textColorPrimary">@android:color/holo_blue_light</item>
         <item name="colorAccent">@android:color/holo_blue_light</item>
         <item name="android:windowTitleStyle">@style/FileChooserTitleStyle_Dark</item>
