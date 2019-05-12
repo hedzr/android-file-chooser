@@ -17,7 +17,6 @@ import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_NORMAL
 import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_SELECT_MULTIPLE;
 import static com.obsez.android.lib.filechooser.internals.UiUtil.getListYScroll;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
@@ -28,6 +27,7 @@ import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.view.ContextThemeWrapper;
+import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.view.View;
@@ -191,11 +191,15 @@ class onShowListener implements DialogInterface.OnShowListener {
                     if (_c.get()._options == null) {
                         // region Draw options view. (this only happens the first time one clicks on options)
                         // Root view (FrameLayout) of the ListView in the AlertDialog.
-                        final int rootId = _c.get()._context.getResources().getIdentifier("contentPanel", "id",
-                            "android");
-                        final ViewGroup root = ((AlertDialog) dialog).findViewById(rootId);
+                        int rootId = _c.get()._context.getResources().getIdentifier("contentPanel", "id", _c.get()._context.getPackageName());
+                        ViewGroup tmpRoot = ((AlertDialog) dialog).findViewById(rootId);
                         // In case the root id was changed or not found.
-                        if (root == null) return;
+                        if (tmpRoot == null) {
+                            rootId = _c.get()._context.getResources().getIdentifier("contentPanel", "id", "android");
+                            tmpRoot = ((AlertDialog) dialog).findViewById(rootId);
+                            if (tmpRoot == null) return;
+                        }
+                        final ViewGroup root = tmpRoot;
 
                         // Create options view.
                         final FrameLayout options = new FrameLayout(_c.get()._context);

@@ -7,7 +7,6 @@ import static com.obsez.android.lib.filechooser.internals.FileUtil.NewFolderFilt
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,6 +22,7 @@ import android.support.annotation.StyleRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.view.ContextThemeWrapper;
+import android.support.v7.app.AlertDialog;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -638,10 +638,14 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     private void displayPath(String path) {
         if (_pathView == null) {
-            final int rootId = _context.getResources().getIdentifier("contentPanel", "id", "android");
-            final ViewGroup root = ((AlertDialog) _alertDialog).findViewById(rootId);
-            // In case the id was changed or not found.
-            if (root == null) return;
+            int rootId = _context.getResources().getIdentifier("contentPanel", "id", _context.getPackageName());
+            ViewGroup root = ((AlertDialog) _alertDialog).findViewById(rootId);
+            // In case the root id was changed or not found.
+            if (root == null) {
+                rootId = _context.getResources().getIdentifier("contentPanel", "id", "android");
+                root = ((AlertDialog) _alertDialog).findViewById(rootId);
+                if (root == null) return;
+            }
 
             ViewGroup.MarginLayoutParams params;
             if (root instanceof LinearLayout) {
