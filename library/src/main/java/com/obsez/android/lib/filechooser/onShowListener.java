@@ -1,23 +1,5 @@
 package com.obsez.android.lib.filechooser;
 
-import static android.view.Gravity.BOTTOM;
-import static android.view.Gravity.CENTER;
-import static android.view.Gravity.CENTER_HORIZONTAL;
-import static android.view.Gravity.CENTER_VERTICAL;
-import static android.view.Gravity.END;
-import static android.view.Gravity.START;
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
-import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-import static android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE;
-
-import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_DELETE;
-import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_NORMAL;
-import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_SELECT_MULTIPLE;
-import static com.obsez.android.lib.filechooser.internals.UiUtil.getListYScroll;
-
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
@@ -25,9 +7,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.view.ContextThemeWrapper;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.view.View;
@@ -41,12 +20,33 @@ import android.widget.LinearLayout;
 import android.widget.Space;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
+
 import com.obsez.android.lib.filechooser.internals.FileUtil;
 import com.obsez.android.lib.filechooser.internals.UiUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+
+import static android.view.Gravity.BOTTOM;
+import static android.view.Gravity.CENTER;
+import static android.view.Gravity.CENTER_HORIZONTAL;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
+import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+import static android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE;
+import static android.widget.RelativeLayout.CENTER_VERTICAL;
+import static androidx.appcompat.widget.ListPopupWindow.MATCH_PARENT;
+import static androidx.core.view.GravityCompat.END;
+import static androidx.core.view.GravityCompat.START;
+import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_DELETE;
+import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_NORMAL;
+import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_SELECT_MULTIPLE;
+import static com.obsez.android.lib.filechooser.internals.UiUtil.getListYScroll;
 
 class onShowListener implements DialogInterface.OnShowListener {
     private WeakReference<ChooserDialog> _c;
