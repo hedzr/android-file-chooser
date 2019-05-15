@@ -900,6 +900,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     }
                     _chooseMode = CHOOSE_MODE_NORMAL;
                     if (_deleteModeIndicator != null) _deleteModeIndicator.run();
+                    scrollTo = -1;
                     break;
                 default:
                     // ERROR! It shouldn't get here...
@@ -907,8 +908,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             }
         }
         refreshDirs();
-        _list.setSelection(scrollTo);
-        _list.post(() -> _list.setSelection(scrollTo));
+        if (scrollTo != -1) {
+            _list.setSelection(scrollTo);
+            _list.post(() -> _list.setSelection(scrollTo));
+        }
     }
 
     @Override
