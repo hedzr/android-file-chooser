@@ -455,6 +455,11 @@ class onShowListener implements DialogInterface.OnShowListener {
                                         END);
                                     buttons.addView(ok, params);
 
+                                    final int id = cancel.hashCode();
+                                    cancel.setId(id);
+                                    ok.setNextFocusLeftId(id);
+                                    input.setNextFocusLeftId(id);
+
                                     // Event Listeners.
                                     input.setOnEditorActionListener(
                                         (v, actionId, event) -> {
