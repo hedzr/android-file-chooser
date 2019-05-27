@@ -407,6 +407,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                                         _c.get()._newFolderFilter != null ? _c.get()._newFolderFilter
                                             : new FileUtil.NewFolderFilter()});
                                     input.setGravity(CENTER_HORIZONTAL);
+                                    input.setImeOptions(EditorInfo.IME_ACTION_DONE);
                                     params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
                                     params.setMargins(3, 2, 3, 0);
                                     holder.addView(input, params);
