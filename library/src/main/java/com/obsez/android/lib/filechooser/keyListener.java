@@ -1,13 +1,13 @@
 package com.obsez.android.lib.filechooser;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.content.DialogInterface;
 import android.view.KeyEvent;
 import android.view.View;
 
 import java.lang.ref.WeakReference;
-
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
 
 class keyListener implements DialogInterface.OnKeyListener {
     private WeakReference<ChooserDialog> _c;
@@ -45,6 +45,9 @@ class keyListener implements DialogInterface.OnKeyListener {
         if (!_c.get()._list.hasFocus()) {
             switch (keyCode) {
                 case KeyEvent.KEYCODE_DPAD_UP:
+                    if (_c.get()._neutralBtn == null) {
+                        return false;
+                    }
                     if (_c.get()._neutralBtn.hasFocus() || _c.get()._negativeBtn.hasFocus()
                         || _c.get()._positiveBtn.hasFocus()) {
                         if (_c.get()._options != null && _c.get()._options.getVisibility() == VISIBLE) {
