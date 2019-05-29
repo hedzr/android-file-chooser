@@ -12,7 +12,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.0'
+        classpath 'com.android.tools.build:gradle:3.4.1'
         classpath 'com.android.tools:r8:1.4.93'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 

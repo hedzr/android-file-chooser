@@ -4,30 +4,20 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.appcompat.view.ContextThemeWrapper
-
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
+import com.google.android.material.snackbar.Snackbar
 import com.obsez.android.lib.filechooser.demo.R
 import com.obsez.android.lib.filechooser.internals.UiUtil
 import kotlinx.android.synthetic.main.activity_about.*
 import kotlinx.android.synthetic.main.content_about.*
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.android.synthetic.main.li_about_item.view.*
 
 class AboutActivity : AppCompatActivity() {
     /*
@@ -141,19 +131,19 @@ class AboutActivity : AppCompatActivity() {
             holder.mValueView.tag = it.valueLink
             //holder.mIconView.text = it.title
         }
-        
-        class ViewHolder(view: View, clicking: ((v: View, holder: MainAdapter.ViewHolder) -> Unit)? = null) : RecyclerView.ViewHolder(view) {
-            internal var mTitleView = view.findViewById<TextView>(R.id.title)
-            internal var mSubTitleView = view.findViewById<TextView>(R.id.sub_title)
-            internal var mValueView = view.findViewById<TextView>(R.id.value)
-            internal var mCatalogView = view.findViewById<TextView>(R.id.catalog)
-            internal var mIconView = view.findViewById<ImageView>(R.id.icon)
-            
+
+        class ViewHolder(view: View, clicking: ((v: View, holder: ViewHolder) -> Unit)? = null) : RecyclerView.ViewHolder(view) {
+            internal var mTitleView = view.title
+            internal var mSubTitleView = view.sub_title
+            internal var mValueView = view.value
+            internal var mCatalogView = view.catalog
+            //internal var mIconView = view.icon
+
             init {
                 // mValueView.setOnClickListener {
                 //     clicking?.invoke(it, this)
                 // }
-                view.findViewById<View>(R.id.row)?.setOnClickListener {
+                view.row?.setOnClickListener {
                     clicking?.invoke(it, this)
                 }
             }
