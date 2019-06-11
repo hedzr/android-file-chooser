@@ -51,7 +51,7 @@
             android:layout_toEndOf="@+id/icon"
             android:layout_toRightOf="@+id/icon"
             android:gravity="center_vertical"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             app:fontFamily="@font/adamina"
             tools:text="@string/title_choose"/>
 
@@ -67,7 +67,7 @@
             android:layout_toEndOf="@+id/icon"
             android:layout_toRightOf="@+id/icon"
             android:textAllCaps="true"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textAppearance="?android:attr/textAppearanceListItemSmall"
             android:textSize="12sp"
             android:textStyle="italic"
             app:fontFamily="@font/amita"
