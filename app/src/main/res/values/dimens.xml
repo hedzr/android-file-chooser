@@ -5,4 +5,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="app_bar_height">210dp</dimen>
     <dimen name="text_margin">16dp</dimen>
+
+    <bool name="large_layout">false</bool>
+
 </resources>
