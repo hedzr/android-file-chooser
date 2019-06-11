@@ -177,7 +177,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         if (startFile != null) {
             _currentDir = new File(startFile);
         } else {
-            _currentDir = new File(FileUtil.getStoragePath(_context, false));
+            _currentDir = new File(FileUtil.getDefaultPath(_context, false));
         }
 
         if (!_currentDir.isDirectory()) {
@@ -185,7 +185,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         }
 
         if (_currentDir == null) {
-            _currentDir = new File(FileUtil.getStoragePath(_context, false));
+            _currentDir = new File(FileUtil.getDefaultPath(_context, false));
         }
 
         return this;
@@ -689,8 +689,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             _list.setLayoutParams(param);
         } else {
             if (removableRoot == null || primaryRoot == null) {
-                removableRoot = FileUtil.getStoragePath(_context, true);
-                primaryRoot = FileUtil.getStoragePath(_context, false);
+                removableRoot = FileUtil.getDefaultPath(_context, true);
+                primaryRoot = FileUtil.getDefaultPath(_context, false);
             }
             if (path.contains(removableRoot)) {
                 path = path.substring(displayRoot ? removableRoot.lastIndexOf('/') + 1 : removableRoot.length());
@@ -744,7 +744,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         _entries.clear();
 
         if (_currentDir == null) {
-            _currentDir = new File(FileUtil.getStoragePath(_context, false));
+            _currentDir = FileUtil.getDefaultPathAsFile(_context, false);
         }
 
         // Get files
@@ -752,8 +752,8 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
         // Add the ".." entry
         if (removableRoot == null || primaryRoot == null) {
-            removableRoot = FileUtil.getStoragePath(_context, true);
-            primaryRoot = FileUtil.getStoragePath(_context, false);
+            removableRoot = FileUtil.getDefaultPath(_context, true);
+            primaryRoot = FileUtil.getDefaultPath(_context, false);
         }
         if (!removableRoot.equals(primaryRoot)) {
             if (_currentDir.getAbsolutePath().equals(primaryRoot)) {

@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.os.storage.StorageManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.InputFilter;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -71,8 +72,29 @@ public class FileUtil {
         return String.valueOf(dec.format(fileSize) + suffix);
     }
 
+    @Nullable
+    public static File getDefaultPathAsFile(Context context, boolean isRemovable) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+            String path = getDefaultPath(context, isRemovable);
+            return new File(path);
+        } else {
+            return context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+        }
+    }
+
     @NonNull
-    public static String getStoragePath(Context context, boolean isRemovable) {
+    public static String getDefaultPath(Context context, boolean isRemovable) {
+        String path;
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+            path = getStoragePath(context, isRemovable);
+        } else {
+            path = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        }
+        return path;
+    }
+
+    @NonNull
+    protected static String getStoragePath(Context context, boolean isRemovable) {
         StorageManager storageManager = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
         Class<?> storageVolumeClazz = null;
         try {
