@@ -7,10 +7,16 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.storage.StorageManager;
+import android.os.storage.StorageVolume;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +25,6 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.support.v7.app.AlertDialog;
 
 import com.obsez.android.lib.filechooser.ChooserDialog;
 import com.obsez.android.lib.filechooser.demo.tool.ImageUtil;
@@ -30,6 +35,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Set;
 
 import timber.log.Timber;
 
@@ -65,14 +71,88 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
         super.onActivityCreated(savedInstanceState);
 
         assert getActivity() != null;
-        String ext = FileUtil.getStoragePath(getActivity(), true);
-        String itl = FileUtil.getStoragePath(getActivity(), false);
-        Timber.v("ext: " + ext + ", total size: " + FileUtil.getReadableFileSize(
-            FileUtil.readSDCard(getActivity(), true)) + ", free size: " + FileUtil.getReadableFileSize(
-            FileUtil.readSDCard(getActivity(), true, true)));
-        Timber.v("itl: " + itl + ", total size: " + FileUtil.getReadableFileSize(
-            FileUtil.readSDCard(getActivity(), false)) + ", free size: " + FileUtil.getReadableFileSize(
-            FileUtil.readSDCard(getActivity(), false, true)));
+        Context c = getActivity();
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            String ext = FileUtil.getDefaultPath(c, true);
+            String itl = FileUtil.getDefaultPath(c, false);
+            Timber.v("ext: " + ext + ", total size: " + FileUtil.getReadableFileSize(
+                FileUtil.readSDCard(c, true)) + ", free size: " + FileUtil.getReadableFileSize(
+                FileUtil.readSDCard(c, true, true)));
+            Timber.v("itl: " + itl + ", total size: " + FileUtil.getReadableFileSize(
+                FileUtil.readSDCard(c, false)) + ", free size: " + FileUtil.getReadableFileSize(
+                FileUtil.readSDCard(c, false, true)));
+        }
+
+        StorageManager storageManager = (StorageManager) c.getSystemService(Context.STORAGE_SERVICE);
+        //StorageVolume svPrimary = storageManager.getPrimaryStorageVolume()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (storageManager != null) {
+                for (StorageVolume sv : storageManager.getStorageVolumes()) {
+                    Timber.d("    vol: state=%s, desc=%s, isEmulated=%b, isPrimary=%b, isRemovable=%b | %s",
+                        sv.getState(), sv.getDescription(c), sv.isEmulated(), sv.isPrimary(), sv.isRemovable(),
+                        sv.toString());
+                }
+            }
+        }
+
+
+        Timber.d("Test dirs for Q: ------------------------------");
+        Timber.v("  Environment.getDataDirectory : %s", Environment.getDataDirectory().getAbsoluteFile());
+        Timber.v("  Environment.getDownloadCacheDirectory : %s",
+            Environment.getDownloadCacheDirectory().getAbsoluteFile());
+        Timber.v("  Environment.getExternalStorageDirectory : %s",
+            Environment.getExternalStorageDirectory().getAbsoluteFile());
+        Timber.v("  Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) : %s",
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile());
+        Timber.v("  Environment.getRootDirectory : %s", Environment.getRootDirectory().getAbsoluteFile());
+        Timber.v("  ------------------------------");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            Set<String> volumes = MediaStore.getExternalVolumeNames(c);
+            for (String s : volumes) {
+                Timber.d("    vol: %s", s);
+            }
+        }
+        Timber.v("  ------------------------------");
+        Timber.d("   getCacheDir : %s", c.getCacheDir().getAbsoluteFile());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Timber.d("   getCodeCacheDir : %s", c.getCodeCacheDir().getAbsoluteFile());
+        }
+        Timber.d("   getDatabasePath(abc) : %s", c.getDatabasePath("abc").getAbsoluteFile());
+        Timber.d("   getDatabasePath(v.db3) : %s", c.getDatabasePath("v.db3").getAbsoluteFile());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Timber.d("   getDataDir : %s", c.getDataDir().getAbsoluteFile());
+        }
+        Timber.d("   getDir(null) : %s", c.getDir(null, Context.MODE_PRIVATE).getAbsoluteFile());
+        Timber.d("   getDir(zzz) : %s", c.getDir("zzz", Context.MODE_PRIVATE).getAbsoluteFile());
+        Timber.d("   getExternalCacheDir : %s", c.getExternalCacheDir().getAbsoluteFile());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            for (File f : c.getExternalCacheDirs()) {
+                Timber.d("   getExternalCacheDirs : %s", f.getAbsoluteFile());
+            }
+        }
+        Timber.d("   getExternalFilesDir : %s", c.getExternalFilesDir(null).getAbsoluteFile());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            for (File f : c.getExternalFilesDirs(null)) {
+                Timber.d("   getExternalFilesDirs : %s", f.getAbsoluteFile());
+            }
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            for (File f : c.getExternalMediaDirs()) {
+                Timber.d("   getExternalMediaDirs : %s", f.getAbsoluteFile());
+            }
+        }
+        Timber.d("   getFilesDir : %s", c.getFilesDir().getAbsoluteFile());
+        Timber.d("   getFileStreamPath : %s", c.getFileStreamPath("").getAbsoluteFile());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Timber.d("   getNoBackupFilesDir : %s", c.getNoBackupFilesDir().getAbsoluteFile());
+        }
+        Timber.d("   getObbDir : %s", c.getObbDir().getAbsoluteFile());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            for (File f : c.getObbDirs()) {
+                Timber.d("   getObbDirs : %s", f.getAbsoluteFile());
+            }
+        }
+        Timber.d("   getPackageCodePath : %s", c.getPackageCodePath());
     }
 
     @Nullable
