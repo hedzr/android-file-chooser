@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
           package="com.obsez.android.lib.filechooser.demo">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -33,6 +39,22 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts"/>
+
+        <provider
+            android:name=".tool.AppContextProvider"
+            android:authorities="${applicationId}.tool.applicationprovider"
+            android:directBootAware="true"
+            android:exported="false"
+            android:initOrder="900"
+            tools:ignore="UnusedAttribute"/>
+        <provider
+            android:name=".tool.LastActivityProvider"
+            android:authorities="${applicationId}.tool.lastactivityprovider"
+            android:directBootAware="true"
+            android:exported="false"
+            android:initOrder="900"
+            tools:ignore="UnusedAttribute"/>
+
     </application>
 
 </manifest>
