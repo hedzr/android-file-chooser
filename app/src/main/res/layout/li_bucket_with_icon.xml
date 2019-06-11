@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    tools:ignore="ResourceName">
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentLeft="false"
+        android:layout_centerVertical="false"
+        android:layout_marginTop="6dp"
+        android:layout_toEndOf="@+id/tv_icon"
+        android:layout_toRightOf="@+id/tv_icon"
+        android:ellipsize="end"
+        android:lines="1"
+        android:singleLine="true"
+        android:textSize="16sp"
+        tools:text="@string/title_choose"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_size"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_title"
+        android:layout_alignStart="@+id/tv_title"
+        android:layout_alignLeft="@+id/tv_title"
+        android:layout_toStartOf="@+id/tv_date"
+        android:layout_toLeftOf="@+id/tv_date"
+        tools:text="@string/title_choose"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/tv_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_title"
+        android:layout_alignEnd="@+id/tv_title"
+        android:layout_alignRight="@+id/tv_title"
+        tools:text="@string/title_choose"/>
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/tv_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:contentDescription="@string/title_choose"
+        android:src="@drawable/ic_folder"
+        android:visibility="visible"
+        app:srcCompat="@drawable/ic_folder"
+        tools:visibility="visible"/>
+
+</RelativeLayout>
