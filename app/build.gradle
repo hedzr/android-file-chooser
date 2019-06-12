@@ -14,7 +14,7 @@ def JAVA_COMPATIBILITY =  JavaVersion.valueOf(project.JAVA_COMPATIBILITY)
 
 android {
     compileSdkVersion ANDROID_COMPILE_SDK_VERSION
-    //buildToolsVersion ANDROID_BUILD_TOOLS_VERSION
+    buildToolsVersion ANDROID_BUILD_TOOLS_VERSION
 
     signingConfigs {
         Properties properties = new Properties()
