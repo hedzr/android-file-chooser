@@ -19,19 +19,10 @@
     under the License.
 -->
 
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment"
     android:name="com.obsez.android.lib.filechooser.demo.ChooseFileActivityFragment"
-    tools:layout="@layout/fragment_choose_file"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
-
-    <!--<fragment xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--xmlns:tools="http://schemas.android.com/tools"-->
-    <!--android:id="@+id/fragment"-->
-    <!--android:name="com.obsez.android.lib.filechooser.demo.ChooseFileActivityFragment"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--tools:layout="@layout/fragment_choose_file" />-->
+    android:layout_height="match_parent"
+    tools:layout="@layout/fragment_choose_file" />
