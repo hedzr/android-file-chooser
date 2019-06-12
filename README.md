@@ -5,20 +5,24 @@
 [![Release](https://jitpack.io/v/hedzr/android-file-chooser.svg)](https://jitpack.io/#hedzr/android-file-chooser)
 [![Build Status](https://travis-ci.com/hedzr/android-file-chooser.svg?branch=master)](https://travis-ci.com/hedzr/android-file-chooser)
 
-## Legacy
+### Legacy
 
+```
 dependencies {
 	// implementation 'com.github.hedzr:android-file-chooser:1.2.0-SNAPSHOT'
 	implementation 'com.github.hedzr:android-file-chooser:v1.2.0'
 }
+```
 
-## MediaStore for Android Q (still in beta)
+### MediaStore for Android Q (still in beta)
 
+```
 dependencies {
 	implementation 'com.github.hedzr:android-file-chooser:master-SNAPSHOT'
 }
 
 `android-file-library` is a lightweight file/folder chooser.
+```
 
 The usages at [HERE](#Usages), and [Acknowledges](#Acknowledges).
 
