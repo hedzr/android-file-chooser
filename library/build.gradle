@@ -70,6 +70,7 @@ task createPom {
             groupId GROUP
             artifactId 'android-file-chooser'
             version VERSION_NAME
+            packaging 'aar'
 
             inceptionYear '2015'
             licenses {
