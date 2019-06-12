@@ -20,4 +20,8 @@
     <string name="choose_file">Select a file</string>
     <string name="error_selecting_file">Error selecting File</string>
     <string name="internal_storage">Internal storage</string>
+
+    <string name="loading">Loading…</string>
+    <string name="searching">Searching…</string>
+
 </resources>

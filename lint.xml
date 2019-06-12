@@ -1,10 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
-  <issue id="GoogleAppIndexWarning" severity="ignore" />
+    <issue id="GoogleAppIndexWarning" severity="ignore"/>
 
-  <issue id="InvalidPackage" severity="error">
-    <ignore regexp="okio.*jar" />
-    <ignore regexp="retrofit.*jar" />
-  </issue>
+    <issue id="InvalidPackage" severity="error">
+        <ignore regexp="okio.*jar"/>
+        <ignore regexp="retrofit.*jar"/>
+    </issue>
+
+    <!-- Disable the given check in this project -->
+    <issue id="IconMissingDensityFolder" severity="ignore"/>
+
+    <!-- Ignore the ObsoleteLayoutParam issue in the specified files -->
+    <!--<issue id="ObsoleteLayoutParam">-->
+    <!--<ignore path="res/layout/activation.xml"/>-->
+    <!--<ignore path="res/layout-xlarge/activation.xml"/>-->
+    <!--</issue>-->
+
+    <!-- Ignore the UselessLeaf issue in the specified file -->
+    <!--<issue id="UselessLeaf">-->
+    <!--<ignore path="res/layout/main.xml"/>-->
+    <!--</issue>-->
+
+    <!-- Change the severity of hardcoded strings to "error" -->
+    <!--<issue id="HardcodedText" severity="error"/>-->
 </lint>
 

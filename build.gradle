@@ -45,4 +45,29 @@ allprojects {
         mavenCentral()
         mavenLocal()
     }
+
+    tasks.withType(Javadoc) {
+        //options.addStringOption('Xdoclint:none', '-quiet')
+        options.addStringOption('encoding', 'UTF-8')
+        options.addBooleanOption('Xdoclint:none', true)
+    }
+
+    // to disable 'javadoc error - illegal package name kotlin'
+    //    https://github.com/novoda/bintray-release/issues/71
+    // make it works: `./gradlew clean build`.
+    //
+    tasks.withType(Javadoc).all {
+        enabled = false
+    }
 }
+
+// to disable 'javadoc error - illegal package name kotlin'
+//    https://github.com/novoda/bintray-release/issues/71
+//if (JavaVersion.current().isJava8Compatible()) {
+//    allprojects {
+//        tasks.withType(Javadoc) {
+//            options.addStringOption('Xdoclint:none', '-quiet')
+//            options.addStringOption('encoding', 'UTF-8')
+//        }
+//    }
+//}

@@ -53,7 +53,7 @@ NOTE: list height is 0 while using constraintlayout
             android:layout_height="wrap_content"
             android:paddingTop="4dip"
             android:singleLine="true"
-            android:text="@string/loading"
+            android:text="@string/searching"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:visibility="gone"/>
 
