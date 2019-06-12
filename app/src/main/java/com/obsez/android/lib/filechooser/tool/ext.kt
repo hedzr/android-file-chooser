@@ -87,10 +87,3 @@ fun RecyclerView.changeLayoutManager(layoutManager: RecyclerView.LayoutManager, 
     if (restoreScrollPosition)
         this.scrollToPosition(scrollPosition)
 }
-
-inline fun <reified T : Enum<T>> printAllValues() {
-    print(enumValues<T>().joinToString { it.name })
-}
-// enum class RGB { RED, GREEN, BLUE }
-// printAllValues<RGB>() // 输出 RED, GREEN, BLUE
-

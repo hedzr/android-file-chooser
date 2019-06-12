@@ -20,7 +20,7 @@ object Demo {
             .build()
             .show()
     }
-    
+
     fun demo2(context: Context, startPath: String, callback: ChooserDialog.Result) {
         ChooserDialog(context)
             .displayPath(true)

@@ -5,18 +5,9 @@ import android.os.Bundle
 import android.support.annotation.IdRes
 import android.support.v4.app.FragmentActivity
 import com.obsez.android.lib.filechooser.PickerDialogFragment.Companion.argDialogMode
-import com.obsez.android.lib.filechooser.PickerDialogFragment.Companion.argMediaType
 import com.obsez.android.lib.filechooser.demo.tool.ActivityProvider
-import com.obsez.android.lib.filechooser.media.*
 import timber.log.Timber
 
-enum class MediaType(val getter: MediaTypeGetter) {
-    IMAGES(ImagesMediaTypeGetter()), //(MediaStore.Images.Media.EXTERNAL_CONTENT_URI),
-    VIDEOS(VideosMediaTypeGetter()), //(MediaStore.Video.Media.EXTERNAL_CONTENT_URI),
-    AUDIOS(AudiosMediaTypeGetter()), //(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI),
-    DOWNLOADS(DownloadsMediaTypeGetter()), //(MediaStore.Downloads.EXTERNAL_CONTENT_URI),
-    FILES(FilesMediaTypeGetter()), //(MediaStore.Files.EXTERNAL_CONTENT_URI), // MediaStore.Files.getContentUri(volName)
-}
 
 class MediaStorePicker {
     
@@ -24,21 +15,19 @@ class MediaStorePicker {
         fun get(): MediaStorePicker {
             return MediaStorePicker()
         }
-    
     }
     
     /**
      * @param dialogMode true means a large screen detected, and picker will be shown as a popup dialog.
      * @param containerId the fragment container's res-id, default is [android.R.id.content].
      */
-    fun config(mediaType: MediaType = MediaType.IMAGES, dialogMode: Boolean = false, @IdRes containerId: Int = android.R.id.content): MediaStorePicker {
-        mMediaType = mediaType
+    fun config(@IdRes containerId: Int = android.R.id.content, dialogMode: Boolean = false): MediaStorePicker {
         mDialogMode = dialogMode
         mContainerId = containerId
         return this
     }
     
-    private fun build(): MediaStorePicker {
+    fun build(): MediaStorePicker {
         // TODO How to refresh MediaStore database exactly?
         MediaScannerConnection.scanFile(ActivityProvider.currentActivity!!
             , emptyArray()
@@ -52,8 +41,6 @@ class MediaStorePicker {
     
     
     fun show() {
-        build()
-        
         val a = ActivityProvider.currentActivity!!
         //Timber.d("application = $application, last activity = $a")
         if (a is FragmentActivity) {
@@ -61,7 +48,6 @@ class MediaStorePicker {
             val pickerFragment = PickerDialogFragment()
             pickerFragment.arguments = Bundle().apply {
                 putBoolean(argDialogMode, mDialogMode)
-                putInt(argMediaType, mMediaType.ordinal)
             }
     
             //Timber.d("mDialogMode = $mDialogMode")
@@ -83,8 +69,6 @@ class MediaStorePicker {
         }
     }
     
-    
-    private var mMediaType: MediaType = MediaType.IMAGES
     private var mDialogMode = true
     @IdRes
     private var mContainerId: Int = android.R.id.content

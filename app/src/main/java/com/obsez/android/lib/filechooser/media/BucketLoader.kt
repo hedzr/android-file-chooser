@@ -7,7 +7,6 @@ import android.os.Build
 import android.provider.MediaStore
 import android.support.v4.content.AsyncTaskLoader
 import android.support.v4.os.BuildCompat
-import com.obsez.android.lib.filechooser.MediaType
 import java.io.File
 
 //import retrofit2.Retrofit
@@ -62,7 +61,6 @@ import java.io.File
  * query's the Book Service API.
  */
 class BucketLoader(context: Context,
-                   private val mediaType: MediaType,
                    private val mQueryString: String,
                    private val progressListener: ProgressListener? = null) : AsyncTaskLoader<Buckets>(context) {
     
@@ -88,15 +86,12 @@ class BucketLoader(context: Context,
      */
     override fun loadInBackground(): Buckets? {
         var cursor: Cursor? = null
-        val contentUri = mediaType.getter.getContentUri()
         try {
-            cursor = context.contentResolver.query(
-                contentUri,
-                mediaType.getter.getProjection(),
+            cursor = context.contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null,
                 //MediaStore.Images.Media.MIME_TYPE + "= ? or " + MediaStore.Images.Media.MIME_TYPE + "= ?",
                 //arrayOf("image/jpeg", "image/png"),
-                mediaType.getter.getSelection(), mediaType.getter.getSelectionArgs(),
-                mediaType.getter.getSortOrder())
+                null, null,
+                MediaStore.Images.Media.DATE_MODIFIED + " DESC")
             val mDirs = mutableMapOf<String, Long>()
             if (cursor != null) {
                 var bid: Long = 1
@@ -120,7 +115,7 @@ class BucketLoader(context: Context,
                 
                 while (cursor.moveToNext()) {
                     val id = cursor.getString(idColumn)
-                    val photoUri = Uri.withAppendedPath(contentUri, id)
+                    val photoUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
                     val title = cursor.getString(titleColumn)
                     val size = safeString2(cursor, sizeColumn, "0")
                     val w = safeString2(cursor, widthColumn, "0")
@@ -168,7 +163,7 @@ class BucketLoader(context: Context,
     }
     
     private fun safeString(cursor: Cursor?, idx: Int): String {
-        return if (idx < 0) "" else try {
+        return try {
             cursor?.getString(idx) ?: ""
         } catch (e: Exception) {
             ""
@@ -176,7 +171,7 @@ class BucketLoader(context: Context,
     }
     
     private fun safeString2(cursor: Cursor?, idx: Int, def: String): String {
-        return if (idx < 0) def else try {
+        return try {
             cursor?.getString(idx) ?: def
         } catch (e: Exception) {
             def

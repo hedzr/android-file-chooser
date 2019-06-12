@@ -2,8 +2,12 @@ package com.obsez.android.lib.filechooser.media
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
-import com.obsez.android.lib.filechooser.MediaType
+import android.os.Build
+import android.provider.MediaStore
+import android.util.Size
+import timber.log.Timber
 
 
 interface BucketBase {
@@ -25,9 +29,25 @@ data class BucketItem(override var title: String, override var id: Long,
     
     private var _thumbnail: Bitmap? = null
     
-    fun getThumbnail(c: Context, mediaType: MediaType, width: Int = 96): Bitmap? {
+    fun getThumbnail(c: Context, width: Int = 96): Bitmap? {
         if (_thumbnail == null) {
-            _thumbnail = mediaType.getter.getThumbnail(c, id, uri, width)
+            _thumbnail = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // val w = if (width <= 0) 128 else width
+                try {
+                    c.contentResolver.loadThumbnail(uri, Size(512, 384), null)
+                } catch (e: Exception) {
+                    null
+                }
+            } else {
+                val bmOptions = BitmapFactory.Options()
+                bmOptions.inSampleSize = 2
+                Timber.v("MediaStore.Images.Thumbnails.getThumbnail for id=$id")
+                MediaStore.Images.Thumbnails.getThumbnail(c.contentResolver,
+                    id,
+                    MediaStore.Images.Thumbnails.MINI_KIND,  // 512 x 384
+                    //MediaStore.Images.Thumbnails.MICRO_KIND, // 96 x 96
+                    bmOptions)
+            }
         }
         return _thumbnail
     }
