@@ -11,7 +11,6 @@ import android.os.Build;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -51,8 +50,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static androidx.appcompat.widget.ListPopupWindow.MATCH_PARENT;
+import static androidx.appcompat.widget.ListPopupWindow.WRAP_CONTENT;
 import static com.obsez.android.lib.filechooser.internals.FileUtil.NewFolderFilter;
 
 /**
