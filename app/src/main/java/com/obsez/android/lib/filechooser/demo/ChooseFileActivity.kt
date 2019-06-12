@@ -1,13 +1,13 @@
 package com.obsez.android.lib.filechooser.demo
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.obsez.android.lib.filechooser.MediaStorePicker
+import com.obsez.android.lib.filechooser.MediaType
 import com.obsez.android.lib.filechooser.demo.about.AboutActivity
 import timber.log.Timber
 import java.util.*
@@ -86,9 +86,12 @@ class ChooseFileActivity : AppCompatActivity() {
     
             var isLargeLayout = resources.getBoolean(R.bool.large_layout)
             //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                isLargeLayout = true
+            isLargeLayout = true
             //}
-            MediaStorePicker.get().config(R.id.fragment, isLargeLayout).build().show()
+    
+            Timber.v("MediaType: ${MediaType.IMAGES}, ${MediaType.IMAGES.name}, ${MediaType.IMAGES.ordinal}, ${MediaType.IMAGES.getter}, ")
+    
+            MediaStorePicker.get().config(MediaType.VIDEOS, isLargeLayout, R.id.fragment).show()
             return true
         }
         

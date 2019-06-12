@@ -16,26 +16,32 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.ProgressBar
-import android.widget.TextView
 import android.widget.Toast
 import com.obsez.android.lib.filechooser.demo.R
 import com.obsez.android.lib.filechooser.media.*
 import com.obsez.android.lib.filechooser.media.BucketsAdapter.TasksListener
 import com.obsez.android.lib.filechooser.permissions.PermissionsUtil
-import com.obsez.android.lib.filechooser.tool.addRipple
 import com.obsez.android.lib.filechooser.tool.changeLayoutManager
-import com.obsez.android.lib.filechooser.tool.makeClickable
 import com.obsez.android.lib.filechooser.tool.networkInfo
 import timber.log.Timber
 
 
 class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buckets> {
     companion object {
+        const val argMediaType = "mediaType"
         const val argDialogMode = "dialogMode"
         const val argQueryString = "queryString"
     }
     
-    var ourRootView: ViewGroup? = null
+    private var ourRootView: ViewGroup? = null
+    
+    private var mAdapter: BucketsAdapter? = null
+    
+    private var lmBucketView: RecyclerView.LayoutManager? = null
+    private var lmBucketItemView: RecyclerView.LayoutManager? = null
+    
+    private var _permissionListener: PermissionsUtil.OnPermissionListener? = null
+    
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -101,9 +107,6 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
         }
     }
     
-    private var lmBucketView: RecyclerView.LayoutManager? = null
-    private var lmBucketItemView: RecyclerView.LayoutManager? = null
-    
     private fun initView(root: ViewGroup) {
         lmBucketView = LinearLayoutManager(this.activity, LinearLayoutManager.VERTICAL, false)
         lmBucketItemView = GridLayoutManager(this.activity, 6, GridLayoutManager.VERTICAL, false).apply {
@@ -122,10 +125,50 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
         }
     }
     
-    private var _permissionListener: PermissionsUtil.OnPermissionListener? = null
+    private fun initAdapter() {
+        //mAdapter = MyAdapter(getData())
+        mAdapter = BucketsAdapter(
+            MediaType.values()[arguments?.getInt(argMediaType) ?: MediaType.IMAGES.ordinal],
+            object : TasksListener {
+                override fun onCallClick(position: Int, item: BucketBase) {
+                    Timber.d("onCallClick($position, bucket: $item)")
+                }
+            
+                override fun onBucketItemClick(position: Int, item: BucketItem, bucket: BucketBase) {
+                    Timber.d("onBucketItemClick($position, item: $item, bucket: $bucket)")
+                }
+            
+                override fun onBackToBucketView(lastSel: Bucket) {
+                    val mRecyclerView = ourRootView?.findViewById(R.id.recyclerView1) as RecyclerView
+                    mRecyclerView.apply {
+                        changeLayoutManager(lmBucketView!!)
+                        scrollToPosition(bucketViewPos)
+                    }
+                }
+            
+                override fun onItemClick(position: Int, item: BucketBase) {
+                    val mRecyclerView = ourRootView?.findViewById(R.id.recyclerView1) as RecyclerView
+                    mRecyclerView.apply {
+                        bucketViewSel = position
+                        bucketViewPos = (layoutManager as LinearLayoutManager)
+                            .findFirstCompletelyVisibleItemPosition()
+                        changeLayoutManager(lmBucketItemView!!)
+                    }
+                    Timber.v("onItemClick($position, bucket: $item), changeLayoutManager to grid")
+                }
+            
+                private var bucketViewPos: Int = 0
+                private var bucketViewSel: Int = 0
+            })
+        
+        //this.addAll(getData())
+        getData()
+    }
     
     private fun getData(): ArrayList<Bucket> {
         loader()
+        
+        // demo data
         
         val data = ArrayList<Bucket>()
         val temp = " item"
@@ -134,173 +177,6 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
         }
         
         return data
-    }
-    
-    //    fun onCreateDialog(savedInstanceState: Bundle): Dialog {
-    //        // Use the Builder class for convenient dialog construction
-    //        val builder = AlertDialog.Builder(getActivity())
-    //        builder.setMessage(R.string.dialog_fire_missiles)
-    //            .setPositiveButton(R.string.fire, DialogInterface.OnClickListener { dialog, id ->
-    //                // FIRE ZE MISSILES!
-    //            })
-    //            .setNegativeButton(R.string.cancel, DialogInterface.OnClickListener { dialog, id ->
-    //                // User cancelled the dialog
-    //            })
-    //        // Create the AlertDialog object and return it
-    //        return builder.create()
-    //    }
-    
-    private var mAdapter: BucketsAdapter? = null
-    
-    
-    inner class MyAdapter(private var mData: ArrayList<String>?) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
-        
-        fun updateData(data: ArrayList<String>) {
-            this.mData = data
-            notifyDataSetChanged()
-        }
-        
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val v = LayoutInflater.from(parent.context).inflate(android.R.layout.simple_selectable_list_item, parent, false)
-            
-            // android:background="?actionBarItemBackground"
-            // android:background="?android:attr/actionBarItemBackground"
-            v.addRipple()
-            v.makeClickable(true)
-            
-            return ViewHolder(v)
-        }
-        
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            holder.mTv.text = mData?.get(position) ?: ""
-        }
-        
-        override fun getItemCount(): Int {
-            return mData?.size ?: 0
-        }
-        
-        inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            
-            internal var mTv: TextView = itemView.findViewById<View>(android.R.id.text1) as TextView
-            
-            init {
-                //
-            }
-        }
-    }
-    
-    
-    private fun initAdapter() {
-        //mAdapter = MyAdapter(getData())
-        mAdapter = BucketsAdapter(object : TasksListener {
-            override fun onCallClick(position: Int, item: BucketBase) {
-                Timber.d("onCallClick($position, bucket: $item)")
-            }
-            
-            override fun onBucketItemClick(position: Int, item: BucketItem, bucket: BucketBase) {
-                Timber.d("onBucketItemClick($position, item: $item, bucket: $bucket)")
-            }
-            
-            override fun onBackToBucketView(lastSel: Bucket) {
-                val mRecyclerView = ourRootView?.findViewById(R.id.recyclerView1) as RecyclerView
-                mRecyclerView.apply {
-                    changeLayoutManager(lmBucketView!!)
-                    scrollToPosition(bucketViewPos)
-                }
-            }
-            
-            override fun onItemClick(position: Int, item: BucketBase) {
-                val mRecyclerView = ourRootView?.findViewById(R.id.recyclerView1) as RecyclerView
-                mRecyclerView.apply {
-                    bucketViewSel = position
-                    bucketViewPos = (layoutManager as LinearLayoutManager)
-                        .findFirstCompletelyVisibleItemPosition()
-                    changeLayoutManager(lmBucketItemView!!)
-                }
-                Timber.v("onItemClick($position, bucket: $item), changeLayoutManager to grid")
-            }
-            
-            private var bucketViewPos: Int = 0
-            private var bucketViewSel: Int = 0
-        })
-        
-        //this.addAll(getData())
-        getData()
-    }
-    
-    override fun onCreateLoader(id: Int, args: Bundle?): Loader<Buckets> {
-    
-        val progressListener = object : BucketLoader.ProgressListener {
-            private val pb = ourRootView?.findViewById<ProgressBar>(R.id.progressContainer)
-        
-            override fun onInit(max: Int) {
-                activity?.runOnUiThread {
-                    pb?.apply {
-                        visibility = View.VISIBLE
-                        this.max = max
-                        this.progress = 0
-                    }
-                }
-            }
-        
-            override fun onStep(diff: Int, bucketId: Long, bucketName: String, item: BucketItem) {
-                activity?.runOnUiThread {
-                    pb?.incrementProgressBy(diff)
-                    mAdapter?.addOne(bucketId, bucketName, item)
-                }
-            
-                // make ui animating
-                Thread.sleep(20)
-            }
-        
-            override fun onEnd() {
-                activity?.runOnUiThread {
-                    pb?.apply {
-                        visibility = View.GONE
-                    }
-                }
-            }
-        }
-    
-    
-        return BucketLoader(
-            this.activity!!,
-            args?.getString(argQueryString) ?: "",
-            progressListener)
-    }
-    
-    override fun onLoadFinished(loader: Loader<Buckets>, tasks: Buckets?) {
-        // activity?.runOnUiThread { ourRootView?.findViewById<ViewGroup>(R.id.progressContainer)?.visibility = View.GONE }
-    }
-    
-    override fun onLoaderReset(loader: Loader<Buckets>) {
-        // TO DO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-    
-    @Suppress("DEPRECATION")
-    private fun loaderRun() {
-        //Check if a Loader is running, if it is, reconnect to it
-        val lm = LoaderManager.getInstance(this)
-        if (lm.getLoader<Any>(0) != null) {
-            lm.initLoader(0, null, this)
-        }
-        
-        val networkInfo = activity?.networkInfo
-        
-        // If the network is active and the search field is not empty,
-        // add the search term to the arguments Bundle and start the loader.
-        if (networkInfo != null && networkInfo.isConnected) {
-            val queryBundle = Bundle()
-            lm.restartLoader(0, queryBundle, this)
-        } else {
-            // Otherwise update the TextView to tell the user there is no connection or no search term.
-            //if (queryString.isEmpty()) {
-            //    titleText!!.setText(R.string.no_search_term)
-            //} else {
-            //    titleText!!.setText(R.string.no_network)
-            //}
-            Timber.d("")
-        }
     }
     
     private fun loader() {
@@ -348,6 +224,81 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
             Manifest.permission.ACCESS_MEDIA_LOCATION)
         
         PermissionsUtil.checkPermissions(activity!!, _permissionListener, *permissions)
+    }
+    
+    @Suppress("DEPRECATION")
+    private fun loaderRun() {
+        //Check if a Loader is running, if it is, reconnect to it
+        val lm = LoaderManager.getInstance(this)
+        if (lm.getLoader<Any>(0) != null) {
+            lm.initLoader(0, null, this)
+        }
+        
+        val networkInfo = activity?.networkInfo
+        
+        // If the network is active and the search field is not empty,
+        // add the search term to the arguments Bundle and start the loader.
+        if (networkInfo != null && networkInfo.isConnected) {
+            val queryBundle = Bundle()
+            lm.restartLoader(0, queryBundle, this)
+        } else {
+            // Otherwise update the TextView to tell the user there is no connection or no search term.
+            //if (queryString.isEmpty()) {
+            //    titleText!!.setText(R.string.no_search_term)
+            //} else {
+            //    titleText!!.setText(R.string.no_network)
+            //}
+            Timber.d("")
+        }
+    }
+    
+    override fun onCreateLoader(id: Int, args: Bundle?): Loader<Buckets> {
+        
+        val progressListener = object : BucketLoader.ProgressListener {
+            private val pbc = ourRootView?.findViewById<ViewGroup>(R.id.progressContainer)
+            private val pb = ourRootView?.findViewById<ProgressBar>(R.id.progressBar)
+            
+            override fun onInit(max: Int) {
+                activity?.runOnUiThread {
+                    pbc?.visibility = View.VISIBLE
+                    pb?.apply {
+                        this.max = max
+                        this.progress = 0
+                    }
+                }
+            }
+            
+            override fun onStep(diff: Int, bucketId: Long, bucketName: String, item: BucketItem) {
+                activity?.runOnUiThread {
+                    pb?.incrementProgressBy(diff)
+                    mAdapter?.addOne(bucketId, bucketName, item)
+                }
+                
+                // make ui animating
+                Thread.sleep(20)
+            }
+            
+            override fun onEnd() {
+                activity?.runOnUiThread {
+                    pbc?.visibility = View.GONE
+                }
+            }
+        }
+        
+        Timber.v("mediaType: ${arguments?.getInt(argMediaType)}")
+        return BucketLoader(
+            this.activity!!,
+            MediaType.values()[arguments?.getInt(argMediaType) ?: MediaType.IMAGES.ordinal],
+            arguments?.getString(argQueryString) ?: "",
+            progressListener)
+    }
+    
+    override fun onLoadFinished(loader: Loader<Buckets>, tasks: Buckets?) {
+        // activity?.runOnUiThread { ourRootView?.findViewById<ViewGroup>(R.id.progressContainer)?.visibility = View.GONE }
+    }
+    
+    override fun onLoaderReset(loader: Loader<Buckets>) {
+        // TO DO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
     
 }

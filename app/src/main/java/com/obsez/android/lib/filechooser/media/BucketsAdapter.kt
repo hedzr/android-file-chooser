@@ -2,10 +2,12 @@ package com.obsez.android.lib.filechooser.media
 
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.AppCompatTextView
+import com.obsez.android.lib.filechooser.MediaType
 import com.obsez.android.lib.filechooser.R
 import timber.log.Timber
 
-class BucketsAdapter(private val listener: TasksListener? = null) : SimpleAbstractAdapter<BucketBase>() {
+class BucketsAdapter(private val mediaType: MediaType,
+                     private val listener: TasksListener? = null) : SimpleAbstractAdapter<BucketBase>() {
     
     companion object {
         // val VT_FOLDER = 0
@@ -81,7 +83,7 @@ class BucketsAdapter(private val listener: TasksListener? = null) : SimpleAbstra
                     findViewById<AppCompatTextView>(com.obsez.android.lib.filechooser.demo.R.id.tv_size).text = item.size.toString()
                     // findViewById<AppCompatTextView>(com.obsez.android.lib.filechooser.demo.R.id.tv_date).text = item.lastModified
                     findViewById<AppCompatImageView>(com.obsez.android.lib.filechooser.demo.R.id.tv_icon).apply {
-                        item.getThumbnail(context, this.drawable.intrinsicWidth).let {
+                        item.getThumbnail(context, mediaType, this.drawable.intrinsicWidth).let {
                             if (it != null) {
                                 setImageBitmap(it)
                                 Timber.v("thumbnail's width is: ${this.drawable.intrinsicWidth} / ${it.width}")
