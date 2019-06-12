@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -107,6 +108,10 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
         }
     }
     
+    fun setOnPicked() {
+        //
+    }
+    
     private fun initView(root: ViewGroup) {
         lmBucketView = LinearLayoutManager(this.activity, LinearLayoutManager.VERTICAL, false)
         lmBucketItemView = GridLayoutManager(this.activity, 6, GridLayoutManager.VERTICAL, false).apply {
@@ -135,7 +140,8 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
                 }
                 
                 override fun onBucketItemClick(position: Int, item: BucketItem, bucket: BucketBase) {
-                    //Timber.d("onBucketItemClick($position, item: $item, bucket: $bucket)")
+                    Log.d(TAG, "onBucketItemClick($position, item: $item, bucket: $bucket)")
+                    Toast.makeText(ourRootView?.context, "onBucketItemClick($position, item: $item, bucket: $bucket)", Toast.LENGTH_SHORT).show()
                 }
                 
                 override fun onBackToBucketView(lastSel: Bucket) {

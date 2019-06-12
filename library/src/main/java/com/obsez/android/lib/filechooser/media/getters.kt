@@ -25,6 +25,7 @@ interface MediaTypeGetter {
     fun getThumbnail(context: Context, id: Long, uri: Uri, width: Int): Bitmap?
 }
 
+
 class ImagesMediaTypeGetter : MediaTypeGetter {
     override fun getContentUri(external: Boolean, vararg args: Any): Uri {
         return if (external) MediaStore.Images.Media.EXTERNAL_CONTENT_URI else MediaStore.Images.Media.INTERNAL_CONTENT_URI

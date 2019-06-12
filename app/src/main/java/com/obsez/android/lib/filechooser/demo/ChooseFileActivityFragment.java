@@ -26,6 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.obsez.android.lib.filechooser.ChooserDialog;
+import com.obsez.android.lib.filechooser.MediaStorePicker;
+import com.obsez.android.lib.filechooser.MediaType;
 import com.obsez.android.lib.filechooser.demo.tool.ImageUtil;
 import com.obsez.android.lib.filechooser.internals.FileUtil;
 import com.obsez.android.lib.filechooser.tool.RootFile;
@@ -81,77 +83,6 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                 FileUtil.readSDCard(c, false)) + ", free size: " + FileUtil.getReadableFileSize(
                 FileUtil.readSDCard(c, false, true)));
         }
-
-        StorageManager storageManager = (StorageManager) c.getSystemService(Context.STORAGE_SERVICE);
-        //StorageVolume svPrimary = storageManager.getPrimaryStorageVolume()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            if (storageManager != null) {
-                for (StorageVolume sv : storageManager.getStorageVolumes()) {
-                    Timber.d("    vol: state=%s, desc=%s, isEmulated=%b, isPrimary=%b, isRemovable=%b | %s",
-                        sv.getState(), sv.getDescription(c), sv.isEmulated(), sv.isPrimary(), sv.isRemovable(),
-                        sv.toString());
-                }
-            }
-        }
-
-
-        Timber.d("Test dirs for Q: ------------------------------");
-        Timber.v("  Environment.getDataDirectory : %s", Environment.getDataDirectory().getAbsoluteFile());
-        Timber.v("  Environment.getDownloadCacheDirectory : %s",
-            Environment.getDownloadCacheDirectory().getAbsoluteFile());
-        Timber.v("  Environment.getExternalStorageDirectory : %s",
-            Environment.getExternalStorageDirectory().getAbsoluteFile());
-        Timber.v("  Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) : %s",
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile());
-        Timber.v("  Environment.getRootDirectory : %s", Environment.getRootDirectory().getAbsoluteFile());
-        Timber.v("  ------------------------------");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            Set<String> volumes = MediaStore.getExternalVolumeNames(c);
-            for (String s : volumes) {
-                Timber.d("    vol: %s", s);
-            }
-        }
-        Timber.v("  ------------------------------");
-        Timber.d("   getCacheDir : %s", c.getCacheDir().getAbsoluteFile());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Timber.d("   getCodeCacheDir : %s", c.getCodeCacheDir().getAbsoluteFile());
-        }
-        Timber.d("   getDatabasePath(abc) : %s", c.getDatabasePath("abc").getAbsoluteFile());
-        Timber.d("   getDatabasePath(v.db3) : %s", c.getDatabasePath("v.db3").getAbsoluteFile());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            Timber.d("   getDataDir : %s", c.getDataDir().getAbsoluteFile());
-        }
-        Timber.d("   getDir(null) : %s", c.getDir(null, Context.MODE_PRIVATE).getAbsoluteFile());
-        Timber.d("   getDir(zzz) : %s", c.getDir("zzz", Context.MODE_PRIVATE).getAbsoluteFile());
-        Timber.d("   getExternalCacheDir : %s", c.getExternalCacheDir().getAbsoluteFile());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            for (File f : c.getExternalCacheDirs()) {
-                Timber.d("   getExternalCacheDirs : %s", f.getAbsoluteFile());
-            }
-        }
-        Timber.d("   getExternalFilesDir : %s", c.getExternalFilesDir(null).getAbsoluteFile());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            for (File f : c.getExternalFilesDirs(null)) {
-                Timber.d("   getExternalFilesDirs : %s", f.getAbsoluteFile());
-            }
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            for (File f : c.getExternalMediaDirs()) {
-                Timber.d("   getExternalMediaDirs : %s", f.getAbsoluteFile());
-            }
-        }
-        Timber.d("   getFilesDir : %s", c.getFilesDir().getAbsoluteFile());
-        Timber.d("   getFileStreamPath : %s", c.getFileStreamPath("").getAbsoluteFile());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Timber.d("   getNoBackupFilesDir : %s", c.getNoBackupFilesDir().getAbsoluteFile());
-        }
-        Timber.d("   getObbDir : %s", c.getObbDir().getAbsoluteFile());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            for (File f : c.getObbDirs()) {
-                Timber.d("   getObbDirs : %s", f.getAbsoluteFile());
-            }
-        }
-        Timber.d("   getPackageCodePath : %s", c.getPackageCodePath());
     }
 
     @Nullable
@@ -210,7 +141,36 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
 
         dpad.setChecked(true);
 
+
+        // for MediaStorePicker
+
+        root.findViewById(R.id.btn_images).setOnClickListener(this::onBtnImagesClick);
+        root.findViewById(R.id.btn_videos).setOnClickListener(this::onBtnVideosClick);
+        root.findViewById(R.id.btn_audios).setOnClickListener(this::onBtnAudiosClick);
+        root.findViewById(R.id.btn_downloads).setOnClickListener(this::onBtnDownloadsClick);
+        root.findViewById(R.id.btn_files).setOnClickListener(this::onBtnFilesClick);
+
         return root;
+    }
+
+    public void onBtnImagesClick(View v) {
+        MediaStorePicker.Companion.get().config(MediaType.IMAGES, true, R.id.fragment).show();
+    }
+
+    public void onBtnVideosClick(View v) {
+        MediaStorePicker.Companion.get().config(MediaType.VIDEOS, true, R.id.fragment).show();
+    }
+
+    public void onBtnAudiosClick(View v) {
+        MediaStorePicker.Companion.get().config(MediaType.AUDIOS, true, R.id.fragment).show();
+    }
+
+    public void onBtnDownloadsClick(View v) {
+        MediaStorePicker.Companion.get().config(MediaType.DOWNLOADS, true, R.id.fragment).show();
+    }
+
+    public void onBtnFilesClick(View v) {
+        MediaStorePicker.Companion.get().config(MediaType.FILES, true, R.id.fragment).show();
     }
 
     @Override

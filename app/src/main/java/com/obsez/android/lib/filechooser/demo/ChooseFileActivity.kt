@@ -1,7 +1,12 @@
 package com.obsez.android.lib.filechooser.demo
 
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.os.storage.StorageManager
+import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
@@ -21,6 +26,82 @@ class ChooseFileActivity : AppCompatActivity() {
         }
     }
     
+    @Suppress("DEPRECATION")
+    private fun testPrint() {
+        
+        val c = this
+        
+        val storageManager = c.getSystemService(Context.STORAGE_SERVICE) as StorageManager
+        //StorageVolume svPrimary = storageManager.getPrimaryStorageVolume()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (storageManager != null) {
+                for (sv in storageManager.storageVolumes) {
+                    Timber.d("    vol: state=%s, desc=%s, isEmulated=%b, isPrimary=%b, isRemovable=%b | %s",
+                        sv.state, sv.getDescription(c), sv.isEmulated, sv.isPrimary, sv.isRemovable,
+                        sv.toString())
+                }
+            }
+        }
+        
+        Timber.d("Test dirs for Q: ------------------------------")
+        Timber.v("  Environment.getDataDirectory : %s", Environment.getDataDirectory().absoluteFile)
+        Timber.v("  Environment.getDownloadCacheDirectory : %s",
+            Environment.getDownloadCacheDirectory().absoluteFile)
+        Timber.v("  Environment.getExternalStorageDirectory : %s",
+            Environment.getExternalStorageDirectory().absoluteFile)
+        Timber.v("  Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) : %s",
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absoluteFile)
+        Timber.v("  Environment.getRootDirectory : %s", Environment.getRootDirectory().absoluteFile)
+        Timber.v("  ------------------------------")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val volumes = MediaStore.getExternalVolumeNames(c)
+            for (s in volumes) {
+                Timber.d("    vol: %s", s)
+            }
+        }
+        Timber.v("  ------------------------------")
+        Timber.d("   getCacheDir : %s", c.cacheDir.absoluteFile)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Timber.d("   getCodeCacheDir : %s", c.codeCacheDir.absoluteFile)
+        }
+        Timber.d("   getDatabasePath(abc) : %s", c.getDatabasePath("abc").absoluteFile)
+        Timber.d("   getDatabasePath(v.db3) : %s", c.getDatabasePath("v.db3").absoluteFile)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Timber.d("   getDataDir : %s", c.dataDir.absoluteFile)
+        }
+        Timber.d("   getDir(null) : %s", c.getDir(null, Context.MODE_PRIVATE).absoluteFile)
+        Timber.d("   getDir(zzz) : %s", c.getDir("zzz", Context.MODE_PRIVATE).absoluteFile)
+        Timber.d("   getExternalCacheDir : %s", c.externalCacheDir!!.absoluteFile)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            for (f in c.externalCacheDirs) {
+                Timber.d("   getExternalCacheDirs : %s", f.absoluteFile)
+            }
+        }
+        Timber.d("   getExternalFilesDir : %s", c.getExternalFilesDir(null)!!.absoluteFile)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            for (f in c.getExternalFilesDirs(null)) {
+                Timber.d("   getExternalFilesDirs : %s", f.absoluteFile)
+            }
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            for (f in c.externalMediaDirs) {
+                Timber.d("   getExternalMediaDirs : %s", f.absoluteFile)
+            }
+        }
+        Timber.d("   getFilesDir : %s", c.filesDir.absoluteFile)
+        Timber.d("   getFileStreamPath : %s", c.getFileStreamPath("").absoluteFile)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Timber.d("   getNoBackupFilesDir : %s", c.noBackupFilesDir.absoluteFile)
+        }
+        Timber.d("   getObbDir : %s", c.obbDir.absoluteFile)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            for (f in c.obbDirs) {
+                Timber.d("   getObbDirs : %s", f.absoluteFile)
+            }
+        }
+        Timber.d("   getPackageCodePath : %s", c.packageCodePath)
+    }
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_choose_file)
@@ -33,6 +114,8 @@ class ChooseFileActivity : AppCompatActivity() {
             finish()
             return
         }
+    
+        testPrint()
         
         val transaction = supportFragmentManager.beginTransaction()
         // transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)

@@ -11,15 +11,15 @@ import com.obsez.android.lib.filechooser.fragments.PickerDialogFragment.Companio
 import com.obsez.android.lib.filechooser.media.*
 import com.obsez.android.lib.filechooser.provider.ActivityProvider
 
-//import timber.log.Timber
 
 enum class MediaType(val getter: MediaTypeGetter) {
-    IMAGES(ImagesMediaTypeGetter()), //(MediaStore.Images.Media.EXTERNAL_CONTENT_URI),
-    VIDEOS(VideosMediaTypeGetter()), //(MediaStore.Video.Media.EXTERNAL_CONTENT_URI),
-    AUDIOS(AudiosMediaTypeGetter()), //(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI),
-    DOWNLOADS(DownloadsMediaTypeGetter()), //(MediaStore.Downloads.EXTERNAL_CONTENT_URI),
-    FILES(FilesMediaTypeGetter()), //(MediaStore.Files.EXTERNAL_CONTENT_URI), // MediaStore.Files.getContentUri(volName)
+    IMAGES(ImagesMediaTypeGetter()),
+    VIDEOS(VideosMediaTypeGetter()),
+    AUDIOS(AudiosMediaTypeGetter()),
+    DOWNLOADS(DownloadsMediaTypeGetter()),
+    FILES(FilesMediaTypeGetter()),
 }
+
 
 class MediaStorePicker {
     
@@ -32,6 +32,7 @@ class MediaStorePicker {
         private const val FRAG_TAG = "picker-dialog"
     }
     
+    
     /**
      * @param mediaType see also [MediaType]
      * @param dialogMode true means a large screen detected, and picker will be shown as a popup dialog.
@@ -43,6 +44,7 @@ class MediaStorePicker {
         mContainerId = containerId
         return this
     }
+    
     
     private fun build(): MediaStorePicker {
         // TODO How to refresh MediaStore database exactly?
