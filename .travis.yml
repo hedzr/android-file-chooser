@@ -11,6 +11,10 @@ cache:
     - $HOME/.gradle/wrapper/
     - $HOME/.android/build-cache
 
+# https://stackoverflow.com/questions/52274229/travis-ci-android-28-licenses-have-not-been-accepted
+before_install:
+  - yes | sdkmanager "platforms;android-28"
+
 android:
   components:
     # Uncomment the lines below if you want to
