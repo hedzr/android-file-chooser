@@ -18,11 +18,11 @@ dependencies {
 
 ```
 dependencies {
-	implementation 'com.github.hedzr:android-file-chooser:master-SNAPSHOT'
+	implementation 'com.github.hedzr:android-file-chooser:devel-SNAPSHOT'
 }
+```
 
 `android-file-library` is a lightweight file/folder chooser.
-```
 
 The usages at [HERE](#Usages), and [Acknowledges](#Acknowledges).
 
