@@ -22,7 +22,10 @@ interface MediaTypeGetter {
     fun getSelection(): String?
     fun getSelectionArgs(): Array<String>?
     fun getSortOrder(): String
-    fun getThumbnail(context: Context, id: Long, uri: Uri, width: Int): Bitmap?
+    /**
+     * @param forceWidth unused below Android Q; for Q or later, true means that we want a width x height thumbnail instead of the internal size; default internal size is 512x384 (MediaStore.Images.Thumbnails.MINI_KIND)
+     */
+    fun getThumbnail(context: Context, id: Long, uri: Uri, width: Int, height: Int = 0, forceWidth: Boolean = false): Bitmap?
 }
 
 
@@ -47,19 +50,19 @@ class ImagesMediaTypeGetter : MediaTypeGetter {
         return MediaStore.Images.Media.DATE_MODIFIED + " DESC"
     }
     
-    override fun getThumbnail(context: Context, id: Long, uri: Uri, width: Int): Bitmap? {
-        return this.getThumbnailImpl(context, id, uri, width).let {
+    override fun getThumbnail(context: Context, id: Long, uri: Uri, width: Int, height: Int, forceWidth: Boolean): Bitmap? {
+        return this.getThumbnailImpl(context, id, uri, width, height, forceWidth).let {
             //Timber.v("thumbnail's width is: $width / ${it.width}")
             it ?: BitmapFactory.decodeResource(context.resources, R.drawable.no_image)
         }
     }
     
     @Suppress("UNUSED_PARAMETER")
-    private fun getThumbnailImpl(c: Context, id: Long, uri: Uri, width: Int = 96): Bitmap? {
+    private fun getThumbnailImpl(c: Context, id: Long, uri: Uri, width: Int = 96, height: Int = 0, forceWidth: Boolean = false): Bitmap? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             // val w = if (width <= 0) 128 else width
             try {
-                c.contentResolver.loadThumbnail(uri, Size(512, 384), null)
+                c.contentResolver.loadThumbnail(uri, if (forceWidth) Size(width, if (height == 0) width else height) else Size(512, 384), null)
             } catch (e: Exception) {
                 Log.e(TAG, "CANNOT create or get thumbnail", e)
                 null
@@ -100,19 +103,19 @@ class VideosMediaTypeGetter : MediaTypeGetter {
         return MediaStore.Video.Media.DATE_MODIFIED + " DESC"
     }
     
-    override fun getThumbnail(context: Context, id: Long, uri: Uri, width: Int): Bitmap? {
-        return this.getThumbnailImpl(context, id, uri, width).let {
+    override fun getThumbnail(context: Context, id: Long, uri: Uri, width: Int, height: Int, forceWidth: Boolean): Bitmap? {
+        return this.getThumbnailImpl(context, id, uri, width, height, forceWidth).let {
             //Timber.v("thumbnail's width is: $width / ${it.width}")
             it ?: BitmapFactory.decodeResource(context.resources, R.drawable.no_image)
         }
     }
     
     @Suppress("UNUSED_PARAMETER")
-    private fun getThumbnailImpl(c: Context, id: Long, uri: Uri, width: Int = 96): Bitmap? {
+    private fun getThumbnailImpl(c: Context, id: Long, uri: Uri, width: Int = 96, height: Int = 0, forceWidth: Boolean = false): Bitmap? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             // val w = if (width <= 0) 128 else width
             try {
-                c.contentResolver.loadThumbnail(uri, Size(512, 384), null)
+                c.contentResolver.loadThumbnail(uri, if (forceWidth) Size(width, if (height == 0) width else height) else Size(512, 384), null)
             } catch (e: Exception) {
                 Log.e(TAG, "CANNOT create or get thumbnail", e)
                 null
@@ -124,7 +127,7 @@ class VideosMediaTypeGetter : MediaTypeGetter {
             @Suppress("DEPRECATION")
             MediaStore.Video.Thumbnails.getThumbnail(c.contentResolver,
                 id,
-                MediaStore.Images.Thumbnails.MINI_KIND,  // 512 x 384
+                MediaStore.Video.Thumbnails.MINI_KIND,  // 512 x 384
                 //MediaStore.Images.Thumbnails.MICRO_KIND, // 96 x 96
                 bmOptions)
         }
@@ -154,15 +157,15 @@ class AudiosMediaTypeGetter : MediaTypeGetter {
         return MediaStore.Audio.Media.DATE_MODIFIED + " DESC"
     }
     
-    override fun getThumbnail(context: Context, id: Long, uri: Uri, width: Int): Bitmap? {
-        return this.getThumbnailImpl(context, id, uri, width).let {
+    override fun getThumbnail(context: Context, id: Long, uri: Uri, width: Int, height: Int, forceWidth: Boolean): Bitmap? {
+        return this.getThumbnailImpl(context, id, uri, width, height, forceWidth).let {
             //Timber.v("thumbnail's width is: $width / ${it.width}")
             it ?: BitmapFactory.decodeResource(context.resources, R.drawable.no_image)
         }
     }
     
     @Suppress("UNUSED_PARAMETER")
-    private fun getThumbnailImpl(c: Context, id: Long, uri: Uri, width: Int = 96): Bitmap? {
+    private fun getThumbnailImpl(c: Context, id: Long, uri: Uri, width: Int = 96, height: Int = 0, forceWidth: Boolean = false): Bitmap? {
         return null
     }
 }
@@ -192,15 +195,15 @@ class DownloadsMediaTypeGetter : MediaTypeGetter {
         return MediaStore.Downloads.DATE_MODIFIED + " DESC"
     }
     
-    override fun getThumbnail(context: Context, id: Long, uri: Uri, width: Int): Bitmap? {
-        return this.getThumbnailImpl(context, id, uri, width).let {
+    override fun getThumbnail(context: Context, id: Long, uri: Uri, width: Int, height: Int, forceWidth: Boolean): Bitmap? {
+        return this.getThumbnailImpl(context, id, uri, width, height, forceWidth).let {
             //Timber.v("thumbnail's width is: $width / ${it.width}")
             it ?: BitmapFactory.decodeResource(context.resources, R.drawable.no_image)
         }
     }
     
     @Suppress("UNUSED_PARAMETER")
-    private fun getThumbnailImpl(c: Context, id: Long, uri: Uri, width: Int = 96): Bitmap? {
+    private fun getThumbnailImpl(c: Context, id: Long, uri: Uri, width: Int = 96, height: Int = 0, forceWidth: Boolean = false): Bitmap? {
         return null
     }
 }
@@ -226,15 +229,15 @@ class FilesMediaTypeGetter : MediaTypeGetter {
         return MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC"
     }
     
-    override fun getThumbnail(context: Context, id: Long, uri: Uri, width: Int): Bitmap? {
-        return this.getThumbnailImpl(context, id, uri, width).let {
+    override fun getThumbnail(context: Context, id: Long, uri: Uri, width: Int, height: Int, forceWidth: Boolean): Bitmap? {
+        return this.getThumbnailImpl(context, id, uri, width, height, forceWidth).let {
             //Timber.v("thumbnail's width is: $width / ${it.width}")
             it ?: BitmapFactory.decodeResource(context.resources, R.drawable.no_image)
         }
     }
     
     @Suppress("UNUSED_PARAMETER")
-    private fun getThumbnailImpl(c: Context, id: Long, uri: Uri, width: Int = 96): Bitmap? {
+    private fun getThumbnailImpl(c: Context, id: Long, uri: Uri, width: Int = 96, height: Int = 0, forceWidth: Boolean = false): Bitmap? {
         return null
     }
 }

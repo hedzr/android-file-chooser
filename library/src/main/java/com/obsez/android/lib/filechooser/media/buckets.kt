@@ -25,9 +25,20 @@ data class BucketItem(override var title: String, override var id: Long,
     
     private var _thumbnail: Bitmap? = null
     
-    fun getThumbnail(c: Context, mediaType: MediaType, width: Int = 96): Bitmap? {
-        if (_thumbnail == null) {
-            _thumbnail = mediaType.getter.getThumbnail(c, id, uri, width)
+    /**
+     * @param forceWidth unused below Android Q; for Q or later, true means that we want a width x height thumbnail instead of the internal size; default internal size is 512x384 (MediaStore.Images.Thumbnails.MINI_KIND)
+     *
+     * You might not get the thumbnail with exact width and height, even if you specify them explicitly.
+     * The largest thumbnail size would be limited to about 526x602.
+     * The largest width is about half an your screen, and height would be restricted with your source picture ratio.
+     *
+     * And:
+     * - MediaStore.Images.Thumbnails.MINI_KIND,  // 512 x 384
+     * - MediaStore.Images.Thumbnails.MICRO_KIND, // 96 x 96
+     */
+    fun getThumbnail(c: Context, mediaType: MediaType, width: Int = 96, height: Int = 0, forceWidth: Boolean = false): Bitmap? {
+        if (_thumbnail == null || (forceWidth && width > 0)) {
+            _thumbnail = mediaType.getter.getThumbnail(c, id, uri, width, height, forceWidth)
         }
         return _thumbnail
     }

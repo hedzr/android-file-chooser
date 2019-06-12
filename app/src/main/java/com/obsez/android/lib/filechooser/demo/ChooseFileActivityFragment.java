@@ -2,15 +2,12 @@ package com.obsez.android.lib.filechooser.demo;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.storage.StorageManager;
-import android.os.storage.StorageVolume;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,13 +27,14 @@ import com.obsez.android.lib.filechooser.MediaStorePicker;
 import com.obsez.android.lib.filechooser.MediaType;
 import com.obsez.android.lib.filechooser.demo.tool.ImageUtil;
 import com.obsez.android.lib.filechooser.internals.FileUtil;
+import com.obsez.android.lib.filechooser.tool.BitmapUtil;
 import com.obsez.android.lib.filechooser.tool.RootFile;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Set;
+import java.util.Objects;
 
 import timber.log.Timber;
 
@@ -66,6 +64,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
     private String _path = null;
     private TextView _tv;
     private ImageView _iv;
+    private ViewGroup _rootView;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -93,6 +92,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
 
         View root = inflater.inflate(R.layout.fragment_choose_file, container, false);
 
+        _rootView = (ViewGroup) root;
         _tv = root.findViewById(R.id.textView);
         _tv.setText(BuildConfig.VERSION_NAME);
         _iv = root.findViewById(R.id.imageView);
@@ -154,23 +154,61 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
     }
 
     public void onBtnImagesClick(View v) {
-        MediaStorePicker.Companion.get().config(MediaType.IMAGES, true, R.id.fragment).show();
+        MediaStorePicker.Companion.get()
+            .config(MediaType.IMAGES, true, R.id.fragment, (dlg, mediaType, bucket, position, bucketItem) -> {
+                switch (mediaType) {
+                    case IMAGES:
+                    case VIDEOS: {
+                        // for a match_parent [ImageView], getMeasuredWidth() return is right
+                        int w = _iv.getMeasuredWidth(), h = 0;
+                        boolean forceWidth = true;
+
+                        if (bucketItem.getWidth() > 0 && bucketItem.getHeight() > 0) {
+                            h = (int) ((float) w * bucketItem.getHeight() / bucketItem.getWidth());
+                        }
+                        Timber.d("onPicked: %d x %d, %d x %d, '%s', %s", w, h, bucketItem.getWidth(),
+                            bucketItem.getHeight(), bucketItem.getPath(), bucketItem.getUri());
+
+                        // and trying to retrieve a larger one
+                        Bitmap bitmap = null;
+                        if (mediaType == MediaType.IMAGES) {
+                            bitmap = BitmapUtil.decodeBitmap(Objects.requireNonNull(getActivity()),
+                                bucketItem.getUri(), w, h);
+                        }
+                        if (bitmap == null) {
+                            bitmap = bucketItem.getThumbnail(Objects.requireNonNull(getActivity()), mediaType,
+                                w, h, forceWidth);
+                        }
+                        if (bitmap != null) {
+                            BitmapUtil.setBitmapTo(_iv, bitmap);
+                        }
+
+                        if (dlg != null) dlg.dismiss();
+                        break;
+                    }
+                    default:
+                        Toast.makeText(v.getContext(),
+                            "onBucketItemClick($position, item: $item, bucket: $bucket)",
+                            Toast.LENGTH_SHORT).show();
+                }
+                return null;
+            }).show();
     }
 
     public void onBtnVideosClick(View v) {
-        MediaStorePicker.Companion.get().config(MediaType.VIDEOS, true, R.id.fragment).show();
+        MediaStorePicker.Companion.get().config(MediaType.VIDEOS, true, R.id.fragment, null).show();
     }
 
     public void onBtnAudiosClick(View v) {
-        MediaStorePicker.Companion.get().config(MediaType.AUDIOS, true, R.id.fragment).show();
+        MediaStorePicker.Companion.get().config(MediaType.AUDIOS, true, R.id.fragment, null).show();
     }
 
     public void onBtnDownloadsClick(View v) {
-        MediaStorePicker.Companion.get().config(MediaType.DOWNLOADS, true, R.id.fragment).show();
+        MediaStorePicker.Companion.get().config(MediaType.DOWNLOADS, true, R.id.fragment, null).show();
     }
 
     public void onBtnFilesClick(View v) {
-        MediaStorePicker.Companion.get().config(MediaType.FILES, true, R.id.fragment).show();
+        MediaStorePicker.Companion.get().config(MediaType.FILES, true, R.id.fragment, null).show();
     }
 
     @Override

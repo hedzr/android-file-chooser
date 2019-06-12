@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.annotation.IdRes
 import android.support.v4.app.FragmentActivity
 import android.util.Log
+import com.obsez.android.lib.filechooser.fragments.OnPickHandler
 import com.obsez.android.lib.filechooser.fragments.PickerDialogFragment
 import com.obsez.android.lib.filechooser.fragments.PickerDialogFragment.Companion.argDialogMode
 import com.obsez.android.lib.filechooser.fragments.PickerDialogFragment.Companion.argMediaType
@@ -38,10 +39,14 @@ class MediaStorePicker {
      * @param dialogMode true means a large screen detected, and picker will be shown as a popup dialog.
      * @param containerId the fragment container's res-id, default is [android.R.id.content].
      */
-    fun config(mediaType: MediaType = MediaType.IMAGES, dialogMode: Boolean = false, @IdRes containerId: Int = android.R.id.content): MediaStorePicker {
+    fun config(mediaType: MediaType = MediaType.IMAGES,
+               dialogMode: Boolean = false,
+               @IdRes containerId: Int = android.R.id.content,
+               onPickedHandler: OnPickHandler? = null): MediaStorePicker {
         mMediaType = mediaType
         mDialogMode = dialogMode
         mContainerId = containerId
+        mOnPickedHandler = onPickedHandler
         return this
     }
     
@@ -66,7 +71,9 @@ class MediaStorePicker {
         //Timber.d("application = $application, last activity = $a")
         if (a is FragmentActivity) {
             val fm = a.supportFragmentManager
-            val pickerFragment = PickerDialogFragment()
+            val pickerFragment = PickerDialogFragment().apply {
+                onPickedHandler = mOnPickedHandler
+            }
             pickerFragment.arguments = Bundle().apply {
                 putBoolean(argDialogMode, mDialogMode)
                 putInt(argMediaType, mMediaType.ordinal)
@@ -96,5 +103,7 @@ class MediaStorePicker {
     private var mDialogMode = true
     @IdRes
     private var mContainerId: Int = android.R.id.content
+    private var mOnPickedHandler: OnPickHandler? = null
+    
 }
 

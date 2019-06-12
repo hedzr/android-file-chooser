@@ -3,6 +3,7 @@ package com.obsez.android.lib.filechooser.fragments
 
 import android.Manifest
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
@@ -12,7 +13,6 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +26,8 @@ import com.obsez.android.lib.filechooser.media.BucketsAdapter.TasksListener
 import com.obsez.android.lib.filechooser.permissions.PermissionsUtil
 import com.obsez.android.lib.filechooser.tool.changeLayoutManager
 
+typealias OnPickHandler = (dlg: DialogInterface?, mediaType: MediaType, bucket: Bucket, position: Int, item: BucketItem) -> Unit
+
 
 class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buckets> {
     companion object {
@@ -34,35 +36,49 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
         const val argQueryString = "queryString"
     }
     
-    private var ourRootView: ViewGroup? = null
     
-    private var mAdapter: BucketsAdapter? = null
+    @Suppress("unused")
+    var onPickedHandler: OnPickHandler? = null
+    //    @Suppress("unused")
+    //    fun setOnPicked(onPicked: OnPickHandler? = null) {
+    //        _onPickedHandler = onPicked
+    //    }
     
-    private var lmBucketView: RecyclerView.LayoutManager? = null
-    private var lmBucketItemView: RecyclerView.LayoutManager? = null
+    
+    private var _mediaType: MediaType = MediaType.IMAGES
+    private var _ourRootView: ViewGroup? = null
+    
+    private var _adapter: BucketsAdapter? = null
+    private var _dlg: AlertDialog? = null
+    
+    private var _lmBucketView: RecyclerView.LayoutManager? = null
+    private var _lmBucketItemView: RecyclerView.LayoutManager? = null
     
     private var _permissionListener: PermissionsUtil.OnPermissionListener? = null
     
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val largeLayout = arguments?.getBoolean(argDialogMode) ?: false
+        _mediaType = MediaType.values()[arguments?.getInt(argMediaType) ?: MediaType.IMAGES.ordinal]
+    
         // Inflate the layout to use as dialog or embedded fragment
+        val largeLayout = arguments?.getBoolean(argDialogMode) ?: false
         return if (largeLayout) {
             null
         } else {
-            ourRootView = inflater.inflate(R.layout.fragment_picker, container, false) as ViewGroup
-            initView(ourRootView!!)
-            ourRootView
+            _ourRootView = inflater.inflate(R.layout.fragment_picker, container, false) as ViewGroup
+            initView(_ourRootView!!)
+            _ourRootView
         }
     }
     
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         // return super.onCreateDialog(savedInstanceState)
         // Use the Builder class for convenient dialog construction
+    
+        _mediaType = MediaType.values()[arguments?.getInt(argMediaType) ?: MediaType.IMAGES.ordinal]
         
         val largeLayout = arguments?.getBoolean(argDialogMode) ?: false
-        
         if (largeLayout) {
             val builder = AlertDialog.Builder(this.activity!!)
             
@@ -73,9 +89,9 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
             val inflater = this.activity!!.layoutInflater
             // Inflate and set the layout for the dialog
             // Pass null as the parent view because its going in the dialog layout
-            ourRootView = inflater.inflate(R.layout.fragment_picker, null) as ViewGroup
-            initView(ourRootView!!)
-            builder.setView(ourRootView).setTitle("AAA")
+            _ourRootView = inflater.inflate(R.layout.fragment_picker, null) as ViewGroup
+            initView(_ourRootView!!)
+            builder.setView(_ourRootView).setTitle("AAA")
             
             builder
                 .setPositiveButton(R.string.dialog_ok) { dialog, id ->
@@ -88,17 +104,17 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
                 .setNeutralButton("Up", null)
             
             //Timber.d("Create the AlertDialog object and return it")
-            val dlg = builder.create()
-            
-            dlg.setOnShowListener { dialog ->
+            _dlg = builder.create()
+    
+            _dlg?.setOnShowListener { dialog ->
                 val neutralBtn = (dialog as AlertDialog).getButton(AlertDialog.BUTTON_NEUTRAL)
                 neutralBtn.setOnClickListener {
                     // do something but don't dismiss
-                    mAdapter?.goUp()
+                    _adapter?.goUp()
                 }
             }
-            
-            return dlg
+    
+            return _dlg!!
             
         } else {
             
@@ -108,13 +124,9 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
         }
     }
     
-    fun setOnPicked() {
-        //
-    }
-    
     private fun initView(root: ViewGroup) {
-        lmBucketView = LinearLayoutManager(this.activity, LinearLayoutManager.VERTICAL, false)
-        lmBucketItemView = GridLayoutManager(this.activity, 6, GridLayoutManager.VERTICAL, false).apply {
+        _lmBucketView = LinearLayoutManager(this.activity, LinearLayoutManager.VERTICAL, false)
+        _lmBucketItemView = GridLayoutManager(this.activity, 6, GridLayoutManager.VERTICAL, false).apply {
             spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
                     return 3
@@ -125,40 +137,40 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
         initAdapter()
         
         (root.findViewById(R.id.recyclerView1) as RecyclerView).apply {
-            layoutManager = lmBucketView
-            adapter = mAdapter
+            layoutManager = _lmBucketView
+            adapter = _adapter
         }
     }
     
     private fun initAdapter() {
-        //mAdapter = MyAdapter(getData())
-        mAdapter = BucketsAdapter(
-            MediaType.values()[arguments?.getInt(argMediaType) ?: MediaType.IMAGES.ordinal],
+        //_adapter = MyAdapter(getData())
+        _adapter = BucketsAdapter(
+            _mediaType,
             object : TasksListener {
                 override fun onCallClick(position: Int, item: BucketBase) {
                     //Timber.d("onCallClick($position, bucket: $item)")
                 }
                 
                 override fun onBucketItemClick(position: Int, item: BucketItem, bucket: BucketBase) {
-                    Log.d(TAG, "onBucketItemClick($position, item: $item, bucket: $bucket)")
-                    Toast.makeText(ourRootView?.context, "onBucketItemClick($position, item: $item, bucket: $bucket)", Toast.LENGTH_SHORT).show()
+                    //Log.d(TAG, "onBucketItemClick($position, item: $item, bucket: $bucket)")
+                    onPickedHandler?.invoke(_dlg, _mediaType, bucket as @kotlin.ParameterName(name = "bucket") Bucket, position, item)
                 }
                 
                 override fun onBackToBucketView(lastSel: Bucket) {
-                    val mRecyclerView = ourRootView?.findViewById(R.id.recyclerView1) as RecyclerView
+                    val mRecyclerView = _ourRootView?.findViewById(R.id.recyclerView1) as RecyclerView
                     mRecyclerView.apply {
-                        changeLayoutManager(lmBucketView!!)
+                        changeLayoutManager(_lmBucketView!!)
                         scrollToPosition(bucketViewPos)
                     }
                 }
                 
                 override fun onItemClick(position: Int, item: BucketBase) {
-                    val mRecyclerView = ourRootView?.findViewById(R.id.recyclerView1) as RecyclerView
+                    val mRecyclerView = _ourRootView?.findViewById(R.id.recyclerView1) as RecyclerView
                     mRecyclerView.apply {
                         bucketViewSel = position
                         bucketViewPos = (layoutManager as LinearLayoutManager)
                             .findFirstCompletelyVisibleItemPosition()
-                        changeLayoutManager(lmBucketItemView!!)
+                        changeLayoutManager(_lmBucketItemView!!)
                     }
                     //Timber.v("onItemClick($position, bucket: $item), changeLayoutManager to grid")
                 }
@@ -177,9 +189,8 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
         // demo data
         
         val data = ArrayList<Bucket>()
-        val temp = " item"
         for (i in 0..19) {
-            data.add(Bucket(i.toString() + temp, i.toLong(), ArrayList()))
+            data.add(Bucket("item $i", i.toLong(), ArrayList()))
         }
         
         return data
@@ -264,8 +275,8 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Buckets> {
         
         val progressListener = object : BucketLoader.ProgressListener {
-            private val pbc = ourRootView?.findViewById<ViewGroup>(R.id.progressContainer)
-            private val pb = ourRootView?.findViewById<ProgressBar>(R.id.progressBar)
+            private val pbc = _ourRootView?.findViewById<ViewGroup>(R.id.progressContainer)
+            private val pb = _ourRootView?.findViewById<ProgressBar>(R.id.progressBar)
             
             override fun onInit(max: Int) {
                 activity?.runOnUiThread {
@@ -280,7 +291,7 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
             override fun onStep(diff: Int, bucketId: Long, bucketName: String, item: BucketItem) {
                 activity?.runOnUiThread {
                     pb?.incrementProgressBy(diff)
-                    mAdapter?.addOne(bucketId, bucketName, item)
+                    _adapter?.addOne(bucketId, bucketName, item)
                 }
                 
                 // make ui animating
@@ -297,13 +308,13 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
         //Timber.v("mediaType: ${arguments?.getInt(argMediaType)}")
         return BucketLoader(
             this.activity!!,
-            MediaType.values()[arguments?.getInt(argMediaType) ?: MediaType.IMAGES.ordinal],
+            _mediaType,
             arguments?.getString(argQueryString) ?: "",
             progressListener)
     }
     
     override fun onLoadFinished(loader: Loader<Buckets>, tasks: Buckets?) {
-        // activity?.runOnUiThread { ourRootView?.findViewById<ViewGroup>(R.id.progressContainer)?.visibility = View.GONE }
+        // activity?.runOnUiThread { _ourRootView?.findViewById<ViewGroup>(R.id.progressContainer)?.visibility = View.GONE }
     }
     
     override fun onLoaderReset(loader: Loader<Buckets>) {
