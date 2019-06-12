@@ -86,9 +86,9 @@ class ChooseFileActivity : AppCompatActivity() {
             var isLargeLayout = resources.getBoolean(R.bool.large_layout)
             //            var fr = supportFragmentManager.fragments[0]
             //            Timber.v("fr.id=${fr.id}, fff = ${R.id.fragment}")
-            //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 isLargeLayout = true
-            //}
+            }
             MediaStorePicker.get().config(R.id.fragment, isLargeLayout).build().show()
             return true
         }
