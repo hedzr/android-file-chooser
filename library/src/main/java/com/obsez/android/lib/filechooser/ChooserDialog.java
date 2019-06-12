@@ -65,12 +65,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         void onChoosePath(String dir, File dirFile);
     }
 
-    /**
-     * @deprecated will be removed at v1.2
-     */
-    public ChooserDialog() {
-    }
-
     public ChooserDialog(Context cxt, @StyleRes int fileChooserTheme) {
         this._context = cxt;
         init(fileChooserTheme);
@@ -99,17 +93,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     public ChooserDialog(Fragment fragment) {
         this._context = fragment.getActivity();
         init();
-    }
-
-    /**
-     * @param cxt android context
-     * @return `this` reference
-     * @deprecated will be removed at v1.2
-     */
-    public ChooserDialog with(Context cxt) {
-        this._context = cxt;
-        init();
-        return this;
     }
 
     private void init() {
@@ -188,11 +171,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             _currentDir = new File(FileUtil.getStoragePath(_context, false));
         }
 
-        return this;
-    }
-
-    @Deprecated
-    public ChooserDialog dismissOnButtonClick(final boolean dismissOnButtonClick) {
         return this;
     }
 
@@ -302,16 +280,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     public ChooserDialog withLayoutView(@LayoutRes int layoutResId) {
         this._layoutRes = layoutResId;
-        return this;
-    }
-
-    /**
-     * @deprecated use {@link AdapterSetter#apply(DirAdapter)}
-     * and then {@link DirAdapter.GetView#getView(File, boolean, boolean, View, ViewGroup, LayoutInflater)}
-     * instead
-     */
-    public ChooserDialog withRowLayoutView(@LayoutRes int layoutResId) {
-        this._rowLayoutRes = layoutResId;
         return this;
     }
 
@@ -427,16 +395,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         return this;
     }
 
-    /**
-     * @param followDir deprecated
-     * @return this
-     * @deprecated at 1.1.17 or 1.2.0
-     */
-    public ChooserDialog followDir(boolean followDir) {
-        _followDir = followDir;
-        return this;
-    }
-
     public ChooserDialog displayPath(boolean displayPath) {
         _displayPath = displayPath;
         return this;
@@ -475,12 +433,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             R.drawable.listview_item_selector);
         ta.recycle();
 
-        if (_rowLayoutRes != -1) {
-            _adapter = new DirAdapter(context,
-                new ArrayList<>(), _rowLayoutRes, this._dateFormat);
-        } else {
-            _adapter = new DirAdapter(context, this._dateFormat);
-        }
+        _adapter = new DirAdapter(context, this._dateFormat);
         if (_adapterSetter != null) _adapterSetter.apply(_adapter);
 
         refreshDirs();
@@ -975,9 +928,6 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
     Drawable _icon;
     private @LayoutRes
     int _layoutRes = -1;
-    private @LayoutRes
-    @Deprecated
-    int _rowLayoutRes = -1;
     private String _dateFormat;
     private DialogInterface.OnClickListener _negativeListener;
     private DialogInterface.OnCancelListener _cancelListener;
