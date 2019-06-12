@@ -60,9 +60,11 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 
-/*task createPom {
+task createPom {
     //apply plugin: 'com.github.dcendents.android-maven'
-    apply from: 'https://raw.githubusercontent.com/sky-uk/gradle-maven-plugin/master/gradle-mavenizer.gradle'
+    //apply from: 'https://raw.githubusercontent.com/sky-uk/gradle-maven-plugin/master/gradle-mavenizer.gradle'
+    apply plugin: 'maven'
+    description "Generates pom.xml"
     pom {
         project {
             groupId GROUP
@@ -78,10 +80,21 @@ dependencies {
                 }
             }
         }
+    }.withXml {
+        def dependenciesNode = asNode().appendNode('dependencies')
+        configurations.implementation.allDependencies.each { dependency ->
+            if (dependency.name != 'unspecified') {
+                def dependencyNode = dependenciesNode.appendNode('dependency')
+                dependencyNode.appendNode('groupId', dependency.group)
+                dependencyNode.appendNode('artifactId', dependency.name)
+                dependencyNode.appendNode('version', dependency.version)
+            }
+        }
     }.writeTo("pom.xml")
+    // based on https://gist.github.com/delor/f70560f14674b322dcd2
 }
 
-build.finalizedBy(createPom)*/
+build.finalizedBy(createPom)
 
 // gradle uploadArchives
 apply from: '_sonatype.gradle'
