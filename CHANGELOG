@@ -1,6 +1,13 @@
 # Changelog
 
 
+## 1.1.19 - 2019-06-12
+- completely switched to AndroidX and AppCompat
+- added localization for Bahasa Indonesia (thanks joielechong)
+- added localization for Georgian
+- fix #69, and other small bugs
+
+
 ## 1.1.19 - 2019-04-27
 
 - bugs fixed
@@ -11,12 +18,10 @@
 - mainly by Guiorgy.
 
 
-
 ## 1.1.18 - 2019-04-27
 
 - temporary release with gradle 5.1.1 compartibility test.
 - this library works within androidx project.
-
 
 
 ## 1.1.17 - 2019-03-28
@@ -56,6 +61,7 @@ no more details
 ## 1.1.12 ~ 1.1.14
 
 the publishing had matters.
+(Guiorgy: LOL)
 
 
 ## 1.1.11 - 2018-10-08
