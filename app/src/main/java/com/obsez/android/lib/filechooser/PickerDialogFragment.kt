@@ -30,12 +30,16 @@ import timber.log.Timber
 
 
 class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buckets> {
+    companion object {
+        const val argDialogMode = "dialogMode"
+        const val argQueryString = "queryString"
+    }
     
     var ourRootView: ViewGroup? = null
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val largeLayout = arguments?.getBoolean("largeLayout") ?: false
+        val largeLayout = arguments?.getBoolean(argDialogMode) ?: false
         // Inflate the layout to use as dialog or embedded fragment
         return if (largeLayout) {
             null
@@ -49,8 +53,8 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         // return super.onCreateDialog(savedInstanceState)
         // Use the Builder class for convenient dialog construction
-        
-        val largeLayout = arguments?.getBoolean("largeLayout") ?: false
+    
+        val largeLayout = arguments?.getBoolean(argDialogMode) ?: false
         
         if (largeLayout) {
             val builder = AlertDialog.Builder(this.activity!!)
@@ -224,15 +228,49 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
         getData()
     }
     
-    
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Buckets> {
-        activity?.runOnUiThread { ourRootView?.findViewById<ViewGroup>(R.id.progressContainer)?.visibility = View.VISIBLE }
-        return BucketLoader(this.activity!!, ourRootView?.findViewById<ProgressBar>(R.id.progressBar)!!, mAdapter!!,
-            args?.getString("queryString") ?: "")
+    
+        val progressListener = object : BucketLoader.ProgressListener {
+            private val pb = ourRootView?.findViewById<ProgressBar>(R.id.progressContainer)
+        
+            override fun onInit(max: Int) {
+                activity?.runOnUiThread {
+                    pb?.apply {
+                        visibility = View.VISIBLE
+                        this.max = max
+                        this.progress = 0
+                    }
+                }
+            }
+        
+            override fun onStep(diff: Int, bucketId: Long, bucketName: String, item: BucketItem) {
+                activity?.runOnUiThread {
+                    pb?.incrementProgressBy(diff)
+                    mAdapter?.addOne(bucketId, bucketName, item)
+                }
+            
+                // make ui animating
+                Thread.sleep(20)
+            }
+        
+            override fun onEnd() {
+                activity?.runOnUiThread {
+                    pb?.apply {
+                        visibility = View.GONE
+                    }
+                }
+            }
+        }
+    
+    
+        return BucketLoader(
+            this.activity!!,
+            args?.getString(argQueryString) ?: "",
+            progressListener)
     }
     
     override fun onLoadFinished(loader: Loader<Buckets>, tasks: Buckets?) {
-        activity?.runOnUiThread { ourRootView?.findViewById<ViewGroup>(R.id.progressContainer)?.visibility = View.GONE }
+        // activity?.runOnUiThread { ourRootView?.findViewById<ViewGroup>(R.id.progressContainer)?.visibility = View.GONE }
     }
     
     override fun onLoaderReset(loader: Loader<Buckets>) {
