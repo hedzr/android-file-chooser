@@ -16,7 +16,7 @@ buildscript {
         classpath 'com.android.tools:r8:1.4.93'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
-        classpath(group: 'org.jfrog.buildinfo', name: 'build-info-extractor-gradle', version: '3.1.0')
+        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.9.6'
         classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4"
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
 
