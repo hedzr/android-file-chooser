@@ -1,12 +1,13 @@
 package com.obsez.android.lib.filechooser.media
 
-import android.content.Context
+import android.app.Activity
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.support.v4.content.AsyncTaskLoader
 import android.support.v4.os.BuildCompat
+import android.widget.ProgressBar
 import java.io.File
 
 //import retrofit2.Retrofit
@@ -60,15 +61,10 @@ import java.io.File
  * AsyncTaskLoader implementation that opens a network connection and
  * query's the Book Service API.
  */
-class BucketLoader(context: Context,
-                   private val mQueryString: String,
-                   private val progressListener: ProgressListener? = null) : AsyncTaskLoader<Buckets>(context) {
-    
-    interface ProgressListener {
-        fun onInit(max: Int)
-        fun onStep(diff: Int, bucketId: Long, bucketName: String, item: BucketItem)
-        fun onEnd()
-    }
+class BucketLoader(val context: Activity,
+                   val progressBar: ProgressBar,
+                   private val adapter: BucketsAdapter,
+                   private val mQueryString: String) : AsyncTaskLoader<Buckets>(context) {
     
     private val buckets = Buckets("", ArrayList())
     
@@ -110,8 +106,11 @@ class BucketLoader(context: Context,
                 
                 // TODO set to -1 while `BuildCompat.isAtLeastQ()` is true
                 val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
-    
-                progressListener?.onInit(cursor.count)
+                
+                context.runOnUiThread {
+                    progressBar.max = cursor.count
+                    progressBar.progress = 0
+                }
                 
                 while (cursor.moveToNext()) {
                     val id = cursor.getString(idColumn)
@@ -136,27 +135,33 @@ class BucketLoader(context: Context,
                         }
                         
                         // Timber.d("- $photoUri, $title, $bucketId, $bucketName, ${w}x$h, $size, $path, ")
-    
-                        progressListener?.onStep(1, bucketId, bucketName,
-                            BucketItem(title, id.toLong(), photoUri, path, desc,
-                                size.toLong(), h.toLong(), w.toLong(), lastModified))
+                        
+                        context.runOnUiThread {
+                            adapter.addOne(bucketId, bucketName,
+                                BucketItem(title, id.toLong(), photoUri, path, desc, size.toLong(), h.toLong(), w.toLong(), lastModified))
+                            progressBar.incrementProgressBy(1)
+                        }
                     } else {
                         val bucketName = cursor.getString(bucketNameColumn)
                         val bucketId = cursor.getString(bucketIdColumn)
                         
                         // Timber.d("- $photoUri, $title, $bucketId, $bucketName, ${w}x$h, $size, $path, ")
-    
-                        progressListener?.onStep(1, bucketId.toLong(), bucketName,
-                            BucketItem(title, id.toLong(), photoUri, path, desc,
-                                size.toLong(), h.toLong(), w.toLong(), lastModified))
+                        
+                        context.runOnUiThread {
+                            adapter.addOne(bucketId.toLong(), bucketName,
+                                BucketItem(title, id.toLong(), photoUri, path, desc, size.toLong(), h.toLong(), w.toLong(), lastModified))
+                            progressBar.incrementProgressBy(1)
+                        }
                     }
+                    
+                    // make ui animating
+                    Thread.sleep(20)
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
             cursor?.close()
-            progressListener?.onEnd()
         }
         
         return buckets

@@ -4,7 +4,6 @@ import android.media.MediaScannerConnection
 import android.os.Bundle
 import android.support.annotation.IdRes
 import android.support.v4.app.FragmentActivity
-import com.obsez.android.lib.filechooser.PickerDialogFragment.Companion.argDialogMode
 import com.obsez.android.lib.filechooser.demo.tool.ActivityProvider
 import timber.log.Timber
 
@@ -18,11 +17,11 @@ class MediaStorePicker {
     }
     
     /**
-     * @param dialogMode true means a large screen detected, and picker will be shown as a popup dialog.
+     * @param isLargeLayout true means a large screen detected, and picker will be shown as a popup dialog.
      * @param containerId the fragment container's res-id, default is [android.R.id.content].
      */
-    fun config(@IdRes containerId: Int = android.R.id.content, dialogMode: Boolean = false): MediaStorePicker {
-        mDialogMode = dialogMode
+    fun config(@IdRes containerId: Int = android.R.id.content, isLargeLayout: Boolean = false): MediaStorePicker {
+        mIsLargeLayout = isLargeLayout
         mContainerId = containerId
         return this
     }
@@ -47,11 +46,11 @@ class MediaStorePicker {
             val fm = a.supportFragmentManager
             val pickerFragment = PickerDialogFragment()
             pickerFragment.arguments = Bundle().apply {
-                putBoolean(argDialogMode, mDialogMode)
+                putBoolean("largeLayout", mIsLargeLayout)
             }
-    
-            //Timber.d("mDialogMode = $mDialogMode")
-            if (mDialogMode) {
+            
+            //Timber.d("mIsLargeLayout = $mIsLargeLayout")
+            if (mIsLargeLayout) {
                 // The device is using a large layout, so show the fragment as a dialog
                 pickerFragment.show(fm, "picker-dialog")
             } else {
@@ -69,7 +68,7 @@ class MediaStorePicker {
         }
     }
     
-    private var mDialogMode = true
+    private var mIsLargeLayout = true
     @IdRes
     private var mContainerId: Int = android.R.id.content
 }

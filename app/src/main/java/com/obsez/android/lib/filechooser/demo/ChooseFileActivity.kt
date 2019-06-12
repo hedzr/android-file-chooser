@@ -83,8 +83,9 @@ class ChooseFileActivity : AppCompatActivity() {
         }
         if (id == R.id.action_gh) {
             // startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/hedzr/android-file-chooser")))
-    
             var isLargeLayout = resources.getBoolean(R.bool.large_layout)
+            //            var fr = supportFragmentManager.fragments[0]
+            //            Timber.v("fr.id=${fr.id}, fff = ${R.id.fragment}")
             //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 isLargeLayout = true
             //}
