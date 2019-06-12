@@ -1,17 +1,18 @@
 package com.obsez.android.lib.filechooser.permissions;
 
-import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 public class PermissionActivity extends AppCompatActivity {
     @SuppressWarnings("unused")
@@ -100,7 +101,7 @@ public class PermissionActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (isFinishing()){
+        if (isFinishing()) {
             overridePendingTransition(0, 0);
         }
     }

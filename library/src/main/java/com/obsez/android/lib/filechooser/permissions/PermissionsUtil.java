@@ -3,9 +3,10 @@ package com.obsez.android.lib.filechooser.permissions;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.SparseArray;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.SparseArray;
 
 import java.util.Random;
 
