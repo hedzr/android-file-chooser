@@ -1,11 +1,18 @@
 # Changelog
 
 
-## 1.1.19 - 2019-06-12
+## 1.1.19 - 2019-06-13
+
 - completely switched to AndroidX and AppCompat
 - added localization for Bahasa Indonesia (thanks joielechong)
 - added localization for Georgian
 - fix #69, and other small bugs
+- removed deprecated methods:
+  - new ChooserDialog()
+  - with(Context cxt)
+  - dismissOnButtonClick(final boolean dismissOnButtonClick)
+  - withRowLayoutView(@LayoutRes int layoutResId)
+  - followDir(boolean followDir))
 
 
 ## 1.1.19 - 2019-04-27
