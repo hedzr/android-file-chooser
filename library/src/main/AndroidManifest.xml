@@ -1,11 +1,30 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.obsez.android.lib.filechooser">
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.obsez.android.lib.filechooser">
 
     <application android:allowBackup="true">
         <activity
-            android:name="com.obsez.android.lib.filechooser.permissions.PermissionActivity"
+            android:name=".permissions.PermissionActivity"
             android:label=""
             android:theme="@style/Theme.Transparent"/>
+
+
+        <provider
+            android:name=".provider.AppContextProvider"
+            android:authorities="${applicationId}.provider.applicationprovider"
+            android:directBootAware="true"
+            android:exported="false"
+            android:initOrder="900"
+            tools:ignore="UnusedAttribute"/>
+        <provider
+            android:name=".provider.LastActivityProvider"
+            android:authorities="${applicationId}.provider.lastactivityprovider"
+            android:directBootAware="true"
+            android:exported="false"
+            android:initOrder="900"
+            tools:ignore="UnusedAttribute"/>
+
+
     </application>
 
 </manifest>

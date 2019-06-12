@@ -40,21 +40,6 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts"/>
 
-        <provider
-            android:name=".tool.AppContextProvider"
-            android:authorities="${applicationId}.tool.applicationprovider"
-            android:directBootAware="true"
-            android:exported="false"
-            android:initOrder="900"
-            tools:ignore="UnusedAttribute"/>
-        <provider
-            android:name=".tool.LastActivityProvider"
-            android:authorities="${applicationId}.tool.lastactivityprovider"
-            android:directBootAware="true"
-            android:exported="false"
-            android:initOrder="900"
-            tools:ignore="UnusedAttribute"/>
-
     </application>
 
 </manifest>

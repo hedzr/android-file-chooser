@@ -1,4 +1,4 @@
-package com.obsez.android.lib.filechooser.demo.tool
+package com.obsez.android.lib.filechooser.provider
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -114,7 +114,8 @@ private var _application: Application? = null
 
 @Suppress("unused")
 val application: Application?
-    get() = _application ?: initAndGetAppCtxWithReflection()
+    get() = _application
+        ?: initAndGetAppCtxWithReflection()
 
 /**
  * This methods is only run if [appCtx] is accessed while [AppCtxInitProvider] hasn't been

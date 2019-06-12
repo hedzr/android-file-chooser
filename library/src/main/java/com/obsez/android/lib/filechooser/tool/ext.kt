@@ -1,10 +1,7 @@
 package com.obsez.android.lib.filechooser.tool
 
-import android.R
 import android.app.Activity
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import android.os.Build
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -21,13 +18,8 @@ fun Activity.disableSoftKeyboard() {
         InputMethodManager.HIDE_NOT_ALWAYS)
 }
 
-@Suppress("MemberVisibilityCanBePrivate", "unused", "DEPRECATION")
-inline val Activity.networkInfo: NetworkInfo?
-    get() {
-        // Check the status of the network connection.
-        val connMgr = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        return connMgr.activeNetworkInfo
-    }
+
+//
 
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
@@ -40,7 +32,7 @@ fun View.makeClickable(b: Boolean) = this.apply {
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 fun View.addRipple() = with(TypedValue()) {
-    context.theme.resolveAttribute(R.attr.selectableItemBackground, this, true)
+    context.theme.resolveAttribute(android.R.attr.selectableItemBackground, this, true)
     setBackgroundResource(resourceId)
     // cardView.setClickable(true)
     // this.recycle()
@@ -49,10 +41,14 @@ fun View.addRipple() = with(TypedValue()) {
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 fun View.addCircleRipple() = with(TypedValue()) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        context.theme.resolveAttribute(R.attr.selectableItemBackgroundBorderless, this, true)
+        context.theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, this, true)
         setBackgroundResource(resourceId)
     }
 }
+
+
+//
+
 
 fun RecyclerView.changeLayoutManager(layoutManager: RecyclerView.LayoutManager, restoreScrollPosition: Boolean = false) {
     var scrollPosition = 0
@@ -87,6 +83,10 @@ fun RecyclerView.changeLayoutManager(layoutManager: RecyclerView.LayoutManager, 
     if (restoreScrollPosition)
         this.scrollToPosition(scrollPosition)
 }
+
+
+//
+
 
 inline fun <reified T : Enum<T>> printAllValues() {
     print(enumValues<T>().joinToString { it.name })

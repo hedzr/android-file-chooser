@@ -4,7 +4,8 @@ import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.AppCompatTextView
 import com.obsez.android.lib.filechooser.MediaType
 import com.obsez.android.lib.filechooser.R
-import timber.log.Timber
+
+//import timber.log.Timber
 
 class BucketsAdapter(private val mediaType: MediaType,
                      private val listener: TasksListener? = null) : SimpleAbstractAdapter<BucketBase>() {
@@ -52,8 +53,8 @@ class BucketsAdapter(private val mediaType: MediaType,
         // return android.R.layout.simple_selectable_list_item
         // return android.R.layout.simple_list_item_2
         if (viewType == vtImage)
-            return com.obsez.android.lib.filechooser.demo.R.layout.li_bucket_item_with_thumb
-        return com.obsez.android.lib.filechooser.demo.R.layout.li_bucket_with_icon
+            return R.layout.li_bucket_item_with_thumb
+        return R.layout.li_bucket_with_icon
     }
     
     override fun getDiffCallback(): DiffCallback<BucketBase>? {
@@ -74,19 +75,19 @@ class BucketsAdapter(private val mediaType: MediaType,
             val position = viewHolder.adapterPosition
             viewHolder.itemView.apply {
                 // findViewById<TextView>(android.R.id.text1).text = item.title
-                findViewById<AppCompatTextView>(com.obsez.android.lib.filechooser.demo.R.id.tv_title).text = item.title
+                findViewById<AppCompatTextView>(R.id.tv_title).text = item.title
                 if (item is Bucket) {
-                    findViewById<AppCompatTextView>(com.obsez.android.lib.filechooser.demo.R.id.tv_size).text = "${item.items.size} Items"
-                    findViewById<AppCompatTextView>(com.obsez.android.lib.filechooser.demo.R.id.tv_date).text = "-"
-                    findViewById<AppCompatImageView>(com.obsez.android.lib.filechooser.demo.R.id.tv_icon).setImageResource(R.drawable.ic_folder)
+                    findViewById<AppCompatTextView>(R.id.tv_size).text = "${item.items.size} Items"
+                    findViewById<AppCompatTextView>(R.id.tv_date).text = "-"
+                    findViewById<AppCompatImageView>(R.id.tv_icon).setImageResource(R.drawable.ic_folder)
                 } else if (item is BucketItem) {
-                    findViewById<AppCompatTextView>(com.obsez.android.lib.filechooser.demo.R.id.tv_size).text = item.size.toString()
-                    // findViewById<AppCompatTextView>(com.obsez.android.lib.filechooser.demo.R.id.tv_date).text = item.lastModified
-                    findViewById<AppCompatImageView>(com.obsez.android.lib.filechooser.demo.R.id.tv_icon).apply {
+                    findViewById<AppCompatTextView>(R.id.tv_size).text = item.size.toString()
+                    // findViewById<AppCompatTextView>(R.id.tv_date).text = item.lastModified
+                    findViewById<AppCompatImageView>(R.id.tv_icon).apply {
                         item.getThumbnail(context, mediaType, this.drawable.intrinsicWidth).let {
                             if (it != null) {
                                 setImageBitmap(it)
-                                Timber.v("thumbnail's width is: ${this.drawable.intrinsicWidth} / ${it.width}")
+                                //Timber.v("thumbnail's width is: ${this.drawable.intrinsicWidth} / ${it.width}")
                             } else setImageResource(R.drawable.no_image)
                         }
                     }

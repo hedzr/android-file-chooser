@@ -1,4 +1,5 @@
-package com.obsez.android.lib.filechooser
+package com.obsez.android.lib.filechooser.fragments
+
 
 import android.Manifest
 import android.app.Dialog
@@ -17,13 +18,12 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.ProgressBar
 import android.widget.Toast
-import com.obsez.android.lib.filechooser.demo.R
+import com.obsez.android.lib.filechooser.MediaType
+import com.obsez.android.lib.filechooser.R
 import com.obsez.android.lib.filechooser.media.*
 import com.obsez.android.lib.filechooser.media.BucketsAdapter.TasksListener
 import com.obsez.android.lib.filechooser.permissions.PermissionsUtil
 import com.obsez.android.lib.filechooser.tool.changeLayoutManager
-import com.obsez.android.lib.filechooser.tool.networkInfo
-import timber.log.Timber
 
 
 class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buckets> {
@@ -59,7 +59,7 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         // return super.onCreateDialog(savedInstanceState)
         // Use the Builder class for convenient dialog construction
-    
+        
         val largeLayout = arguments?.getBoolean(argDialogMode) ?: false
         
         if (largeLayout) {
@@ -131,13 +131,13 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
             MediaType.values()[arguments?.getInt(argMediaType) ?: MediaType.IMAGES.ordinal],
             object : TasksListener {
                 override fun onCallClick(position: Int, item: BucketBase) {
-                    Timber.d("onCallClick($position, bucket: $item)")
+                    //Timber.d("onCallClick($position, bucket: $item)")
                 }
-            
+                
                 override fun onBucketItemClick(position: Int, item: BucketItem, bucket: BucketBase) {
-                    Timber.d("onBucketItemClick($position, item: $item, bucket: $bucket)")
+                    //Timber.d("onBucketItemClick($position, item: $item, bucket: $bucket)")
                 }
-            
+                
                 override fun onBackToBucketView(lastSel: Bucket) {
                     val mRecyclerView = ourRootView?.findViewById(R.id.recyclerView1) as RecyclerView
                     mRecyclerView.apply {
@@ -145,7 +145,7 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
                         scrollToPosition(bucketViewPos)
                     }
                 }
-            
+                
                 override fun onItemClick(position: Int, item: BucketBase) {
                     val mRecyclerView = ourRootView?.findViewById(R.id.recyclerView1) as RecyclerView
                     mRecyclerView.apply {
@@ -154,9 +154,9 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
                             .findFirstCompletelyVisibleItemPosition()
                         changeLayoutManager(lmBucketItemView!!)
                     }
-                    Timber.v("onItemClick($position, bucket: $item), changeLayoutManager to grid")
+                    //Timber.v("onItemClick($position, bucket: $item), changeLayoutManager to grid")
                 }
-            
+                
                 private var bucketViewPos: Int = 0
                 private var bucketViewSel: Int = 0
             })
@@ -234,22 +234,25 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
             lm.initLoader(0, null, this)
         }
         
-        val networkInfo = activity?.networkInfo
+        val queryBundle = Bundle()
+        lm.restartLoader(0, queryBundle, this)
         
-        // If the network is active and the search field is not empty,
-        // add the search term to the arguments Bundle and start the loader.
-        if (networkInfo != null && networkInfo.isConnected) {
-            val queryBundle = Bundle()
-            lm.restartLoader(0, queryBundle, this)
-        } else {
-            // Otherwise update the TextView to tell the user there is no connection or no search term.
-            //if (queryString.isEmpty()) {
-            //    titleText!!.setText(R.string.no_search_term)
-            //} else {
-            //    titleText!!.setText(R.string.no_network)
-            //}
-            Timber.d("")
-        }
+        // val networkInfo = activity?.networkInfo
+        //
+        // // If the network is active and the search field is not empty,
+        // // add the search term to the arguments Bundle and start the loader.
+        // if (networkInfo != null && networkInfo.isConnected) {
+        //     val queryBundle = Bundle()
+        //     lm.restartLoader(0, queryBundle, this)
+        // } else {
+        //     // Otherwise update the TextView to tell the user there is no connection or no search term.
+        //     //if (queryString.isEmpty()) {
+        //     //    titleText!!.setText(R.string.no_search_term)
+        //     //} else {
+        //     //    titleText!!.setText(R.string.no_network)
+        //     //}
+        //     //Timber.d("")
+        // }
     }
     
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Buckets> {
@@ -285,7 +288,7 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
             }
         }
         
-        Timber.v("mediaType: ${arguments?.getInt(argMediaType)}")
+        //Timber.v("mediaType: ${arguments?.getInt(argMediaType)}")
         return BucketLoader(
             this.activity!!,
             MediaType.values()[arguments?.getInt(argMediaType) ?: MediaType.IMAGES.ordinal],
@@ -302,5 +305,4 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
     }
     
 }
-
 

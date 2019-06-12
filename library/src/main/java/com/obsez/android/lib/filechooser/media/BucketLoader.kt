@@ -106,16 +106,19 @@ class BucketLoader(context: Context,
                 val sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE)
                 val descColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DESCRIPTION)
                 val lastModiColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
+    
                 val heightColumn = if (Build.VERSION.SDK_INT < 16) -1 else cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.HEIGHT)
                 val widthColumn = if (Build.VERSION.SDK_INT < 16) -1 else cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.WIDTH)
+    
                 val bucketNameColumn = if (Build.VERSION.SDK_INT < 29) -1 else cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.BUCKET_DISPLAY_NAME)
                 val bucketIdColumn = if (Build.VERSION.SDK_INT < 29) -1 else cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.BUCKET_ID)
-                val latColumn = if (BuildCompat.isAtLeastQ()) -1 else cursor.getColumnIndexOrThrow(MediaStore.Images.Media.LATITUDE)
-                val lngColumn = if (BuildCompat.isAtLeastQ()) -1 else cursor.getColumnIndexOrThrow(MediaStore.Images.Media.LONGITUDE)
+    
+                @Suppress("DEPRECATION", "UNUSED_VARIABLE") val latColumn = if (BuildCompat.isAtLeastQ()) -1 else cursor.getColumnIndexOrThrow(MediaStore.Images.Media.LATITUDE)
+                @Suppress("DEPRECATION", "UNUSED_VARIABLE") val lngColumn = if (BuildCompat.isAtLeastQ()) -1 else cursor.getColumnIndexOrThrow(MediaStore.Images.Media.LONGITUDE)
                 
                 // TODO set to -1 while `BuildCompat.isAtLeastQ()` is true
-                val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
-    
+                @Suppress("DEPRECATION") val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
+                
                 progressListener?.onInit(cursor.count)
                 
                 while (cursor.moveToNext()) {
