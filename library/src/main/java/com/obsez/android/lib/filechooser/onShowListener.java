@@ -1,22 +1,5 @@
 package com.obsez.android.lib.filechooser;
 
-import static android.view.Gravity.BOTTOM;
-import static android.view.Gravity.CENTER;
-import static android.view.Gravity.CENTER_HORIZONTAL;
-import static android.view.Gravity.CENTER_VERTICAL;
-import static android.view.Gravity.END;
-import static android.view.Gravity.START;
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
-import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-import static android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE;
-
-import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_DELETE;
-import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_NORMAL;
-import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_SELECT_MULTIPLE;
-import static com.obsez.android.lib.filechooser.internals.UiUtil.getListYScroll;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
@@ -52,12 +35,12 @@ import java.lang.ref.WeakReference;
 import static android.view.Gravity.BOTTOM;
 import static android.view.Gravity.CENTER;
 import static android.view.Gravity.CENTER_HORIZONTAL;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static android.view.Gravity.CENTER_VERTICAL;
 import static android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
 import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 import static android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE;
-import static android.widget.RelativeLayout.CENTER_VERTICAL;
 import static androidx.appcompat.widget.ListPopupWindow.MATCH_PARENT;
+import static androidx.appcompat.widget.ListPopupWindow.WRAP_CONTENT;
 import static androidx.core.view.GravityCompat.END;
 import static androidx.core.view.GravityCompat.START;
 import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_DELETE;
