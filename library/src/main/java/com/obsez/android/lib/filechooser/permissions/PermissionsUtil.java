@@ -31,10 +31,10 @@ public final class PermissionsUtil {
         int requestCode = _random.nextInt(1024);
         _permissionListeners.put(requestCode, onPermissionListener);
 
-        Intent intent = new Intent(context, PermissionActivity.class);
-        intent.putExtra(PermissionActivity.INTENT_EXTRA_PERMISSIONS, permissions);
-        intent.putExtra(PermissionActivity.INTENT_EXTRA_REQUEST_CODE, requestCode);
-        context.startActivity(intent);
+        context.startActivity(new Intent(context, PermissionActivity.class)
+            .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+            .putExtra(PermissionActivity.INTENT_EXTRA_PERMISSIONS, permissions)
+            .putExtra(PermissionActivity.INTENT_EXTRA_REQUEST_CODE, requestCode));
     }
 
     private static final SparseArray<OnPermissionListener> _permissionListeners = new SparseArray<>();

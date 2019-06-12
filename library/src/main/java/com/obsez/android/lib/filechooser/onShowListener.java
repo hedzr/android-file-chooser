@@ -1,5 +1,22 @@
 package com.obsez.android.lib.filechooser;
 
+import static android.view.Gravity.BOTTOM;
+import static android.view.Gravity.CENTER;
+import static android.view.Gravity.CENTER_HORIZONTAL;
+import static android.view.Gravity.CENTER_VERTICAL;
+import static android.view.Gravity.END;
+import static android.view.Gravity.START;
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
+import static android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+import static android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE;
+
+import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_DELETE;
+import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_NORMAL;
+import static com.obsez.android.lib.filechooser.ChooserDialog.CHOOSE_MODE_SELECT_MULTIPLE;
+import static com.obsez.android.lib.filechooser.internals.UiUtil.getListYScroll;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
@@ -191,11 +208,15 @@ class onShowListener implements DialogInterface.OnShowListener {
                     if (_c.get()._options == null) {
                         // region Draw options view. (this only happens the first time one clicks on options)
                         // Root view (FrameLayout) of the ListView in the AlertDialog.
-                        final int rootId = _c.get()._context.getResources().getIdentifier("contentPanel", "id",
-                            "android");
-                        final ViewGroup root = ((AlertDialog) dialog).findViewById(rootId);
+                        int rootId = _c.get()._context.getResources().getIdentifier("contentPanel", "id", _c.get()._context.getPackageName());
+                        ViewGroup tmpRoot = ((AlertDialog) dialog).findViewById(rootId);
                         // In case the root id was changed or not found.
-                        if (root == null) return;
+                        if (tmpRoot == null) {
+                            rootId = _c.get()._context.getResources().getIdentifier("contentPanel", "id", "android");
+                            tmpRoot = ((AlertDialog) dialog).findViewById(rootId);
+                            if (tmpRoot == null) return;
+                        }
+                        final ViewGroup root = tmpRoot;
 
                         // Create options view.
                         final FrameLayout options = new FrameLayout(_c.get()._context);
@@ -403,6 +424,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                                         _c.get()._newFolderFilter != null ? _c.get()._newFolderFilter
                                             : new FileUtil.NewFolderFilter()});
                                     input.setGravity(CENTER_HORIZONTAL);
+                                    input.setImeOptions(EditorInfo.IME_ACTION_DONE);
                                     params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
                                     params.setMargins(3, 2, 3, 0);
                                     holder.addView(input, params);
@@ -449,6 +471,11 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                                         END);
                                     buttons.addView(ok, params);
+
+                                    final int id = cancel.hashCode();
+                                    cancel.setId(id);
+                                    ok.setNextFocusLeftId(id);
+                                    input.setNextFocusLeftId(id);
 
                                     // Event Listeners.
                                     input.setOnEditorActionListener(

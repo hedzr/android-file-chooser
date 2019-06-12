@@ -24,7 +24,6 @@ import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.appcompat.view.ContextThemeWrapper;
-
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -651,10 +650,14 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
     private void displayPath(String path) {
         if (_pathView == null) {
-            final int rootId = _context.getResources().getIdentifier("contentPanel", "id", "android");
-            final ViewGroup root = ((AlertDialog) _alertDialog).findViewById(rootId);
-            // In case the id was changed or not found.
-            if (root == null) return;
+            int rootId = _context.getResources().getIdentifier("contentPanel", "id", _context.getPackageName());
+            ViewGroup root = ((AlertDialog) _alertDialog).findViewById(rootId);
+            // In case the root id was changed or not found.
+            if (root == null) {
+                rootId = _context.getResources().getIdentifier("contentPanel", "id", "android");
+                root = ((AlertDialog) _alertDialog).findViewById(rootId);
+                if (root == null) return;
+            }
 
             ViewGroup.MarginLayoutParams params;
             if (root instanceof LinearLayout) {
@@ -693,7 +696,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
 
             ViewGroup.MarginLayoutParams param = ((ViewGroup.MarginLayoutParams) _list.getLayoutParams());
             if (_pathView.getParent() instanceof FrameLayout) {
-                param.topMargin = _pathView.getHeight();
+                param.topMargin = 0;
             }
             _list.setLayoutParams(param);
         } else {
@@ -733,6 +736,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                             param.topMargin = _pathView.getHeight();
                         }
                         _list.setLayoutParams(param);
+                        _list.post(() -> _list.setSelection(0));
                         return true;
                     }
                 });
@@ -909,6 +913,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
                     }
                     _chooseMode = CHOOSE_MODE_NORMAL;
                     if (_deleteModeIndicator != null) _deleteModeIndicator.run();
+                    scrollTo = -1;
                     break;
                 default:
                     // ERROR! It shouldn't get here...
@@ -916,8 +921,10 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             }
         }
         refreshDirs();
-        _list.setSelection(scrollTo);
-        _list.post(() -> _list.setSelection(scrollTo));
+        if (scrollTo != -1) {
+            _list.setSelection(scrollTo);
+            _list.post(() -> _list.setSelection(scrollTo));
+        }
     }
 
     @Override

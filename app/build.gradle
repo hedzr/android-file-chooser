@@ -7,9 +7,19 @@ androidExtensions {
     features = ["parcelize"]
 }
 
+def VERSION_NAME = project.VERSION_NAME
+def VERSION_CODE = Integer.parseInt(project.VERSION_CODE)
+
+def ANDROID_COMPILE_SDK_VERSION = Integer.parseInt(project.ANDROID_COMPILE_SDK_VERSION)
+def ANDROID_TARGET_SDK_VERSION = Integer.parseInt(project.ANDROID_TARGET_SDK_VERSION)
+//def ANDROID_BUILD_TOOLS_VERSION = project.ANDROID_BUILD_TOOLS_VERSION
+def ANDROID_MIN_SDK_VERSION = Integer.parseInt(project.ANDROID_MIN_SDK_VERSION)
+
+def JAVA_COMPATIBILITY =  JavaVersion.valueOf(project.JAVA_COMPATIBILITY)
+
 android {
-    compileSdkVersion Integer.parseInt(project.ANDROID_COMPILE_SDK_VERSION)
-    //buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
+    compileSdkVersion ANDROID_COMPILE_SDK_VERSION
+    //buildToolsVersion ANDROID_BUILD_TOOLS_VERSION
 
     signingConfigs {
         Properties properties = new Properties()
@@ -38,10 +48,10 @@ android {
     }
     defaultConfig {
         applicationId "com.obsez.android.lib.filechooser.demo"
-        minSdkVersion project.ANDROID_MIN_SDK_VERSION
-        targetSdkVersion project.ANDROID_TARGET_SDK_VERSION
-        versionCode Integer.parseInt(project.VERSION_CODE)
-        versionName project.VERSION_NAME
+        minSdkVersion ANDROID_MIN_SDK_VERSION
+        targetSdkVersion ANDROID_TARGET_SDK_VERSION
+        versionCode VERSION_CODE
+        versionName VERSION_NAME
     }
     buildTypes {
         release {
@@ -52,8 +62,8 @@ android {
 
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JAVA_COMPATIBILITY
+        targetCompatibility JAVA_COMPATIBILITY
     }
     lintOptions {
         lintConfig rootProject.file('lint.xml')
@@ -80,13 +90,10 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
     implementation project(':library')
-//    debugImplementation project(':library')
-//    //releaseImplementation 'com.github.hedzr:android-file-chooser:v1.1.17'
-//    releaseImplementation 'com.obsez.android.lib.filechooser:filechooser:1.1.17'
-//    // implementation 'com.github.hedzr:android-file-chooser:master-SNAPSHOT'
-//    // implementation 'com.github.hedzr:android-file-chooser:v1.1.10'
 
-    //unitTestCompile 'com.google.android:android-test:4.1.1.4'
+//    debugImplementation project(':library')
+//    implementation 'com.github.hedzr:android-file-chooser:master-SNAPSHOT'
+//    unitTestCompile 'com.google.android:android-test:4.1.1.4'
 }
 repositories {
     mavenCentral()

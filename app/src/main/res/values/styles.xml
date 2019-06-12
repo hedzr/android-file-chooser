@@ -15,17 +15,19 @@
         <item name="fileChooserNewFolderStyle">@style/FileChooserNewFolderStyle_Dark</item>
     </style>
 
-    <style name="FileChooserDialogStyle_Dark">
-        <item name="android:windowBackground">@android:color/transparent</item>
+    <style name="FileChooserDialogStyle_Dark" parent="Theme.AppCompat.Dialog.Alert">
+        <!--<item name="android:windowBackground">@android:color/transparent</item>-->
         <item name="android:textColorPrimary">@android:color/holo_blue_light</item>
         <item name="colorAccent">@android:color/holo_blue_light</item>
         <item name="android:windowTitleStyle">@style/FileChooserTitleStyle_Dark</item>
         <item name="android:buttonBarButtonStyle">@style/FileChooserButtonStyle_Dark</item>
+        <item name="buttonBarButtonStyle">@style/FileChooserButtonStyle_Dark</item>
         <item name="android:backgroundDimAmount">0.8</item>
     </style>
 
     <style name="FileChooserTitleStyle_Dark" parent="FileChooserTitleStyle">
-        <item name="android:textAppearance">@android:style/TextAppearance.Holo.DialogWindowTitle</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Title.Inverse</item>
+        <item name="android:textColor">@android:color/holo_blue_light</item>
     </style>
 
     <style name="FileChooserButtonStyle_Dark" parent="FileChooserButtonStyle">
