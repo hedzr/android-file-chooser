@@ -4,6 +4,7 @@ package com.obsez.android.lib.filechooser.fragments
 import android.Manifest
 import android.app.Dialog
 import android.content.DialogInterface
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
@@ -125,6 +126,9 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
         }
     }
     
+    //private var _gridItemDecor: RecyclerView.ItemDecoration? = null
+    private var _itemDecor: RecyclerView.ItemDecoration? = null
+    
     private fun initView(root: ViewGroup) {
         _lmBucketView = LinearLayoutManager(this.activity, LinearLayoutManager.VERTICAL, false)
         _lmBucketItemView = GridLayoutManager(this.activity, 2, GridLayoutManager.VERTICAL, false).apply {
@@ -135,11 +139,13 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
             }
         }
     
-        _gridItemDecor = GridItemDecoration.Builder(this.activity!!).build()
-    
+        //_gridItemDecor = GridItemDecoration.Builder(this.activity!!).build()
+        _itemDecor = DividerItemDecoration(this.activity!!, DividerItemDecoration.BOTH_SET, 1, Color.LTGRAY)
+        
         initAdapter()
         
         (root.findViewById(R.id.recyclerView1) as RecyclerView).apply {
+            addItemDecoration(_itemDecor!!)
             layoutManager = _lmBucketView
             adapter = _adapter
         }
@@ -162,7 +168,7 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
                 override fun onBackToBucketView(lastSel: Bucket) {
                     val mRecyclerView = _ourRootView?.findViewById(R.id.recyclerView1) as RecyclerView
                     mRecyclerView.apply {
-                        removeItemDecoration(_gridItemDecor!!)
+                        //removeItemDecoration(_gridItemDecor!!)
                         changeLayoutManager(_lmBucketView!!)
                         scrollToPosition(bucketViewPos)
                     }
@@ -175,7 +181,7 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
                         bucketViewPos = (layoutManager as LinearLayoutManager)
                             .findFirstCompletelyVisibleItemPosition()
                         changeLayoutManager(_lmBucketItemView!!)
-                        addItemDecoration(_gridItemDecor!!)
+                        //addItemDecoration(_gridItemDecor!!)
                     }
                     //Timber.v("onItemClick($position, bucket: $item), changeLayoutManager to grid")
                 }
@@ -187,8 +193,6 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
         //this.addAll(getData())
         getData()
     }
-    
-    var _gridItemDecor: RecyclerView.ItemDecoration? = null
     
     private fun getData(): ArrayList<Bucket> {
         loader()
