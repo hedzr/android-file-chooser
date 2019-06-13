@@ -5,7 +5,15 @@
 [![Release](https://jitpack.io/v/hedzr/android-file-chooser.svg)](https://jitpack.io/#hedzr/android-file-chooser)
 [![Build Status](https://travis-ci.com/hedzr/android-file-chooser.svg?branch=master)](https://travis-ci.com/hedzr/android-file-chooser)
 
+`android-file-library` is a lightweight file/folder chooser.
+
+The usages at [HERE](#Usages), and [Acknowledges](#Acknowledges).
+
+
+
 ### Legacy
+
+#### 1. with AndroidX
 
 ```
 dependencies {
@@ -21,10 +29,6 @@ dependencies {
 	implementation 'com.github.hedzr:android-file-chooser:devel-SNAPSHOT'
 }
 ```
-
-`android-file-library` is a lightweight file/folder chooser.
-
-The usages at [HERE](#Usages), and [Acknowledges](#Acknowledges).
 
 
 
@@ -52,15 +56,6 @@ A Xamarin nuget package by [@Guiorgy](https://github.com/Guiorgy) can be found a
 
 ## Changes
 
-### `x1.2.0` branch
-
-- **In progress**
-- Plan: uses AndroidX
-
-### v1.1.x patches on `master`
-
-- 
-
 ### v1.1.19
 
 - bugs fixed
@@ -70,36 +65,21 @@ A Xamarin nuget package by [@Guiorgy](https://github.com/Guiorgy) can be found a
 - added cancelOnTouchOutside and enableDpad (true by default)
 - mainly by Guiorgy.
 
-### v1.1.18
-
-temporary release with gradle 5.1.1 compartibility test.
-
-this library works within androidx project.
-
-### v1.1.17
-
-- bugs fixed.
-- rewrite demo app
-- small tunes
-  - show dlg after permissions granted, without fault
-  - better text color and dark facade
-  - displaying the current path string
-  - etc.
-
 ### Archived History:
 
+- rewrite demo app
 - #48: add `displayPath(boolean)`, thank you [@Guiorgy](https://github.com/Guiorgy), and your [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser).
 - new style demo app by @Guiorgy.
 - NOTE: `displayPath` is true by default now.
 - since v1.1.16, bumped targer sdk to 1.8 (please include the following into your build.gradle)
-```java
-android {
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-}
-```
+  ```java
+  android {
+      compileOptions {
+          sourceCompatibility JavaVersion.VERSION_1_8
+          targetCompatibility JavaVersion.VERSION_1_8
+      }
+  }
+  ```
 
 - no WRITE_EXTERNAL_STORAGE requests if not `enableOptions(true)`;
 - after requested permissions, try showing dialog again instead of return directly;
