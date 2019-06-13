@@ -224,7 +224,7 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStorePicker.Companion.get().config(MediaType.DOWNLOADS, true, R.id.fragment, _handler).show();
         } else {
-            Snackbar.make(v, "Just for Android Q: Downlaods is new type.", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(v, "Just for Android Q: Downloads is new type.", Snackbar.LENGTH_SHORT).show();
         }
     }
 

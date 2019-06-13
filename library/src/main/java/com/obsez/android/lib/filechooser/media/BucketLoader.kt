@@ -9,6 +9,7 @@ import android.provider.MediaStore
 import android.support.v4.content.AsyncTaskLoader
 import android.support.v4.os.BuildCompat
 import com.obsez.android.lib.filechooser.MediaType
+import com.obsez.android.lib.filechooser.internals.FileUtil
 import java.io.File
 
 //import retrofit2.Retrofit
@@ -129,7 +130,7 @@ class BucketLoader(context: Context,
                 while (cursor.moveToNext()) {
                     val id = cursor.getString(idColumn)
                     val photoUri = Uri.withAppendedPath(contentUri, id)
-                    val title = cursor.getString(titleColumn)
+                    var title = safeString(cursor, titleColumn)
                     val size = safeString2(cursor, sizeColumn, "0")
                     val w = safeString2(cursor, widthColumn, "0")
                     val h = safeString2(cursor, heightColumn, "0")
@@ -137,21 +138,22 @@ class BucketLoader(context: Context,
                     val lastModified = safeString(cursor, lastModiColumn)
                     val path = cursor.getString(pathColumn)
     
+                    if (title.isEmpty() && path != null) title = FileUtil.getExtensionWithoutDot(File(path).parentFile)
+                    
                     val albumId = if (mediaType != MediaType.AUDIOS) 0L else cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)).toLong()
                     val artPath: String? = if (mediaType != MediaType.AUDIOS) null else {
                         val cursorAlbum = context.contentResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
                             arrayOf(MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART),
                             MediaStore.Audio.Albums._ID + "=" + albumId, null, null)
-        
+    
                         if (cursorAlbum != null && cursorAlbum.moveToFirst()) {
                             val idx = cursorAlbum.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART)
                             val albumCoverPath = cursorAlbum.getString(idx)
                             //val data = cursorAudio.getString(cursorAudio.getColumnIndex(MediaStore.Audio.Media.DATA))
                             //musicPathArrList.add(CommonModel(data, albumCoverPath, false))
-            
-                            //Uri.parse(albumCoverPath)
+        
                             albumCoverPath
-            
+        
                         } else null
                     }
                     val artUri: Uri? = if (artPath == null) null else ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), albumId)
