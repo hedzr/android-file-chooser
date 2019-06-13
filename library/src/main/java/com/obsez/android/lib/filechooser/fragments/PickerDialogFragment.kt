@@ -127,14 +127,16 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
     
     private fun initView(root: ViewGroup) {
         _lmBucketView = LinearLayoutManager(this.activity, LinearLayoutManager.VERTICAL, false)
-        _lmBucketItemView = GridLayoutManager(this.activity, 6, GridLayoutManager.VERTICAL, false).apply {
+        _lmBucketItemView = GridLayoutManager(this.activity, 2, GridLayoutManager.VERTICAL, false).apply {
             spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
-                    return 3
+                    return 1
                 }
             }
         }
-        
+    
+        _gridItemDecor = GridItemDecoration.Builder(this.activity!!).build()
+    
         initAdapter()
         
         (root.findViewById(R.id.recyclerView1) as RecyclerView).apply {
@@ -160,6 +162,7 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
                 override fun onBackToBucketView(lastSel: Bucket) {
                     val mRecyclerView = _ourRootView?.findViewById(R.id.recyclerView1) as RecyclerView
                     mRecyclerView.apply {
+                        removeItemDecoration(_gridItemDecor!!)
                         changeLayoutManager(_lmBucketView!!)
                         scrollToPosition(bucketViewPos)
                     }
@@ -172,6 +175,7 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
                         bucketViewPos = (layoutManager as LinearLayoutManager)
                             .findFirstCompletelyVisibleItemPosition()
                         changeLayoutManager(_lmBucketItemView!!)
+                        addItemDecoration(_gridItemDecor!!)
                     }
                     //Timber.v("onItemClick($position, bucket: $item), changeLayoutManager to grid")
                 }
@@ -183,6 +187,8 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
         //this.addAll(getData())
         getData()
     }
+    
+    var _gridItemDecor: RecyclerView.ItemDecoration? = null
     
     private fun getData(): ArrayList<Bucket> {
         loader()
