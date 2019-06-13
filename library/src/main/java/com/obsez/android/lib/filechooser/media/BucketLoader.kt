@@ -179,7 +179,6 @@ class BucketLoader(context: Context,
                         val bucketId = cursor.getString(bucketIdColumn)
                         
                         // Timber.d("- $photoUri, $title, $bucketId, $bucketName, ${w}x$h, $size, $path, ")
-    
                         progressListener?.onStep(1, bucketId.toLong(), bucketName,
                             BucketItem(title, id.toLong(), photoUri, path, desc,
                                 size.toLong(), h.toLong(), w.toLong(), lastModified, albumId, artUri, artPath))

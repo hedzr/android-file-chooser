@@ -288,6 +288,8 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
         val progressListener = object : BucketLoader.ProgressListener {
             private val pbc = _ourRootView?.findViewById<ViewGroup>(R.id.progressContainer)
             private val pb = _ourRootView?.findViewById<ProgressBar>(R.id.progressBar)
+            private var counter: Int = 0
+            private val counterMod: Int = 300
             
             override fun onInit(max: Int) {
                 activity?.runOnUiThread {
@@ -300,13 +302,18 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
             }
             
             override fun onStep(diff: Int, bucketId: Long, bucketName: String, item: BucketItem) {
+                counter += diff; counter %= counterMod
+                
                 activity?.runOnUiThread {
-                    pb?.incrementProgressBy(diff)
+                    if (counter == 0)
+                        pb?.incrementProgressBy(diff)
                     _adapter?.addOne(bucketId, bucketName, item)
                 }
-                
-                // make ui animating
-                Thread.sleep(20)
+    
+                if (counter == 0) {
+                    // make ui animating
+                    Thread.sleep(20)
+                }
             }
             
             override fun onEnd() {
