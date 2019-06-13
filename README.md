@@ -18,7 +18,7 @@ The usages at [HERE](#Usages), and [Acknowledges](#Acknowledges).
 ```
 dependencies {
 	// implementation 'com.github.hedzr:android-file-chooser:1.2.0-SNAPSHOT'
-	implementation 'com.github.hedzr:android-file-chooser:v1.2.0'
+	implementation 'com.github.hedzr:android-file-chooser:v1.2.0-final'
 }
 ```
 
