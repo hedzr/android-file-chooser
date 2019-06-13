@@ -131,7 +131,7 @@ class PickerDialogFragment : DialogFragment(), LoaderManager.LoaderCallbacks<Buc
     
     private fun initView(root: ViewGroup) {
         _lmBucketView = LinearLayoutManager(this.activity, LinearLayoutManager.VERTICAL, false)
-        _lmBucketItemView = GridLayoutManager(this.activity, 2, GridLayoutManager.VERTICAL, false).apply {
+        _lmBucketItemView = GridLayoutManager(this.activity, 3, GridLayoutManager.VERTICAL, false).apply {
             spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
                     return 1

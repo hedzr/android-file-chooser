@@ -27,67 +27,77 @@
             tools:context=".ChooseFileActivityFragment">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/panelQTests"
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp">
+            android:fillViewport="true">
 
-            <Button
-                android:id="@+id/btn_images"
+            <LinearLayout
+                android:id="@+id/panelQTests"
+                style="?android:attr/buttonBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:text="Images"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btn_videos"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:text="Videos"
-                app:layout_constraintStart_toEndOf="@+id/btn_images"
-                app:layout_constraintTop_toTopOf="@+id/btn_images"/>
+                <!--style="?android:attr/buttonBarButtonStyle" attribute on each of the buttons, and set style="?android:attr/buttonBarStyle" on the parent layout-->
+                <!--Issue id: ButtonStyle http://developer.android.com/design/building-blocks/buttons.html-->
 
-            <Button
-                android:id="@+id/btn_audios"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:text="Audios"
-                app:layout_constraintStart_toEndOf="@+id/btn_videos"
-                app:layout_constraintTop_toTopOf="@+id/btn_images"/>
+                <Button
+                    android:id="@+id/btn_images"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:text="Images"
+                    style="?android:attr/buttonBarButtonStyle"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
 
-            <Button
-                android:id="@+id/btn_downloads"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Downloads"
-                app:layout_constraintStart_toStartOf="@+id/btn_images"
-                app:layout_constraintTop_toBottomOf="@+id/btn_images"/>
+                <Button
+                    android:id="@+id/btn_videos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:text="Videos"
+                    style="?android:attr/buttonBarButtonStyle"
+                    app:layout_constraintStart_toEndOf="@+id/btn_images"
+                    app:layout_constraintTop_toTopOf="@+id/btn_images"/>
 
-            <Button
-                android:id="@+id/btn_files"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:text="Files"
-                app:layout_constraintStart_toEndOf="@+id/btn_downloads"
-                app:layout_constraintTop_toTopOf="@+id/btn_downloads"/>
+                <Button
+                    android:id="@+id/btn_audios"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:text="Audios"
+                    style="?android:attr/buttonBarButtonStyle"
+                    app:layout_constraintStart_toEndOf="@+id/btn_videos"
+                    app:layout_constraintTop_toTopOf="@+id/btn_images"/>
 
-        </android.support.constraint.ConstraintLayout>
+                <Button
+                    android:id="@+id/btn_files"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:text="Files"
+                    style="?android:attr/buttonBarButtonStyle"
+                    app:layout_constraintStart_toEndOf="@+id/btn_downloads"
+                    app:layout_constraintTop_toTopOf="@+id/btn_downloads"/>
+
+                <Button
+                    android:id="@+id/btn_downloads"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:text="Downloads"
+                    style="?android:attr/buttonBarButtonStyle"
+                    app:layout_constraintStart_toStartOf="@+id/btn_images"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_images"/>
+
+            </LinearLayout>
+        </HorizontalScrollView>
 
         <include layout="@layout/inc_legacy_panel"/>
 
