@@ -647,14 +647,15 @@ class DividerItemDecoration : RecyclerView.ItemDecoration {
             //     Color.argb(0, 0, 0, 0),
             //     Shader.TileMode.MIRROR)
             val colors = intArrayOf(
+                Color.argb(0, 0, 0, 0),
+                Color.argb(70, Color.red(clr), Color.green(clr), Color.blue(clr)),
                 Color.argb(210, Color.red(clr), Color.green(clr), Color.blue(clr)),
-                Color.argb(140, Color.red(clr), Color.green(clr), Color.blue(clr)),
                 Color.argb(70, Color.red(clr), Color.green(clr), Color.blue(clr)),
                 Color.argb(0, 0, 0, 0)
             )
-            val stops = floatArrayOf(0f, 0.25f, 0.6f, 1f)
+            val stops = floatArrayOf(0f, 0.25f, 0.5f, 0.75f, 1f)
             // TODO this shader have not worked yet
-            LinearGradient(0f, 0f, 0f, width.toFloat(), colors, stops, Shader.TileMode.REPEAT)
+            LinearGradient(0f, 0f, 0f, width.toFloat(), colors, stops, Shader.TileMode.CLAMP)
         } else null
         if (shader != null && mPaint != null) mPaint!!.shader = shader
         
