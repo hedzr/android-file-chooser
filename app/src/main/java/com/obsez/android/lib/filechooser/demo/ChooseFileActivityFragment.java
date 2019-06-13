@@ -2,6 +2,7 @@ package com.obsez.android.lib.filechooser.demo;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -10,6 +11,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -27,6 +30,8 @@ import com.obsez.android.lib.filechooser.MediaStorePicker;
 import com.obsez.android.lib.filechooser.MediaType;
 import com.obsez.android.lib.filechooser.demo.tool.ImageUtil;
 import com.obsez.android.lib.filechooser.internals.FileUtil;
+import com.obsez.android.lib.filechooser.media.Bucket;
+import com.obsez.android.lib.filechooser.media.BucketItem;
 import com.obsez.android.lib.filechooser.tool.BitmapUtil;
 import com.obsez.android.lib.filechooser.tool.RootFile;
 
@@ -36,6 +41,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function5;
 import timber.log.Timber;
 
 /**
@@ -153,9 +160,12 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
         return root;
     }
 
-    public void onBtnImagesClick(View v) {
-        MediaStorePicker.Companion.get()
-            .config(MediaType.IMAGES, true, R.id.fragment, (dlg, mediaType, bucket, position, bucketItem) -> {
+    // dlg: DialogInterface?, mediaType: MediaType, bucket: Bucket, position: Int, item: BucketItem) -> Unit
+    private Function5<DialogInterface, MediaType, Bucket, Integer, BucketItem, Unit> _handler =
+        new Function5<DialogInterface, MediaType, Bucket, Integer, BucketItem, Unit>() {
+            @Override
+            public Unit invoke(DialogInterface dlg, MediaType mediaType, Bucket bucket,
+                Integer position, BucketItem bucketItem) {
                 switch (mediaType) {
                     case IMAGES:
                     case VIDEOS: {
@@ -187,29 +197,44 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                         break;
                     }
                     default:
-                        Toast.makeText(v.getContext(),
+                        Timber.d("onPicked: position=%d, %s", position, bucketItem);
+                        Toast.makeText(getActivity(),
                             "onBucketItemClick($position, item: $item, bucket: $bucket)",
                             Toast.LENGTH_SHORT).show();
+                        if (dlg != null) dlg.dismiss();
                 }
                 return null;
-            }).show();
+            }
+        };
+
+    public void onBtnImagesClick(View v) {
+        MediaStorePicker.Companion.get()
+            .config(MediaType.IMAGES, true, R.id.fragment, _handler).show();
     }
 
     public void onBtnVideosClick(View v) {
-        MediaStorePicker.Companion.get().config(MediaType.VIDEOS, true, R.id.fragment, null).show();
+        MediaStorePicker.Companion.get().config(MediaType.VIDEOS, true, R.id.fragment, _handler).show();
     }
 
     public void onBtnAudiosClick(View v) {
-        MediaStorePicker.Companion.get().config(MediaType.AUDIOS, true, R.id.fragment, null).show();
+        MediaStorePicker.Companion.get().config(MediaType.AUDIOS, true, R.id.fragment, _handler).show();
     }
 
     public void onBtnDownloadsClick(View v) {
-        MediaStorePicker.Companion.get().config(MediaType.DOWNLOADS, true, R.id.fragment, null).show();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            MediaStorePicker.Companion.get().config(MediaType.DOWNLOADS, true, R.id.fragment, _handler).show();
+        } else {
+            Snackbar.make(v, "Just for Android Q: Downlaods is new type.", Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     public void onBtnFilesClick(View v) {
-        MediaStorePicker.Companion.get().config(MediaType.FILES, true, R.id.fragment, null).show();
+        MediaStorePicker.Companion.get().config(MediaType.FILES, true, R.id.fragment, _handler).show();
     }
+
+
+    //
+
 
     @Override
     public void onClick(View v) {

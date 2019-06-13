@@ -1,5 +1,6 @@
 package com.obsez.android.lib.filechooser.media
 
+import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
@@ -104,17 +105,21 @@ class BucketLoader(context: Context,
                 val idColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID)
                 val titleColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.TITLE)
                 val sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE)
-                val descColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DESCRIPTION)
                 val lastModiColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
     
-                val heightColumn = if (Build.VERSION.SDK_INT < 16) -1 else cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.HEIGHT)
-                val widthColumn = if (Build.VERSION.SDK_INT < 16) -1 else cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.WIDTH)
+                // for Audio:
+                //  [_id, _data, _display_name, _size, mime_type, date_added, is_drm, date_modified, title,
+                //  title_key, duration, artist_id, composer, album_id, track, year, is_ringtone, is_music, is_alarm, is_notification, is_podcast, bookmark, album_artist, artist_id:1, artist_key, artist, album_id:1, album_key, album]
+                val descColumn = cursor.getColumnIndexOrThrow(if (mediaType == MediaType.AUDIOS) MediaStore.Audio.Media.TITLE else MediaStore.Images.Media.DESCRIPTION)
     
+                val heightColumn = if (Build.VERSION.SDK_INT < 16 || mediaType == MediaType.AUDIOS) -1 else cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.HEIGHT)
+                val widthColumn = if (Build.VERSION.SDK_INT < 16 || mediaType == MediaType.AUDIOS) -1 else cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.WIDTH)
+    
+                @Suppress("DEPRECATION", "UNUSED_VARIABLE") val latColumn = if (BuildCompat.isAtLeastQ() || mediaType == MediaType.AUDIOS) -1 else cursor.getColumnIndexOrThrow(MediaStore.Images.Media.LATITUDE)
+                @Suppress("DEPRECATION", "UNUSED_VARIABLE") val lngColumn = if (BuildCompat.isAtLeastQ() || mediaType == MediaType.AUDIOS) -1 else cursor.getColumnIndexOrThrow(MediaStore.Images.Media.LONGITUDE)
+                
                 val bucketNameColumn = if (Build.VERSION.SDK_INT < 29) -1 else cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.BUCKET_DISPLAY_NAME)
                 val bucketIdColumn = if (Build.VERSION.SDK_INT < 29) -1 else cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.BUCKET_ID)
-    
-                @Suppress("DEPRECATION", "UNUSED_VARIABLE") val latColumn = if (BuildCompat.isAtLeastQ()) -1 else cursor.getColumnIndexOrThrow(MediaStore.Images.Media.LATITUDE)
-                @Suppress("DEPRECATION", "UNUSED_VARIABLE") val lngColumn = if (BuildCompat.isAtLeastQ()) -1 else cursor.getColumnIndexOrThrow(MediaStore.Images.Media.LONGITUDE)
                 
                 // TODO set to -1 while `BuildCompat.isAtLeastQ()` is true
                 @Suppress("DEPRECATION") val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
@@ -131,6 +136,25 @@ class BucketLoader(context: Context,
                     val desc = safeString(cursor, descColumn)
                     val lastModified = safeString(cursor, lastModiColumn)
                     val path = cursor.getString(pathColumn)
+    
+                    val albumId = if (mediaType != MediaType.AUDIOS) 0L else cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)).toLong()
+                    val artPath: String? = if (mediaType != MediaType.AUDIOS) null else {
+                        val cursorAlbum = context.contentResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                            arrayOf(MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART),
+                            MediaStore.Audio.Albums._ID + "=" + albumId, null, null)
+        
+                        if (cursorAlbum != null && cursorAlbum.moveToFirst()) {
+                            val idx = cursorAlbum.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART)
+                            val albumCoverPath = cursorAlbum.getString(idx)
+                            //val data = cursorAudio.getString(cursorAudio.getColumnIndex(MediaStore.Audio.Media.DATA))
+                            //musicPathArrList.add(CommonModel(data, albumCoverPath, false))
+            
+                            //Uri.parse(albumCoverPath)
+                            albumCoverPath
+            
+                        } else null
+                    }
+                    val artUri: Uri? = if (artPath == null) null else ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), albumId)
                     
                     if (Build.VERSION.SDK_INT < 29) {
                         val parentFile = File(path).parentFile ?: continue
@@ -147,7 +171,7 @@ class BucketLoader(context: Context,
     
                         progressListener?.onStep(1, bucketId, bucketName,
                             BucketItem(title, id.toLong(), photoUri, path, desc,
-                                size.toLong(), h.toLong(), w.toLong(), lastModified))
+                                size.toLong(), h.toLong(), w.toLong(), lastModified, albumId, artUri, artPath))
                     } else {
                         val bucketName = cursor.getString(bucketNameColumn)
                         val bucketId = cursor.getString(bucketIdColumn)
@@ -156,7 +180,7 @@ class BucketLoader(context: Context,
     
                         progressListener?.onStep(1, bucketId.toLong(), bucketName,
                             BucketItem(title, id.toLong(), photoUri, path, desc,
-                                size.toLong(), h.toLong(), w.toLong(), lastModified))
+                                size.toLong(), h.toLong(), w.toLong(), lastModified, albumId, artUri, artPath))
                     }
                 }
             }

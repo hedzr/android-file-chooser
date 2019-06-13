@@ -9,17 +9,7 @@ import com.obsez.android.lib.filechooser.fragments.OnPickHandler
 import com.obsez.android.lib.filechooser.fragments.PickerDialogFragment
 import com.obsez.android.lib.filechooser.fragments.PickerDialogFragment.Companion.argDialogMode
 import com.obsez.android.lib.filechooser.fragments.PickerDialogFragment.Companion.argMediaType
-import com.obsez.android.lib.filechooser.media.*
 import com.obsez.android.lib.filechooser.provider.ActivityProvider
-
-
-enum class MediaType(val getter: MediaTypeGetter) {
-    IMAGES(ImagesMediaTypeGetter()),
-    VIDEOS(VideosMediaTypeGetter()),
-    AUDIOS(AudiosMediaTypeGetter()),
-    DOWNLOADS(DownloadsMediaTypeGetter()),
-    FILES(FilesMediaTypeGetter()),
-}
 
 
 class MediaStorePicker {

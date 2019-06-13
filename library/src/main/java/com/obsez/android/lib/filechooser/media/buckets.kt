@@ -16,12 +16,17 @@ data class Buckets(var title: String, var items: ArrayList<Bucket>)
 data class Bucket(override var title: String, override var id: Long, var items: ArrayList<BucketItem>) : BucketBase
 
 @Suppress("unused")
-data class BucketItem(override var title: String, override var id: Long,
-                      var uri: Uri,
-                      var path: String,
-                      var desc: String,
-                      var size: Long, var height: Long, var width: Long,
-                      var lastModified: String) : BucketBase {
+data class BucketItem(
+    override var title: String, override var id: Long,
+    var uri: Uri,
+    var path: String,
+    var desc: String,
+    var size: Long, var height: Long, var width: Long,
+    var lastModified: String,
+    var artId: Long = 0, // for audio
+    var artUri: Uri? = null, // for audio
+    var artPath: String? = null // for audio
+) : BucketBase {
     
     private var _thumbnail: Bitmap? = null
     
@@ -38,7 +43,10 @@ data class BucketItem(override var title: String, override var id: Long,
      */
     fun getThumbnail(c: Context, mediaType: MediaType, width: Int = 96, height: Int = 0, forceWidth: Boolean = false): Bitmap? {
         if (_thumbnail == null || (forceWidth && width > 0)) {
-            _thumbnail = mediaType.getter.getThumbnail(c, id, uri, width, height, forceWidth)
+            if (artId > 0 && artUri != null)
+                _thumbnail = mediaType.getter.getThumbnail(c, artId, artUri!!, artPath, width, height, forceWidth)
+            else
+                _thumbnail = mediaType.getter.getThumbnail(c, id, uri, null, width, height, forceWidth)
         }
         return _thumbnail
     }
