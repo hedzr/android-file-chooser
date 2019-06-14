@@ -601,7 +601,14 @@ feel free to make a new issue.
 many peoples report or contribute to improve me, but only a few of them be put here — it's hard to list all.
 
 - logo and banner by: [**iqbalhood**](https://github.com/iqbalhood)
-- codes and reports: [**bostrot**](https://github.com/bostrot), [**SeppPenner**](https://github.com/SeppPenner), [**lucian-cm**](https://github.com/lucian-cm), [**ghost**](https://github.com/ghost), [**UmeshBaldaniya46**](https://github.com/UmeshBaldaniya46), ...
+- codes, reports, translations:
+  - [**bostrot**](https://github.com/bostrot)
+  - [**SeppPenner**](https://github.com/SeppPenner)
+  - [**lucian-cm**](https://github.com/lucian-cm)
+  - [**ghost**](https://github.com/ghost)
+  - [**UmeshBaldaniya46**](https://github.com/UmeshBaldaniya46)
+  - [**joielechong**](https://github.com/joielechong)
+  - ...
 - especially, the Supporter/Collabotor: [Guiorgy](https://github.com/Guiorgy) and his [android-smbfile-chooser](https://github.com/Guiorgy/android-smbfile-chooser)
 
 
