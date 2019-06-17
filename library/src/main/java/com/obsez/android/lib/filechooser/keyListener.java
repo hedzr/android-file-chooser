@@ -31,7 +31,7 @@ class keyListener implements DialogInterface.OnKeyListener {
     public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
         if (event.getAction() != KeyEvent.ACTION_DOWN) return false;
 
-        if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_ESCAPE) {
+        if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_ESCAPE || keyCode == KeyEvent.KEYCODE_BUTTON_B) {
             if (_c.get()._newFolderView != null && _c.get()._newFolderView.getVisibility() == VISIBLE) {
                 _c.get()._newFolderView.setVisibility(GONE);
                 return true;
