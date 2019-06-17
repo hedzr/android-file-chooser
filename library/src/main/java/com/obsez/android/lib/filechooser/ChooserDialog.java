@@ -492,8 +492,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
             builder.setOnDismissListener(_onDismissListener);
         }
 
-        builder.setOnItemSelectedListener(this)
-            .setOnKeyListener(new keyListener(this));
+        builder.setOnKeyListener(new keyListener(this));
 
         _alertDialog = builder.create();
 
@@ -507,10 +506,11 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         }
 
         if (_enableDpad) {
-            this._list.setSelector(listview_item_selector);
-            this._list.setDrawSelectorOnTop(true);
-            this._list.setItemsCanFocus(true);
-            this._list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+            _list.setSelector(listview_item_selector);
+            _list.setDrawSelectorOnTop(true);
+            _list.setItemsCanFocus(true);
+            _list.setOnItemSelectedListener(this);
+            _list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         }
 
         _list.requestFocus();
