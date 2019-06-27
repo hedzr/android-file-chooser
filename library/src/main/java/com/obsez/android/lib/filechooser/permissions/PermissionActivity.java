@@ -18,12 +18,6 @@ public class PermissionActivity extends AppCompatActivity {
     @SuppressWarnings("unused")
     private static final String TAG = PermissionActivity.class.getName();
 
-    private String[] toArray(final List<String> list) {
-        String[] array = new String[list.size()];
-        list.toArray(array);
-        return array;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,12 +45,12 @@ public class PermissionActivity extends AppCompatActivity {
                 throw new RuntimeException("there are no permissions");
             } else {
                 if (_permissionListener != null) {
-                    _permissionListener.onPermissionGranted(toArray(_permissions_granted));
+                    _permissionListener.onPermissionGranted(_permissions_granted.toArray(new String[0]));
                 }
                 finish();
             }
         } else {
-            ActivityCompat.requestPermissions(this, toArray(_permissions_denied), _requestCode);
+            ActivityCompat.requestPermissions(this, _permissions_denied.toArray(new String[0]), _requestCode);
         }
     }
 
@@ -79,7 +73,7 @@ public class PermissionActivity extends AppCompatActivity {
                 throw new RuntimeException("there are no permissions");
             } else {
                 if (_permissionListener != null) {
-                    _permissionListener.onPermissionGranted(toArray(_permissions_granted));
+                    _permissionListener.onPermissionGranted(_permissions_granted.toArray(new String[0]));
                 }
                 finish();
             }
@@ -91,7 +85,7 @@ public class PermissionActivity extends AppCompatActivity {
                 }
             }
             if (_permissionListener != null) {
-                _permissionListener.onPermissionDenied(toArray(_permissions_denied));
+                _permissionListener.onPermissionDenied(_permissions_denied.toArray(new String[0]));
                 _permissionListener.onShouldShowRequestPermissionRationale(toArray(permissionsShouldRequest));
             }
             finish();
