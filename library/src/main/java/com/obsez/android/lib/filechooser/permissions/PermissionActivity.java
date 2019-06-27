@@ -86,7 +86,7 @@ public class PermissionActivity extends AppCompatActivity {
             }
             if (_permissionListener != null) {
                 _permissionListener.onPermissionDenied(_permissions_denied.toArray(new String[0]));
-                _permissionListener.onShouldShowRequestPermissionRationale(toArray(permissionsShouldRequest));
+                _permissionListener.onShouldShowRequestPermissionRationale(permissionsShouldRequest.toArray(new String[0]));
             }
             finish();
         }
