@@ -130,6 +130,7 @@ class BucketLoader(context: Context,
                 while (cursor.moveToNext()) {
                     val id = cursor.getString(idColumn)
                     val photoUri = Uri.withAppendedPath(contentUri, id)
+    
                     var title = safeString(cursor, titleColumn)
                     val size = safeString2(cursor, sizeColumn, "0")
                     val w = safeString2(cursor, widthColumn, "0")
