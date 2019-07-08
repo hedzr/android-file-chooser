@@ -2,6 +2,7 @@ package com.obsez.android.lib.filechooser.tool;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -227,7 +228,11 @@ public class DirAdapter extends ArrayAdapter<File> {
     }
 
     public void clearSelected() {
-        _selected.clear();
+        try {
+            _selected.clear();
+        } catch (Resources.NotFoundException e) {
+            _selected = new SparseArray<>();
+        }
     }
 
     public boolean isEmpty() {
