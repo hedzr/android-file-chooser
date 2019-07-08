@@ -8,7 +8,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.collection.SparseArrayCompat;
 import androidx.core.content.ContextCompat;
 
 import com.obsez.android.lib.filechooser.R;
@@ -231,7 +231,7 @@ public class DirAdapter extends ArrayAdapter<File> {
         try {
             _selected.clear();
         } catch (Resources.NotFoundException e) {
-            _selected = new SparseArray<>();
+            _selected = new SparseArrayCompat<>();
         }
     }
 
@@ -248,7 +248,7 @@ public class DirAdapter extends ArrayAdapter<File> {
     private Drawable _defaultFileIcon = null;
     private boolean _resolveFileType = false;
     private PorterDuffColorFilter _colorFilter;
-    private SparseArray<File> _selected = new SparseArray<File>();
+    private SparseArrayCompat<File> _selected = new SparseArrayCompat<File>();
     private GetView _getView = null;
     private Stack<Integer> _indexStack = new Stack<>();
 }
