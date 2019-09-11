@@ -86,11 +86,11 @@ class onShowListener implements DialogInterface.OnShowListener {
             _c.get()._positiveBtn.setVisibility(View.INVISIBLE);
         }
 
-        if (_c.get()._enableDpad) {
+        /*if (_c.get()._enableDpad) {
             _c.get()._neutralBtn.setBackgroundResource(_selector);
             _c.get()._negativeBtn.setBackgroundResource(_selector);
             _c.get()._positiveBtn.setBackgroundResource(_selector);
-        }
+        }*/
 
         if (_c.get()._enableOptions) {
             final int buttonColor = _c.get()._neutralBtn.getCurrentTextColor();

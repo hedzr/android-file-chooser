@@ -32,6 +32,7 @@
 
     <style name="FileChooserButtonStyle_Dark" parent="FileChooserButtonStyle">
         <item name="android:textColor">@android:color/holo_blue_light</item>
+        <item name="android:background">@drawable/listview_item_selector_dark</item>
     </style>
 
     <style name="FileChooserListItemStyle_Dark" parent="FileChooserListItemStyle">

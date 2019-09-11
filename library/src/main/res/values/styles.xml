@@ -71,6 +71,7 @@
     <style name="FileChooserButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
         <item name="android:textAppearanceButton">@style/TextAppearance.AppCompat.Button</item>
         <item name="android:textColor">@color/material_deep_teal_500</item>
+        <item name="android:background">@drawable/listview_item_selector</item>
     </style>
 
     <!-- List -->
