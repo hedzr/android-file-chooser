@@ -50,11 +50,9 @@ import static com.obsez.android.lib.filechooser.internals.UiUtil.getListYScroll;
 
 class onShowListener implements DialogInterface.OnShowListener {
     private WeakReference<ChooserDialog> _c;
-    private int _selector;
 
-    onShowListener(ChooserDialog c, int selector) {
+    onShowListener(ChooserDialog c) {
         this._c = new WeakReference<>(c);
-        this._selector = selector;
     }
 
     @Override
@@ -85,12 +83,6 @@ class onShowListener implements DialogInterface.OnShowListener {
         if (_c.get()._enableMultiple) {
             _c.get()._positiveBtn.setVisibility(View.INVISIBLE);
         }
-
-        /*if (_c.get()._enableDpad) {
-            _c.get()._neutralBtn.setBackgroundResource(_selector);
-            _c.get()._negativeBtn.setBackgroundResource(_selector);
-            _c.get()._positiveBtn.setBackgroundResource(_selector);
-        }*/
 
         if (_c.get()._enableOptions) {
             final int buttonColor = _c.get()._neutralBtn.getCurrentTextColor();
@@ -220,8 +212,14 @@ class onShowListener implements DialogInterface.OnShowListener {
                             _c.get()._list.bringToFront();
                         }
 
+                        TypedArray ta = _c.get()._context.obtainStyledAttributes(R.styleable.FileChooser);
+                        final int style = ta.getResourceId(R.styleable.FileChooser_fileChooserDialogStyle,
+                            R.style.FileChooserDialogStyle);
+                        ta.recycle();
+                        final Context buttonContext = new ContextThemeWrapper(_c.get()._context, style);
+
                         // Create a button for the option to create a new directory/folder.
-                        final Button createDir = new Button(_c.get()._context, null,
+                        final Button createDir = new Button(buttonContext, null,
                             android.R.attr.buttonBarButtonStyle);
                         if (_c.get()._createDirRes != -1) {
                             createDir.setText(_c.get()._createDirRes);
@@ -244,16 +242,13 @@ class onShowListener implements DialogInterface.OnShowListener {
                             plus.setColorFilter(filter);
                             createDir.setCompoundDrawablesWithIntrinsicBounds(plus, null, null, null);
                         }
-                        if (_c.get()._enableDpad) {
-                            createDir.setBackgroundResource(_selector);
-                        }
                         params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                             START | CENTER_VERTICAL);
                         params.leftMargin = UiUtil.dip2px(10);
                         options.addView(createDir, params);
 
                         // Create a button for the option to delete a file.
-                        final Button delete = new Button(_c.get()._context, null,
+                        final Button delete = new Button(buttonContext, null,
                             android.R.attr.buttonBarButtonStyle);
                         if (_c.get()._deleteRes != -1) {
                             delete.setText(_c.get()._deleteRes);
@@ -274,9 +269,6 @@ class onShowListener implements DialogInterface.OnShowListener {
                         if (bin != null) {
                             bin.setColorFilter(filter);
                             delete.setCompoundDrawablesWithIntrinsicBounds(bin, null, null, null);
-                        }
-                        if (_c.get()._enableDpad) {
-                            delete.setBackgroundResource(_selector);
                         }
                         params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                             END | CENTER_VERTICAL);
@@ -308,7 +300,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     // happens the first time one clicks on New folder)
                                     TypedArray ta = _c.get()._context.obtainStyledAttributes(
                                         R.styleable.FileChooser);
-                                    int style = ta.getResourceId(
+                                    final int style = ta.getResourceId(
                                         R.styleable.FileChooser_fileChooserNewFolderStyle,
                                         R.style.FileChooserNewFolderStyle);
                                     final Context context = new ContextThemeWrapper(_c.get()._context, style);
@@ -420,7 +412,7 @@ class onShowListener implements DialogInterface.OnShowListener {
                                     holder.addView(buttons, params);
 
                                     // The Cancel button.
-                                    final Button cancel = new Button(_c.get()._context, null,
+                                    final Button cancel = new Button(buttonContext, null,
                                         android.R.attr.buttonBarButtonStyle);
                                     if (_c.get()._newFolderCancelRes != -1) {
                                         cancel.setText(_c.get()._newFolderCancelRes);
@@ -430,15 +422,12 @@ class onShowListener implements DialogInterface.OnShowListener {
                                         cancel.setText(R.string.new_folder_cancel);
                                     }
                                     cancel.setTextColor(buttonColor);
-                                    if (_c.get()._enableDpad) {
-                                        cancel.setBackgroundResource(_selector);
-                                    }
                                     params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                                         START);
                                     buttons.addView(cancel, params);
 
                                     // The OK button.
-                                    final Button ok = new Button(_c.get()._context, null,
+                                    final Button ok = new Button(buttonContext, null,
                                         android.R.attr.buttonBarButtonStyle);
                                     if (_c.get()._newFolderOkRes != -1) {
                                         ok.setText(_c.get()._newFolderOkRes);
@@ -448,9 +437,6 @@ class onShowListener implements DialogInterface.OnShowListener {
                                         ok.setText(R.string.new_folder_ok);
                                     }
                                     ok.setTextColor(buttonColor);
-                                    if (_c.get()._enableDpad) {
-                                        ok.setBackgroundResource(_selector);
-                                    }
                                     params = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT,
                                         END);
                                     buttons.addView(ok, params);

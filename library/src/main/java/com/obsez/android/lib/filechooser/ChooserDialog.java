@@ -497,7 +497,7 @@ public class ChooserDialog implements AdapterView.OnItemClickListener, DialogInt
         _alertDialog = builder.create();
 
         _alertDialog.setCanceledOnTouchOutside(this._cancelOnTouchOutside);
-        _alertDialog.setOnShowListener(new onShowListener(this, listview_item_selector));
+        _alertDialog.setOnShowListener(new onShowListener(this));
 
         _list = _alertDialog.getListView();
         _list.setOnItemClickListener(this);
