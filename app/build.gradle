@@ -2,10 +2,10 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
-// disable synthetics
-androidExtensions {
-    features = ["parcelize"]
-}
+//// disable synthetics
+//androidExtensions {
+//    features = ["parcelize"]
+//}
 
 def VERSION_NAME = project.VERSION_NAME
 def VERSION_CODE = Integer.parseInt(project.VERSION_CODE)
@@ -81,7 +81,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'

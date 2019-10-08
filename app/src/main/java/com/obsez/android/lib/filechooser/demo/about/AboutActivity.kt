@@ -19,6 +19,10 @@ import kotlinx.android.synthetic.main.activity_about.*
 import kotlinx.android.synthetic.main.content_about.*
 import kotlinx.android.synthetic.main.li_about_item.view.*
 
+// import kotlinx.android.synthetic.main.activity_about.*
+// import kotlinx.android.synthetic.main.content_about.*
+// import kotlinx.android.synthetic.main.li_about_item.view.*
+
 class AboutActivity : AppCompatActivity() {
     /*
     var toolbar : Toolbar? = null
