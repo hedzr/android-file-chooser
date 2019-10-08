@@ -219,7 +219,7 @@ class FileManager {
     
     // 获取视频缩略图
     fun getVideoThumbnail(id: Int): Bitmap? {
-        var bitmap: Bitmap? = null
+        val bitmap: Bitmap?
         val options = BitmapFactory.Options()
         options.inDither = false
         options.inPreferredConfig = Bitmap.Config.ARGB_8888
@@ -269,7 +269,7 @@ class FileManager {
     fun getImgListByDir(dir: String): List<String> {
         val imgPaths = ArrayList<String>()
         val directory = File(dir)
-        if (directory == null || !directory.exists()) {
+        if (!directory.exists()) {
             return imgPaths
         }
         val files = directory.listFiles()

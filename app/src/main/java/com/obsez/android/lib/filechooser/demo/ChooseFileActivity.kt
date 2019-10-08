@@ -19,6 +19,7 @@ import java.util.*
 
 class ChooseFileActivity : AppCompatActivity() {
     init {
+        @Suppress("ControlFlowWithEmptyBody")
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         } else {
@@ -34,12 +35,10 @@ class ChooseFileActivity : AppCompatActivity() {
         val storageManager = c.getSystemService(Context.STORAGE_SERVICE) as StorageManager
         //StorageVolume svPrimary = storageManager.getPrimaryStorageVolume()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            if (storageManager != null) {
-                for (sv in storageManager.storageVolumes) {
-                    Timber.d("    vol: state=%s, desc=%s, isEmulated=%b, isPrimary=%b, isRemovable=%b | %s",
-                        sv.state, sv.getDescription(c), sv.isEmulated, sv.isPrimary, sv.isRemovable,
-                        sv.toString())
-                }
+            for (sv in storageManager.storageVolumes) {
+                Timber.d("    vol: state=%s, desc=%s, isEmulated=%b, isPrimary=%b, isRemovable=%b | %s",
+                    sv.state, sv.getDescription(c), sv.isEmulated, sv.isPrimary, sv.isRemovable,
+                    sv.toString())
             }
         }
         
@@ -167,11 +166,11 @@ class ChooseFileActivity : AppCompatActivity() {
         if (id == R.id.action_gh) {
             // startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/hedzr/android-file-chooser")))
     
-            var isLargeLayout = resources.getBoolean(R.bool.large_layout)
-            //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            isLargeLayout = true
-            //}
-    
+            // var isLargeLayout = resources.getBoolean(R.bool.large_layout)
+            // //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // isLargeLayout = true
+            // //}
+            var isLargeLayout = true
             Timber.v("MediaType: ${MediaType.IMAGES}, ${MediaType.IMAGES.name}, ${MediaType.IMAGES.ordinal}, ${MediaType.IMAGES.getter}, ")
     
             MediaStorePicker.get().config(MediaType.VIDEOS, isLargeLayout, R.id.fragment).show()
