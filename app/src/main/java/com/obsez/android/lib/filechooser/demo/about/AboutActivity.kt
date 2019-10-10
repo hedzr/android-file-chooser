@@ -3,21 +3,28 @@ package com.obsez.android.lib.filechooser.demo.about
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import com.obsez.android.lib.filechooser.ChooserDialog
 import com.obsez.android.lib.filechooser.demo.R
+import com.obsez.android.lib.filechooser.demo.demo.Demo
 import com.obsez.android.lib.filechooser.internals.UiUtil
 import kotlinx.android.synthetic.main.activity_about.*
 import kotlinx.android.synthetic.main.content_about.*
 import kotlinx.android.synthetic.main.li_about_item.view.*
+import java.util.ArrayList
 
 // import kotlinx.android.synthetic.main.activity_about.*
 // import kotlinx.android.synthetic.main.content_about.*
@@ -82,15 +89,27 @@ class AboutActivity : AppCompatActivity() {
                 plainItems.addAll(it.items)
             }
         }
-        
+    
+        @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             //return ViewHolder(TextView(parent.context))
             return ViewHolder(LayoutInflater.from(ctx).inflate(R.layout.li_about_item, parent, false)) { _, holder ->
                 if (holder.mValueView.tag != null && holder.mValueView.tag is String) {
                     val link: String = holder.mValueView.tag as String
                     when {
-                        link.startsWith("mailto:") -> ctx.startActivity(Intent(Intent.ACTION_SENDTO, Uri.parse(link)))
-                        link.startsWith("tel:") -> ctx.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse(link)))
+                        link.startsWith("mailto:") -> {
+                            ctx.startActivity(Intent(Intent.ACTION_SENDTO, Uri.parse(link)))
+                            //                            Demo.demo2(ctx,"") { paths ->
+                            //                                val builder = AlertDialog.Builder(ctx, R.style.FileChooserDialogStyle)
+                            //                                builder.setTitle("${paths.size} files selected:")
+                            //                                    .setAdapter(ArrayAdapter(ctx, android.R.layout.simple_expandable_list_item_1, paths), null)
+                            //                                    .create()
+                            //                                    .show()
+                            //                            }
+                        }
+                        link.startsWith("tel:") -> {
+                            ctx.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse(link)))
+                        }
                         link.startsWith("market:") -> {
                             val intent = Intent(Intent.ACTION_DIAL, Uri.parse(link))
                             intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or
