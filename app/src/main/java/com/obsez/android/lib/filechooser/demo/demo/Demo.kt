@@ -7,6 +7,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.obsez.android.lib.filechooser.ChooserDialog
 import com.obsez.android.lib.filechooser.demo.R
+import timber.log.Timber
 import java.io.File
 import java.util.*
 
@@ -42,6 +43,7 @@ object Demo {
                 } else if (!files.remove(dirFile)) {
                     files.add(dirFile)
                 }
+                Timber.d("$dir, $dirFile")
             }
             .withOnDismissListener {
                 val paths = ArrayList<String>()
