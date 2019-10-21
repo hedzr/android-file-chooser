@@ -5,10 +5,11 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
 import android.os.storage.StorageManager;
-import androidx.annotation.NonNull;
+import android.os.storage.StorageVolume;
 import android.text.InputFilter;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,8 +17,15 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 /**
  * Created by coco on 6/7/15.
@@ -77,8 +85,137 @@ public class FileUtil {
         return String.valueOf(new DecimalFormat("###.#").format(fileSize) + suffix);
     }
 
+    @Nullable
+    public static File getDefaultPathAsFile(Context context, boolean isRemovable) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            String path = getDefaultPath(context, isRemovable);
+            return new File(path);
+        } else {
+            return context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+        }
+    }
+
+    @NonNull
+    public static String getDefaultPath(Context context, boolean isRemovable) {
+        String path;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            path = getStoragePath(context, isRemovable);
+        } else {
+            path = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        }
+        return path;
+    }
+
+    @NonNull
+    public static String getVolDescription(Context context, StorageVolume vol) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            return getVolDescLow(context,  vol);
+        } else {
+            return getVolDesc24(context, vol);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @NonNull
+    private static String getVolDesc24(Context context, StorageVolume vol) {
+        return vol.getDescription(context);
+    }
+
+    @NonNull
+    private static String getVolDescLow(Context context, StorageVolume vol) {
+        try {
+            Method getDesc = vol.getClass().getMethod("getDescription");
+            Object result = getDesc.invoke(vol, context);
+            return (String) result;
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return vol.toString();
+    }
+
+    @NonNull
+    public static List<StorageVolume> getStorageVols(Context context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            return getStorageVolsLow(context);
+        } else {
+            return getStorageVols24(context);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @NonNull
+    private static List<StorageVolume> getStorageVols24(Context context) {
+        StorageManager storageManager = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
+        try {
+            List<StorageVolume> result = Objects.requireNonNull(storageManager).getStorageVolumes();
+            return result;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    @NonNull
+    private static List<StorageVolume> getStorageVolsLow(Context context) {
+        StorageManager storageManager = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
+        try {
+            Method getVolumeList = storageManager.getClass().getMethod("getVolumeList");
+            Object result = getVolumeList.invoke(storageManager);
+            return (List<StorageVolume>) result;
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
     @NonNull
     public static String getStoragePath(Context context, boolean isRemovable) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            return getStoragePathLow(context, isRemovable);
+        } else {
+            return getStoragePath24(context, isRemovable);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @NonNull
+    public static String getStoragePath24(Context context, boolean isRemovable) {
+        StorageManager storageManager = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
+        Class<?> storageVolumeClazz = null;
+        try {
+            List<StorageVolume> result = Objects.requireNonNull(storageManager).getStorageVolumes();
+            for (StorageVolume vol : result) {
+                Log.d("X", "  ---Object--" + vol + " | desc: " + vol.getDescription(context));
+                if (isRemovable != vol.isRemovable()) {
+                    continue;
+                }
+                Method getPath = vol.getClass().getMethod("getPath");
+                String path = (String) getPath.invoke(vol);
+                Log.d("X", "    ---path--" + path);
+                return path;
+            }
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+        return Environment.getExternalStorageDirectory().getAbsolutePath();
+    }
+
+    @NonNull
+    public static String getStoragePathLow(Context context, boolean isRemovable) {
         StorageManager storageManager = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
         Class<?> storageVolumeClazz = null;
         try {
@@ -88,15 +225,16 @@ public class FileUtil {
             Method isRemovableMtd = storageVolumeClazz.getMethod("isRemovable");
             Object result = getVolumeList.invoke(storageManager);
             final int length = Array.getLength(result);
-            //Timber.d("---length--" + length);
+            //final int length = result.size();
+            Log.d("X", "---length--" + length);
             for (int i = 0; i < length; i++) {
                 Object storageVolumeElement = Array.get(result, i);
-                //Timber.d("---Object--" + storageVolumeElement + "i==" + i);
+                Log.d("X", "  ---Object--" + storageVolumeElement + "i==" + i);
                 String path = (String) getPath.invoke(storageVolumeElement);
-                //Timber.d("---path_total--" + path);
+                Log.d("X", "  ---path_total--" + path);
                 boolean removable = (Boolean) isRemovableMtd.invoke(storageVolumeElement);
                 if (isRemovable == removable) {
-                    //Timber.d("---path--" + path);
+                    Log.d("X", "    ---path--" + path);
                     return path;
                 }
             }
@@ -117,27 +255,31 @@ public class FileUtil {
     }
 
     public static long readSDCard(Context context, Boolean isRemovable, Boolean freeOrTotal) {
-        DecimalFormat df = new DecimalFormat("0.00");
-        getStoragePath(context, isRemovable);
-        StatFs sf = new StatFs(getStoragePath(context, isRemovable));
-        long blockSize;
-        long blockCount;
-        long availCount;
-        if (Build.VERSION.SDK_INT > 18) {
-            blockSize = sf.getBlockSizeLong(); //文件存储时每一个存储块的大小为4KB
-            blockCount = sf.getBlockCountLong();//存储区域的存储块的总个数
-            availCount = sf.getFreeBlocksLong();//存储区域中可用的存储块的个数（剩余的存储大小）
-        } else {
-            blockSize = sf.getBlockSize();
-            blockCount = sf.getBlockCount();
-            availCount = sf.getFreeBlocks();
+        //DecimalFormat df = new DecimalFormat("0.00");
+        String path = getStoragePath(context, isRemovable);
+        try {
+            StatFs sf = new StatFs(path);
+            long blockSize;
+            long blockCount;
+            long availCount;
+            if (Build.VERSION.SDK_INT > 18) {
+                blockSize = sf.getBlockSizeLong(); //文件存储时每一个存储块的大小为4KB
+                blockCount = sf.getBlockCountLong();//存储区域的存储块的总个数
+                availCount = sf.getFreeBlocksLong();//存储区域中可用的存储块的个数（剩余的存储大小）
+            } else {
+                blockSize = sf.getBlockSize();
+                blockCount = sf.getBlockCount();
+                availCount = sf.getFreeBlocks();
+            }
+            //Log.d("sss", "总的存储空间大小:" + blockSize * blockCount / 1073741824 + "GB" + ",剩余空间:"
+            //    + availCount * blockSize / 1073741824 + "GB"
+            //    + "--存储块的总个数--" + blockCount + "--一个存储块的大小--" + blockSize / 1024 + "KB");
+            //return df.format((freeOrTotal ? availCount : blockCount) * blockSize / 1073741824.0);
+            return (freeOrTotal ? availCount : blockCount) * blockSize;
+        } catch (Exception ex) {
+            Log.e("X", String.format("wrong path '%s'", path), ex);
         }
-        //Log.d("sss", "总的存储空间大小:" + blockSize * blockCount / 1073741824 + "GB" + ",剩余空间:"
-        //    + availCount * blockSize / 1073741824 + "GB"
-        //    + "--存储块的总个数--" + blockCount + "--一个存储块的大小--" + blockSize / 1024 + "KB");
-        //return df.format((freeOrTotal ? availCount : blockCount) * blockSize / 1073741824.0);
-        return (freeOrTotal ? availCount : blockCount) * blockSize;
-        //return "-1";
+        return -1;
     }
 
 

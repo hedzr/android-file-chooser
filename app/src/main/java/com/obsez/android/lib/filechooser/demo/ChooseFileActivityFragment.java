@@ -1,12 +1,14 @@
 package com.obsez.android.lib.filechooser.demo;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.storage.StorageVolume;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +17,6 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 
 import com.obsez.android.lib.filechooser.ChooserDialog;
 import com.obsez.android.lib.filechooser.demo.tool.ImageUtil;
@@ -31,7 +27,13 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import timber.log.Timber;
 
 /**
@@ -65,15 +67,22 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        assert getActivity() != null;
-        String ext = FileUtil.getStoragePath(getActivity(), true);
-        String itl = FileUtil.getStoragePath(getActivity(), false);
+        final Activity a = getActivity();
+        assert a != null;
+
+        List<StorageVolume> vols = FileUtil.getStorageVols(a);
+        for (StorageVolume vol : vols) {
+            Timber.v(" -> vol: " + vol + " (" + FileUtil.getVolDescription(a, vol) + ")");
+        }
+
+        String ext = FileUtil.getStoragePath(a, true);
+        String itl = FileUtil.getStoragePath(a, false);
         Timber.v("ext: " + ext + ", total size: " + FileUtil.getReadableFileSize(
-            FileUtil.readSDCard(getActivity(), true)) + ", free size: " + FileUtil.getReadableFileSize(
-            FileUtil.readSDCard(getActivity(), true, true)));
+            FileUtil.readSDCard(a, true)) + ", free size: " + FileUtil.getReadableFileSize(
+            FileUtil.readSDCard(a, true, true)));
         Timber.v("itl: " + itl + ", total size: " + FileUtil.getReadableFileSize(
-            FileUtil.readSDCard(getActivity(), false)) + ", free size: " + FileUtil.getReadableFileSize(
-            FileUtil.readSDCard(getActivity(), false, true)));
+            FileUtil.readSDCard(a, false)) + ", free size: " + FileUtil.getReadableFileSize(
+            FileUtil.readSDCard(a, false, true)));
     }
 
     @Nullable
@@ -162,6 +171,9 @@ public class ChooseFileActivityFragment extends Fragment implements View.OnClick
                 "Choose", "Cancel")
             .withOptionStringResources("New folder",
                 "Delete", "Cancel", "Ok")*/
+            .withNavigateUpTo(dir -> {
+                return dir!=null && (dir.canRead() || true);
+            })
             .disableTitle(disableTitle.isChecked())
             .enableOptions(enableOptions.isChecked())
             .titleFollowsDir(titleFollowsDir.isChecked())
