@@ -5,6 +5,12 @@
 [![Release](https://jitpack.io/v/hedzr/android-file-chooser.svg)](https://jitpack.io/#hedzr/android-file-chooser)
 [![Build Status](https://travis-ci.com/hedzr/android-file-chooser.svg?branch=master)](https://travis-ci.com/hedzr/android-file-chooser)
 
+**IMPORTANT**:
+
+THIS REPO HAS BEEN STOPPED TO UPDATE TO COMPLY WITH THE NEWER ANDROID LIKE 'Q' AND ABOVE.
+
+---
+
 `android-file-library` is a lightweight file/folder chooser.
 
 The usages at [HERE](#Usages), and [Acknowledges](#Acknowledges).
@@ -22,7 +28,7 @@ dependencies {
 }
 ```
 
-### MediaStore for Android Q (still in beta)
+### ~~MediaStore for Android Q (still in beta)~~
 
 ```
 dependencies {
